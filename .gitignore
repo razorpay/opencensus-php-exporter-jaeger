@@ -1,3 +1,7 @@
+/vendor
+/.idea
 .DS_Store
 Thumbs.db
-/vendor
+Homestead.json
+Homestead.yaml
+.env
