@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Response;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -11,6 +13,12 @@
 |
 */
 
-$app->get('/', function () use ($app) {
-    return $app->version();
-});
+$app->get('/', [
+	'as' => 'get_root',
+	'uses' => 'AuthController@getRoot'
+]);
+
+$app->get('/create', [
+	'as' => 'create_token',
+	'uses' => 'AuthController@createToken'
+]);
