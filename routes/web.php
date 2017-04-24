@@ -13,12 +13,12 @@ use Illuminate\Http\Response;
 |
 */
 
-$app->get('/', [
-	'as' => 'get_root',
-	'uses' => 'AuthController@getRoot'
+$app->get('/authorize', [
+	'as' => 'get_auth_code',
+	'uses' => 'AuthController@authorize'
 ]);
 
-$app->get('/create', [
-	'as' => 'create_token',
-	'uses' => 'AuthController@createToken'
+$app->get('/get_access', [
+	'as' => 'get_access_token',
+	'uses' => 'AuthController@getAccessToken'
 ]);

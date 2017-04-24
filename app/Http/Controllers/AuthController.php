@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use \Razorpay\OAuth;
+use \Razorpay\OAuth as OAuth;
 
 class AuthController extends Controller
 {
+    protected $authService;
+
     public function __construct()
     {
-        //
+        $this->authService = new OAuth\Service();
     }
 
     public function getRoot()
@@ -18,11 +20,20 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
-    public function createToken()
+    public function authorize()
     {
-        $clientService = new OAuth\Client\Service;
+        $input = Request::all();
 
-        $data = $clientService->create([]);
+        $data = $this->authService->getAuthCode($input);
+
+        return response()->json($data);
+    }
+
+    public function getAccessToken()
+    {
+        $input = Request::all();
+
+        $data = $this->authService->getAccessToken($input);
 
         return response()->json($data);
     }
