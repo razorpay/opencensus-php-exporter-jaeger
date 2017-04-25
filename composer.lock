@@ -1278,19 +1278,20 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "dbd05f76e6e7016ee1aaced764d0c6b162eddd89"
+                "reference": "a2fd371e19c639a47b5825c0b4587582a1a19aee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/dbd05f76e6e7016ee1aaced764d0c6b162eddd89",
-                "reference": "dbd05f76e6e7016ee1aaced764d0c6b162eddd89",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/a2fd371e19c639a47b5825c0b4587582a1a19aee",
+                "reference": "a2fd371e19c639a47b5825c0b4587582a1a19aee",
                 "shasum": ""
             },
             "require": {
                 "laravel/framework": "5.2.*",
                 "league/oauth2-server": "^5.1",
                 "php": ">=5.6",
-                "razorpay/spine": "dev-master"
+                "razorpay/spine": "dev-master",
+                "zendframework/zend-diactoros": "^1.4"
             },
             "require-dev": {
                 "phpunit/phpunit": "^5.6"
@@ -1319,7 +1320,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/master",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2017-04-12 12:07:09"
+            "time": "2017-04-19 19:59:54"
         },
         {
             "name": "razorpay/spine",
@@ -2250,6 +2251,58 @@
                 "environment"
             ],
             "time": "2016-09-01T10:05:43+00:00"
+        },
+        {
+            "name": "zendframework/zend-diactoros",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-diactoros.git",
+                "reference": "b03f285a333f51e58c95cce54109a4a9ed691436"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/b03f285a333f51e58c95cce54109a4a9ed691436",
+                "reference": "b03f285a333f51e58c95cce54109a4a9ed691436",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.4 || ^7.0",
+                "psr/http-message": "~1.0"
+            },
+            "provide": {
+                "psr/http-message-implementation": "1.0"
+            },
+            "require-dev": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "phpunit/phpunit": "^4.6 || ^5.5",
+                "zendframework/zend-coding-standard": "~1.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4-dev",
+                    "dev-develop": "1.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Diactoros\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "description": "PSR HTTP Message implementations",
+            "homepage": "https://github.com/zendframework/zend-diactoros",
+            "keywords": [
+                "http",
+                "psr",
+                "psr-7"
+            ],
+            "time": "2017-04-06T16:18:34+00:00"
         }
     ],
     "packages-dev": [
