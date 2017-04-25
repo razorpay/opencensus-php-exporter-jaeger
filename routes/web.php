@@ -12,13 +12,17 @@ use Illuminate\Http\Response;
 | and give it the Closure to call when that URI is requested.
 |
 */
+$app->get('/', [
+	'as' => 'get_root',
+	'uses' => 'AuthController@getRoot'
+]);
 
 $app->get('/authorize', [
 	'as' => 'get_auth_code',
 	'uses' => 'AuthController@authorize'
 ]);
 
-$app->get('/get_access', [
+$app->get('/token', [
 	'as' => 'get_access_token',
 	'uses' => 'AuthController@getAccessToken'
 ]);
