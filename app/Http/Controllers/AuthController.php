@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use \Razorpay\OAuth;
+use Razorpay\OAuth;
 
 class AuthController extends Controller
 {
