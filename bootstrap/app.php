@@ -26,9 +26,13 @@ $app = new Laravel\Lumen\Application(
 $app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
 $app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
 
-// $app->withFacades();
+$app->withFacades();
 
 $app->withEloquent();
+
+if (!class_exists('Redirect')) {
+    class_alias('Illuminate\Support\Facades\Redirect', 'Redirect');
+}
 
 /*
 |--------------------------------------------------------------------------

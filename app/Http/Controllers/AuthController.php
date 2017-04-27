@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use \Razorpay\OAuth as OAuth;
+use App\Auth;
+use Redirect;
 
 class AuthController extends Controller
 {
@@ -10,17 +11,18 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->authService = new OAuth\Service();
+        $this->authService = new Auth\Service();
     }
 
     public function getRoot()
     {
         $response['message'] = 'Welcome to Auth Service!';
+        return redirect()->to('http://www.gmail.com');
 
         return response()->json($response);
     }
 
-    public function authorize()
+    public function getAuthorize()
     {
         $input = Request::all();
 
@@ -38,3 +40,4 @@ class AuthController extends Controller
         return response()->json($data);
     }
 }
+

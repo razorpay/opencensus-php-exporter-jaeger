@@ -19,7 +19,7 @@ $app->get('/', [
 
 $app->get('/authorize', [
 	'as' => 'get_auth_code',
-	'uses' => 'AuthController@authorize'
+	'uses' => 'AuthController@getAuthorize'
 ]);
 
 $app->get('/token', [
