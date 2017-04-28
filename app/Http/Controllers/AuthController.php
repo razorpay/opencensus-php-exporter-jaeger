@@ -17,7 +17,6 @@ class AuthController extends Controller
     public function getRoot()
     {
         $response['message'] = 'Welcome to Auth Service!';
-        return redirect()->to('http://www.gmail.com');
 
         return response()->json($response);
     }
