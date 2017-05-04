@@ -31,7 +31,10 @@ $app->withFacades();
 $app->withEloquent();
 
 if (!class_exists('Redirect')) {
-    class_alias('Illuminate\Support\Facades\Redirect', 'Redirect');
+	class_alias('Laravel\Lumen\Http\Redirector', 'Redirect');
+}
+if (!class_exists('Request')) {
+	class_alias('Illuminate\Support\Facades\Request', 'Request');
 }
 
 /*

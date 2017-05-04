@@ -22,7 +22,15 @@ $app->get('/authorize', [
 	'uses' => 'AuthController@getAuthorize'
 ]);
 
-$app->get('/token', [
-	'as' => 'get_access_token',
-	'uses' => 'AuthController@getAccessToken'
+//post authorize for actually getting the auth code on grant accept
+
+$app->post('/token', [
+	'as' => 'post_access_token',
+	'uses' => 'AuthController@postAccessToken'
+]);
+
+//better name and url format
+$app->get('/{token}/token_data', [
+	'as' => 'get_user_detail',
+	'uses' => 'AuthController@getTokenData'
 ]);
