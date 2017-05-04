@@ -7,7 +7,6 @@
  |
  */
 use Dotenv\Dotenv;
-use Dotenv\Exception\InvalidPathException;
 
 $envDir = __DIR__.'/../environment';
 $app->useEnvironmentPath($envDir);
@@ -15,10 +14,9 @@ $app->useEnvironmentPath($envDir);
 //
 // By default we assume environment is prod.
 // During testing, laravel sets APP_ENV to 'testing'
-// Otherwise, we get the environement from the file
+// Otherwise, we get the environment from the file
 // environment/env.php
 //
-
 $env = 'production';
 
 if (env('APP_ENV') === 'testing')
@@ -43,11 +41,11 @@ $cascadingEnvFile = '.env.' . $env;
 // * Default env file
 //
 // Note that of the above 3, first two are committed in git
-// while last one comes into the folder when baking amis via brahma
+// while last one comes into the folder when baking AMI's via brahma
 //
 if (function_exists('read_env_file') === false)
 {
-    function read_env_file($envDir, $fileName)
+    function read_env_file(string $envDir, string $fileName)
     {
         $file = $envDir . '/' . $fileName;
 
@@ -56,9 +54,9 @@ if (function_exists('read_env_file') === false)
             return;
         }
 
-        $dotenv = new Dotenv($envDir, $fileName);
+        $dotEnv = new Dotenv($envDir, $fileName);
 
-        $dotenv->load();
+        $dotEnv->load();
     }
 }
 
