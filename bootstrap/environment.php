@@ -9,7 +9,6 @@
 use Dotenv\Dotenv;
 
 $envDir = __DIR__.'/../environment';
-$app->useEnvironmentPath($envDir);
 
 //
 // By default we assume environment is prod.
@@ -29,8 +28,6 @@ else if (file_exists($file = __DIR__ . '/../environment/env.php'))
 }
 
 putenv("APP_ENV=$env");
-
-$file = $app->environmentFile();
 
 $cascadingEnvFile = '.env.' . $env;
 
