@@ -25,11 +25,19 @@ class AuthController extends Controller
 
     public function getAuthorize()
     {
+        $input = Request::all();
         //TODO: validate input
 
         //TODO: Pass the data to view in hidden format so that accept/reject request has the request input
 
-        return view('authorize');
+        return view('authorize')->with('input', $input);
+    }
+
+    public function postAuthorize()
+    {
+        $input = Request::all();
+
+        $authCode = $this->authService->postAuthCode($input);
     }
 
     public function postAccessToken()

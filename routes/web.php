@@ -22,7 +22,10 @@ $app->get('/authorize', [
 	'uses' => 'AuthController@getAuthorize'
 ]);
 
-//post authorize for actually getting the auth code on grant accept
+$app->post('/authorize', [
+	'as' => 'post_auth_code',
+	'uses' => 'AuthController@postAuthorize'
+]);
 
 $app->post('/token', [
 	'as' => 'post_access_token',

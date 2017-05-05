@@ -2,7 +2,7 @@
 
 namespace App\Models\Auth;
 
-// use Razorpay\OAuth;
+use Razorpay\OAuth;
 
 class Service
 {
@@ -11,14 +11,12 @@ class Service
         $this->oauthServer = new OAuth\OAuthServer();
     }
 
-    public funtion getAuthCode(array $input)
+    public function postAuthCode(array $input)
     {
         // TODO: Validate input
         try
         {
-            $this->oauthServer = new OAuth\OAuthServer();
-
-            return $oauthServer->getAuthCode($input);
+            return $this->oauthServer->getAuthCode($input);
         }
         catch (\Exception $ex)
         {
@@ -31,9 +29,7 @@ class Service
         // TODO: Validate input
         try
         {
-            $this->oauthServer = new OAuth\OAuthServer();
-
-            return $oauthServer->getAccessToken($input);
+            return $this->oauthServer->getAccessToken($input);
         }
         catch (\Exception $ex)
         {

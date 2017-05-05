@@ -49,6 +49,34 @@
       xmlhttp.open("GET", "/"+token+"/token_data", true);
       xmlhttp.send();
  	}
+
+ 	function postAuthCode(input) {
+ 	  var xmlhttp = new XMLHttpRequest();
+
+ 	  var form_data = new FormData();
+
+	  for ( var key in input ) {
+		form_data.append(key, input[key]);
+	  }
+
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+          if (xmlhttp.status == 200) {
+          	var data = JSON.parse(xmlhttp.responseText);
+          }
+          else if (xmlhttp.status == 400) {
+            alert('There was an error 400');
+          }
+          else {
+            alert('something else other than 200 was returned');
+          }
+        }
+      };
+
+      xmlhttp.open("POST", "/authorize", true);
+      xmlhttp.send(form_data);
+ 	}
+
   </script>
 </head>
 
@@ -57,7 +85,7 @@
   <div>
   	<span id="agreement" style="display: none">You are giving permissions as the user <span id="user"></span> for merchant <span id="merchant"></span></span>
   </div>
-  <button id="accept" style="display: none">
+  <button id="accept" style="display: none" onclick="postAuthCode({{ json_encode($input) }})">
   	Accept
   </button>
   <button = id="reject" style="display: none">
