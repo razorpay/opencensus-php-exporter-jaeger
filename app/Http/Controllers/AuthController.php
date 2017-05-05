@@ -6,6 +6,7 @@ use App\Models\Auth;
 use Redirect;
 use Request;
 use Requests;
+use Razorpay\OAuth;
 
 class AuthController extends Controller
 {
