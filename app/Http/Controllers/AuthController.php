@@ -39,6 +39,8 @@ class AuthController extends Controller
         $input = Request::all();
 
         $authCode = $this->authService->postAuthCode($input);
+
+        return response()->json($authCode->getHeaders()['Location'][0]);
     }
 
     public function postAccessToken()

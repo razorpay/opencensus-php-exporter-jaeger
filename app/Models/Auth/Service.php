@@ -14,13 +14,17 @@ class Service
     public function postAuthCode(array $input)
     {
         // TODO: Validate input
+        $userData['email'] = array_pop($input);
+        $userData['name'] = array_pop($input);
+        $userData['id'] = array_pop($input);
         try
         {
-            return $this->oauthServer->getAuthCode($input);
+            return $this->oauthServer->getAuthCode($input, $userData);
         }
         catch (\Exception $ex)
         {
             //TODO: Add tracing
+            var_dump($ex->getMessage());
         }
     }
 

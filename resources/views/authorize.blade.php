@@ -36,6 +36,7 @@
             document.getElementById("agreement").style.display = "block";
             document.getElementById("accept").style.display = "block";
             document.getElementById("reject").style.display = "block";
+            document.getElementById("user_data").value = data.data.user;
           }
           else if (xmlhttp.status == 400) {
             alert('There was an error 400');
@@ -50,19 +51,23 @@
       xmlhttp.send();
  	}
 
- 	function postAuthCode(input) {
+  function postAuthCode(input, user) {
  	  var xmlhttp = new XMLHttpRequest();
 
  	  var form_data = new FormData();
 
 	  for ( var key in input ) {
-		form_data.append(key, input[key]);
+		  form_data.append(key, input[key]);
 	  }
+    for ( var key in user ) {
+      form_data.append(key, user[key]);
+    }
 
       xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
           if (xmlhttp.status == 200) {
           	var data = JSON.parse(xmlhttp.responseText);
+            window.location.href = data;
           }
           else if (xmlhttp.status == 400) {
             alert('There was an error 400');
@@ -85,7 +90,8 @@
   <div>
   	<span id="agreement" style="display: none">You are giving permissions as the user <span id="user"></span> for merchant <span id="merchant"></span></span>
   </div>
-  <button id="accept" style="display: none" onclick="postAuthCode({{ json_encode($input) }})">
+  <div type="hidden" id="user_data"></div>
+  <button id="accept" style="display: none" onclick="postAuthCode({{ json_encode($input) }}, document.getElementById('user_data').value)">
   	Accept
   </button>
   <button = id="reject" style="display: none">
