@@ -27,6 +27,7 @@ class AuthController extends Controller
     public function getAuthorize()
     {
         $input = Request::all();
+
         //TODO: validate input
 
         //TODO: Pass the data to view in hidden format so that accept/reject request has the request input
@@ -49,7 +50,9 @@ class AuthController extends Controller
 
         $data = $this->authService->getAccessToken($input);
 
-        return response()->json($data);
+        $response = json_decode($data->getBody(), true);
+
+        return response()->json($response);
     }
 
     public function getTokenData($token)

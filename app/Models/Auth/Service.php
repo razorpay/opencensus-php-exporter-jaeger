@@ -31,13 +31,6 @@ class Service
     public function getAccessToken(array $input)
     {
         // TODO: Validate input
-        try
-        {
-            return $this->oauthServer->getAccessToken($input);
-        }
-        catch (\Exception $ex)
-        {
-            //TODO: Add tracing
-        }
+        return $this->oauthServer->getAccessToken($input);
     }
 }
