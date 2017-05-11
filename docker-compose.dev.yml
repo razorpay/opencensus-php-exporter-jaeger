@@ -1,0 +1,13 @@
+version: '2'
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: razorpay:auth
+    volumes:
+      - .:/app
+    ports:
+      - 28090:80
+    environment:
+      DB_HOST: db_live
