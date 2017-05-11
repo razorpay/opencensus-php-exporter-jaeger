@@ -7,7 +7,20 @@ services:
     image: razorpay:auth
     volumes:
       - .:/app
+    external_links:
+      - api_db
+    networks:
+      - api_default
     ports:
       - 28090:80
     environment:
-      DB_HOST: db_live
+      DB_LIVE_HOST: api_db
+      DB_LIVE_USERNAME: api_user
+      DB_LIVE_PASSWORD: 123
+      DB_TEST_HOST: api_db
+      DB_TEST_USERNAME: api_user
+      DB_TEST_PASSWORD: 123
+
+networks:
+  api_default:
+    external: true
