@@ -4,7 +4,8 @@
   <script>
 	function cors() {
 	  var req = new XMLHttpRequest();
-	  var token = '';
+    var currentUrl = window.location.href;
+    var token = '';
 	  if ('withCredentials' in req) {
 		req.open('GET', 'http://dashboard.razorpay.dev/user/logged_in', true);
 		req.withCredentials = true;
@@ -15,11 +16,12 @@
 		      document.getElementById('token').value = token;
 		      document.getElementById('token').onchange();
 		    } else {
-		      console.log('error'); //redirect for login
+          currentUrl = encodeURI(currentUrl);
+          window.location.href = 'http://dashboard.razorpay.dev/#/access/signin?next='+currentUrl;
 		    }
 		  }
 		};
-    	req.send();
+    req.send();
 	  }
 	}
 	window.onload = cors();
@@ -62,6 +64,7 @@
     for ( var key in user ) {
       form_data.append(key, user[key]);
     }
+    form_data.append('authorize', true);
 
       xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
@@ -82,6 +85,38 @@
       xmlhttp.send(form_data);
  	}
 
+  function denyAuthCode(input, user) {
+    var xmlhttp = new XMLHttpRequest();
+
+    var form_data = new FormData();
+
+    for ( var key in input ) {
+      form_data.append(key, input[key]);
+    }
+    for ( var key in user ) {
+      form_data.append(key, user[key]);
+    }
+    form_data.append('authorize', false);
+
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+          if (xmlhttp.status == 200) {
+            var data = JSON.parse(xmlhttp.responseText);
+            window.location.href = data;
+          }
+          else if (xmlhttp.status == 400) {
+            alert('There was an error 400');
+          }
+          else {
+            alert('something else other than 200 was returned');
+          }
+        }
+      };
+
+      xmlhttp.open("POST", "/authorize", true);
+      xmlhttp.send(form_data);
+  }
+
   </script>
 </head>
 
@@ -94,7 +129,7 @@
   <button id="accept" style="display: none" onclick="postAuthCode({{ json_encode($input) }}, document.getElementById('user_data').value)">
   	Accept
   </button>
-  <button = id="reject" style="display: none">
+  <button id="reject" style="display: none" onclick="denyAuthCode({{ json_encode($input) }}, document.getElementById('user_data').value)">
   	Reject
   </button>
 </body>

@@ -14,9 +14,11 @@ class Service
     public function postAuthCode(array $input)
     {
         // TODO: Validate input
+        $userData['authorize'] = array_pop($input);
         $userData['email'] = array_pop($input);
         $userData['name'] = array_pop($input);
         $userData['id'] = array_pop($input);
+
         try
         {
             return $this->oauthServer->getAuthCode($input, $userData);
