@@ -5,6 +5,7 @@ Thumbs.db
 Homestead.json
 Homestead.yaml
 /.wercker
+/storage
 
 # Env files
 .env
