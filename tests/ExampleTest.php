@@ -14,7 +14,7 @@ class ExampleTest extends TestCase
     {
         $this->get('/');
 
-        $expected = '{"message":"Welcome to Auth Service!"}';
+        $expected = '{"message":"Welcome to Razorpay Auth!"}';
 
         $this->assertEquals(
             $expected, $this->response->getContent()
