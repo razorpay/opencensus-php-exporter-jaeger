@@ -1,0 +1,30 @@
+box:
+  id: razorpay/docker:php7
+no-response-timeout: 30
+command-timeout: 30
+dev:
+  steps:
+    - internal/shell:
+      code: echo "Razorpay Auth Service"
+build:
+    steps:
+      - script:
+          name: copy env file
+          code: cp ./environment/.env.wercker ./environment/.env.testing
+      - create-file:
+          name: Create auth_service_db.sqlite
+          filename: auth_service_db.sqlite
+          overwrite: true
+          content:
+      - script:
+          name: Composer set-up
+          code: |
+              composer config -g github-oauth.github.com $github_token
+              export COMPOSER_CACHE_DIR="$WERCKER_CACHE_DIR/composer" && mkdir -p $COMPOSER_CACHE_DIR
+              composer install --no-interaction
+      - script:
+        name: Run unit tests
+        code: php -d memory_limit=1024M vendor/phpunit/phpunit/phpunit --debug --verbose
+      - script:
+          name: List directory
+          code: ls -lah
