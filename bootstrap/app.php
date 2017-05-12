@@ -25,11 +25,34 @@ $app = new Laravel\Lumen\Application(
 
 require __DIR__ . '/environment.php';
 
+/*
+ |-------------------------------------------------------------------------
+ | Define the paths required by the app
+ |-------------------------------------------------------------------------
+ */
+
+$app->instance('path.config', $app->getConfigurationPath());
+
 $app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
 
-// $app->withFacades();
+//
+// Use Facades for now, will attempt to drop this later
+//
+$app->withFacades();
 
 $app->withEloquent();
+
+
+if (class_exists('Trace') === false) {
+    class_alias(Razorpay\Trace\Facades\Trace::class, 'Trace');
+}
+
+//
+// Required by the Trace facade :(
+//
+if (class_exists('Request') === false) {
+    class_alias(Illuminate\Support\Facades\Request::class, 'Request');
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +108,9 @@ $app->singleton(
 $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+
+$app->register(\Razorpay\Trace\TraceServiceProviderLaravel5::class);
+
 
 $app->configure('trace');
 
