@@ -9,9 +9,9 @@ return [
      * logs will be written.
      */
     'debug_options' => [
-        'screen' => false,
+        'screen'  => false,
         'browser' => false,
-        'chrome' => false
+        'chrome'  => false
     ],
 
     'channel' => 'AUTH-SERVICE',
@@ -19,8 +19,10 @@ return [
     'cacheDir' => storage_path('framework/cache/'),
 
     /*
-     * Displays line/file/class/method from which the log call originated
-     */
+    |--------------------------------------------------------------------------
+    | Displays line/file/class/method from which the log call originated
+    |--------------------------------------------------------------------------
+    */
     'introspection' => true,
 
     /*
