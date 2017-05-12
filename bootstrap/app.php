@@ -25,14 +25,41 @@ $app = new Laravel\Lumen\Application(
 
 require __DIR__ . '/environment.php';
 
+/*
+ |-------------------------------------------------------------------------
+ | Define the paths required by the app
+ |-------------------------------------------------------------------------
+ */
 
+$app->instance('path.config', $app->getConfigurationPath());
 
-$app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
 $app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
 
-// $app->withFacades();
+//
+// Use Facades for now, will attempt to drop this later
+//
+$app->withFacades();
 
 $app->withEloquent();
+
+
+if (class_exists('Trace') === false)
+{
+    class_alias(Razorpay\Trace\Facades\Trace::class, 'Trace');
+}
+
+//
+// App and Request facades are required by the Trace facade :(
+//
+if (class_exists('Request') === false)
+{
+    class_alias(Illuminate\Support\Facades\Request::class, 'Request');
+}
+
+if (class_exists('App') === false)
+{
+    class_alias('Illuminate\Support\Facades\App', 'App');
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -89,6 +116,11 @@ $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
+$app->register(\Razorpay\Trace\TraceServiceProviderLaravel5::class);
+
+
+$app->configure('trace');
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -101,7 +133,7 @@ $app->register(App\Providers\AppServiceProvider::class);
 */
 
 $app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
-    require __DIR__.'/../routes/web.php';
+    require __DIR__ . '/../routes/web.php';
 });
 
 return $app;

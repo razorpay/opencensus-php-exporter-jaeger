@@ -9,7 +9,8 @@
         "laravel/lumen-framework": ">=5.2",
         "vlucas/phpdotenv": "~2.2",
         "razorpay/spine": "dev-master",
-        "razorpay/oauth": "dev-master"
+        "razorpay/oauth": "dev-master",
+        "razorpay/trace": "dev-master"
     },
     "repositories": [
         {
@@ -19,6 +20,10 @@
         {
             "type": "vcs",
             "url": "git@github.com:razorpay/oauth.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:razorpay/trace.git"
         }
     ],
     "require-dev": {
