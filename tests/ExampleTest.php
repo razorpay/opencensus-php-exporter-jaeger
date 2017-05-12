@@ -14,8 +14,10 @@ class ExampleTest extends TestCase
     {
         $this->get('/');
 
+        $expected = '{"message":"Welcome to Auth Service!"}';
+
         $this->assertEquals(
-            $this->app->version(), $this->response->getContent()
+            $expected, $this->response->getContent()
         );
     }
 }
