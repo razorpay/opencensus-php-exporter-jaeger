@@ -25,8 +25,6 @@ $app = new Laravel\Lumen\Application(
 
 require __DIR__ . '/environment.php';
 
-
-$app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
 $app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
 
 // $app->withFacades();
@@ -88,6 +86,8 @@ $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
+$app->configure('trace');
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -100,7 +100,7 @@ $app->register(App\Providers\AppServiceProvider::class);
 */
 
 $app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
-    require __DIR__.'/../routes/web.php';
+    require __DIR__ . '/../routes/web.php';
 });
 
 return $app;
