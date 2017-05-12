@@ -43,15 +43,22 @@ $app->withFacades();
 $app->withEloquent();
 
 
-if (class_exists('Trace') === false) {
+if (class_exists('Trace') === false)
+{
     class_alias(Razorpay\Trace\Facades\Trace::class, 'Trace');
 }
 
 //
-// Required by the Trace facade :(
+// App and Request facades are required by the Trace facade :(
 //
-if (class_exists('Request') === false) {
+if (class_exists('Request') === false)
+{
     class_alias(Illuminate\Support\Facades\Request::class, 'Request');
+}
+
+if (class_exists('App') === false)
+{
+    class_alias('Illuminate\Support\Facades\App', 'App');
 }
 
 /*
