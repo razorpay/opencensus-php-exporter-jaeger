@@ -13,7 +13,7 @@ class AuthController extends Controller
 
     public function getRoot()
     {
-        $response['message'] = 'Welcome to Auth Service!';
+        $response['message'] = config('trace.channel');
 
         return response()->json($response);
     }

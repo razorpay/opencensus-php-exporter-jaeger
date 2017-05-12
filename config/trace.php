@@ -30,7 +30,7 @@ return [
     | Path for trace logs
     |--------------------------------------------------------------------------
     */
-    'logpath' => storage_path(). '/logs/trace.log',
+    'logpath' => storage_path('logs/trace.log'),
 
     'mockAws' => false,
 
