@@ -1490,6 +1490,8 @@
                 "sockets"
             ],
             "time": "2016-10-13T00:11:37+00:00"
+        },
+        {
             "name": "razorpay/trace",
             "version": "dev-master",
             "source": {
