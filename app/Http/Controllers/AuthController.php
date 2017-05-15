@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Auth;
+use Trace;
 use Redirect;
 use Request;
-use Requests;
-use Trace;
-use Razorpay\OAuth;
-
+use App\Models\Auth;
 use App\Constants\TraceCode;
 
 class AuthController extends Controller
@@ -33,12 +30,9 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
-        //TODO: validate input
-        Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, ['test' => 'test']);
+        (new Auth\Validator)->validateInput('auth_code', $input);
 
-        $clientService = new OAuth\Client\Service;
-
-        //TODO: Pass the data to view in hidden format so that accept/reject request has the request input
+        Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, $input);
 
         return view('authorize')->with('input', $input);
     }
@@ -56,29 +50,16 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
-        $data = $this->authService->getAccessToken($input);
-
-        $response = json_decode($data->getBody(), true);
+        $response = $this->authService->generateAccessToken($input);
 
         return response()->json($response);
     }
 
     public function getTokenData($token)
     {
-        //TODO: Add and move stuff to config files
-        $options = array('auth'=> array('rzp_api', 'RANDOM_DASH_PASSWORD'));
+        $response = (new Auth\Service)->getTokenData($token);
 
-        // Move to service
-        $response = Requests::get(
-            'http://dashboard.razorpay.dev/user/'.$token.'/detail',
-            array(),
-            $options
-        );
-
-        // Maybe do this better?
-        $body = json_decode($response->body, true);
-
-        return response()->json($body);
+        return response()->json($response);
     }
 }
 

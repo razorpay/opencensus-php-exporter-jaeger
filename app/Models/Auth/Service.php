@@ -2,7 +2,10 @@
 
 namespace App\Models\Auth;
 
+use Trace;
+use Requests;
 use Razorpay\OAuth;
+use App\Constants\TraceCode;
 
 class Service
 {
@@ -13,11 +16,15 @@ class Service
 
     public function postAuthCode(array $input)
     {
-        // TODO: Validate input
-        $userData['authorize'] = array_pop($input);
-        $userData['email'] = array_pop($input);
-        $userData['name'] = array_pop($input);
-        $userData['id'] = array_pop($input);
+        // TODO: Validate input after improving the following few lines
+        $userData['authorize'] = $input['authorize'];
+        unset($input['authorize']);
+        $userData['email'] = $input['email'];
+        unset($input['email']);
+        $userData['name'] = $input['name'];
+        unset($input['email']);
+        $userData['id'] = $input['id'];
+        unset($input['id']);
 
         try
         {
@@ -25,14 +32,38 @@ class Service
         }
         catch (\Exception $ex)
         {
-            //TODO: Add tracing
-            var_dump($ex->getMessage());
+            Trace::error(TraceCode::AUTH_AUTHORIZE_FAILURE, [$ex->getMessage()]);
         }
     }
 
-    public function getAccessToken(array $input)
+    public function generateAccessToken(array $input)
     {
-        // TODO: Validate input
-        return $this->oauthServer->getAccessToken($input);
+        (new Auth\Validator)->validateInput('access_token', $input);
+
+        try
+        {
+            $data = $this->oauthServer->getAccessToken($input);
+    
+            return json_decode($data->getBody(), true);
+        }
+        catch (\Exception $ex)
+        {
+            Trace::error(TraceCode::AUTH_ACCESS_TOKEN_FAILURE, [$ex->getMessage()]);
+        }
+    }
+
+    public function getTokenData(string $token)
+    {
+        $options = ['auth'=> ['rzp_api', env('APP_DASHBOARD_SECRET')]];
+
+        $response = Requests::get(
+            env('APP_DASHBOARD_URL').'user/'.$token.'/detail',
+            [],
+            $options
+        );
+
+        $body = json_decode($response->body, true);
+
+        return $body;
     }
 }
