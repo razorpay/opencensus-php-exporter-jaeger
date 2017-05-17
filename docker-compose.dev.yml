@@ -12,7 +12,7 @@ services:
     depends_on:
       - auth_db
     ports:
-      - 28100:80
+      - 28095:80
     environment:
       DB_HOST: auth_db
   auth_db:
