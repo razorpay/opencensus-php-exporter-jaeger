@@ -1,0 +1,25 @@
+version: '2'
+services:
+  auth:
+    build:
+      context: .
+      args:
+        GIT_TOKEN:
+    image: razorpay:auth
+    links:
+      - auth_db
+    depends_on:
+      - auth_db
+    ports:
+      - 28095:80
+    environment:
+      DB_HOST: auth_db
+  auth_db:
+      image: mysql:5.6
+      ports:
+        - 23309:3306
+      environment:
+        MYSQL_ROOT_PASSWORD: 123
+        MYSQL_DATABASE: auth
+        MYSQL_USER: auth
+        MYSQL_PASSWORD: 123
