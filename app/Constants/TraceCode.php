@@ -14,6 +14,7 @@ class TraceCode extends BaseTraceCode
     const AUTH_ACCESS_TOKEN_FAILURE                                 = 'AUTH_ACCESS_TOKEN_FAILURE';
 
     // ----- Generic Codes ----
+    const MISC_TOSTRING_ERROR                                       = 'MISC_TOSTRING_ERROR';
     const RECOVERABLE_EXCEPTION                                     = 'RECOVERABLE_EXCEPTION';
     const ERROR_EXCEPTION                                           = 'ERROR_EXCEPTION';
     const MISC_TRACE_CODE                                           = 'MISC_TRACE_CODE';
