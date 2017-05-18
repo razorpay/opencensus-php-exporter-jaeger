@@ -1,0 +1,13 @@
+FROM razorpay/docker:base-nginx-php7
+
+VOLUME ['/app']
+
+RUN chown -R nginx.nginx /app
+
+COPY ./dockerconf/boot.sh /boot.sh
+
+WORKDIR /app
+
+EXPOSE 80
+
+ENTRYPOINT ["/boot.sh"]
