@@ -1,9 +1,14 @@
 <?php
 
-namespace Raven\Exception;
+namespace App\Exception;
+
+use App\Error\Error;
 
 class BaseException extends \Exception
 {
+    /**
+     * @var Error
+     */
     protected $error = null;
 
     protected $data = null;
@@ -29,11 +34,6 @@ class BaseException extends \Exception
     protected function setError($error)
     {
         $this->error = $error;
-    }
-
-    public function setGatewayErrorCodeAndDesc($code, $desc)
-    {
-        $this->error->setGatewayErrorCodeAndDesc($code, $desc);
     }
 
     public function getError()

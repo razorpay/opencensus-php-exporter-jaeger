@@ -6,15 +6,7 @@ use App\Error\Error;
 
 class ServerErrorException extends BaseException
 {
-    /**
-     * Aim should be to fill the value of these attributes.
-     * The child classes should provide the field values
-     * and 'data' variable should store values corresponding
-     * to those fields. Note that it's not binding though
-     *
-     * @var array
-     */
-    protected $fields = array();
+    protected $fields = [];
 
     protected $code = null;
 

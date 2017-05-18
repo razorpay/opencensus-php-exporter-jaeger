@@ -2,7 +2,6 @@
 
 namespace App\Exception;
 
-use App\Error\Error;
 use App\Error\ErrorCode;
 
 class InvalidArgumentException extends ServerErrorException

@@ -9,7 +9,7 @@ class UnauthorizedException extends RecoverableException
     use MessageFormats;
 
     public function __construct(
-        $code = 0,
+        $code,
         $field = null,
         \Exception $previous = null)
     {

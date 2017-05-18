@@ -1,9 +1,8 @@
 <?php
 
-namespace Raven\Exception;
+namespace App\Exception;
 
-use DB;
-use App\Error\Error;
+// use DB;
 use App\Error\ErrorCode;
 use Razorpay\Spine\Exception\DbQueryExceptionTrait;
 
@@ -13,13 +12,15 @@ class DbQueryException extends ServerErrorException
 
     /**
      * Aim should be to fill the value of these attributes.
+     *
      * @var array
      */
-    protected $fields = array(
+    protected $fields = [
         'operation',
         'model',
         'attributes',
-        'query');
+        'query'
+    ];
 
     public function __construct(array $data, \Exception $previous = null)
     {

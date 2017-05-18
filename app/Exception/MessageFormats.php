@@ -17,7 +17,7 @@ trait MessageFormats
 
     protected function decideFormat(
         $message = null,
-        $code = 0,
+        $code,
         $field = null,
         \Exception $previous = null)
     {
@@ -50,7 +50,7 @@ trait MessageFormats
      */
     protected function constructStringMessage($message)
     {
-        if ($message instanceof messageBag)
+        if ($message instanceof MessageBag)
         {
             $this->messageFormat = 'message_bag';
 
@@ -168,15 +168,13 @@ trait MessageFormats
 
         $category = substr($className, $pos+1, $pos2 - $pos - 1);
 
-        $code = '';
-
         switch($category)
         {
             case 'BadRequestValidationFailure':
                 $code = 'BAD_REQUEST_VALIDATION_FAILURE';
                 break;
             default:
-                throw new InvalidArgumentException('not a valid category: ' . $category);
+                throw new InvalidArgumentException('Not a valid category: ' . $category);
         }
 
         Error::checkErrorCode($code);

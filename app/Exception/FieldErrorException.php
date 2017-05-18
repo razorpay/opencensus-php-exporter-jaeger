@@ -1,6 +1,6 @@
 <?php
 
-namespace Raven\Exception;
+namespace App\Exception;
 
 class FieldErrorException extends RecoverableException
 {

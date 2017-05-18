@@ -3,9 +3,9 @@
 namespace App\Exception;
 
 use App;
+use Razorpay\Trace\Trace;
 use Response;
 use App\Error\Error;
-use Razorpay\Trace;
 use App\Error\ErrorCode;
 use Psr\Log\LoggerInterface;
 use App\Constants\TraceCode;
@@ -14,6 +14,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
@@ -36,8 +37,6 @@ class Handler extends ExceptionHandler
         parent::__construct($log);
 
         $this->app = App::getFacadeRoot();
-
-        $this->trace = $this->app['trace'];
     }
 
     /**
@@ -56,14 +55,18 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $e
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Exception               $e
+     *
      * @return \Illuminate\Http\Response
+     * @throws RouteNotFoundException
      */
     public function render($request, \Exception $e)
     {
         switch (true)
         {
+            case $e instanceOf NotFoundHttpException:
+                throw new RouteNotFoundException();
             case $e instanceof UnauthorizedException:
                 $error = $e->getError();
                 return response()->json(
@@ -109,7 +112,7 @@ class Handler extends ExceptionHandler
         if ($exception instanceof ServerErrorException)
             return;
 
-        $this->trace->warn(
+        \Trace::warn(
             TraceCode::RECOVERABLE_EXCEPTION,
             $this->getExceptionDetails($exception));
 
@@ -123,6 +126,7 @@ class Handler extends ExceptionHandler
         if (($level === null) and
             ($code === null))
         {
+            dd ($exception);
             if ($exception instanceof RecoverableException)
             {
                 $level = Trace::WARNING;
@@ -135,7 +139,7 @@ class Handler extends ExceptionHandler
             }
         }
 
-        $this->trace->addRecord($level, $code, $traceData);
+        \Trace::addRecord($level, $code, $traceData);
     }
 
     protected function getExceptionDetails(\Exception $exception, $level = 0)
@@ -198,7 +202,7 @@ class Handler extends ExceptionHandler
             return false;
         }
 
-        $this->trace->warn(
+        \Trace::warn(
             TraceCode::MISC_TOSTRING_ERROR,
             $this->getExceptionDetails($exception));
 

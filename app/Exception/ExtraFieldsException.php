@@ -1,6 +1,6 @@
 <?php
 
-namespace Raven\Exception;
+namespace App\Exception;
 
 use App\Error\Error;
 use App\Error\ErrorCode;
@@ -9,8 +9,6 @@ class ExtraFieldsException extends RecoverableException
 {
     protected $fields;
 
-    protected $count;
-
     public function __construct(
         $fields,
         $code = ErrorCode::BAD_REQUEST_EXTRA_FIELDS_PROVIDED,
@@ -18,18 +16,14 @@ class ExtraFieldsException extends RecoverableException
     {
         $this->fields = $fields;
 
-        $extrafields = $fields;
+        $extraFields = $fields;
 
-        $count = 1;
-
-        if (is_array($fields))
+        if (is_array($fields) === true)
         {
-            $this->count = count($fields);
-
-            $extrafields = implode(', ', $fields);
+            $extraFields = implode(', ', $fields);
         }
 
-        $message = $extrafields . ' is/are not required and should not be sent';
+        $message = $extraFields . ' is/are not required and should not be sent';
 
         $this->error = new Error($code, $message);
 
