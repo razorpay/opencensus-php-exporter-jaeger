@@ -5,6 +5,7 @@ namespace App\Models\Auth;
 use Trace;
 use Requests;
 use Razorpay\OAuth;
+use App\Models\Auth;
 use App\Constants\TraceCode;
 
 class Service

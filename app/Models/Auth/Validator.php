@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Auth;
+namespace App\Models\Auth;
 
 use App\Base;
 
@@ -10,7 +10,7 @@ class Validator extends Base\Validator
         'response_type' => 'required|alpha',
         'client_id'     => 'required|alpha_num|max:14',
         'redirect_uri'  => 'required|url',
-        'scope'         => 'required|alpha_space'
+        'scope'         => 'required|alpha_dash'
     ];
 
     protected static $accessTokenRules = [
