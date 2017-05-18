@@ -14,8 +14,7 @@ class ExtendedValidations extends \Razorpay\Spine\Validation\LaravelValidatorEx
         //
         if ($match !== 1)
         {
-            // throw new Exception\BadRequestException(ErrorCode::BAD_REQUEST_INVALID_ID);
-            throw new Exception("Bad request invalid id", 1);
+            throw new \Exception("Bad request invalid id", 1);
         }
 
         return true;
@@ -26,17 +25,12 @@ class ExtendedValidations extends \Razorpay\Spine\Validation\LaravelValidatorEx
      * By default it checks if the value is in between Jan 2000 - Jan 2100.
      * Parameters(min and max value) can be passed when using this rule.
      *
-     * Eg usage:
-     * epoch:946684800,946684801
-     * epoch
-     *
      * @param string $attribute
      * @param mixed  $value
      * @param array  $parameters
      *
-     * @return boolean
-     *
-     * @throws Exception\BadRequestValidationFailureException
+     * @return bool
+     * @throws \Exception
      */
     protected function validateEpoch(string $attribute, $value, array $parameters)
     {
@@ -44,7 +38,7 @@ class ExtendedValidations extends \Razorpay\Spine\Validation\LaravelValidatorEx
 
         if ($value === false)
         {
-            throw new Exception\BadRequestValidationFailureException("$attribute must be an integer.");
+            throw new \Exception("$attribute must be an integer.");
         }
 
         array_walk(
@@ -61,7 +55,7 @@ class ExtendedValidations extends \Razorpay\Spine\Validation\LaravelValidatorEx
 
         if ($isValid === false)
         {
-            throw new Exception\BadRequestValidationFailureException("$attribute must be between $min and $max");
+            throw new \Exception("$attribute must be between $min and $max");
         }
 
         return true;
