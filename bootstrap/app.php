@@ -42,6 +42,10 @@ $app->withFacades();
 
 $app->withEloquent();
 
+if (class_exists('Redirect') === false)
+{
+	class_alias('Laravel\Lumen\Http\Redirector', 'Redirect');
+}
 
 if (class_exists('Trace') === false)
 {

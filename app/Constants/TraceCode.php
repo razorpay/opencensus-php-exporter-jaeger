@@ -11,6 +11,7 @@ class TraceCode extends BaseTraceCode
 
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';
+    const AUTH_ACCESS_TOKEN_FAILURE                                 = 'AUTH_ACCESS_TOKEN_FAILURE';
 
     // ----- Generic Codes ----
     const RECOVERABLE_EXCEPTION                                     = 'RECOVERABLE_EXCEPTION';

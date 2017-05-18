@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use Trace;
-use Razorpay\OAuth;
-
+use Redirect;
+use Request;
+use App\Models\Auth;
 use App\Constants\TraceCode;
 
 class AuthController extends Controller
 {
+    protected $authService;
+
     public function __construct()
     {
-        //
+        $this->authService = new Auth\Service();
     }
 
     public function getRoot()
@@ -23,14 +26,40 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
-    public function createToken()
+    public function getAuthorize()
     {
-        Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, ['test' => 'test']);
+        $input = Request::all();
 
-        $clientService = new OAuth\Client\Service;
+        (new Auth\Validator)->validateInput('auth_code', $input);
 
-        $data = $clientService->create([]);
+        Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, $input);
 
-        return response()->json($data);
+        return view('authorize')->with('input', $input);
+    }
+
+    public function postAuthorize()
+    {
+        $input = Request::all();
+
+        $authCode = $this->authService->postAuthCode($input);
+
+        return response()->json($authCode->getHeaders()['Location'][0]);
+    }
+
+    public function postAccessToken()
+    {
+        $input = Request::all();
+
+        $response = $this->authService->generateAccessToken($input);
+
+        return response()->json($response);
+    }
+
+    public function getTokenData($token)
+    {
+        $response = (new Auth\Service)->getTokenData($token);
+
+        return response()->json($response);
     }
 }
+
