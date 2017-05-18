@@ -78,7 +78,7 @@ if (class_exists('App') === false)
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
+    App\Exception\Handler::class
 );
 
 $app->singleton(
