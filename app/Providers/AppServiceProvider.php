@@ -19,5 +19,16 @@ class AppServiceProvider extends ServiceProvider
                 $app['Illuminate\Routing\Redirector']
             );
         });
+
+        $this->registerValidatorResolver();
+    }
+
+    protected function registerValidatorResolver()
+    {
+        $this->app['validator']->resolver(function($translator, $data, $rules, $messages, $customAttributes)
+        {
+            return new \App\Models\Base\ExtendedValidations(
+                            $translator, $data, $rules, $messages, $customAttributes);
+        });
     }
 }
