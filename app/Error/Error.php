@@ -3,7 +3,7 @@
 namespace App\Error;
 
 use Illuminate\Support\Fluent;
-use Raven\Exception\InvalidArgumentException;
+use App\Exception\InvalidArgumentException;
 
 class Error extends Fluent
 {
@@ -15,8 +15,6 @@ class Error extends Fluent
     const FIELD                 = 'field';
     const ERROR_CLASS           = 'class';
     const DATA                  = 'data';
-    const GATEWAY_ERROR_CODE    = 'gateway_error_code';
-    const GATEWAY_ERROR_DESC    = 'gateway_error_desc';
 
     protected $attributes = array();
 
@@ -39,17 +37,11 @@ class Error extends Fluent
 
         $this->setClass($code);
 
-        $this->setPublicErrorDetails($code);
+        $this->setPublicErrorDetails();
 
         $this->setDesc($desc);
 
         $this->setAttribute(self::INTERNAL_ERROR_DESC, $internalDesc);
-    }
-
-    public function setGatewayErrorCodeAndDesc($code, $desc)
-    {
-        $this->attributes[self::GATEWAY_ERROR_CODE] = $code;
-        $this->attributes[self::GATEWAY_ERROR_DESC] = $desc;
     }
 
     protected function setAttribute($key, $value)
@@ -73,7 +65,7 @@ class Error extends Fluent
         $this->setAttribute(self::ERROR_CLASS, $class);
     }
 
-    protected function setDesc(/* string */ $desc = null)
+    protected function setDesc(string $desc = null)
     {
         //
         // We get description in this order
@@ -96,14 +88,16 @@ class Error extends Fluent
                 $desc = $this->getDescriptionFromErrorCode($code);
 
                 if ($desc === null)
+                {
                     throw new InvalidArgumentException(
                         'Description not provided for code: '. $code);
+                }
             }
         }
 
         if (is_string($desc) === false)
         {
-            throw new InvalidArgumentException('desc should be string');
+            throw new InvalidArgumentException('Description should be string');
         }
 
         $this->setAttribute(self::DESCRIPTION, $desc);
@@ -127,14 +121,9 @@ class Error extends Fluent
     protected function setPublicErrorDetails()
     {
         $class = $this->getAttribute(self::ERROR_CLASS);
-        $internalCode = $this->getInternalErrorCode();
 
         switch ($class)
         {
-            case ErrorClass::GATEWAY:
-                $this->handleGatewayErrors();
-                break;
-
             case ErrorClass::BAD_REQUEST:
                 $this->handleBadRequestErrors();
                 break;
@@ -159,16 +148,6 @@ class Error extends Fluent
         return $this->getAttribute(self::INTERNAL_ERROR_CODE);
     }
 
-    public function getGatewayErrorCode()
-    {
-        return $this->getAttribute(self::GATEWAY_ERROR_CODE);
-    }
-
-    public function getGatewayErrorDescription()
-    {
-        return $this->getAttribute(self::GATEWAY_ERROR_DESC);
-    }
-
     public function getDescription()
     {
         return $this->getAttribute(self::DESCRIPTION);
@@ -177,11 +156,6 @@ class Error extends Fluent
     public function getClass()
     {
         return $this->getAttribute(self::ERROR_CLASS);
-    }
-
-    public function isGatewayError()
-    {
-        return ($this->getClass() === ErrorClass::GATEWAY);
     }
 
     public function getPublicErrorCode()
@@ -202,10 +176,7 @@ class Error extends Fluent
 
         switch($code)
         {
-            case ErrorCode::BAD_REQUEST_UNAUTHORIZED_BASICAUTH_EXPECTED:
-            case ErrorCode::BAD_REQUEST_UNAUTHORIZED_INVALID_API_KEY:
-            case ErrorCode::BAD_REQUEST_UNAUTHORIZED_INVALID_API_SECRET:
-            case ErrorCode::BAD_REQUEST_UNAUTHORIZED_SECRET_NOT_PROVIDED:
+            case ErrorCode::BAD_REQUEST_UNAUTHORIZED:
                 $httpStatusCode = 401;
                 break;
             case ErrorCode::BAD_REQUEST_ONLY_HTTPS_ALLOWED:
@@ -214,23 +185,6 @@ class Error extends Fluent
         }
 
         $this->setPublicErrorCode(PublicErrorCode::BAD_REQUEST_ERROR);
-        $this->setHttpStatusCode($httpStatusCode);
-    }
-
-    protected function handleGatewayErrors()
-    {
-        $code = $this->getInternalErrorCode();
-
-        $httpStatusCode = 502;
-
-        switch ($code)
-        {
-            case ErrorCode::GATEWAY_ERROR_REQUEST_TIMEOUT:
-                $httpStatusCode = 504;
-                break;
-        }
-
-        $this->setPublicErrorCode(PublicErrorCode::GATEWAY_ERROR);
         $this->setHttpStatusCode($httpStatusCode);
     }
 
@@ -257,14 +211,16 @@ class Error extends Fluent
 
     public function toDebugArray()
     {
-        return array('error' => $this->getAttributes());
+        return [
+            'error' => $this->getAttributes()
+        ];
     }
 
     protected function getDescriptionFromErrorCode($code)
     {
         $code = strtoupper($code);
 
-        if (defined(PublicErrorDescription::class . '::' . $code))
+        if (defined(PublicErrorDescription::class . '::' . $code) === true)
         {
             return constant(PublicErrorDescription::class.'::'.$code);
         }

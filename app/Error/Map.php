@@ -7,7 +7,6 @@ use App\Exception;
 class Map
 {
     public static $map = [
-        PublicErrorCode::GATEWAY_ERROR      => Exception\GatewayErrorException::class,
         PublicErrorCode::BAD_REQUEST_ERROR  => Exception\BadRequestException::class,
         PublicErrorCode::SERVER_ERROR       => Exception\ServerErrorException::class
     ];
@@ -25,10 +24,6 @@ class Map
         {
             throw new Exception\BadRequestValidationFailureException($desc);
         }
-        else if ($internalCode === ErrorCode::GATEWAY_ERROR_REQUEST_TIMEOUT)
-        {
-            throw new Exception\GatewayTimeoutException('Gateway request timed out');
-        }
         else if ($class === Exception\BadRequestException::class)
         {
             throw new Exception\BadRequestException($internalCode);
@@ -38,10 +33,6 @@ class Map
             throw new Exception\ServerErrorException(
                 'Server error getting repeated for payment callback',
                 ErrorCode::SERVER_ERROR);
-        }
-        else if ($publicCode === PublicErrorCode::GATEWAY_ERROR)
-        {
-            throw new Exception\GatewayErrorException($internalCode);
         }
     }
 }

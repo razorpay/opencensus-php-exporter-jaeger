@@ -11,6 +11,7 @@ class ErrorCode
     const SERVER_ERROR                                                              = 'SERVER_ERROR';
 
     // Generic bad requests
+    const BAD_REQUEST_UNAUTHORIZED                                                  = 'BAD_REQUEST_UNAUTHORIZED';
     const BAD_REQUEST_INVALID_ID                                                    = 'BAD_REQUEST_INVALID_ID';
     const BAD_REQUEST_ONLY_HTTPS_ALLOWED                                            = 'BAD_REQUEST_ONLY_HTTPS_ALLOWED';
     const BAD_REQUEST_HTTP_METHOD_NOT_ALLOWED                                       = 'BAD_REQUEST_HTTP_METHOD_NOT_ALLOWED';
