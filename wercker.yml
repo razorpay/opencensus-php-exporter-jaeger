@@ -7,6 +7,12 @@ dev:
     - internal/shell:
       code: echo "Razorpay Auth Service"
 build:
+  services:
+    - id: mysql
+      tag: latest
+      env:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: root
   steps:
     - script:
         name: copy env file
@@ -34,3 +40,71 @@ build:
         channel: tech_bots
         username: wercker
         icon_url: https://cdn.rawgit.com/wantedly/step-pretty-slack-notify/master/icons/$WERCKER_RESULT.jpg
+deploy:
+    steps:
+      - script:
+          name: List directory
+          code: ls -lah
+      - script:
+          name: check vendor dir exists
+          code: if [ ! -d vendor ] ; then exit 1 ; fi;
+      - script:
+          name: check if dotfile rsyncignore exists
+          code: if [ ! -f .rsyncignore ] ; then exit 1 ; fi;
+      - script:
+          name: create commit.txt
+          code: git rev-parse HEAD > public/commit.txt
+      - nhuray/aws-code-deploy:
+          key: $AWS_KEY
+          secret: $AWS_SECRET
+          region: $AWS_REGION
+          application-name: auth-service
+          deployment-group-name: $WERCKER_DEPLOYTARGET_NAME
+          s3-bucket: "rzp-code-deploy"
+    after-steps:
+      - slack-notifier:
+          url: $SLACK_URL
+          channel: tech_bots
+          username: wercker
+          icon_url: https://cdn.rawgit.com/wantedly/step-pretty-slack-notify/master/icons/$WERCKER_RESULT.jpg
+# Docker build and push
+ecr-build-push:
+    box:
+      id: razorpay/docker:base-php7
+      cmd: /bin/bash
+    steps:
+      - script:
+          name:  Copy app directory
+          code: |
+            cp -Rp $WERCKER_SOURCE_DIR/* /app/
+      - script:
+          name: Fix permissions
+          code: |
+            chown -R apache.www-data /app
+      - script:
+          name: Configure mpm and httpd
+          code: |
+            sed -i 's#PidFile "/run/.*#Pidfile /tmp/run/httpd.pid"#g' /etc/apache2/conf.d/mpm.conf && \
+            sed -i 's/#LoadModule rewrite_module*/LoadModule rewrite_module/' /etc/apache2/httpd.conf
+      - script:
+          name: Copy entrypoint script
+          code: |
+            cp /app/dockerconf/boot.sh /app/boot.sh
+      - internal/docker-push:
+          disable-sync: false
+          aws-access-key: $AWS_KEY
+          aws-secret-key: $AWS_SECRET
+          aws-region: $AWS_REGION
+          aws-registry-id: $AWS_REGISTRY_ID
+          aws-strict-auth: false
+          repository: $AWS_ECR_REPO
+          entrypoint: /app/boot.sh
+          registry: https://${AWS_REGISTRY_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/v2
+          ports: 80/tcp
+          working-dir: /app/
+          tag: ${WERCKER_GIT_BRANCH}-${WERCKER_GIT_COMMIT}
+      - script:
+          name: Docker Image tag
+          code: |
+            echo "[INFO] Tag for created image:"
+            echo "${WERCKER_GIT_BRANCH}-${WERCKER_GIT_COMMIT}"
