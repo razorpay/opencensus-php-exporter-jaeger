@@ -18,14 +18,11 @@ class Service
     public function postAuthCode(array $input)
     {
         // TODO: Validate input after improving the following few lines
-        $userData['authorize'] = $input['authorize'];
-        unset($input['authorize']);
-        $userData['email'] = $input['email'];
-        unset($input['email']);
-        $userData['name'] = $input['name'];
-        unset($input['email']);
-        $userData['id'] = $input['id'];
-        unset($input['id']);
+        $userData['authorize'] = $input['user']['authorize'];
+        $userData['email'] = $input['user']['email'];
+        $userData['name'] = $input['user']['name'];
+        $userData['id'] = $input['user']['id'];
+        unset($input['user']);
 
         try
         {

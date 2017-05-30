@@ -36,6 +36,16 @@
           if (xmlhttp.status == 200) {
             console.log(xmlhttp.responseText);
           	var data = JSON.parse(xmlhttp.responseText);
+            if (data.success === false) {
+              alert('User data not found.');
+            } else {
+              document.getElementById("user").innerHTML = data.data.user.id;
+              document.getElementById("merchant").innerHTML = data.data.user.merchant_id;
+              document.getElementById("agreement").style.display = "block";
+              document.getElementById("accept").style.display = "block";
+              document.getElementById("reject").style.display = "block";
+              document.getElementById("user_data").value = data.data.user;
+            }
             document.getElementById("user").innerHTML = data.data.user.id;
             document.getElementById("merchant").innerHTML = data.data.user.merchant_id;
             document.getElementById("agreement").style.display = "block";
@@ -64,10 +74,8 @@
 	  for ( var key in input ) {
 		  form_data.append(key, input[key]);
 	  }
-    for ( var key in user ) {
-      form_data.append(key, user[key]);
-    }
-    form_data.append('authorize', true);
+    user.authorize = true;
+    form_data.append('user', JSON.stringify(user));
 
       xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
@@ -96,10 +104,8 @@
     for ( var key in input ) {
       form_data.append(key, input[key]);
     }
-    for ( var key in user ) {
-      form_data.append(key, user[key]);
-    }
-    form_data.append('authorize', false);
+    user.authorize = false;
+    form_data.append('user', JSON.stringify(user));
 
       xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
