@@ -2,6 +2,9 @@
 
 namespace App\Models\Base;
 
+use App\Error\ErrorCode;
+use App\Exception;
+
 class ExtendedValidations extends \Razorpay\Spine\Validation\LaravelValidatorEx
 {
     protected function validatePublicId($attribute, $id)
@@ -14,7 +17,7 @@ class ExtendedValidations extends \Razorpay\Spine\Validation\LaravelValidatorEx
         //
         if ($match !== 1)
         {
-            throw new \Exception("Bad request invalid id", 1);
+            throw new Exception\BadRequestException(ErrorCode::BAD_REQUEST_INVALID_ID);
         }
 
         return true;
@@ -38,7 +41,7 @@ class ExtendedValidations extends \Razorpay\Spine\Validation\LaravelValidatorEx
 
         if ($value === false)
         {
-            throw new \Exception("$attribute must be an integer.");
+            throw new Exception\BadRequestValidationFailureException("$attribute must be an integer.");
         }
 
         array_walk(
@@ -55,7 +58,7 @@ class ExtendedValidations extends \Razorpay\Spine\Validation\LaravelValidatorEx
 
         if ($isValid === false)
         {
-            throw new \Exception("$attribute must be between $min and $max");
+            throw new Exception\BadRequestValidationFailureException("$attribute must be between $min and $max");
         }
 
         return true;

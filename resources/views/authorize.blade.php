@@ -4,8 +4,9 @@
   <script>
 	function cors() {
 	  var req = new XMLHttpRequest();
-    var currentUrl = window.location.href;
-    var token = '';
+      var currentUrl = window.location.href;
+      var token = '';
+
 	  if ('withCredentials' in req) {
 		req.open('GET', 'http://dashboard.razorpay.dev/user/logged_in', true);
 		req.withCredentials = true;
@@ -16,12 +17,13 @@
 		      document.getElementById('token').value = token;
 		      document.getElementById('token').onchange();
 		    } else {
-          currentUrl = encodeURI(currentUrl);
-          window.location.href = 'http://dashboard.razorpay.dev/#/access/signin?next='+currentUrl;
+              currentUrl = encodeURI(currentUrl);
+              window.location.href = 'http://dashboard.razorpay.dev/#/access/signin?next='+currentUrl;
 		    }
 		  }
 		};
-    req.send();
+
+      req.send();
 	  }
 	}
 	window.onload = cors();
@@ -32,6 +34,7 @@
       xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
           if (xmlhttp.status == 200) {
+            console.log(xmlhttp.responseText);
           	var data = JSON.parse(xmlhttp.responseText);
             if (data.success === false) {
               alert('User data not found.');
@@ -43,6 +46,12 @@
               document.getElementById("reject").style.display = "block";
               document.getElementById("user_data").value = data.data.user;
             }
+            document.getElementById("user").innerHTML = data.data.user.id;
+            document.getElementById("merchant").innerHTML = data.data.user.merchant_id;
+            document.getElementById("agreement").style.display = "block";
+            document.getElementById("accept").style.display = "block";
+            document.getElementById("reject").style.display = "block";
+            document.getElementById("user_data").value = data.data.user;
           }
           else if (xmlhttp.status == 400) {
             alert('There was an error 400');

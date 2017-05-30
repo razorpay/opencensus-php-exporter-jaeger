@@ -41,7 +41,7 @@ class Service
         try
         {
             $data = $this->oauthServer->getAccessToken($input);
-    
+
             return json_decode($data->getBody(), true);
         }
         catch (\Exception $ex)
@@ -52,10 +52,10 @@ class Service
 
     public function getTokenData(string $token)
     {
-        $options = ['auth'=> ['rzp_api', env('APP_DASHBOARD_SECRET')]];
+        $options = ['auth' => ['rzp_api', env('APP_DASHBOARD_SECRET')]];
 
         $response = Requests::get(
-            env('APP_DASHBOARD_URL').'user/'.$token.'/detail',
+            env('APP_DASHBOARD_URL') . 'user/' . $token . '/detail',
             [],
             $options
         );
