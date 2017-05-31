@@ -17,7 +17,7 @@
 		      document.getElementById('token').value = token;
 		      document.getElementById('token').onchange();
 		    } else {
-              currentUrl = encodeURI(currentUrl);
+              currentUrl = encodeURIComponent(currentUrl);
               window.location.href = 'http://dashboard.razorpay.dev/#/access/signin?next='+currentUrl;
 		    }
 		  }
