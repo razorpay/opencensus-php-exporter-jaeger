@@ -20,4 +20,4 @@ $ALOHOMORA_BIN cast --region ap-south-1 --env $DEPLOYMENT_GROUP_NAME --app $APPL
 
 # DB Migrate
 echo  "DB Migrate"
-cd "$AUTH_INSTALL_DIR" && php artisan migrate --force
+cd "$AUTH_INSTALL_DIR" && php artisan rzp:migrate
