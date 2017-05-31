@@ -14,10 +14,10 @@ cd $BASEDIR && rsync -avz --force --delete --progress --exclude-from=./.rsyncign
 echo  "Fix permissions"
 cd "$AUTH_INSTALL_DIR" && sudo chmod 777 -R storage
 
-# DB Migrate
-echo  "DB Migrate"
-cd "$AUTH_INSTALL_DIR" && php artisan migrate --force
-
 # Run alohomora
 $ALOHOMORA_BIN cast --region ap-south-1 --env $DEPLOYMENT_GROUP_NAME --app $APPLICATION_NAME "$AUTH_INSTALL_DIR/environment/.env.vault.j2"
 $ALOHOMORA_BIN cast --region ap-south-1 --env $DEPLOYMENT_GROUP_NAME --app $APPLICATION_NAME "$AUTH_INSTALL_DIR/environment/env.php.j2"
+
+# DB Migrate
+echo  "DB Migrate"
+cd "$AUTH_INSTALL_DIR" && php artisan migrate --force
