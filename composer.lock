@@ -1351,12 +1351,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "51c79ccaac9771e4ee607312fc46e23cf70bd0a1"
+                "reference": "e2afca407e1ab52beb8211e21d53b09eb2d86416"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/51c79ccaac9771e4ee607312fc46e23cf70bd0a1",
-                "reference": "51c79ccaac9771e4ee607312fc46e23cf70bd0a1",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/e2afca407e1ab52beb8211e21d53b09eb2d86416",
+                "reference": "e2afca407e1ab52beb8211e21d53b09eb2d86416",
                 "shasum": ""
             },
             "require": {
@@ -1393,7 +1393,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/master",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2017-05-24 13:32:02"
+            "time": "2017-05-26 15:39:14"
         },
         {
             "name": "razorpay/spine",
@@ -1401,20 +1401,24 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/spine.git",
-                "reference": "102edfc8d56397e5ca0bf7fc086a62590fc37f72"
+                "reference": "82d79196cdfa03cc136c12af921fc8c6c410e1e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/spine/zipball/102edfc8d56397e5ca0bf7fc086a62590fc37f72",
-                "reference": "102edfc8d56397e5ca0bf7fc086a62590fc37f72",
+                "url": "https://api.github.com/repos/razorpay/spine/zipball/82d79196cdfa03cc136c12af921fc8c6c410e1e6",
+                "reference": "82d79196cdfa03cc136c12af921fc8c6c410e1e6",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": ">=4.2",
+                "illuminate/database": ">=4.2",
+                "illuminate/validation": ">=4.2",
                 "php": ">=5.4"
             },
             "require-dev": {
-                "raveren/kint": "1.*"
+                "kint-php/kint": "1.*"
+            },
+            "suggest": {
+                "laravel/framework": ">=4.2"
             },
             "type": "library",
             "autoload": {
@@ -1440,7 +1444,7 @@
                 "source": "https://github.com/razorpay/spine/tree/master",
                 "issues": "https://github.com/razorpay/spine/issues"
             },
-            "time": "2016-11-22 08:12:12"
+            "time": "2017-05-31 09:55:37"
         },
         {
             "name": "razorpay/trace",
