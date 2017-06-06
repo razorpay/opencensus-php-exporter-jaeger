@@ -4,6 +4,7 @@ namespace App\Tests\Functional;
 
 use Crypt;
 use Request;
+use Razorpay\OAuth\Client;
 use Razorpay\OAuth\Application;
 use App\Tests\TestCase as TestCase;
 use App\Tests\Concerns\RequestResponseFlowTrait;
@@ -19,7 +20,7 @@ class OAuthTest extends TestCase
 
         parent::setup();
 
-        $this->fixture = factory(\Razorpay\OAuth\Application\Entity::class);
+        // $this->fixture = factory(\Razorpay\OAuth\Application\Entity::class);
     }
 
     public function testGetAuthCode()
@@ -33,21 +34,21 @@ class OAuthTest extends TestCase
     {
         $data = $this->testData['testPostAuthCode'];
 
-        // $client = $this->fixture->create(['merchant_id' => '10AuthMerchant',
-        //                                   'name' => 'authTest',
-        //                                   'redirect_url' => 'https://www.example.com',
-        //                                   'type' => 'public',
-        //                                   'secret' => Crypt::encrypt('supersecuresecret')]);
+        $application = (new Application\Service)->createApplication(['name' => 'Auth Test Merchant',
+                                                                    'merchant_id' => '10AuthMerchant',
+                                                                    'website' => 'https://www.example.com']);
 
-        $application = $this->fixture->create(['name' => 'Auth Test Merchant',
-                                               'merchant_id' => '10AuthMerchant',
-                                               'website' => 'https://www.example.com']);
+        $clients[0]['redirect_url'] = ['https://www.example.com'];
 
-        $application = Application\Entity::with('clients')->firstOrFail();
+        $clients[0]['id'] = $application['clients']['dev']['id'];
 
-        $clients = $application->clients()->get();
+        $clients[1]['redirect_url'] = ['https://www.example.com'];
 
-        $data['request']['content']['client_id'] = $client->id;
+        $clients[1]['id'] = $application['clients']['prod']['id'];
+
+        (new Application\Service)->update($application['id'], ['clients' => $clients, 'merchant_id' => '10AuthMerchant']);
+
+        $data['request']['content']['client_id'] = $clients[1]['id'];
 
         $content = ($this->runRequestResponseFlow($data))->getContent();
 
@@ -57,18 +58,22 @@ class OAuthTest extends TestCase
 
         $code = substr($content, $pos + 5);
 
-        $this->testGetAccessToken($code, $client->id);
+        $this->getAccessTokenTest($code, $clients[1]['id']);
     }
 
-    public function testGetAccessToken($authCode, $clientId)
+    private function getAccessTokenTest($authCode, $clientId)
     {
         Request::clearResolvedInstances();
 
-        $data = $this->testData['testGetAccessToken'];
+        $data = $this->testData['getAccessTokenTest'];
 
         $data['request']['content']['code'] = $authCode;
 
         $data['request']['content']['client_id'] = $clientId;
+
+        $client = (new Client\Entity)->findOrFail($clientId);
+
+        $data['request']['content']['client_secret'] = $client->getDecryptedSecret();
 
         $content = ($this->sendRequest($data['request']))->getContent();
 

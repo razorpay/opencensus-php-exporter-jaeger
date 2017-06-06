@@ -60,7 +60,7 @@ class TestCase extends LumenTestCase
     {
         DB::rollBack();
 
-        Artisan::call('migrate:reset');
+        // Artisan::call('migrate:reset');
 
         parent::tearDown();
     }

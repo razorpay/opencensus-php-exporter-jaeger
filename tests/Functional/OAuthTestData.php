@@ -42,7 +42,7 @@ return [
         ]
     ],
 
-    'testGetAccessToken' => [
+    'getAccessTokenTest' => [
         'request' => [
             'method' => 'POST',
             'url'    => '/token',
