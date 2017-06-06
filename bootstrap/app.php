@@ -60,9 +60,29 @@ if (class_exists('Request') === false)
     class_alias(Illuminate\Support\Facades\Request::class, 'Request');
 }
 
+if (class_exists('Input') === false)
+{
+    class_alias(Illuminate\Support\Facades\Input::class, 'Input');
+}
+
 if (class_exists('App') === false)
 {
     class_alias('Illuminate\Support\Facades\App', 'App');
+}
+
+if (class_exists('Crypt') === false)
+{
+    class_alias('Illuminate\Support\Facades\Crypt', 'Crypt');
+}
+
+if (class_exists('DB') === false)
+{
+    class_alias(Illuminate\Support\Facades\DB::class, 'DB');
+}
+
+if (class_exists('Config') === false)
+{
+    class_alias(Illuminate\Support\Facades\Config::class, 'Config');
 }
 
 /*
