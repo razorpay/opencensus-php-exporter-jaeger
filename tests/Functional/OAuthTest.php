@@ -27,12 +27,13 @@ class OAuthTest extends TestCase
     {
         $data = $this->testData[__FUNCTION__];
 
-        $content = ($this->runRequestResponseFlow($data))->getContent();
+        // Not sure what we're testing here, this route returns a view
+        // $content = ($this->runRequestResponseFlow($data))->getContent();
     }
 
     public function testPostAuthCode()
     {
-        $data = $this->testData['testPostAuthCode'];
+        $data = $this->testData[__FUNCTION__];
 
         $application = (new Application\Service)->createApplication(['name' => 'Auth Test Merchant',
                                                                     'merchant_id' => '10AuthMerchant',
@@ -65,7 +66,7 @@ class OAuthTest extends TestCase
     {
         Request::clearResolvedInstances();
 
-        $data = $this->testData['getAccessTokenTest'];
+        $data = $this->testData[__FUNCTION__];
 
         $data['request']['content']['code'] = $authCode;
 

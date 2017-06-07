@@ -2,7 +2,6 @@
 
 namespace App\Tests;
 
-use Illuminate\Support\Facades\Artisan;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\TestCase as LumenTestCase;
@@ -10,6 +9,7 @@ use Laravel\Lumen\Testing\TestCase as LumenTestCase;
 class TestCase extends LumenTestCase
 {
     use DatabaseTransactions;
+    use DatabaseMigrations;
 
     /**
      * The base URL to use while testing the application.
@@ -25,9 +25,8 @@ class TestCase extends LumenTestCase
         parent::setUp();
 
         $this->loadTestData();
-
-        $this->prepareForTests();
     }
+
     /**
      * Creates the application.
      *
@@ -40,9 +39,16 @@ class TestCase extends LumenTestCase
         return $app;
     }
 
-    protected function prepareForTests()
+    /**
+     * Run the database migrations for the application.
+     *
+     * Overrides function in Laravel\Lumen\Testing\DatabaseMigrations
+     *
+     * @return void
+     */
+    public function runDatabaseMigrations()
     {
-        Artisan::call('rzp:migrate');
+        $this->artisan('rzp:migrate');
 
         $this->beforeApplicationDestroyed(function () {
             $this->artisan('migrate:rollback');

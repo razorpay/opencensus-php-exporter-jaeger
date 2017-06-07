@@ -12,6 +12,7 @@ trait RequestResponseFlowTrait
     public function runRequestResponseFlow($data, Closure $closure = null)
     {
         $response = null;
+
         try
         {
             if ($closure !== null)
@@ -39,9 +40,6 @@ trait RequestResponseFlowTrait
         }
 
         return $response;
-        // $this->processAndAssertStatusCode($data, $response);
-
-        // return $this->processAndAssertResponseData($data, $response);
     }
 
     protected function checkException($e, $data)
@@ -73,7 +71,7 @@ trait RequestResponseFlowTrait
         $content = $response->getContent();
         $this->assertJson($content);
         $content = json_decode($content, true);
-        
+
         return $content;
     }
 
@@ -105,7 +103,9 @@ trait RequestResponseFlowTrait
 
         $request = array_merge($defaults, $request);
         // $request['server'] = array_merge($request['server'], $this->ba->getCreds());
-        
+
+
+
         $this->convertContentToString($request['content']);
 
         $response = $this->call(
