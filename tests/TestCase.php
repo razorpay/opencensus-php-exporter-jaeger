@@ -2,8 +2,6 @@
 
 namespace App\Tests;
 
-// use Tests\Concerns\CustomAssertions;
-use DB;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
@@ -12,21 +10,23 @@ use Laravel\Lumen\Testing\TestCase as LumenTestCase;
 class TestCase extends LumenTestCase
 {
     use DatabaseTransactions;
-    // use CustomAssertions;
+
     /**
      * The base URL to use while testing the application.
      *
      * @var string
      */
     protected $baseUrl = 'http://localhost:8000';
+
     protected $testDataFilePath = null;
 
     public function setUp()
     {
         parent::setUp();
+
         $this->loadTestData();
+
         $this->prepareForTests();
-        DB::beginTransaction();
     }
     /**
      * Creates the application.
@@ -35,14 +35,18 @@ class TestCase extends LumenTestCase
      */
     public function createApplication()
     {
-        $app = require __DIR__.'/../bootstrap/app.php';
-        // $app->make(\Illuminate\Foundation\Console\Kernel::class)->bootstrap();
+        $app = require __DIR__ . '/../bootstrap/app.php';
+
         return $app;
     }
 
     protected function prepareForTests()
     {
-        Artisan::call('migrate');
+        Artisan::call('rzp:migrate');
+
+        $this->beforeApplicationDestroyed(function () {
+            $this->artisan('migrate:rollback');
+        });
     }
 
     protected function loadTestData()
@@ -58,10 +62,6 @@ class TestCase extends LumenTestCase
 
     public function tearDown()
     {
-        DB::rollBack();
-
-        // Artisan::call('migrate:reset');
-
         parent::tearDown();
     }
 }
