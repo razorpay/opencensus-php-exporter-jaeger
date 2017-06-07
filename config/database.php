@@ -45,33 +45,7 @@ return [
     */
 
     'connections' => [
-        'mysql' => [
-            'driver'    => 'mysql',
-            'host'      => env('DB_HOST'),
-            'database'  => env('DB_DATABASE'),
-            'port'      => env('DB_PORT', 3306),
-            'username'  => env('DB_USERNAME'),
-            'password'  => env('DB_PASSWORD'),
-            'charset'   => 'utf8',
-            'collation' => 'utf8_bin',
-            'prefix'    => '',
-            'strict'    => false,
-        ],
-
         'auth' => [
-            'driver'    => 'mysql',
-            'host'      => env('DB_HOST'),
-            'port'      => env('DB_PORT'),
-            'database'  => env('DB_DATABASE'),
-            'username'  => env('DB_USERNAME'),
-            'password'  => env('DB_PASSWORD'),
-            'charset'   => 'utf8',
-            'collation' => 'utf8_bin',
-            'prefix'    => '',
-            'strict'    => true
-        ],
-
-        'auth_test' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST'),
             'port'      => env('DB_PORT'),
