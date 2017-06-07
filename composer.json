@@ -41,7 +41,8 @@
     "autoload-dev": {
         "classmap": [
             "tests/",
-            "database/"
+            "database/",
+            "vendor/razorpay/oauth/database/migrations"
         ]
     },
     "scripts": {
