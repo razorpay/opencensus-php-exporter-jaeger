@@ -57,6 +57,12 @@ return [
             'prefix'    => '',
             'strict'    => true
         ],
+
+        'sqlite' => [
+            'driver'   => 'sqlite',
+            'database' => env('DB_DATABASE', base_path('database/database.sqlite')),
+            'prefix'   => env('DB_PREFIX', ''),
+        ],
     ],
 
     /*
