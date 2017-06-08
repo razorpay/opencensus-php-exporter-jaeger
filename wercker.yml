@@ -17,17 +17,20 @@ build:
     - script:
         name: copy env file
         code: cp ./environment/.env.wercker ./environment/.env.testing
-    - create-file:
-        name: Create auth_service_db.sqlite
-        filename: auth_service_db.sqlite
-        overwrite: true
-        content:
+    - script:
+        name: Export wercker DB env vars to API environment variables
+        code: >
+          export DB_HOST="$MYSQL_PORT_3306_TCP_ADDR"
+          export DB_PORT="$MYSQL_PORT_3306_TCP_PORT"
     - script:
         name: Composer set-up
         code: |
             composer config -g github-oauth.github.com $github_token
             export COMPOSER_CACHE_DIR="$WERCKER_CACHE_DIR/composer" && mkdir -p $COMPOSER_CACHE_DIR
             composer install --no-interaction
+    - script:
+        name: Run migrations
+        code: APP_ENV=testing php artisan rzp:migrate
     - script:
         name: Run unit tests
         code: php -d memory_limit=1024M vendor/phpunit/phpunit/phpunit --debug --verbose

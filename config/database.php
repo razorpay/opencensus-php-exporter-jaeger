@@ -46,7 +46,7 @@ return [
 
     'connections' => [
         'auth' => [
-            'driver'    => 'mysql',
+            'driver'    => env('DB_DRIVER'),
             'host'      => env('DB_HOST'),
             'port'      => env('DB_PORT'),
             'database'  => env('DB_DATABASE'),
@@ -56,12 +56,6 @@ return [
             'collation' => 'utf8_bin',
             'prefix'    => '',
             'strict'    => true
-        ],
-
-        'sqlite' => [
-            'driver'   => 'sqlite',
-            'database' => env('DB_DATABASE', base_path('database/database.sqlite')),
-            'prefix'   => env('DB_PREFIX', ''),
         ],
     ],
 
