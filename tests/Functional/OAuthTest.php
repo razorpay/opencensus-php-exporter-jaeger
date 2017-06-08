@@ -2,8 +2,8 @@
 
 namespace App\Tests\Functional;
 
-use Crypt;
 use Request;
+
 use Razorpay\OAuth\Client;
 use Razorpay\OAuth\Application;
 use App\Tests\TestCase as TestCase;
@@ -11,7 +11,6 @@ use App\Tests\Concerns\RequestResponseFlowTrait;
 
 class OAuthTest extends TestCase
 {
-    // use DatabaseMigrations;
     use RequestResponseFlowTrait;
 
     public function setup()
@@ -19,8 +18,6 @@ class OAuthTest extends TestCase
         $this->testDataFilePath = __DIR__ . '/OAuthTestData.php';
 
         parent::setup();
-
-        // $this->fixture = factory(\Razorpay\OAuth\Application\Entity::class);
     }
 
     public function testGetAuthCode()
@@ -35,21 +32,34 @@ class OAuthTest extends TestCase
     {
         $data = $this->testData[__FUNCTION__];
 
-        $application = (new Application\Service)->createApplication(['name' => 'Auth Test Merchant',
-                                                                    'merchant_id' => '10AuthMerchant',
-                                                                    'website' => 'https://www.example.com']);
+        $appParams = [
+            'name'        => 'Auth Test Merchant',
+            'merchant_id' => '10AuthMerchant',
+            'website'     => 'https://www.example.com'
+        ];
 
-        $clients[0]['redirect_url'] = ['https://www.example.com'];
+        $application = (new Application\Service)->createApplication($appParams);
 
-        $clients[0]['id'] = $application['clients']['dev']['id'];
+        $clients = $application['clients'];
 
-        $clients[1]['redirect_url'] = ['https://www.example.com'];
+        $clientParams = [
+            [
+                'id'           => $clients['dev']['id'],
+                'redirect_url' => ['https://www.example.com'],
+            ],
+            [
+                'id'           => $clients['prod']['id'],
+                'redirect_url' => ['https://www.example.com'],
+            ]
+        ];
 
-        $clients[1]['id'] = $application['clients']['prod']['id'];
+        (new Application\Service)->update($application['id'],
+                                          [
+                                              'clients'     => $clientParams,
+                                              'merchant_id' => '10AuthMerchant'
+                                          ]);
 
-        (new Application\Service)->update($application['id'], ['clients' => $clients, 'merchant_id' => '10AuthMerchant']);
-
-        $data['request']['content']['client_id'] = $clients[1]['id'];
+        $data['request']['content']['client_id'] = $clientParams[1]['id'];
 
         $content = ($this->runRequestResponseFlow($data))->getContent();
 
@@ -59,7 +69,7 @@ class OAuthTest extends TestCase
 
         $code = substr($content, $pos + 5);
 
-        $this->getAccessTokenTest($code, $clients[1]['id']);
+        $this->getAccessTokenTest($code, $clientParams[1]['id']);
     }
 
     private function getAccessTokenTest($authCode, $clientId)
