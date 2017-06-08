@@ -1,5 +1,7 @@
 # Auth Microservice
 
+[![wercker status](https://app.wercker.com/status/f092b0270510fdc892d8c86ab3d7846b/m/master "wercker status")](https://app.wercker.com/project/byKey/f092b0270510fdc892d8c86ab3d7846b)
+
 Razorpay's Auth Microservice - Powers OAuth and auth.razorpay.com
 
 ## Testing
