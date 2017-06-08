@@ -8,7 +8,7 @@
       var token = '';
 
 	  if ('withCredentials' in req) {
-		req.open('GET', 'http://dashboard.razorpay.dev/user/logged_in', true);
+		req.open('GET', '{{$input["dash_url"]}}', true);
 		req.withCredentials = true;
 		req.onreadystatechange = function() {
 		  if (req.readyState === 4) {

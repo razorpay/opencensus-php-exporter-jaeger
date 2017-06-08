@@ -126,7 +126,6 @@ class Handler extends ExceptionHandler
         if (($level === null) and
             ($code === null))
         {
-            dd ($exception);
             if ($exception instanceof RecoverableException)
             {
                 $level = Trace::WARNING;

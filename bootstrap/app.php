@@ -65,6 +65,11 @@ if (class_exists('App') === false)
     class_alias('Illuminate\Support\Facades\App', 'App');
 }
 
+if (class_exists('Crypt') === false)
+{
+    class_alias('Illuminate\Support\Facades\Crypt', 'Crypt');
+}
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -121,7 +126,6 @@ $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
 $app->register(\Razorpay\Trace\TraceServiceProviderLaravel5::class);
-
 
 $app->configure('trace');
 

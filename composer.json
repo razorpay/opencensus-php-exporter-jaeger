@@ -31,7 +31,7 @@
         "fzaninotto/faker": "~1.4",
         "phpunit/phpunit": "~5.0",
         "mockery/mockery": "~0.9",
-        "raveren/kint": ">=0.9"
+        "kint-php/kint": "1.*"
     },
     "autoload": {
         "psr-4": {
@@ -41,7 +41,8 @@
     "autoload-dev": {
         "classmap": [
             "tests/",
-            "database/"
+            "database/",
+            "vendor/razorpay/oauth/database/migrations"
         ]
     },
     "scripts": {
