@@ -2,14 +2,12 @@
 
 namespace App\Tests;
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\TestCase as LumenTestCase;
 
 class TestCase extends LumenTestCase
 {
     use DatabaseTransactions;
-    use DatabaseMigrations;
 
     /**
      * The base URL to use while testing the application.

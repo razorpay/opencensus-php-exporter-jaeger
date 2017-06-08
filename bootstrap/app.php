@@ -127,7 +127,6 @@ $app->register(App\Providers\AppServiceProvider::class);
 
 $app->register(\Razorpay\Trace\TraceServiceProviderLaravel5::class);
 
-
 $app->configure('trace');
 
 /*
