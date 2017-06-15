@@ -7,14 +7,18 @@ services:
         GIT_TOKEN:
     image: razorpay:auth
     links:
-      - auth_db
+      - db-auth
     depends_on:
-      - auth_db
+      - db-auth
     ports:
       - 28095:80
     environment:
-      DB_HOST: auth_db
-  auth_db:
+      DB_HOST: db-auth
+      DB_DATABASE: auth
+      DB_USERNAME: auth
+      DB_PASSWORD: 123
+      APP_CONTEXT: dev
+  db-auth:
       image: mysql:5.6
       ports:
         - 23309:3306

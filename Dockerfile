@@ -1,4 +1,4 @@
-FROM razorpay/docker:base-nginx-php7
+FROM razorpay/containers:base-nginx-php7
 
 COPY . /app/
 
