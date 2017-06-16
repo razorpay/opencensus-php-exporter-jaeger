@@ -7,11 +7,11 @@
     "require": {
         "php": ">=5.6.4",
         "rmccue/requests": ">=1.0",
-        "laravel/lumen-framework": ">=5.2",
         "vlucas/phpdotenv": "~2.2",
-        "razorpay/spine": "dev-master",
+        "razorpay/trace": "dev-master",
+        "laravel/lumen-framework": "5.4.*",
         "razorpay/oauth": "dev-master",
-        "razorpay/trace": "dev-master"
+        "razorpay/spine": "dev-laravel5.4"
     },
     "repositories": [
         {
@@ -29,9 +29,9 @@
     ],
     "require-dev": {
         "fzaninotto/faker": "~1.4",
-        "phpunit/phpunit": "~5.0",
         "mockery/mockery": "~0.9",
-        "kint-php/kint": "1.*"
+        "kint-php/kint": "1.*",
+        "phpunit/phpunit": "^6.1"
     },
     "autoload": {
         "psr-4": {

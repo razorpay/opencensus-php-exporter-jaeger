@@ -34,9 +34,9 @@ class Handler extends ExceptionHandler
 
     public function __construct(LoggerInterface $log)
     {
-        parent::__construct($log);
-
         $this->app = App::getFacadeRoot();
+
+        parent::__construct($this->app);
     }
 
     /**
