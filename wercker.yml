@@ -30,7 +30,7 @@ build:
             composer install --no-interaction
     - script:
         name: Run migrations
-        code: APP_ENV=testing php artisan rzp:migrate
+        code: APP_ENV=testing php artisan migrate
     - script:
         name: Run unit tests
         code: php -d memory_limit=1024M vendor/phpunit/phpunit/phpunit --debug --verbose

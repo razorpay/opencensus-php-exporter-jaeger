@@ -16,6 +16,14 @@ class TestCase extends LumenTestCase
      */
     protected $baseUrl = 'http://localhost:8000';
 
+    /**
+     * @var array
+     */
+    protected $testData;
+
+    /**
+     * @var string|null
+     */
     protected $testDataFilePath = null;
 
     public function setUp()
@@ -37,30 +45,16 @@ class TestCase extends LumenTestCase
         return $app;
     }
 
-    /**
-     * Run the database migrations for the application.
-     *
-     * Overrides function in Laravel\Lumen\Testing\DatabaseMigrations
-     *
-     * @return void
-     */
-    public function runDatabaseMigrations()
-    {
-        $this->artisan('rzp:migrate');
-
-        $this->beforeApplicationDestroyed(function () {
-            $this->artisan('migrate:rollback');
-        });
-    }
-
     protected function loadTestData()
     {
         static $testData = null;
+
         if (($this->testDataFilePath !== null) and
             ($testData === null))
         {
-            $testData = require($this->testDataFilePath);
+            $testData = require $this->testDataFilePath;
         }
+
         $this->testData = $testData;
     }
 
