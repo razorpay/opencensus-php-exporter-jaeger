@@ -5,6 +5,8 @@ namespace App\Tests;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\TestCase as LumenTestCase;
 
+use Illuminate\Database\Eloquent\Factory;
+
 class TestCase extends LumenTestCase
 {
     use DatabaseTransactions;
@@ -29,6 +31,10 @@ class TestCase extends LumenTestCase
     public function setUp()
     {
         parent::setUp();
+
+        $factoryPath = __DIR__ . '/../vendor/razorpay/oauth/database/factories';
+
+        $this->app->make(Factory::class)->load($factoryPath);
 
         $this->loadTestData();
     }

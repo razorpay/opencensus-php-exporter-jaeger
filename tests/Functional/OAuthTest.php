@@ -32,34 +32,17 @@ class OAuthTest extends TestCase
     {
         $data = $this->testData[__FUNCTION__];
 
-        $appParams = [
-            'name'        => 'Auth Test Merchant',
-            'merchant_id' => '10AuthMerchant',
-            'website'     => 'https://www.example.com'
-        ];
+        $application = factory(Application\Entity::class)->create();
 
-        $application = (new Application\Service)->createApplication($appParams);
-
-        $clients = $application['clients'];
-
-        $clientParams = [
+        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'dev']);
+        $prodClient = factory(Client\Entity::class)->create(
             [
-                'id'           => $clients['dev']['id'],
+                'application_id' => $application->id,
                 'redirect_url' => ['https://www.example.com'],
-            ],
-            [
-                'id'           => $clients['prod']['id'],
-                'redirect_url' => ['https://www.example.com'],
-            ]
-        ];
+                'environment' => 'prod'
+            ]);
 
-        (new Application\Service)->update($application['id'],
-                                          [
-                                              'clients'     => $clientParams,
-                                              'merchant_id' => '10AuthMerchant'
-                                          ]);
-
-        $data['request']['content']['client_id'] = $clientParams[1]['id'];
+        $data['request']['content']['client_id'] = $prodClient->id;
 
         $content = ($this->runRequestResponseFlow($data))->getContent();
 
@@ -69,7 +52,7 @@ class OAuthTest extends TestCase
 
         $code = substr($content, $pos + 5);
 
-        $this->getAccessTokenTest($code, $clientParams[1]['id']);
+        $this->getAccessTokenTest($code, $prodClient->id);
     }
 
     private function getAccessTokenTest($authCode, $clientId)
