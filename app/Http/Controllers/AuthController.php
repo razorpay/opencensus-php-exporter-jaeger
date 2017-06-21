@@ -32,6 +32,8 @@ class AuthController extends Controller
 
         (new Auth\Validator)->validateInput('auth_code', $input);
 
+        $input['dash_url'] = env('DASH_URL');
+
         Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, $input);
 
         return view('authorize')->with('input', $input);
@@ -62,6 +64,11 @@ class AuthController extends Controller
         $response = (new Auth\Service)->getTokenData($token);
 
         return response()->json($response);
+    }
+
+    public function getLoggedIn()
+    {
+        return view('logged_in');
     }
 }
 

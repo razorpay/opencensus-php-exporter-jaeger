@@ -17,17 +17,20 @@ build:
     - script:
         name: copy env file
         code: cp ./environment/.env.wercker ./environment/.env.testing
-    - create-file:
-        name: Create auth_service_db.sqlite
-        filename: auth_service_db.sqlite
-        overwrite: true
-        content:
+    - script:
+        name: Export wercker DB env vars to API environment variables
+        code: >
+          export DB_HOST="$MYSQL_PORT_3306_TCP_ADDR"
+          export DB_PORT="$MYSQL_PORT_3306_TCP_PORT"
     - script:
         name: Composer set-up
         code: |
             composer config -g github-oauth.github.com $github_token
             export COMPOSER_CACHE_DIR="$WERCKER_CACHE_DIR/composer" && mkdir -p $COMPOSER_CACHE_DIR
             composer install --no-interaction
+    - script:
+        name: Run migrations
+        code: APP_ENV=testing php artisan migrate
     - script:
         name: Run unit tests
         code: php -d memory_limit=1024M vendor/phpunit/phpunit/phpunit --debug --verbose
@@ -40,6 +43,44 @@ build:
         channel: tech_bots
         username: wercker
         icon_url: https://cdn.rawgit.com/wantedly/step-pretty-slack-notify/master/icons/$WERCKER_RESULT.jpg
+dockerhub-push:
+    box:
+      id: razorpay/containers:base-nginx-php7
+      username: $DOCKERHUB_USER
+      password: $DOCKERHUB_PASSWORD
+      cmd: /bin/bash
+    steps:
+      - script:
+          name:  Copy app directory
+          code: |
+            cp -Rp $WERCKER_SOURCE_DIR/* /app/
+      - script:
+          name: Fix permissions
+          code: |
+            chown -R nginx.nginx /app
+      - script:
+          name: Copy entrypoint script
+          code: |
+            cp /app/dockerconf/boot.sh /app/boot.sh
+      - internal/docker-push:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+          repository: razorpay/auth-service
+          entrypoint: /app/boot.sh
+          ports: 80/tcp
+          working-dir: /app/
+          tag: ${WERCKER_GIT_BRANCH}-${WERCKER_GIT_COMMIT}
+      - script:
+          name: Docker Image tag
+          code: |
+            echo "[INFO] Tag for created image:"
+            echo "${WERCKER_GIT_BRANCH}-${WERCKER_GIT_COMMIT}"
+    after-steps:
+      - slack-notifier:
+          url: $SLACK_URL
+          channel: tech_bots
+          username: wercker
+          icon_url: https://cdn.rawgit.com/wantedly/step-pretty-slack-notify/master/icons/$WERCKER_RESULT.jpg
 deploy:
     steps:
       - script:
@@ -70,50 +111,13 @@ deploy:
           application-name: auth-service
           deployment-group-name: $WERCKER_DEPLOYTARGET_NAME
           s3-bucket: "rzp-code-deploy"
+      - hashfyre/newrelic-deployment:
+          api_key: $NEWRELIC_API_KEY
+          app_name: "$APP_ENV-$APP_NAME"
+          skip: $SKIP
     after-steps:
       - slack-notifier:
           url: $SLACK_URL
           channel: tech_bots
           username: wercker
           icon_url: https://cdn.rawgit.com/wantedly/step-pretty-slack-notify/master/icons/$WERCKER_RESULT.jpg
-# Docker build and push
-ecr-build-push:
-    box:
-      id: razorpay/docker:base-php7
-      cmd: /bin/bash
-    steps:
-      - script:
-          name:  Copy app directory
-          code: |
-            cp -Rp $WERCKER_SOURCE_DIR/* /app/
-      - script:
-          name: Fix permissions
-          code: |
-            chown -R apache.www-data /app
-      - script:
-          name: Configure mpm and httpd
-          code: |
-            sed -i 's#PidFile "/run/.*#Pidfile /tmp/run/httpd.pid"#g' /etc/apache2/conf.d/mpm.conf && \
-            sed -i 's/#LoadModule rewrite_module*/LoadModule rewrite_module/' /etc/apache2/httpd.conf
-      - script:
-          name: Copy entrypoint script
-          code: |
-            cp /app/dockerconf/boot.sh /app/boot.sh
-      - internal/docker-push:
-          disable-sync: false
-          aws-access-key: $AWS_KEY
-          aws-secret-key: $AWS_SECRET
-          aws-region: $AWS_REGION
-          aws-registry-id: $AWS_REGISTRY_ID
-          aws-strict-auth: false
-          repository: $AWS_ECR_REPO
-          entrypoint: /app/boot.sh
-          registry: https://${AWS_REGISTRY_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/v2
-          ports: 80/tcp
-          working-dir: /app/
-          tag: ${WERCKER_GIT_BRANCH}-${WERCKER_GIT_COMMIT}
-      - script:
-          name: Docker Image tag
-          code: |
-            echo "[INFO] Tag for created image:"
-            echo "${WERCKER_GIT_BRANCH}-${WERCKER_GIT_COMMIT}"
