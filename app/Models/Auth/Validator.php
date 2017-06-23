@@ -6,7 +6,7 @@ use App\Base;
 
 class Validator extends Base\Validator
 {
-    protected static $authCodeRules = [
+    protected static $authorizeRules = [
         'response_type' => 'required|alpha',
         'client_id'     => 'required|alpha_num|max:14',
         'redirect_uri'  => 'sometimes|url',

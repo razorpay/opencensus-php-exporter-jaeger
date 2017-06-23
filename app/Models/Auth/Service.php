@@ -2,6 +2,7 @@
 
 namespace App\Models\Auth;
 
+use Symfony\Component\HttpKernel\Client;
 use Trace;
 use Requests;
 use Razorpay\OAuth;
@@ -13,6 +14,36 @@ class Service
     public function __construct()
     {
         $this->oauthServer = new OAuth\OAuthServer();
+    }
+
+    /**
+     * Fetch and format the data required for the authorize page UI
+     *
+     * @param array $input
+     *
+     * @return array
+     */
+    public function getAuthorizeViewData(array $input): array
+    {
+        Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, $input);
+
+        (new Auth\Validator)->validateInput('authorize', $input);
+
+        $appData = $this->validateAndGetApplicationDataForAuthorize($input);
+
+        // TODO:
+        // 1. Check scopes request in input for validity
+        // 2. Format scopes for UI
+
+        $scopeData = [
+            'scopes' => []
+        ];
+
+        $authorizeData = array_merge($appData, $scopeData);
+
+        $authorizeData['dashboard_url'] = env('DASH_URL');
+
+        return $authorizeData;
     }
 
     public function postAuthCode(array $input)
@@ -63,5 +94,27 @@ class Service
         $body = json_decode($response->body, true);
 
         return $body;
+    }
+
+    protected function validateAndGetApplicationDataForAuthorize(array $input): array
+    {
+        $clientId = $input[OAuth\Client\Entity::ID];
+
+        $client = (new OAuth\Client\Repository)->find($clientId);
+
+        // TODO:
+        // 1. Call a helper function in Client\Service instead that validates the client.type
+        // 2. If a client is revoked, display a pretty error on the UI
+        // 3. Here, validate the client for environment and redirect_url first
+
+        $application = $client->application;
+
+        $data = [
+            'name' => $application->getName(),
+            'url'  => $application->getWebsite(),
+            'logo' => $application->getLogoUrl()
+        ];
+
+        return ['application' => $data];
     }
 }
