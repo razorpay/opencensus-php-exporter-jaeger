@@ -44,7 +44,7 @@ class Service
 
         $authorizeData = array_merge($appData, $scopeData);
 
-        $authorizeData['dashboard_url'] = env('DASH_URL');
+        $authorizeData['dashboard_url'] = env('APP_DASHBOARD_URL');
 
         return $authorizeData;
     }
