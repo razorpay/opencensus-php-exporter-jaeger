@@ -30,13 +30,9 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
-        (new Auth\Validator)->validateInput('auth_code', $input);
+        $data = $this->authService->getAuthorizeViewData($input);
 
-        $input['dash_url'] = env('DASH_URL');
-
-        Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, $input);
-
-        return view('authorize')->with('input', $input);
+        return view('authorize')->with('data', $data);
     }
 
     public function postAuthorize()
