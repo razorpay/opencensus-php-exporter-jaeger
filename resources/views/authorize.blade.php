@@ -1,134 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-        function cors() {
-          var req = new XMLHttpRequest();
-          var currentUrl = window.location.href;
-          var token = '';
-
-          if ('withCredentials' in req) {
-            req.open('GET', '{{$input["dash_url"]}}', true);
-            req.withCredentials = true;
-            req.onreadystatechange = function() {
-              if (req.readyState === 4) {
-                if (req.status >= 200 && req.status < 400) {
-                  token = (JSON.parse(req.responseText)).data.token;
-                  document.getElementById('token').value = token;
-                  document.getElementById('token').onchange();
-                } else {
-                  currentUrl = encodeURIComponent(currentUrl);
-                  window.location.href = 'http://dashboard.razorpay.dev/#/access/signin?next='+currentUrl;
-                }
-              }
-            };
-
-          req.send();
-          }
-        }
-        window.onload = cors();
-
-        function getData(token) {
-          var xmlhttp = new XMLHttpRequest();
-
-          xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-              if (xmlhttp.status == 200) {
-                console.log(xmlhttp.responseText);
-                var data = JSON.parse(xmlhttp.responseText);
-                if (data.success === false) {
-                  alert('User data not found.');
-                } else {
-                  document.getElementById("user").innerHTML = data.data.user.id;
-                  document.getElementById("merchant").innerHTML = data.data.user.merchant_id;
-                  document.getElementById("agreement").style.display = "block";
-                  document.getElementById("accept").style.display = "block";
-                  document.getElementById("reject").style.display = "block";
-                  document.getElementById("user_data").value = data.data.user;
-                }
-                document.getElementById("user").innerHTML = data.data.user.id;
-                document.getElementById("merchant").innerHTML = data.data.user.merchant_id;
-                document.getElementById("agreement").style.display = "block";
-                document.getElementById("accept").style.display = "block";
-                document.getElementById("reject").style.display = "block";
-                document.getElementById("user_data").value = data.data.user;
-              }
-              else if (xmlhttp.status == 400) {
-                alert('There was an error 400');
-              }
-              else {
-                alert('something else other than 200 was returned');
-              }
-            }
-          };
-
-          xmlhttp.open("GET", "/"+token+"/token_data", true);
-          xmlhttp.send();
-        }
-
-      function postAuthCode(input, user) {
-          var xmlhttp = new XMLHttpRequest();
-
-          var form_data = new FormData();
-
-          for ( var key in input ) {
-              form_data.append(key, input[key]);
-          }
-        user.authorize = true;
-        form_data.append('user', JSON.stringify(user));
-
-          xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-              if (xmlhttp.status == 200) {
-                var data = JSON.parse(xmlhttp.responseText);
-                window.location.href = data;
-              }
-              else if (xmlhttp.status == 400) {
-                alert('There was an error 400');
-              }
-              else {
-                alert('something else other than 200 was returned');
-              }
-            }
-          };
-
-          xmlhttp.open("POST", "/authorize", true);
-          xmlhttp.send(form_data);
-        }
-
-      function denyAuthCode(input, user) {
-        var xmlhttp = new XMLHttpRequest();
-
-        var form_data = new FormData();
-
-        for ( var key in input ) {
-          form_data.append(key, input[key]);
-        }
-        user.authorize = false;
-        form_data.append('user', JSON.stringify(user));
-
-          xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-              if (xmlhttp.status == 200) {
-                var data = JSON.parse(xmlhttp.responseText);
-                window.location.href = data;
-              }
-              else if (xmlhttp.status == 400) {
-                alert('There was an error 400');
-              }
-              else {
-                alert('something else other than 200 was returned');
-              }
-            }
-          };
-
-          xmlhttp.open("POST", "/authorize", true);
-          xmlhttp.send(form_data);
-      }
-
-      </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>Razorpay OAuth</title>
+    <title>Razorpay - Authorize {{$data['application']['name']}}</title>
     <style>
         html {
             line-height: 1.15; /* 1 */
@@ -287,6 +162,133 @@
             display: inline-block;
         }
     </style>
+    <script>
+        function cors() {
+          var req = new XMLHttpRequest();
+          var currentUrl = window.location.href;
+          var currentUrl = window.location.href;
+          var token = '';
+
+          if ('withCredentials' in req) {
+            req.open('GET', '{{$data['dashboard_url']}}', true);
+            req.withCredentials = true;
+            req.onreadystatechange = function() {
+              if (req.readyState === 4) {
+                if (req.status >= 200 && req.status < 400) {
+                  token = (JSON.parse(req.responseText)).data.token;
+                  document.getElementById('token').value = token;
+                  document.getElementById('token').onchange();
+                } else {
+                  currentUrl = encodeURIComponent(currentUrl);
+                  window.location.href = 'http://dashboard.razorpay.dev/#/access/signin?next='+currentUrl;
+                }
+              }
+            };
+
+          req.send();
+          }
+        }
+        window.onload = cors();
+
+        function getData(token) {
+          var xmlhttp = new XMLHttpRequest();
+
+          xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+              if (xmlhttp.status == 200) {
+                console.log(xmlhttp.responseText);
+                var data = JSON.parse(xmlhttp.responseText);
+                if (data.success === false) {
+                  alert('User data not found.');
+                } else {
+                  document.getElementById("user").innerHTML = data.data.user.id;
+                  document.getElementById("merchant").innerHTML = data.data.user.merchant_id;
+                  document.getElementById("agreement").style.display = "block";
+                  document.getElementById("accept").style.display = "block";
+                  document.getElementById("reject").style.display = "block";
+                  document.getElementById("user_data").value = data.data.user;
+                }
+                document.getElementById("user").innerHTML = data.data.user.id;
+                document.getElementById("merchant").innerHTML = data.data.user.merchant_id;
+                document.getElementById("agreement").style.display = "block";
+                document.getElementById("accept").style.display = "block";
+                document.getElementById("reject").style.display = "block";
+                document.getElementById("user_data").value = data.data.user;
+              }
+              else if (xmlhttp.status == 400) {
+                alert('There was an error 400');
+              }
+              else {
+                alert('something else other than 200 was returned');
+              }
+            }
+          };
+
+          xmlhttp.open("GET", "/"+token+"/token_data", true);
+          xmlhttp.send();
+        }
+
+      function postAuthCode(input, user) {
+          var xmlhttp = new XMLHttpRequest();
+
+          var form_data = new FormData();
+
+          for ( var key in input ) {
+              form_data.append(key, input[key]);
+          }
+        user.authorize = true;
+        form_data.append('user', JSON.stringify(user));
+
+          xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+              if (xmlhttp.status == 200) {
+                var data = JSON.parse(xmlhttp.responseText);
+                window.location.href = data;
+              }
+              else if (xmlhttp.status == 400) {
+                alert('There was an error 400');
+              }
+              else {
+                alert('something else other than 200 was returned');
+              }
+            }
+          };
+
+          xmlhttp.open("POST", "/authorize", true);
+          xmlhttp.send(form_data);
+        }
+
+      function denyAuthCode(input, user) {
+        var xmlhttp = new XMLHttpRequest();
+
+        var form_data = new FormData();
+
+        for ( var key in input ) {
+          form_data.append(key, input[key]);
+        }
+        user.authorize = false;
+        form_data.append('user', JSON.stringify(user));
+
+          xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+              if (xmlhttp.status == 200) {
+                var data = JSON.parse(xmlhttp.responseText);
+                window.location.href = data;
+              }
+              else if (xmlhttp.status == 400) {
+                alert('There was an error 400');
+              }
+              else {
+                alert('something else other than 200 was returned');
+              }
+            }
+          };
+
+          xmlhttp.open("POST", "/authorize", true);
+          xmlhttp.send(form_data);
+      }
+
+     </script>
 </head>
 <body>
 <div class="header">
@@ -295,7 +297,7 @@
 <div class="body-section content">
     <div class="content-hero">
         <div class="hero-description">
-            Allow <span class="emphasis">Testapp</span> to access your <span class="emphasis">Nestaway</span> account on Razorpay?
+            Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis">Nestaway</span> account on Razorpay?
         </div>
 
         <div class="app-logos">
@@ -305,12 +307,12 @@
     </div>
 
     <div class="main-content">
-        <p><strong>The app will be able to:</strong></p>
+        <p><strong>This will allow {{$data['application']['name']}} to:</strong></p>
         <ul>
             <li>Read all your live transaction data from dashboard</li>
             <li>Create live orders, transactions, refunds and all other entities</li>
         </ul>
-        <p><strong>Will not be able to:</strong></p>
+        <p><strong>The application will not be able to:</strong></p>
         <ul>
             <li>Access or change your API keys</li>
             <li>Access your organization's private details</li>

@@ -2,12 +2,15 @@
 
 namespace App\Models\Auth;
 
-use Symfony\Component\HttpKernel\Client;
+
 use Trace;
 use Requests;
 use Razorpay\OAuth;
+
 use App\Models\Auth;
+use App\Error\ErrorCode;
 use App\Constants\TraceCode;
+use App\Exception\BadRequestException;
 
 class Service
 {
@@ -98,7 +101,7 @@ class Service
 
     protected function validateAndGetApplicationDataForAuthorize(array $input): array
     {
-        $clientId = $input[OAuth\Client\Entity::ID];
+        $clientId = $input['client_id'];
 
         $client = (new OAuth\Client\Repository)->find($clientId);
 
@@ -106,6 +109,11 @@ class Service
         // 1. Call a helper function in Client\Service instead that validates the client.type
         // 2. If a client is revoked, display a pretty error on the UI
         // 3. Here, validate the client for environment and redirect_url first
+
+        if ($client === null)
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_ERROR);
+        }
 
         $application = $client->application;
 

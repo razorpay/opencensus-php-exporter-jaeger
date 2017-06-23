@@ -299,7 +299,7 @@ class Handler extends ExceptionHandler
 
     protected function ifTestingThenRethrowException($e)
     {
-        if ($this->isTesting())
+        if ($this->isTesting() === true)
         {
             throw $e;
         }
