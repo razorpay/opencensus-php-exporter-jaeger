@@ -28,15 +28,17 @@ class Service
      */
     public function getAuthorizeViewData(array $input): array
     {
-        Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, $input);
+        Trace::debug(TraceCode::AUTH_AUTHORIZE_REQUEST, $input);
 
         (new Auth\Validator)->validateInput('authorize', $input);
 
         $appData = $this->validateAndGetApplicationDataForAuthorize($input);
 
+        //
         // TODO:
         // 1. Check scopes request in input for validity
         // 2. Format scopes for UI
+        //
 
         $scopeData = [
             'scopes' => []

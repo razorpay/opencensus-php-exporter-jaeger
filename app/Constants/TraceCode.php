@@ -7,7 +7,7 @@ use Razorpay\Trace\TraceCode as BaseTraceCode;
 class TraceCode extends BaseTraceCode
 {
     // ----- Debug Codes ------
-    const AUTH_AUTHORIZE_AUTH_CODE_REQUEST                          = 'AUTH_AUTHORIZE_AUTH_CODE_REQUEST';
+    const AUTH_AUTHORIZE_REQUEST                                    = 'AUTH_AUTHORIZE_REQUEST';
 
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';
