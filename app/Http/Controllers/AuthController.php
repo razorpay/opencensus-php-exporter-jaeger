@@ -39,8 +39,6 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
-        $input['user'] = json_decode($input['user'], true);
-
         $authCode = $this->authService->postAuthCode($input);
 
         return response()->json($authCode->getHeaders()['Location'][0]);
@@ -51,13 +49,6 @@ class AuthController extends Controller
         $input = Request::all();
 
         $response = $this->authService->generateAccessToken($input);
-
-        return response()->json($response);
-    }
-
-    public function getTokenData($token)
-    {
-        $response = (new Auth\Service)->getTokenData($token);
 
         return response()->json($response);
     }

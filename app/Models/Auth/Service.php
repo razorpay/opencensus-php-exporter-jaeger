@@ -53,16 +53,11 @@ class Service
 
     public function postAuthCode(array $input)
     {
-        // TODO: Validate input after improving the following few lines
-        $userData['authorize'] = $input['user']['authorize'];
-        $userData['email'] = $input['user']['email'];
-        $userData['name'] = $input['user']['name'];
-        $userData['id'] = $input['user']['id'];
-        unset($input['user']);
+        $data = $this->resolveTokenOnDashboard($input['token']);
 
         try
         {
-            return $this->oauthServer->getAuthCode($input, $userData);
+            return $this->oauthServer->getAuthCode($input, #data);
         }
         catch (\Exception $ex)
         {
@@ -86,7 +81,7 @@ class Service
         }
     }
 
-    public function getTokenData(string $token)
+    protected function resolveTokenOnDashboard(string $token)
     {
         $options = ['auth' => ['rzp_api', env('APP_DASHBOARD_SECRET')]];
 
