@@ -4,6 +4,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Razorpay - Authorize {{$data['application']['name']}}</title>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
     <style>
         html {
             line-height: 1.15; /* 1 */
@@ -145,16 +149,24 @@
             color: white;
             background: #FAFAFA;
         }
+        button.btn:disabled {
+            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+            filter: alpha(opacity=50);
+            -moz-opacity: 0.5;
+            -khtml-opacity: 0.5;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
         button.btn-submit {
             background: #7268B7;
         }
         button.btn-default {
-            border-color: #eee;
-            border-width: 1px;
+            border: 1px #eee;
             color: #8497A0;
             margin-left: 14px;
         }
         .footer {
+            display: none;
             margin-top: 28px;
             font-size: 10px;
         }
@@ -162,133 +174,6 @@
             display: inline-block;
         }
     </style>
-    <script>
-        function cors() {
-          var req = new XMLHttpRequest();
-          var currentUrl = window.location.href;
-          var currentUrl = window.location.href;
-          var token = '';
-
-          if ('withCredentials' in req) {
-            req.open('GET', '{{$data['dashboard_url']}}', true);
-            req.withCredentials = true;
-            req.onreadystatechange = function() {
-              if (req.readyState === 4) {
-                if (req.status >= 200 && req.status < 400) {
-                  token = (JSON.parse(req.responseText)).data.token;
-                  document.getElementById('token').value = token;
-                  document.getElementById('token').onchange();
-                } else {
-                  currentUrl = encodeURIComponent(currentUrl);
-                  window.location.href = 'http://dashboard.razorpay.dev/#/access/signin?next='+currentUrl;
-                }
-              }
-            };
-
-          req.send();
-          }
-        }
-        window.onload = cors();
-
-        function getData(token) {
-          var xmlhttp = new XMLHttpRequest();
-
-          xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-              if (xmlhttp.status == 200) {
-                console.log(xmlhttp.responseText);
-                var data = JSON.parse(xmlhttp.responseText);
-                if (data.success === false) {
-                  alert('User data not found.');
-                } else {
-                  document.getElementById("user").innerHTML = data.data.user.id;
-                  document.getElementById("merchant").innerHTML = data.data.user.merchant_id;
-                  document.getElementById("agreement").style.display = "block";
-                  document.getElementById("accept").style.display = "block";
-                  document.getElementById("reject").style.display = "block";
-                  document.getElementById("user_data").value = data.data.user;
-                }
-                document.getElementById("user").innerHTML = data.data.user.id;
-                document.getElementById("merchant").innerHTML = data.data.user.merchant_id;
-                document.getElementById("agreement").style.display = "block";
-                document.getElementById("accept").style.display = "block";
-                document.getElementById("reject").style.display = "block";
-                document.getElementById("user_data").value = data.data.user;
-              }
-              else if (xmlhttp.status == 400) {
-                alert('There was an error 400');
-              }
-              else {
-                alert('something else other than 200 was returned');
-              }
-            }
-          };
-
-          xmlhttp.open("GET", "/"+token+"/token_data", true);
-          xmlhttp.send();
-        }
-
-      function postAuthCode(input, user) {
-          var xmlhttp = new XMLHttpRequest();
-
-          var form_data = new FormData();
-
-          for ( var key in input ) {
-              form_data.append(key, input[key]);
-          }
-        user.authorize = true;
-        form_data.append('user', JSON.stringify(user));
-
-          xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-              if (xmlhttp.status == 200) {
-                var data = JSON.parse(xmlhttp.responseText);
-                window.location.href = data;
-              }
-              else if (xmlhttp.status == 400) {
-                alert('There was an error 400');
-              }
-              else {
-                alert('something else other than 200 was returned');
-              }
-            }
-          };
-
-          xmlhttp.open("POST", "/authorize", true);
-          xmlhttp.send(form_data);
-        }
-
-      function denyAuthCode(input, user) {
-        var xmlhttp = new XMLHttpRequest();
-
-        var form_data = new FormData();
-
-        for ( var key in input ) {
-          form_data.append(key, input[key]);
-        }
-        user.authorize = false;
-        form_data.append('user', JSON.stringify(user));
-
-          xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-              if (xmlhttp.status == 200) {
-                var data = JSON.parse(xmlhttp.responseText);
-                window.location.href = data;
-              }
-              else if (xmlhttp.status == 400) {
-                alert('There was an error 400');
-              }
-              else {
-                alert('something else other than 200 was returned');
-              }
-            }
-          };
-
-          xmlhttp.open("POST", "/authorize", true);
-          xmlhttp.send(form_data);
-      }
-
-     </script>
 </head>
 <body>
 <div class="header">
@@ -321,15 +206,83 @@
     </div>
 
     <div class="button-toolbar">
-        <button class="btn-submit">Authorize</button>
-        <button class="btn-default">Cancel</button>
+        <button class="btn btn-submit" disabled>Authorize</button>
+        <button class="btn btn-default" disabled>Cancel</button>
     </div>
 
     <div class="footer">
-        <div class="footer-content">Logged in as hari@nestaway.com. <a href="#">Not you?</a></div>
+        <div class="footer-content">Logged in as <span id="user_email"></span>. <a href="#">Not you?</a></div>
         <div class="footer-content bullet">•</div>
         <div class="footer-content"><a href="#">Manage Connected Apps on Dashboard.</a></div>
     </div>
 </div>
+<script type="text/javascript">
+    (function () {
+        var dashboardUrl = "{{$data['dashboard_url']}}";
+        var pageUrl = window.location.href;
+        var verifyToken = null;
+        var elements = {
+            user_email: $('#user_email'),
+            footer: $('.footer'),
+            buttons: $('.btn')
+        };
+
+        function validateResponseData(data) {
+            // TODO:
+            // Validate if the response has all the fields we need
+            // Error if not.
+        }
+
+        function enableButtonsAndShowEmail() {
+            elements.buttons.prop('disabled', false);
+            elements.footer.show();
+        }
+
+        function handleUserSuccess(data) {
+            validateResponseData(data);
+
+            verifyToken = data.token;
+            elements.user_email.text(data.email);
+
+            enableButtonsAndShowEmail();
+        };
+
+        function getUser() {
+            var userUrl = dashboardUrl + '/user/logged_in';
+            $.get({
+                url: userUrl,
+                dataType: "json",
+                xhrFields: {
+                   withCredentials: true
+                }
+            })
+            .done(function(res, textStatus, xhr) {
+                var status = xhr.status;
+
+                if (status === 200) {
+                    handleUserSuccess(res.data);
+                } else if (status === 401) {
+                    // Sign-in flow
+                } else {
+                    // Handle unknown errors
+                }
+            })
+            .fail(function(xhr, textStatus, thrownError) {
+                alert(thrownError);
+            })
+            .always(function () {
+                console.log(verifyToken);
+            });
+        }
+
+        window.RazorpayAuthorize = {
+            getUser: getUser,
+            verifyToken: verifyToken,
+            elements: elements
+        };
+    })();
+
+    RazorpayAuthorize.getUser();
+</script>
 </body>
 </html>
