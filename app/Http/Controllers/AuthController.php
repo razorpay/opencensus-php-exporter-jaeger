@@ -30,9 +30,7 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
-        (new Auth\Validator)->validateInput('auth_code', $input);
-
-        $input['dash_url'] = env('DASH_URL');
+        $input['dash_url'] = env('APP_DASHBOARD_URL');
 
         Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, $input);
 
@@ -47,7 +45,7 @@ class AuthController extends Controller
 
         $authCode = $this->authService->postAuthCode($input);
 
-        return response()->json($authCode->getHeaders()['Location'][0]);
+        return response()->json($authCode);
     }
 
     public function postAccessToken()
@@ -64,11 +62,6 @@ class AuthController extends Controller
         $response = (new Auth\Service)->getTokenData($token);
 
         return response()->json($response);
-    }
-
-    public function getLoggedIn()
-    {
-        return view('logged_in');
     }
 }
 

@@ -27,8 +27,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app['validator']->resolver(function($translator, $data, $rules, $messages, $customAttributes)
         {
-            return new \App\Models\Base\ExtendedValidations(
-                            $translator, $data, $rules, $messages, $customAttributes);
+            return new \Razorpay\Spine\Validation\LaravelValidatorEx(
+                $translator, $data, $rules, $messages, $customAttributes
+            );
         });
     }
 }

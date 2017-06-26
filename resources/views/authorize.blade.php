@@ -8,7 +8,7 @@
       var token = '';
 
 	  if ('withCredentials' in req) {
-		req.open('GET', '{{$input["dash_url"]}}', true);
+		req.open('GET', '{{$input["dash_url"]}}user/logged_in', true);
 		req.withCredentials = true;
 		req.onreadystatechange = function() {
 		  if (req.readyState === 4) {
@@ -17,8 +17,8 @@
 		      document.getElementById('token').value = token;
 		      document.getElementById('token').onchange();
 		    } else {
-              currentUrl = encodeURIComponent(currentUrl);
-              window.location.href = 'http://dashboard.razorpay.dev/#/access/signin?next='+currentUrl;
+          currentUrl = encodeURIComponent(currentUrl);
+          window.location.href = '{{$input["dash_url"]}}#/access/signin?next='+currentUrl;
 		    }
 		  }
 		};
@@ -34,10 +34,9 @@
       xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
           if (xmlhttp.status == 200) {
-            console.log(xmlhttp.responseText);
           	var data = JSON.parse(xmlhttp.responseText);
             if (data.success === false) {
-              alert('User data not found.');
+              alert('Permission denied');
             } else {
               document.getElementById("user").innerHTML = data.data.user.id;
               document.getElementById("merchant").innerHTML = data.data.user.merchant_id;
@@ -54,10 +53,10 @@
             document.getElementById("user_data").value = data.data.user;
           }
           else if (xmlhttp.status == 400) {
-            alert('There was an error 400');
+            alert('Resource not found');
           }
           else {
-            alert('something else other than 200 was returned');
+            alert('There was an error processing the request');
           }
         }
       };

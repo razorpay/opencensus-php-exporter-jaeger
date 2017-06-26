@@ -28,7 +28,7 @@ trait RequestResponseFlowTrait
         {
             $this->checkException($e, $data);
             $this->processAndAssertException($e, $data['exception']);
-            $response = $e->generatePublicJsonResponse();
+            $response = $this->generatePublicJsonResponse($e);
         }
         finally
         {
@@ -39,7 +39,16 @@ trait RequestResponseFlowTrait
             }
         }
 
-        return $response;
+        $this->processAndAssertStatusCode($data, $response);
+
+        return $this->processAndAssertResponseData($data, $response);
+    }
+
+    protected function generatePublicJsonResponse(\Exception $ex)
+    {
+        $httpStatusCode = $ex->getHttpStatusCode();
+
+        return response()->json($ex->toPublicArray(), $httpStatusCode);
     }
 
     protected function checkException($e, $data)
@@ -54,8 +63,8 @@ trait RequestResponseFlowTrait
     {
         $class = (isset($expected['class'])) ? $expected['class'] : 'Raven\Exception\RecoverableException';
         $this->assertExceptionClass($actual, $class);
-        $internalError = $actual->getError()->getAttributes();
-        $this->assertErrorDataEquals($expected, $internalError);
+        $internalError = $actual->getMessage();
+        $this->assertErrorMessageEquals($expected['message'], $internalError);
     }
 
     protected function processAndAssertResponseData($data, $response)

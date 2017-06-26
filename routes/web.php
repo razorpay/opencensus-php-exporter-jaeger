@@ -37,8 +37,3 @@ $app->get('/{token}/token_data', [
 	'as' => 'get_user_detail',
 	'uses' => 'AuthController@getTokenData'
 ]);
-
-$app->get('/logged_in', [
-	'as' => 'get_logged_in',
-	'uses' => 'AuthController@getLoggedIn'
-]);

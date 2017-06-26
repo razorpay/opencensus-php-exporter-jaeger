@@ -2,17 +2,22 @@
 
 namespace App\Models\Auth;
 
+use App;
 use Trace;
-use Requests;
+use App\Services;
 use Razorpay\OAuth;
 use App\Models\Auth;
 use App\Constants\TraceCode;
+use App\Exception\BadRequestException;
+use App\Exception\ServerErrorException;
 
 class Service
 {
     public function __construct()
     {
         $this->oauthServer = new OAuth\OAuthServer();
+
+        $this->app = App::getFacadeRoot();
     }
 
     public function postAuthCode(array $input)
@@ -24,44 +29,34 @@ class Service
         $userData['id'] = $input['user']['id'];
         unset($input['user']);
 
-        try
-        {
-            return $this->oauthServer->getAuthCode($input, $userData);
-        }
-        catch (\Exception $ex)
-        {
-            Trace::error(TraceCode::AUTH_AUTHORIZE_FAILURE, [$ex->getMessage()]);
-        }
+        $authCode = $this->oauthServer->getAuthCode($input, $userData);
+
+        return $authCode->getHeaders()['Location'][0];
     }
 
     public function generateAccessToken(array $input)
     {
-        (new Auth\Validator)->validateInput('access_token', $input);
+        $data = $this->oauthServer->getAccessToken($input);
 
-        try
-        {
-            $data = $this->oauthServer->getAccessToken($input);
-
-            return json_decode($data->getBody(), true);
-        }
-        catch (\Exception $ex)
-        {
-            Trace::error(TraceCode::AUTH_ACCESS_TOKEN_FAILURE, [$ex->getMessage()]);
-        }
+        return json_decode($data->getBody(), true);
     }
 
     public function getTokenData(string $token)
     {
-        $options = ['auth' => ['rzp_api', env('APP_DASHBOARD_SECRET')]];
+        $dashboard = $this->getDashboardService();
 
-        $response = Requests::get(
-            env('APP_DASHBOARD_URL') . 'user/' . $token . '/detail',
-            [],
-            $options
-        );
+        return $dashboard->getTokenData($token);
+    }
 
-        $body = json_decode($response->body, true);
+    public function getDashboardService()
+    {
+        $dashboardMock = env('DASHBOARD_MOCK', false);
 
-        return $body;
+        if ($dashboardMock === true)
+        {
+            return new Services\Mock\Dashboard($this->app);
+        }
+
+        return new Services\Dashboard($this->app);
     }
 }
