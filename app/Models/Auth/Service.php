@@ -2,7 +2,6 @@
 
 namespace App\Models\Auth;
 
-
 use Trace;
 use Requests;
 use Razorpay\OAuth;
@@ -11,6 +10,7 @@ use App\Models\Auth;
 use App\Error\ErrorCode;
 use App\Constants\TraceCode;
 use App\Exception\BadRequestException;
+
 
 class Service
 {
@@ -40,13 +40,12 @@ class Service
         // 2. Format scopes for UI
         //
 
-        $scopeData = [
-            'scopes' => []
+        $authorizeData = [
+            'application'   => $appData,
+            'scopes'        => [],
+            'query_params'  => $input,
+            'dashboard_url' => env('APP_DASHBOARD_URL')
         ];
-
-        $authorizeData = array_merge($appData, $scopeData);
-
-        $authorizeData['dashboard_url'] = env('APP_DASHBOARD_URL');
 
         return $authorizeData;
     }
@@ -55,9 +54,13 @@ class Service
     {
         $data = $this->resolveTokenOnDashboard($input['token']);
 
+        $queryParams = htmlspecialchars_decode($data['query_params']);
+
+        parse_str($queryParams, $queryParamsArray);
+
         try
         {
-            return $this->oauthServer->getAuthCode($input, #data);
+            return $this->oauthServer->getAuthCode($queryParamsArray, $data);
         }
         catch (\Exception $ex)
         {
@@ -69,31 +72,26 @@ class Service
     {
         (new Auth\Validator)->validateInput('access_token', $input);
 
-        try
-        {
-            $data = $this->oauthServer->getAccessToken($input);
+        $data = $this->oauthServer->getAccessToken($input);
 
-            return json_decode($data->getBody(), true);
-        }
-        catch (\Exception $ex)
-        {
-            Trace::error(TraceCode::AUTH_ACCESS_TOKEN_FAILURE, [$ex->getMessage()]);
-        }
+        return json_decode($data->getBody(), true);
     }
 
     protected function resolveTokenOnDashboard(string $token)
     {
-        $options = ['auth' => ['rzp_api', env('APP_DASHBOARD_SECRET')]];
+        $options = ['auth' => ['rzp_oauth', env('APP_DASHBOARD_SECRET')]];
 
         $response = Requests::get(
-            env('APP_DASHBOARD_URL') . 'user/' . $token . '/detail',
+            env('APP_DASHBOARD_URL') . '/oauth_token/' . $token,
             [],
             $options
         );
 
         $body = json_decode($response->body, true);
 
-        return $body;
+        // TODO: null/fail check
+
+        return $body['data'];
     }
 
     protected function validateAndGetApplicationDataForAuthorize(array $input): array
@@ -109,7 +107,7 @@ class Service
 
         if ($client === null)
         {
-            throw new BadRequestException(ErrorCode::BAD_REQUEST_ERROR);
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_CLIENT);
         }
 
         $application = $client->application;
@@ -120,6 +118,6 @@ class Service
             'logo' => $application->getLogoUrl()
         ];
 
-        return ['application' => $data];
+        return $data;
     }
 }

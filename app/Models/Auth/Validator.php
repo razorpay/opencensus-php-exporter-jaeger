@@ -10,7 +10,8 @@ class Validator extends Base\Validator
         'response_type' => 'required|alpha',
         'client_id'     => 'required|alpha_num|max:14',
         'redirect_uri'  => 'sometimes|url',
-        'scope'         => 'required|alpha_dash'
+        'scope'         => 'required|alpha_dash',
+        'state'         => 'sometimes'
     ];
 
     protected static $accessTokenRules = [
@@ -18,6 +19,7 @@ class Validator extends Base\Validator
         'grant_type'    => 'required|string',
         'client_secret' => 'required|string',
         'redirect_uri'  => 'sometimes|url',
-        'code'          => 'required|string'
+        'code'          => 'required|string',
+        'state'         => 'sometimes'
     ];
 }

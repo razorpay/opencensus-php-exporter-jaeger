@@ -32,6 +32,8 @@ class AuthController extends Controller
 
         $data = $this->authService->getAuthorizeViewData($input);
 
+        $data['query_params'] = request()->getQueryString();
+
         return view('authorize')->with('data', $data);
     }
 
@@ -41,7 +43,7 @@ class AuthController extends Controller
 
         $authCode = $this->authService->postAuthCode($input);
 
-        return response()->json($authCode->getHeaders()['Location'][0]);
+        return response()->redirectTo($authCode->getHeaders()['Location'][0]);
     }
 
     public function postAccessToken()

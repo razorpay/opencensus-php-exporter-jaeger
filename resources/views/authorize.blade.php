@@ -62,6 +62,9 @@
         [type="submit"]:-moz-focusring {
             outline: 1px dotted ButtonText;
         }
+        form {
+            display: inline;
+        }
         html {
             font-family: sans-serif;
         }
@@ -206,7 +209,10 @@
     </div>
 
     <div class="button-toolbar">
-        <button class="btn btn-submit" disabled>Authorize</button>
+        <form method="POST" action="/authorize">
+            <input type="hidden" name="token" class="verify_token" value="" />
+            <button type="submit" class="btn btn-submit" disabled>Authorize</button>
+        </form>
         <button class="btn btn-default" disabled>Cancel</button>
     </div>
 
@@ -219,12 +225,14 @@
 <script type="text/javascript">
     (function () {
         var dashboardUrl = "{{$data['dashboard_url']}}";
+        var queryParams = "{{$data['query_params']}}";
         var pageUrl = window.location.href;
         var verifyToken = null;
         var elements = {
             user_email: $('#user_email'),
             footer: $('.footer'),
-            buttons: $('.btn')
+            buttons: $('.btn'),
+            token: $('.verify_token')
         };
 
         function validateResponseData(data) {
@@ -239,10 +247,12 @@
         }
 
         function handleUserSuccess(data) {
+            console.log(data);
             validateResponseData(data);
 
             verifyToken = data.token;
             elements.user_email.text(data.email);
+            elements.token.attr('value', verifyToken);
 
             enableButtonsAndShowEmail();
         };
@@ -251,6 +261,7 @@
             var userUrl = dashboardUrl + '/user/logged_in';
             $.get({
                 url: userUrl,
+                data: {query: queryParams},
                 dataType: "json",
                 xhrFields: {
                    withCredentials: true
@@ -261,14 +272,19 @@
 
                 if (status === 200) {
                     handleUserSuccess(res.data);
-                } else if (status === 401) {
-                    // Sign-in flow
                 } else {
                     // Handle unknown errors
                 }
             })
             .fail(function(xhr, textStatus, thrownError) {
-                alert(thrownError);
+                if (xhr.status === 401) {
+                    var currentUrl = encodeURIComponent(currentUrl);
+                    var signinUrl = dashboardUrl + '/#/access/signin?next=' + currentUrl;
+
+                    window.location.href = signinUrl;
+                } else {
+                    // Unknown errors
+                }
             })
             .always(function () {
                 console.log(verifyToken);
