@@ -2,8 +2,9 @@
 
 namespace App\Models\Auth;
 
+use App;
 use Trace;
-use Requests;
+use App\Services;
 use Razorpay\OAuth;
 
 use App\Models\Auth;
@@ -11,12 +12,13 @@ use App\Error\ErrorCode;
 use App\Constants\TraceCode;
 use App\Exception\BadRequestException;
 
-
 class Service
 {
     public function __construct()
     {
         $this->oauthServer = new OAuth\OAuthServer();
+
+        $this->app = App::getFacadeRoot();
     }
 
     /**
@@ -29,8 +31,6 @@ class Service
     public function getAuthorizeViewData(array $input): array
     {
         Trace::debug(TraceCode::AUTH_AUTHORIZE_REQUEST, $input);
-
-        (new Auth\Validator)->validateInput('authorize', $input);
 
         $appData = $this->validateAndGetApplicationDataForAuthorize($input);
 
@@ -58,20 +58,13 @@ class Service
 
         parse_str($queryParams, $queryParamsArray);
 
-        try
-        {
-            return $this->oauthServer->getAuthCode($queryParamsArray, $data);
-        }
-        catch (\Exception $ex)
-        {
-            Trace::error(TraceCode::AUTH_AUTHORIZE_FAILURE, [$ex->getMessage()]);
-        }
+        $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
+
+        return $authCode->getHeaders()['Location'][0];
     }
 
     public function generateAccessToken(array $input)
     {
-        (new Auth\Validator)->validateInput('access_token', $input);
-
         $data = $this->oauthServer->getAccessToken($input);
 
         return json_decode($data->getBody(), true);
@@ -79,19 +72,22 @@ class Service
 
     protected function resolveTokenOnDashboard(string $token)
     {
-        $options = ['auth' => ['rzp_oauth', env('APP_DASHBOARD_SECRET')]];
+        $dashboard = $this->getDashboardService();
 
-        $response = Requests::get(
-            env('APP_DASHBOARD_URL') . '/oauth_token/' . $token,
-            [],
-            $options
-        );
+        return $dashboard->getTokenData($token);
+    }
 
-        $body = json_decode($response->body, true);
+    public function getDashboardService()
+    {
+        $dashboardMock = env('DASHBOARD_MOCK', false);
 
-        // TODO: null/fail check
+        if ($dashboardMock === true)
+        {
+            return new Services\Mock\Dashboard($this->app);
+        }
 
-        return $body['data'];
+        return new Services\Dashboard($this->app);
+
     }
 
     protected function validateAndGetApplicationDataForAuthorize(array $input): array

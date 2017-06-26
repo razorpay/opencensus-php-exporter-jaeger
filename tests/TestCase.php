@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use App\Tests\Functional\CustomAssertions;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use Laravel\Lumen\Testing\TestCase as LumenTestCase;
 
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Factory;
 class TestCase extends LumenTestCase
 {
     use DatabaseTransactions;
+    use CustomAssertions;
 
     /**
      * The base URL to use while testing the application.
@@ -62,6 +64,22 @@ class TestCase extends LumenTestCase
         }
 
         $this->testData = $testData;
+    }
+
+    protected function startTest($testDataToReplace = [])
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $name = $trace[1]['function'];
+
+        $testData = [];
+        if (isset($this->testData[$name]) === true)
+        {
+            $testData = $this->testData[$name];
+        }
+
+        $this->replaceValuesRecursively($testData, $testDataToReplace);
+
+        return $this->runRequestResponseFlow($testData);
     }
 
     public function tearDown()

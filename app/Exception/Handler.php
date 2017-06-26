@@ -16,6 +16,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
+use Razorpay\OAuth\Exception\BadRequestException as BadRequestException;
+use Razorpay\OAuth\Exception\BaseException as BaseException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
@@ -74,6 +76,7 @@ class Handler extends ExceptionHandler
                     $error->getHttpStatusCode());
 
             case $e instanceof BaseException:
+            case $e instanceof RecoverableException:
                 return $this->baseExceptionHandler($e);
 
             case $e instanceof ProcessTimedOutException:
@@ -264,11 +267,9 @@ class Handler extends ExceptionHandler
     {
         $this->ifTestingThenRethrowException($exception);
 
-        $error = $exception->getError();
+        $httpStatusCode = $exception->getHttpStatusCode();
 
-        $httpStatusCode = $error->getHttpStatusCode();
-
-        $data = $debug ? $error->toDebugArray() : $error->toPublicArray();
+        $data = $debug ? $exception->toDebugArray() : $exception->toPublicArray();
 
         return response()->json($data, $httpStatusCode);
     }

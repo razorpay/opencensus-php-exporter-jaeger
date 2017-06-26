@@ -43,7 +43,7 @@ class AuthController extends Controller
 
         $authCode = $this->authService->postAuthCode($input);
 
-        return response()->redirectTo($authCode->getHeaders()['Location'][0]);
+        return response()->redirectTo($authCode);
     }
 
     public function postAccessToken()
@@ -55,9 +55,11 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
-    public function getLoggedIn()
+    public function getTokenData($token)
     {
-        return view('logged_in');
+        $response = (new Auth\Service)->getTokenData($token);
+
+        return response()->json($response);
     }
 }
 
