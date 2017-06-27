@@ -258,7 +258,7 @@
         };
 
         function getUser() {
-            var userUrl = dashboardUrl + '/user/logged_in';
+            var userUrl = dashboardUrl + '/user/session';
             $.get({
                 url: userUrl,
                 data: {query: queryParams},

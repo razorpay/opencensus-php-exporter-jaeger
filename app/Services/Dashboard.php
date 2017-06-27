@@ -14,7 +14,7 @@ class Dashboard
     public function getTokenData(string $token)
     {
         $options = [
-            'auth' => ['rzp_oauth', env('APP_DASHBOARD_SECRET')]
+            'auth' => ['rzp_auth', env('APP_DASHBOARD_SECRET')]
         ];
 
         $response = Requests::get(
