@@ -10,7 +10,7 @@ services:
     links:
       - db-auth
     depends_on:
-      - auth_db
+      - db-auth
     ports:
       - 28095:80
     environment:
