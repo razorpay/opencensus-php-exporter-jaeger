@@ -107,7 +107,7 @@ class Handler extends ExceptionHandler
         return $this->generateServerErrorResponse($this->isDebug(), $exception);
     }
 
-    protected function baseExceptionHandler(BaseException $exception)
+    protected function baseExceptionHandler(\Exception $exception)
     {
         // ServerError is fatal error and shoudn't be encountered
         // Let the higher-ups handle it. This function handles
@@ -267,9 +267,11 @@ class Handler extends ExceptionHandler
     {
         $this->ifTestingThenRethrowException($exception);
 
-        $httpStatusCode = $exception->getHttpStatusCode();
+        $error = $exception->getError();
 
-        $data = $debug ? $exception->toDebugArray() : $exception->toPublicArray();
+        $httpStatusCode = $error->getHttpStatusCode();
+
+        $data = $debug ? $error->toDebugArray() : $error->toPublicArray();
 
         return response()->json($data, $httpStatusCode);
     }
