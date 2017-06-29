@@ -90,6 +90,10 @@
         .main-content {
             padding-top: 12px;
         }
+        .fade {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
         .button-toolbar {
             margin-top: 28px;
         }
@@ -124,6 +128,17 @@
         form {
             display: inline-block;
         }
+        .error-container {
+            margin-top: 20px;
+            border: 1px #FAEDD1 solid;
+            background: #FCF8E3;
+            color: #907545;
+            padding: 12px;
+            line-height: 1.4;
+        }
+        .close-window {
+            color: #907545;
+        }
     </style>
 </head>
 <body>
@@ -144,7 +159,10 @@
         </div>
     </div>
 
-    <div class="main-content">
+    <div class="error-container">
+        <strong>You are not allowed to authorize this app.</strong> Contact one of your admins to add this app to your dashboard. <a href="#" class="close-window"><strong>Close</strong></a>
+    </div>
+    <div class="main-content fade">
         <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to:</strong></p>
         <ul>
             <li>Read all your live transaction data from dashboard</li>
@@ -165,6 +183,7 @@
         </form>
         <button class="btn btn-default" disabled>Cancel</button>
     </div>
+
 </div>
 <script type="text/javascript">
     (function () {
