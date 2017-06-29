@@ -8,7 +8,10 @@
     <style>
         body {
             margin: 0;
-            line-height: 1.4;
+            /*line-height: 1.4;*/
+            color: #8497A0;
+            font-size: 12px;
+            line-height: 1.8;
             font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;
         }
         a {
@@ -18,6 +21,9 @@
             background: #F7F8FA;
             height: 26px;
             padding: 14px 0;
+        }
+        .header-user-details {
+            float: right;
         }
         .emphasis {
             color: #5A666F;
@@ -77,8 +83,6 @@
             margin: 8px 0 0 0;
         }
         .body-section {
-            font-size: 12px;
-            line-height: 1.8;
         }
         p {
             margin: 14px 0 0 0;
@@ -120,19 +124,13 @@
         form {
             display: inline-block;
         }
-        .footer {
-            display: none;
-            margin-top: 28px;
-            font-size: 10px;
-        }
-        .footer-content {
-            display: inline-block;
-        }
     </style>
 </head>
 <body>
 <div class="header">
-    <div class="content rzp-logo"></div>
+    <div class="content rzp-logo">
+        <div class="header-user-details">Logged in as <span id="user_email">foo@bar.com</span>. <a href="#">Not you?</a></div>
+    </div>
 </div>
 <div class="body-section content">
     <div class="content-hero">
@@ -147,12 +145,12 @@
     </div>
 
     <div class="main-content">
-        <p><strong>This will allow {{$data['application']['name']}} to:</strong></p>
+        <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to:</strong></p>
         <ul>
             <li>Read all your live transaction data from dashboard</li>
             <li>Create live orders, transactions, refunds and all other entities</li>
         </ul>
-        <p><strong>The application will not be able to:</strong></p>
+        <p class="emphasis"><strong>The application will not be able to:</strong></p>
         <ul>
             <li>Access or change your API keys</li>
             <li>Access your organization's private details</li>
@@ -166,12 +164,6 @@
             <button type="submit" class="btn btn-submit" disabled>Authorize</button>
         </form>
         <button class="btn btn-default" disabled>Cancel</button>
-    </div>
-
-    <div class="footer">
-        <div class="footer-content">Logged in as <span id="user_email"></span>. <a href="#">Not you?</a></div>
-        <div class="footer-content bullet">•</div>
-        <div class="footer-content"><a href="#">Manage Connected Apps on Dashboard.</a></div>
     </div>
 </div>
 <script type="text/javascript">
