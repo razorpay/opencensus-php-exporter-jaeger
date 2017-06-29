@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Exception\BadRequestException;
 use Trace;
-use Redirect;
 use Request;
+
 use App\Models\Auth;
 use App\Constants\TraceCode;
+use App\Exception\BadRequestException;
+use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
 
 class AuthController extends Controller
 {
@@ -20,8 +21,6 @@ class AuthController extends Controller
 
     public function getRoot()
     {
-        Trace::info(TraceCode::API_REQUEST, []);
-
         $response['message'] = 'Welcome to Razorpay Auth!';
 
         return response()->json($response);
@@ -74,8 +73,13 @@ class AuthController extends Controller
     {
         $message = 'A server error occurred while serving this connection request';
 
+        //
+        // If the exception is an instance of the following,
+        // the exception message is public!
+        // For all other exceptions, we send a generic error message
+        //
         if (($e instanceof BadRequestException) or
-            ($e instanceof BadRequestException))
+            ($e instanceof OAuthBadRequestException))
         {
             $message = $e->getMessage();
         }
@@ -84,6 +88,7 @@ class AuthController extends Controller
             'message' => $message
         ];
 
+        // TODO: Think of displaying the request_id on the error page. Will help resolving issues.
         return view('authorize_error')->with('error', $error);
     }
 }
