@@ -12,5 +12,5 @@ class PublicErrorDescription
     const BAD_REQUEST_INVALID_ID                                                = 'The id provided does not exist';
 
     const BAD_REQUEST_UNAUTHORIZED                                              = 'Please provide your api key for authentication purposes.';
-    const BAD_REQUEST_INVALID_CLIENT                                            = 'There was a problem with the application, please contact the administrator.';
+    const BAD_REQUEST_INVALID_CLIENT                                            = 'There was a problem with the application you are trying to connect to, please contact the application provider for support.';
 }

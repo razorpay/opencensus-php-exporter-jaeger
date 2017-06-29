@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exception\BadRequestException;
 use Trace;
 use Redirect;
 use Request;
@@ -30,11 +31,18 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
-        $data = $this->authService->getAuthorizeViewData($input);
+        try
+        {
+            $data = $this->authService->getAuthorizeViewData($input);
 
-        $data['query_params'] = request()->getQueryString();
+            $data['query_params'] = request()->getQueryString();
 
-        return view('authorize')->with('data', $data);
+            return view('authorize')->with('data', $data);
+        }
+        catch (\Exception $e)
+        {
+            return $this->renderAuthorizeError($e);
+        }
     }
 
     public function postAuthorize()
@@ -60,6 +68,23 @@ class AuthController extends Controller
         $response = (new Auth\Service)->getTokenData($token);
 
         return response()->json($response);
+    }
+
+    protected function renderAuthorizeError(\Exception $e)
+    {
+        $message = 'A server error occurred while serving this connection request';
+
+        if (($e instanceof BadRequestException) or
+            ($e instanceof BadRequestException))
+        {
+            $message = $e->getMessage();
+        }
+
+        $error = [
+            'message' => $message
+        ];
+
+        return view('authorize_error')->with('error', $error);
     }
 }
 
