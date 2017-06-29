@@ -4,82 +4,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Razorpay - Authorize {{$data['application']['name']}}</title>
-    <script
-            src="https://code.jquery.com/jquery-3.2.1.min.js"
-            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
     <style>
-        html {
-            line-height: 1.15; /* 1 */
-            -ms-text-size-adjust: 100%; /* 2 */
-            -webkit-text-size-adjust: 100%; /* 2 */
-        }
-        a {
-            background-color: transparent; /* 1 */
-            -webkit-text-decoration-skip: objects; /* 2 */
-        }
-        strong {
-            font-weight: inherit;
-            font-weight: bolder;
-        }
-        small {
-            font-size: 80%;
-        }
-        button,
-        input,
-        optgroup,
-        select,
-        textarea {
-            font-family: sans-serif; /* 1 */
-            font-size: 100%; /* 1 */
-            line-height: 1.15; /* 1 */
-            margin: 0; /* 2 */
-        }
-        button,
-        input { /* 1 */
-            overflow: visible;
-        }
-        button,
-        select { /* 1 */
-            text-transform: none;
-        }
-        button,
-        html [type="button"], /* 1 */
-        [type="reset"],
-        [type="submit"] {
-            -webkit-appearance: button; /* 2 */
-        }
-        button::-moz-focus-inner,
-        [type="button"]::-moz-focus-inner,
-        [type="reset"]::-moz-focus-inner,
-        [type="submit"]::-moz-focus-inner {
-            border-style: none;
-            padding: 0;
-        }
-        button:-moz-focusring,
-        [type="button"]:-moz-focusring,
-        [type="reset"]:-moz-focusring,
-        [type="submit"]:-moz-focusring {
-            outline: 1px dotted ButtonText;
-        }
-        form {
-            display: inline;
-        }
-        html {
-            font-family: sans-serif;
-        }
         body {
             margin: 0;
+            line-height: 1.4;
+            font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;
         }
-        body, a {
-            color: #8497A0;
-        }
-        * {
-            box-sizing: border-box;
+        a {
+            color: #09f;
         }
         .header {
             background: #F7F8FA;
-            height: 54px;
+            height: 26px;
             padding: 14px 0;
         }
         .emphasis {
@@ -88,12 +25,14 @@
         .content {
             max-width: 588px;
             margin: 0 auto;
+            padding: 0 20px;
         }
         .rzp-logo {
             height: 100%;
             background: url(https://razorpay.com/images/logo-black.png);
             background-repeat: no-repeat;
             background-size: contain;
+            background-position-x: 20px;
         }
         .content-hero {
             padding: 24px 0;
@@ -105,9 +44,13 @@
             line-height: 36px;
             display: inline-block;
         }
+        @media (max-width: 600px) {
+            .hero-description {
+                width: auto;
+            }
+        }
         .app-logos {
             float: right;
-            height: 48px;
             font-size: 0;
             text-align: right;
         }
@@ -118,6 +61,13 @@
             width: 72px;
             border-radius: 4px;
             border: 1px #eee solid;
+        }
+        @media (max-width: 600px) {
+            .app-logos {
+                float: none;
+                text-align: left;
+                margin-top: 20px;
+            }
         }
         .app-logo + .app-logo {
             margin-left: 8px;
@@ -145,18 +95,17 @@
             padding: 0;
             cursor: pointer;
             border-width: 0;
-            border-radius: 4px;
+            border-radius: 2px;
             border-style: solid;
-            font-size: 14px;
+            font: inherit;
+            line-height: inherit;
+            margin: 0;
             line-height: 40px;
             color: white;
             background: #FAFAFA;
+            outline: none;
         }
         button.btn:disabled {
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-            filter: alpha(opacity=50);
-            -moz-opacity: 0.5;
-            -khtml-opacity: 0.5;
             opacity: 0.5;
             cursor: not-allowed;
         }
@@ -167,6 +116,9 @@
             border: 1px #eee;
             color: #8497A0;
             margin-left: 14px;
+        }
+        form {
+            display: inline-block;
         }
         .footer {
             display: none;
