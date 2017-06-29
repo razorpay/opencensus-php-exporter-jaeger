@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Trace;
 use Request;
 
 use App\Models\Auth;
-use App\Constants\TraceCode;
 use App\Exception\BadRequestException;
 use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
 

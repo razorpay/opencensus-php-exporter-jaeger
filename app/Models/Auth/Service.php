@@ -87,7 +87,6 @@ class Service
         }
 
         return new Services\Dashboard($this->app);
-
     }
 
     protected function validateAndGetApplicationDataForAuthorize(array $input): array
@@ -98,8 +97,7 @@ class Service
 
         // TODO:
         // 1. Call a helper function in Client\Service instead that validates the client.type
-        // 2. If a client is revoked, display a pretty error on the UI
-        // 3. Here, validate the client for environment and redirect_url first
+        // 2. Also validate the client for environment and redirect_url first
 
         if ($client === null)
         {

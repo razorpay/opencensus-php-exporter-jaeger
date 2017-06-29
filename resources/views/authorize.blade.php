@@ -129,6 +129,7 @@
             display: inline-block;
         }
         .error-container {
+            display: none;
             margin-top: 20px;
             border: 1px #FAEDD1 solid;
             background: #FCF8E3;
@@ -162,7 +163,7 @@
     <div class="error-container">
         <strong>You are not allowed to authorize this app.</strong> Contact one of your admins to add this app to your dashboard. <a href="#" class="close-window"><strong>Close</strong></a>
     </div>
-    <div class="main-content fade">
+    <div class="main-content">
         <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to:</strong></p>
         <ul>
             <li>Read all your live transaction data from dashboard</li>
