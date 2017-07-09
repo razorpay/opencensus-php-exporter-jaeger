@@ -32,14 +32,15 @@ class Service
     {
         Trace::debug(TraceCode::AUTH_AUTHORIZE_REQUEST, $input);
 
+        // TODO: Fetching client twice from DB, in each of the following functions; fix.
+        $this->oauthServer->validateAuthorizeRequest($input);
+
         $appData = $this->validateAndGetApplicationDataForAuthorize($input);
 
         //
         // TODO:
-        // 1. Check scopes request in input for validity
-        // 2. Format scopes for UI
+        // 1. Format scopes for UI
         //
-
         $authorizeData = [
             'application'   => $appData,
             'scopes'        => [],
@@ -77,7 +78,7 @@ class Service
         return $dashboard->getTokenData($token);
     }
 
-    public function getDashboardService()
+    protected function getDashboardService()
     {
         $dashboardMock = env('DASHBOARD_MOCK', false);
 
@@ -97,7 +98,7 @@ class Service
 
         // TODO:
         // 1. Call a helper function in Client\Service instead that validates the client.type
-        // 2. Also validate the client for environment and redirect_url first
+        // 2. Also validate the client for environment
 
         if ($client === null)
         {

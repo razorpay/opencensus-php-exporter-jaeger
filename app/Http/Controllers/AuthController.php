@@ -36,7 +36,7 @@ class AuthController extends Controller
 
             return view('authorize')->with('data', $data);
         }
-        catch (\Exception $e)
+        catch (\Throwable $e)
         {
             return $this->renderAuthorizeError($e);
         }
@@ -69,7 +69,7 @@ class AuthController extends Controller
 
     protected function renderAuthorizeError(\Exception $e)
     {
-        $message = 'A server error occurred while serving this connection request';
+        $message = 'A server error occurred while serving this request';
 
         //
         // If the exception is an instance of the following,
