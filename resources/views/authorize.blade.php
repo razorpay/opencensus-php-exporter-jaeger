@@ -236,9 +236,17 @@
                 var status = xhr.status;
 
                 if (status === 200) {
-                    handleUserSuccess(res.data);
+                    if (res.success === true) {
+                        if (res.data.role === 'owner') {
+                            handleUserSuccess(res.data);
+                        } else {
+                            alert('you are not allowed');
+                        }
+                    } else {
+                        // Handle unknown errors
+                    }
                 } else {
-                    // Handle unknown errors
+                    // Handle server/bad request errors
                 }
             })
             .fail(function(xhr, textStatus, thrownError) {
