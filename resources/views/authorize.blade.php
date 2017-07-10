@@ -221,7 +221,7 @@
             enableButtonsAndShowEmail();
         };
 
-        function getUser() {
+        function getUser(pageUrl) {
             var userUrl = dashboardUrl + '/user/session';
             $.get({
                 url: userUrl,
@@ -243,8 +243,8 @@
             })
             .fail(function(xhr, textStatus, thrownError) {
                 if (xhr.status === 401) {
-                    var currentUrl = encodeURIComponent(currentUrl);
-                    var signinUrl = dashboardUrl + '/#/access/signin?next=' + currentUrl;
+                    var pageUrl = encodeURIComponent(pageUrl);
+                    var signinUrl = dashboardUrl + '#/access/signin?next=' + pageUrl;
 
                     window.location.href = signinUrl;
                 } else {

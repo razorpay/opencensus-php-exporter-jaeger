@@ -67,7 +67,7 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
-    protected function renderAuthorizeError(\Exception $e)
+    protected function renderAuthorizeError(\Error $e)
     {
         $message = 'A server error occurred while serving this request';
 
