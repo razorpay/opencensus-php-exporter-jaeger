@@ -221,7 +221,7 @@
             enableButtonsAndShowEmail();
         };
 
-        function getUser(pageUrl) {
+        function getUser() {
             var userUrl = dashboardUrl + '/user/session';
             $.get({
                 url: userUrl,
@@ -251,6 +251,7 @@
             })
             .fail(function(xhr, textStatus, thrownError) {
                 if (xhr.status === 401) {
+                    pageUrl = window.location.href;
                     var pageUrl = encodeURIComponent(pageUrl);
                     var signinUrl = dashboardUrl + '#/access/signin?next=' + pageUrl;
 
