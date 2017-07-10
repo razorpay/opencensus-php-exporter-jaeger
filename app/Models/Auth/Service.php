@@ -33,17 +33,13 @@ class Service
         Trace::debug(TraceCode::AUTH_AUTHORIZE_REQUEST, $input);
 
         // TODO: Fetching client twice from DB, in each of the following functions; fix.
-        $this->oauthServer->validateAuthorizeRequest($input);
+        $scopes = $this->oauthServer->validateAuthorizeRequestAndGetScopes($input);
 
         $appData = $this->validateAndGetApplicationDataForAuthorize($input);
 
-        //
-        // TODO:
-        // 1. Format scopes for UI
-        //
         $authorizeData = [
             'application'   => $appData,
-            'scopes'        => [],
+            'scopes'        => $this->parseScopesForDisplay($scopes),
             'query_params'  => $input,
             'dashboard_url' => env('APP_DASHBOARD_URL')
         ];
@@ -114,5 +110,17 @@ class Service
         ];
 
         return $data;
+    }
+
+    protected function parseScopesForDisplay($scopes)
+    {
+        $scopesArray = [];
+
+        foreach ($scopes as $scope)
+        {
+            $scopesArray[$scope['id']] = $scope['description'];
+        }
+
+        return $scopesArray;
     }
 }
