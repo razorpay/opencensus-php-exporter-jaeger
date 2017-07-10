@@ -24,6 +24,7 @@
         }
         .header-user-details {
             float: right;
+            display: none;
         }
         .emphasis {
             color: #5A666F;
@@ -145,46 +146,46 @@
 <body>
 <div class="header">
     <div class="content rzp-logo">
-        <div class="header-user-details">Logged in as <span id="user_email">foo@bar.com</span>. <a href="#">Not you?</a></div>
+        <div class="header-user-details">Logged in as <span id="user_email">foo@bar.com</span>.</div>
     </div>
 </div>
 <div class="body-section content">
-    <div class="content-hero">
-        <div class="hero-description">
-            Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis">Nestaway</span> account on Razorpay?
-        </div>
+    <div class="error-container"></div>
 
-        <div class="app-logos">
+    <div class="inner-content">
+        <div class="content-hero">
+          <div class="hero-description">
+            Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis">Nestaway</span> account on Razorpay?
+          </div>
+
+          <div class="app-logos">
             <div class="logo-1 app-logo"></div>
             <div class="logo-2 app-logo"></div>
+          </div>
         </div>
-    </div>
 
-    <div class="error-container">
-        <strong>You are not allowed to authorize this app.</strong> Contact one of your admins to add this app to your dashboard. <a href="#" class="close-window"><strong>Close</strong></a>
-    </div>
-    <div class="main-content">
-        <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to:</strong></p>
-        <ul>
+        <div class="main-content">
+          <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to:</strong></p>
+          <ul>
             <li>Read all your live transaction data from dashboard</li>
             <li>Create live orders, transactions, refunds and all other entities</li>
-        </ul>
-        <p class="emphasis"><strong>The application will not be able to:</strong></p>
-        <ul>
+          </ul>
+          <p class="emphasis"><strong>The application will not be able to:</strong></p>
+          <ul>
             <li>Access or change your API keys</li>
             <li>Access your organization's private details</li>
             <li>Update your account settings</li>
-        </ul>
-    </div>
+          </ul>
+        </div>
 
-    <div class="button-toolbar">
-        <form method="POST" action="/authorize">
+        <div class="button-toolbar">
+          <form method="POST" action="/authorize">
             <input type="hidden" name="token" class="verify_token" value="" />
             <button type="submit" class="btn btn-submit" disabled>Authorize</button>
-        </form>
-        <button class="btn btn-default" disabled>Cancel</button>
+          </form>
+          <button class="btn btn-default" disabled>Cancel</button>
+        </div>
     </div>
-
 </div>
 <script type="text/javascript">
     (function () {
@@ -194,10 +195,26 @@
         var verifyToken = null;
         var elements = {
             user_email: $('#user_email'),
-            footer: $('.footer'),
+            user_details: $('.header-user-details'),
             buttons: $('.btn'),
-            token: $('.verify_token')
+            token: $('.verify_token'),
+            error_pane: $('.error-container'),
+            page_container: $('.inner-content')
         };
+
+        var errorHtml = {
+            invalid_role: '<strong>You are not allowed to authorize this app.</strong> <br /> Contact one of your admins to add this app to your dashboard.',
+            unknown_error: '<strong>An unknown error occurred.</strong> <br /> Please contact Razorpay support to report this issue.'
+        };
+
+        function showError(type) {
+            var error = errorHtml[type];
+
+            elements.buttons.prop('disabled', true);
+            elements.error_pane.html(error);
+            elements.error_pane.show();
+            elements.page_container.addClass('fade');
+        }
 
         function validateResponseData(data) {
             // TODO:
@@ -207,7 +224,7 @@
 
         function enableButtonsAndShowEmail() {
             elements.buttons.prop('disabled', false);
-            elements.footer.show();
+            elements.user_details.show();
         }
 
         function handleUserSuccess(data) {
@@ -240,13 +257,11 @@
                         if (res.data.role === 'owner') {
                             handleUserSuccess(res.data);
                         } else {
-                            alert('you are not allowed');
+                            showError('invalid_role');
                         }
                     } else {
-                        // Handle unknown errors
+                        showError('unknown_error');
                     }
-                } else {
-                    // Handle server/bad request errors
                 }
             })
             .fail(function(xhr, textStatus, thrownError) {
@@ -257,17 +272,15 @@
 
                     window.location.href = signinUrl;
                 } else {
-                    // Unknown errors
+                    showError('unknown_error');
                 }
-            })
-            .always(function () {
-                console.log(verifyToken);
             });
         }
 
         window.RazorpayAuthorize = {
             getUser: getUser,
             verifyToken: verifyToken,
+            showError: showError,
             elements: elements
         };
     })();
