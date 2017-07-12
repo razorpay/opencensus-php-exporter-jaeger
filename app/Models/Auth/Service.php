@@ -51,6 +51,13 @@ class Service
     {
         $data = $this->resolveTokenOnDashboard($input['token']);
 
+        if ($data['role'] !== 'owner')
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
+        }
+
+        $data['authorize'] = ($input['permission'] === "1") ? true : false;
+
         $queryParams = htmlspecialchars_decode($data['query_params']);
 
         parse_str($queryParams, $queryParamsArray);

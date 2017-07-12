@@ -181,9 +181,14 @@
         <div class="button-toolbar">
           <form method="POST" action="/authorize">
             <input type="hidden" name="token" class="verify_token" value="" />
+            <input type="hidden" name="permission" class="grant_permission" value=1 />
             <button type="submit" class="btn btn-submit" disabled>Authorize</button>
           </form>
-          <button class="btn btn-default" disabled>Cancel</button>
+          <form method="POST" action="/authorize">
+            <input type="hidden" name="token" class="verify_token" value="" />
+            <input type="hidden" name="permission" class="grant_permission" value=0 />
+            <button class="btn btn-default" disabled>Cancel</button>
+          </form>
         </div>
     </div>
 </div>
@@ -228,7 +233,6 @@
         }
 
         function handleUserSuccess(data) {
-            console.log(data);
             validateResponseData(data);
 
             verifyToken = data.token;
