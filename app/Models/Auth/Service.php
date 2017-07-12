@@ -56,7 +56,7 @@ class Service
             throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
         }
 
-        $data['authorize'] = ($input['permission'] === "1") ? true : false;
+        $data['authorize'] = $input['permission'];
 
         $queryParams = htmlspecialchars_decode($data['query_params']);
 

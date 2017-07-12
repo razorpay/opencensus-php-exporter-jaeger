@@ -46,6 +46,19 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
+        $input['permission'] = true;
+
+        $authCode = $this->authService->postAuthCode($input);
+
+        return response()->redirectTo($authCode);
+    }
+
+    public function deleteAuthorize()
+    {
+        $input = Request::all();
+
+        $input['permission'] = false;
+
         $authCode = $this->authService->postAuthCode($input);
 
         return response()->redirectTo($authCode);
