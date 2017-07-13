@@ -18,7 +18,7 @@ $app->get('/', [
 ]);
 
 $app->get('/status', [
-    'as' => 'get_root',
+    'as' => 'get_status',
     'uses' => 'AuthController@getStatus'
 ]);
 
