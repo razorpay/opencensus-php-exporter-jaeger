@@ -68,7 +68,8 @@ class Handler extends ExceptionHandler
         switch (true)
         {
             case $e instanceOf NotFoundHttpException:
-                throw new RouteNotFoundException();
+                return response()->json(['error' => 'Route does not exist'], 404);
+
             case $e instanceof UnauthorizedException:
                 $error = $e->getError();
                 return response()->json(

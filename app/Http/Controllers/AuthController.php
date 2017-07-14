@@ -19,11 +19,32 @@ class AuthController extends Controller
 
     public function getRoot()
     {
-        Trace::info(TraceCode::API_REQUEST, []);
-
         $response['message'] = 'Welcome to Razorpay Auth!';
 
         return response()->json($response);
+    }
+
+    public function getStatus()
+    {
+        try
+        {
+            if (app('db')->connection('auth')->getPdo())
+            {
+                $response = [
+                    'DB' => 'Ok',
+                ];
+
+                return response()->json($response);
+            }
+        }
+        catch (\Throwable $t)
+        {
+            $response = [
+                'error' => 'DB error',
+            ];
+
+            return response()->json($response, 500);
+        }
     }
 
     public function getAuthorize()

@@ -17,6 +17,11 @@ $app->get('/', [
 	'uses' => 'AuthController@getRoot'
 ]);
 
+$app->get('/status', [
+    'as' => 'get_status',
+    'uses' => 'AuthController@getStatus'
+]);
+
 $app->get('/authorize', [
 	'as' => 'get_auth_code',
 	'uses' => 'AuthController@getAuthorize'
