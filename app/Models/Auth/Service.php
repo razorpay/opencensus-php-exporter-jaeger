@@ -64,6 +64,11 @@ class Service
 
         $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
 
+        if ($data['authorize'] === true)
+        {
+            $this->notifyMerchantApplicationAuthorized($queryParamsArray['client_id'], $data['user_id']);
+        }
+
         return $authCode->getHeaders()['Location'][0];
     }
 
@@ -83,7 +88,7 @@ class Service
 
     protected function getDashboardService()
     {
-        $dashboardMock = env('DASHBOARD_MOCK', false);
+        $dashboardMock = env('APP_DASHBOARD_MOCK', false);
 
         if ($dashboardMock === true)
         {
@@ -129,5 +134,24 @@ class Service
         }
 
         return $scopesArray;
+    }
+
+    protected function notifyMerchantApplicationAuthorized(string $clientId, string $userId)
+    {
+        $apiMock = env('APP_API_MOCK', false);
+
+        if ($apiMock === true)
+        {
+            return;
+        }
+
+        $api = $this->getApiService();
+
+        return $api->notifyMerchant($clientId, $userId);
+    }
+
+    protected function getApiService()
+    {
+        return new Services\Api($this->app);
     }
 }
