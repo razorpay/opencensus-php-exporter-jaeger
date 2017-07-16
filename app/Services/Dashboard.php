@@ -6,11 +6,6 @@ use Requests;
 
 class Dashboard
 {
-    public function __construct($app)
-    {
-
-    }
-
     public function getTokenData(string $token)
     {
         $options = [

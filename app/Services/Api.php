@@ -6,11 +6,6 @@ use Requests;
 
 class Api
 {
-    public function __construct($app)
-    {
-
-    }
-
     public function notifyMerchant(string $clientId, string $userId)
     {
         $options = [
