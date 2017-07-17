@@ -7,7 +7,6 @@ use Trace;
 use App\Services;
 use Razorpay\OAuth;
 
-use App\Models\Auth;
 use App\Error\ErrorCode;
 use App\Constants\TraceCode;
 use App\Exception\BadRequestException;
@@ -64,6 +63,12 @@ class Service
 
         $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
 
+        // TODO: Enqueue this request after checking response times
+        if ($data['authorize'] === true)
+        {
+            $this->notifyMerchantApplicationAuthorized($queryParamsArray['client_id'], $data['user_id']);
+        }
+
         return $authCode->getHeaders()['Location'][0];
     }
 
@@ -83,7 +88,7 @@ class Service
 
     protected function getDashboardService()
     {
-        $dashboardMock = env('DASHBOARD_MOCK', false);
+        $dashboardMock = env('APP_DASHBOARD_MOCK', false);
 
         if ($dashboardMock === true)
         {
@@ -129,5 +134,19 @@ class Service
         }
 
         return $scopesArray;
+    }
+
+    protected function notifyMerchantApplicationAuthorized(string $clientId, string $userId)
+    {
+        $apiMock = env('APP_API_MOCK', false);
+
+        if ($apiMock === true)
+        {
+            return;
+        }
+
+        $apiService = new Services\Api($this->app);
+
+        $apiService->notifyMerchant($clientId, $userId);
     }
 }
