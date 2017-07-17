@@ -64,6 +64,7 @@ class Service
 
         $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
 
+        // TODO: Enqueue this request after checking response times
         if ($data['authorize'] === true)
         {
             $this->notifyMerchantApplicationAuthorized($queryParamsArray['client_id'], $data['user_id']);

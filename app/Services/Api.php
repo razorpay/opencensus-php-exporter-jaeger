@@ -9,7 +9,7 @@ class Api
     public function notifyMerchant(string $clientId, string $userId)
     {
         $options = [
-            'auth' => ['rzp_test', env('APP_API_SECRET')]
+            'auth' => ['rzp_live', env('APP_API_SECRET')]
         ];
 
         $data = ['client_id' => $clientId, 'user_id' => $userId];
