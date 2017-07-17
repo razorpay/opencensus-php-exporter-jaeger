@@ -7,7 +7,6 @@ use Trace;
 use App\Services;
 use Razorpay\OAuth;
 
-use App\Models\Auth;
 use App\Error\ErrorCode;
 use App\Constants\TraceCode;
 use App\Exception\BadRequestException;
@@ -146,13 +145,8 @@ class Service
             return;
         }
 
-        $api = $this->getApiService();
+        $apiService = new Services\Api($this->app);
 
-        return $api->notifyMerchant($clientId, $userId);
-    }
-
-    protected function getApiService()
-    {
-        return new Services\Api($this->app);
+        $apiService->notifyMerchant($clientId, $userId);
     }
 }
