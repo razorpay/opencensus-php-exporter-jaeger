@@ -9,7 +9,7 @@ use App\Constants\TraceCode;
 
 class Api
 {
-    public function notifyMerchant(string $clientId, string $userId, string $type = 'authorize')
+    public function notifyMerchant(string $clientId, string $userId, string $type = 'app_authorized')
     {
         $options = [
             'auth' => ['rzp_live', env('APP_API_SECRET', '')]
