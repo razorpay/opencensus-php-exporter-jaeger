@@ -24,6 +24,29 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
+    public function getStatus()
+    {
+        try
+        {
+            if (app('db')->connection('auth')->getPdo())
+            {
+                $response = [
+                    'DB' => 'Ok',
+                ];
+
+                return response()->json($response);
+            }
+        }
+        catch (\Throwable $t)
+        {
+            $response = [
+                'error' => 'DB error',
+            ];
+
+            return response()->json($response, 500);
+        }
+    }
+
     public function getAuthorize()
     {
         $input = Request::all();
@@ -69,13 +92,6 @@ class AuthController extends Controller
         $input = Request::all();
 
         $response = $this->authService->generateAccessToken($input);
-
-        return response()->json($response);
-    }
-
-    public function getTokenData($token)
-    {
-        $response = (new Auth\Service)->getTokenData($token);
 
         return response()->json($response);
     }
