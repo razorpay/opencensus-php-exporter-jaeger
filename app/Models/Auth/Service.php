@@ -66,7 +66,7 @@ class Service
         // TODO: Enqueue this request after checking response times
         if ($data['authorize'] === true)
         {
-            $this->notifyMerchantApplicationAuthorized($queryParamsArray['client_id'], $data['user_id']);
+            $this->notifyMerchantApplicationAuthorized($queryParamsArray['client_id'], $data['user_id'], $data['merchant_id']);
         }
 
         return $authCode->getHeaders()['Location'][0];
@@ -136,7 +136,7 @@ class Service
         return $scopesArray;
     }
 
-    protected function notifyMerchantApplicationAuthorized(string $clientId, string $userId)
+    protected function notifyMerchantApplicationAuthorized(string $clientId, string $userId, string $merchantId)
     {
         $apiMock = env('APP_API_MOCK', false);
 
@@ -147,6 +147,6 @@ class Service
 
         $apiService = new Services\Api($this->app);
 
-        $apiService->notifyMerchant($clientId, $userId);
+        $apiService->notifyMerchant($clientId, $userId, $merchantId);
     }
 }
