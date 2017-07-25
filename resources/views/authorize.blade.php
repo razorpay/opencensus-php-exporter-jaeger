@@ -41,24 +41,30 @@
             background-position-x: 20px;
         }
         .content-hero {
-            padding: 24px 0;
+            overflow: auto;
+            padding: 24px 0 0;
             border-bottom: 1px #eee solid;
         }
+        .content-hero > div {
+            margin-bottom: 24px;
+        }
         .hero-description {
-            width: calc(100% - 170px);
+            width: 400px;
             font-size: 24px;
             line-height: 36px;
-            display: inline-block;
+            float: left;
+        }
+        .app-logos {
+            font-size: 0;
+            text-align: right;
         }
         @media (max-width: 600px) {
             .hero-description {
                 width: auto;
             }
-        }
-        .app-logos {
-            float: right;
-            font-size: 0;
-            text-align: right;
+            .app-logos {
+                text-align: left;
+            }
         }
         .app-logo {
             display: inline-block;
@@ -67,13 +73,6 @@
             width: 72px;
             border-radius: 4px;
             border: 1px #eee solid;
-        }
-        @media (max-width: 600px) {
-            .app-logos {
-                float: none;
-                text-align: left;
-                margin-top: 20px;
-            }
         }
         .app-logo + .app-logo {
             margin-left: 8px;
