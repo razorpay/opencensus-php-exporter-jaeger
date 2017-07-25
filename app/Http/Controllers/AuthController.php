@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Trace;
-use Redirect;
 use Request;
+
 use App\Models\Auth;
-use App\Constants\TraceCode;
+use App\Exception\BadRequestException;
+use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
 
 class AuthController extends Controller
 {
@@ -51,22 +51,40 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
-        $input['dash_url'] = env('APP_DASHBOARD_URL');
+        try
+        {
+            $data = $this->authService->getAuthorizeViewData($input);
 
-        Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, $input);
+            $data['query_params'] = request()->getQueryString();
 
-        return view('authorize')->with('input', $input);
+            return view('authorize')->with('data', $data);
+        }
+        catch (\Throwable $e)
+        {
+            return $this->renderAuthorizeError($e);
+        }
     }
 
     public function postAuthorize()
     {
         $input = Request::all();
 
-        $input['user'] = json_decode($input['user'], true);
+        $input['permission'] = true;
 
         $authCode = $this->authService->postAuthCode($input);
 
-        return response()->json($authCode);
+        return response()->redirectTo($authCode);
+    }
+
+    public function deleteAuthorize()
+    {
+        $input = Request::all();
+
+        $input['permission'] = false;
+
+        $authCode = $this->authService->postAuthCode($input);
+
+        return response()->redirectTo($authCode);
     }
 
     public function postAccessToken()
@@ -78,11 +96,27 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
-    public function getTokenData($token)
+    protected function renderAuthorizeError(\Throwable $e)
     {
-        $response = (new Auth\Service)->getTokenData($token);
+        $message = 'A server error occurred while serving this request';
 
-        return response()->json($response);
+        //
+        // If the exception is an instance of the following,
+        // the exception message is public!
+        // For all other exceptions, we send a generic error message
+        //
+        if (($e instanceof BadRequestException) or
+            ($e instanceof OAuthBadRequestException))
+        {
+            $message = $e->getMessage();
+        }
+
+        $error = [
+            'message' => $message
+        ];
+
+        // TODO: Think of displaying the request_id on the error page. Will help resolving issues.
+        return view('authorize_error')->with('error', $error);
     }
 }
 

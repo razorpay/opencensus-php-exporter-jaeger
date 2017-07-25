@@ -31,24 +31,44 @@ class OAuthTest extends TestCase
 
         $application = factory(Application\Entity::class)->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'dev']);
+        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
 
-        $prodClient = factory(Client\Entity::class)->create(
+        $devClient = factory(Client\Entity::class)->create(
             [
+                'id'    => '30000000000000',
                 'application_id' => $application->id,
                 'redirect_url' => ['https://www.example.com'],
-                'environment' => 'prod'
+                'environment' => 'dev'
             ]);
 
-        $data['request']['content']['client_id'] = $prodClient->id;
+        $data['request']['content']['client_id'] = $devClient->id;
 
         $content = $this->sendRequest($data['request']);
 
         $content = urldecode($content->getContent());
 
-        $this->assertStringStartsWith('"https:', $content);
+        $this->assertContains('http://localhost?code=', $content);
+    }
 
-        $this->assertContains('code=', $content);
+    public function testPostAuthCodeWithWrongResponseType()
+    {
+        $data = & $this->testData[__FUNCTION__];
+
+        $application = factory(Application\Entity::class)->create();
+
+        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
+
+        $devClient = factory(Client\Entity::class)->create(
+            [
+                'id'    => '30000000000000',
+                'application_id' => $application->id,
+                'redirect_url' => ['https://www.example.com'],
+                'environment' => 'dev'
+            ]);
+
+        $data['request']['content']['client_id'] = $devClient->id;
+
+        $content = $this->startTest();
     }
 
     public function testPostAuthCodeWithReject()
@@ -57,16 +77,17 @@ class OAuthTest extends TestCase
 
         $application = factory(Application\Entity::class)->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'dev']);
+        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
 
-        $prodClient = factory(Client\Entity::class)->create(
+        $devClient = factory(Client\Entity::class)->create(
             [
+                'id'    => '30000000000000',
                 'application_id' => $application->id,
                 'redirect_url' => ['https://www.example.com'],
-                'environment' => 'prod'
+                'environment' => 'dev'
             ]);
 
-        $data['request']['content']['client_id'] = $prodClient->id;
+        $data['request']['content']['client_id'] = $devClient->id;
 
         $content = $this->startTest();
     }
@@ -79,11 +100,11 @@ class OAuthTest extends TestCase
 
         $data = & $this->testData[__FUNCTION__];
 
-        $client = $this->prodClient;
+        $client = $this->devClient;
 
         $data['request']['content']['client_id'] = $client->id;
 
-        $data['request']['content']['client_secret'] = $client->getDecryptedSecret();
+        $data['request']['content']['client_secret'] = $client->getSecret();
 
         $data['request']['content']['code'] = $authCode;
 
@@ -104,7 +125,7 @@ class OAuthTest extends TestCase
 
         $data = & $this->testData[__FUNCTION__];
 
-        $client = $this->prodClient;
+        $client = $this->devClient;
 
         $content = $data['request']['content'];
 
@@ -112,7 +133,7 @@ class OAuthTest extends TestCase
 
         $content['client_id'] = $client->id;
 
-        $content['client_secret'] = $client->getDecryptedSecret();
+        $content['client_secret'] = $client->getSecret();
 
         $data['request']['content'] = $content;
 
@@ -127,13 +148,13 @@ class OAuthTest extends TestCase
 
         $data = & $this->testData[__FUNCTION__];
 
-        $client = $this->prodClient;
+        $client = $this->devClient;
 
         $content = $data['request']['content'];
 
         $content['client_id'] = $client->id;
 
-        $content['client_secret'] = $client->getDecryptedSecret();
+        $content['client_secret'] = $client->getSecret();
 
         $data['request']['content'] = $content;
 
@@ -148,7 +169,7 @@ class OAuthTest extends TestCase
 
         $data = & $this->testData[__FUNCTION__];
 
-        $client = $this->prodClient;
+        $client = $this->devClient;
 
         $content = $data['request']['content'];
 
@@ -171,7 +192,7 @@ class OAuthTest extends TestCase
 
         $data = & $this->testData[__FUNCTION__];
 
-        $client = $this->prodClient;
+        $client = $this->devClient;
 
         $content = $data['request']['content'];
 
@@ -179,20 +200,10 @@ class OAuthTest extends TestCase
 
         $content['client_id'] = 'clientId';
 
-        $content['client_secret'] = $client->getDecryptedSecret();
+        $content['client_secret'] = $client->getSecret();
 
         $data['request']['content'] = $content;
 
-        $this->startTest();
-    }
-
-    public function testGetTokenData()
-    {
-        $this->startTest();
-    }
-
-    public function testGetTokenDataWithInvalidToken()
-    {
         $this->startTest();
     }
 
@@ -205,18 +216,19 @@ class OAuthTest extends TestCase
     {
         $this->application = factory(Application\Entity::class)->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $this->application->id, 'environment' => 'dev']);
+        factory(Client\Entity::class)->create(['application_id' => $this->application->id, 'environment' => 'prod']);
 
-        $this->prodClient = factory(Client\Entity::class)->create(
+        $this->devClient = factory(Client\Entity::class)->create(
             [
+                'id' => '30000000000000',
                 'application_id' => $this->application->id,
                 'redirect_url' => ['https://www.example.com'],
-                'environment' => 'prod'
+                'environment' => 'dev'
             ]);
 
         $data = $this->testData['testPostAuthCode'];
 
-        $data['request']['content']['client_id'] = $this->prodClient->id;
+        $data['request']['content']['client_id'] = $this->devClient->id;
 
         $content = ($this->sendRequest($data['request']))->getContent();
 
@@ -224,6 +236,8 @@ class OAuthTest extends TestCase
 
         $pos = strpos($content, 'code=');
 
-        return substr($content, $pos + 5);
+        $end = strpos($content, '" />', $pos);
+
+        return substr($content, $pos + 5, $end - $pos - 5);
     }
 }
