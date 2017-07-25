@@ -5,34 +5,34 @@ return [
         'request' => [
             'method'  => 'POST',
             'url'     => '/authorize',
-            'content' => ['response_type' => 'code',
-                          'redirect_uri' => 'https://www.example.com',
-                          'scope'        => 'read_only',
-                          'user'         => json_encode(['authorize' => true,
-                                              'name'  => 'test',
-                                              'email' => 'test@razorpay.com',
-                                              'id'    => 'jfme94j9fr1234'
-                                             ])
-                         ]
+            'content' => ['token'         => 'success']
         ],
         'response' => [
             'content' => [],
         ]
     ],
 
-    'testPostAuthCodeWithReject' => [
+    'testPostAuthCodeWithWrongResponseType' => [
         'request' => [
             'method'  => 'POST',
             'url'     => '/authorize',
-            'content' => ['response_type' => 'code',
-                          'redirect_uri' => 'https://www.example.com',
-                          'scope'        => 'read_only',
-                          'user'         => json_encode(['authorize' => false,
-                                              'name'  => 'test',
-                                              'email' => 'test@razorpay.com',
-                                              'id'    => 'jfme94j9fr1234'
-                                             ])
-                         ]
+            'content' => ['token'         => 'incorrect_response_type']
+        ],
+        'response' => [
+            'content' => ['error' => 'Missing argument or incorrect value provided for response_type'],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
+            'message' => 'Missing argument or incorrect value provided for response_type',
+        ],
+    ],
+
+    'testPostAuthCodeWithReject' => [
+        'request' => [
+            'method'  => 'delete',
+            'url'     => '/authorize',
+            'content' => ['token'         => 'success']
         ],
         'response' => [
             'content' => ['error' => 'Missing argument or User denied access'],
@@ -134,10 +134,9 @@ return [
 
     'testGetTokenData' => [
         'request' => [
-            'method'  => 'GET',
-            'url'     => '/success/token_data',
             'content' => [
-                'id'          => '20000000000000',
+                'user_id'     => '20000000000000',
+                'user_email'  => 'test@razorpay.com',
                 'merchant_id' => 'merchant_id',
                 'role'        => 'owner',
                 'user'        => [
@@ -150,34 +149,35 @@ return [
                     'merchant_id'    => '10000000000000',
                     'confirmed'      => true
                 ],
+                'query_params' => 'client_id=30000000000000&amp;redirect_uri=http%3A%2F%2Flocalhost&amp;response_type=code&amp;scope=read_only'
             ],
         ],
-        'response' => [
+    ],
+
+    'testGetTokenDataWrongResponseType' => [
+        'request' => [
             'content' => [
-                'success' => true,
-                'data'    => [
-                    'id'          => '20000000000000',
-                    'merchant_id' => 'merchant_id',
-                    'role'        => 'owner',
-                    'user'        => [
-                        'id'             => '20000000000000',
-                        'name'           => 'fdfd',
-                        'email'          => 'fdsfsd@dfsd.dsfd',
-                        'contact_mobile' => '9999999999',
-                        'created_at'     => '1497678977',
-                        'updated_at'     => '1497678977',
-                        'merchant_id'    => '10000000000000',
-                        'confirmed'      => true,
-                    ],
+                'user_id'     => '20000000000000',
+                'user_email'  => 'test@razorpay.com',
+                'merchant_id' => 'merchant_id',
+                'role'        => 'owner',
+                'user'        => [
+                    'id'             => '20000000000000',
+                    'name'           => 'fdfd',
+                    'email'          => 'fdsfsd@dfsd.dsfd',
+                    'contact_mobile' => '9999999999',
+                    'created_at'     => '1497678977',
+                    'updated_at'     => '1497678977',
+                    'merchant_id'    => '10000000000000',
+                    'confirmed'      => true
                 ],
+                'query_params' => 'client_id=30000000000000&amp;redirect_uri=http%3A%2F%2Flocalhost&amp;response_type=invalid&amp;scope=read_only'
             ],
         ]
     ],
 
     'testGetTokenDataWithInvalidToken' => [
         'request' => [
-            'method'  => 'GET',
-            'url'     => '/invalid/token_data',
             'content' => ['User data not found'],
         ],
         'response' => [

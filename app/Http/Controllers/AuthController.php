@@ -24,6 +24,29 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
+    public function getStatus()
+    {
+        try
+        {
+            if (app('db')->connection('auth')->getPdo())
+            {
+                $response = [
+                    'DB' => 'Ok',
+                ];
+
+                return response()->json($response);
+            }
+        }
+        catch (\Throwable $t)
+        {
+            $response = [
+                'error' => 'DB error',
+            ];
+
+            return response()->json($response, 500);
+        }
+    }
+
     public function getAuthorize()
     {
         $input = Request::all();
@@ -36,7 +59,7 @@ class AuthController extends Controller
 
             return view('authorize')->with('data', $data);
         }
-        catch (\Exception $e)
+        catch (\Throwable $e)
         {
             return $this->renderAuthorizeError($e);
         }
@@ -45,6 +68,19 @@ class AuthController extends Controller
     public function postAuthorize()
     {
         $input = Request::all();
+
+        $input['permission'] = true;
+
+        $authCode = $this->authService->postAuthCode($input);
+
+        return response()->redirectTo($authCode);
+    }
+
+    public function deleteAuthorize()
+    {
+        $input = Request::all();
+
+        $input['permission'] = false;
 
         $authCode = $this->authService->postAuthCode($input);
 
@@ -60,16 +96,9 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
-    public function getTokenData($token)
+    protected function renderAuthorizeError(\Throwable $e)
     {
-        $response = (new Auth\Service)->getTokenData($token);
-
-        return response()->json($response);
-    }
-
-    protected function renderAuthorizeError(\Exception $e)
-    {
-        $message = 'A server error occurred while serving this connection request';
+        $message = 'A server error occurred while serving this request';
 
         //
         // If the exception is an instance of the following,

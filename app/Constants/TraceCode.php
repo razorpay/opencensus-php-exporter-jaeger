@@ -12,6 +12,7 @@ class TraceCode extends BaseTraceCode
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';
     const AUTH_ACCESS_TOKEN_FAILURE                                 = 'AUTH_ACCESS_TOKEN_FAILURE';
+    const MERCHANT_NOTIFY_FAILED                                    = 'MERCHANT_NOTIFY_FAILED';
 
     // ----- Generic Codes ----
     const MISC_TOSTRING_ERROR                                       = 'MISC_TOSTRING_ERROR';

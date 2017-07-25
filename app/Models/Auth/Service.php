@@ -7,7 +7,6 @@ use Trace;
 use App\Services;
 use Razorpay\OAuth;
 
-use App\Models\Auth;
 use App\Error\ErrorCode;
 use App\Constants\TraceCode;
 use App\Exception\BadRequestException;
@@ -32,17 +31,14 @@ class Service
     {
         Trace::debug(TraceCode::AUTH_AUTHORIZE_REQUEST, $input);
 
-        $appData = $this->validateAndGetApplicationDataForAuthorize($input);
+        // TODO: Fetching client twice from DB, in each of the following functions; fix.
+        $scopes = $this->oauthServer->validateAuthorizeRequestAndGetScopes($input);
 
-        //
-        // TODO:
-        // 1. Check scopes request in input for validity
-        // 2. Format scopes for UI
-        //
+        $appData = $this->validateAndGetApplicationDataForAuthorize($input);
 
         $authorizeData = [
             'application'   => $appData,
-            'scopes'        => [],
+            'scopes'        => $this->parseScopesForDisplay($scopes),
             'query_params'  => $input,
             'dashboard_url' => env('APP_DASHBOARD_URL')
         ];
@@ -54,11 +50,24 @@ class Service
     {
         $data = $this->resolveTokenOnDashboard($input['token']);
 
+        if ($data['role'] !== 'owner')
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
+        }
+
+        $data['authorize'] = $input['permission'];
+
         $queryParams = htmlspecialchars_decode($data['query_params']);
 
         parse_str($queryParams, $queryParamsArray);
 
         $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
+
+        // TODO: Enqueue this request after checking response times
+        if ($data['authorize'] === true)
+        {
+            $this->notifyMerchantApplicationAuthorized($queryParamsArray['client_id'], $data['user_id'], $data['merchant_id']);
+        }
 
         return $authCode->getHeaders()['Location'][0];
     }
@@ -77,9 +86,9 @@ class Service
         return $dashboard->getTokenData($token);
     }
 
-    public function getDashboardService()
+    protected function getDashboardService()
     {
-        $dashboardMock = env('DASHBOARD_MOCK', false);
+        $dashboardMock = env('APP_DASHBOARD_MOCK', false);
 
         if ($dashboardMock === true)
         {
@@ -97,7 +106,7 @@ class Service
 
         // TODO:
         // 1. Call a helper function in Client\Service instead that validates the client.type
-        // 2. Also validate the client for environment and redirect_url first
+        // 2. Also validate the client for environment
 
         if ($client === null)
         {
@@ -113,5 +122,31 @@ class Service
         ];
 
         return $data;
+    }
+
+    protected function parseScopesForDisplay($scopes)
+    {
+        $scopesArray = [];
+
+        foreach ($scopes as $scope)
+        {
+            $scopesArray[$scope['id']] = $scope['description'];
+        }
+
+        return $scopesArray;
+    }
+
+    protected function notifyMerchantApplicationAuthorized(string $clientId, string $userId, string $merchantId)
+    {
+        $apiMock = env('APP_API_MOCK', false);
+
+        if ($apiMock === true)
+        {
+            return;
+        }
+
+        $apiService = new Services\Api($this->app);
+
+        $apiService->notifyMerchant($clientId, $userId, $merchantId);
     }
 }
