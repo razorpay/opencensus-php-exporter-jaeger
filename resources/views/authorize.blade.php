@@ -39,7 +39,7 @@
             background: url(https://razorpay.com/images/logo-black.png);
             background-repeat: no-repeat;
             background-size: contain;
-            background-position-x: 20px;
+            background-position: 20px 0;
         }
         .content-hero {
             overflow: auto;
