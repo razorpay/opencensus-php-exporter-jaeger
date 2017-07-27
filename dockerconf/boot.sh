@@ -1,44 +1,44 @@
-#!/bin/bash
+#!/usr/bin/env sh
+echo "Creating Log Files"
+mkdir -p /var/log/nginx
+touch /var/log/nginx/auth.access.log
+touch /var/log/nginx/auth.error.log
 
-# wait for db to be provisioned
-sleep 30
+ALOHOMORA_BIN=$(which alohomora)
 
-# Fix permissions
-echo  "Fix permissions"
-cd /app/ && chmod 777 -R storage
+# Lumen in docker picks system environment variable from .env
+echo "APP_MODE=${APP_MODE}" > /app/.env
 
-# Copy config
-if [[ "${APP_CONTEXT}" == "dev" ]]; then
-  cp dockerconf/auth.docker.conf /etc/nginx/conf.d/auth.conf && \
+if [[ "${APP_MODE}" == "dev" ]]; then
+  cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf && \
   cp environment/.env.docker environment/.env.testing && \
   cp environment/env.sample.php environment/env.php && \
   sed -i 's/dev/testing/g' ./environment/env.php
 else
   # copy nginx config
   cp dockerconf/auth.docker.conf /etc/nginx/conf.d/auth.conf
-
-  # change log path
-  ACCESS_LOG_PATH="access_log /var/log/nginx/auth.razorpay.dev.access.log combined"
-  sed -i "s|access_log|${ACCESS_LOG_PATH}|g" /etc/nginx/conf.d/auth.conf
-
   # change domain reference
-  if [[ "${APP_CONTEXT}" != "prod" ]]; then
-    sed -i "s|auth.razorpay.dev|${APP_CONTEXT}-auth.razorpay.com|g" /etc/nginx/conf.d/auth.conf
-  elif [[ "${APP_CONTEXT}" == "prod" ]]; then
+  if [[ "${APP_MODE}" != "prod" ]]; then
+    sed -i "s|auth.razorpay.dev|${APP_MODE}-auth.razorpay.com|g" /etc/nginx/conf.d/auth.conf
+  elif [[ "${APP_MODE}" == "prod" ]]; then
     sed -i "s|auth.razorpay.dev|auth.razorpay.com|g" /etc/nginx/conf.d/auth.conf
   fi
-
-  # use alohomora to generate vault and env.php
-  # TODO: APP_CONTEXT would be an arbitrary string when deployed in k8s
-  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_CONTEXT --app $APP_NAME "environment/.env.vault.j2"
-  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_CONTEXT --app $APP_NAME "environment/env.php.j2"
+    # casting alohomora to unlock the secrets
+  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/.env.vault.j2"
+  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2"
 fi
-# DB Migrate
-echo  "DB Migrate"
-cd /app/ && php artisan migrate --force
 
-# start nginx
-mkdir /tmp/run
-chown 0775 /tmp/run/
+# Fix permissions
+echo  "Fix permissions"
+cd /app/ && chmod 777 -R storage
+
+## Start the Harvester Process
+echo "Starting Auth Service"
+
+echo "GIT_COMMIT_HASH=${GIT_COMMIT_HASH}" >> /app/.env
+
+# Start nginx
+mkdir /run/nginx
+touch /run/nginx/nginx.pid
 /usr/sbin/php-fpm7
-/usr/sbin/nginx -g 'daemon off;'
+nginx -g 'daemon off;'
