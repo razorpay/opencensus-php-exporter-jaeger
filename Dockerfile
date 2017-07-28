@@ -14,9 +14,9 @@ COPY ./dockerconf/boot.sh /boot.sh
 
 WORKDIR /app
 
-ARG GIT_TOKEN
+ARG GITHUB_TOKEN
 
-RUN composer config -g github-oauth.github.com ${GIT_TOKEN} && \
+RUN composer config -g github-oauth.github.com ${GITHUB_TOKEN} && \
     composer install --no-interaction
 
 EXPOSE 80
