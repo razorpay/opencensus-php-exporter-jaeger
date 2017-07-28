@@ -6,8 +6,6 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 COPY . /app/
 
-RUN chown -R nginx.nginx /app
-
 RUN pip install razorpay.alohomora
 
 COPY ./dockerconf/boot.sh /boot.sh
@@ -18,6 +16,8 @@ ARG GITHUB_TOKEN
 
 RUN composer config -g github-oauth.github.com ${GITHUB_TOKEN} && \
     composer install --no-interaction
+
+RUN chown -R nginx.nginx /app
 
 EXPOSE 80
 
