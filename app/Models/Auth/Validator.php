@@ -2,9 +2,8 @@
 
 namespace App\Models\Auth;
 
-use App\Base;
 
-class Validator extends Base\Validator
+class Validator 
 {
     protected static $authorizeRules = [
         'response_type' => 'required|alpha',
