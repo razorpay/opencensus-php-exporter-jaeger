@@ -4,7 +4,7 @@ namespace App\Models\Auth;
 use RZP\Base;
 
 
-class Validator  \Razorpay\Spine\Validation\Validator
+class Validator extends \Razorpay\Spine\Validation\Validator
 {
     protected static $authorizeRules = [
         'response_type' => 'required|alpha',
