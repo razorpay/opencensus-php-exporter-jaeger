@@ -129,7 +129,7 @@ class Handler extends ExceptionHandler
         return $this->recoverableErrorResponse($this->isDebug(), $exception);
     }
 
-    public function traceException(\Exception $exception, $level = null, $code = null)
+    public function traceException($exception, $level = null, $code = null)
     {
         $traceData = $this->getExceptionDetails($exception);
 
@@ -151,7 +151,7 @@ class Handler extends ExceptionHandler
         \Trace::addRecord($level, $code, $traceData);
     }
 
-    protected function getExceptionDetails(\Exception $exception, $level = 0)
+    protected function getExceptionDetails($exception, $level = 0)
     {
         $previousException = $exception->getPrevious();
 
