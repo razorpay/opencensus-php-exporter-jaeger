@@ -15,7 +15,7 @@ class Service
 {
     public function __construct()
     {
-        $this->oauthServer = new OAuth\OAuthServer();
+        $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'));
 
         $this->app = App::getFacadeRoot();
     }
