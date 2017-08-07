@@ -10,8 +10,8 @@
         "vlucas/phpdotenv": "~2.2",
         "razorpay/trace": "dev-master",
         "laravel/lumen-framework": "5.4.*",
-        "razorpay/oauth": "dev-master",
-        "razorpay/spine": "dev-laravel5.4"
+        "razorpay/spine": "dev-laravel5.4",
+        "razorpay/oauth": "dev-master"
     },
     "repositories": [
         {
@@ -41,8 +41,7 @@
     "autoload-dev": {
         "classmap": [
             "tests/",
-            "database/",
-            "vendor/razorpay/oauth/database/migrations"
+            "database/"
         ]
     },
     "scripts": {

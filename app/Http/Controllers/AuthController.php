@@ -8,7 +8,6 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use App\Models\Auth;
 use App\Exception\BadRequestException;
 use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 class AuthController extends Controller
 {
