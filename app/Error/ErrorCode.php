@@ -20,6 +20,8 @@ class ErrorCode
     const BAD_REQUEST_VALIDATION_FAILURE                                            = 'BAD_REQUEST_VALIDATION_FAILURE';
 
     const BAD_REQUEST_URL_NOT_FOUND                                                 = 'BAD_REQUEST_URL_NOT_FOUND';
+    const BAD_REQUEST_INVALID_CLIENT                                                = 'BAD_REQUEST_INVALID_CLIENT';
+    const BAD_REQUEST_ROLE_NOT_ALLOWED                                              = 'BAD_REQUEST_ROLE_NOT_ALLOWED';
 
     const SERVER_ERROR_INVALID_ARGUMENT                                             = 'SERVER_ERROR_INVALID_ARGUMENT';
     const SERVER_ERROR_DB_QUERY_FAILED                                              = 'SERVER_ERROR_DB_QUERY_FAILED';

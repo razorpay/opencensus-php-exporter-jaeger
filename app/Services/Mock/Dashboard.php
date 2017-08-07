@@ -20,6 +20,9 @@ class Dashboard
 
             case 'invalid':
                 return $this->invalidTokenResponse();
+
+            case 'incorrect_response_type':
+                return $this->invalidResponseTypeResponse();
             
             default:
                 # code...
@@ -29,13 +32,7 @@ class Dashboard
 
     public function correctResponse()
     {
-        $content = $this->testData['testGetTokenData']['request']['content'];
-
-        $data = [
-            'success' => true,
-            'data'    => $content,
-        ];
-        return $data;
+        return $this->testData['testGetTokenData']['request']['content'];
     }
 
     public function invalidTokenResponse()
@@ -47,5 +44,10 @@ class Dashboard
             'errors'    => $content,
         ];
         return $data;
+    }
+
+    public function invalidResponseTypeResponse()
+    {
+        return $this->testData['testGetTokenDataWrongResponseType']['request']['content'];
     }
 }

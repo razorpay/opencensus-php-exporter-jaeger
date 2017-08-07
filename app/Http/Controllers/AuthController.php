@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Trace;
-use Redirect;
 use Request;
+use Illuminate\Contracts\Debug\ExceptionHandler;
+
 use App\Models\Auth;
-use App\Constants\TraceCode;
+use App\Exception\BadRequestException;
+use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
 
 class AuthController extends Controller
 {
     protected $authService;
-
-    public function __construct()
-    {
-        $this->authService = new Auth\Service();
-    }
 
     public function getRoot()
     {
@@ -51,38 +47,81 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
-        $input['dash_url'] = env('APP_DASHBOARD_URL');
+        try
+        {
+            $data = $this->service()->getAuthorizeViewData($input);
 
-        Trace::info(TraceCode::AUTH_AUTHORIZE_AUTH_CODE_REQUEST, $input);
+            $data['query_params'] = request()->getQueryString();
 
-        return view('authorize')->with('input', $input);
+            return view('authorize')->with('data', $data);
+        }
+        catch (\Throwable $e)
+        {
+            app(ExceptionHandler::class)->traceException($e);
+
+            return $this->renderAuthorizeError($e);
+        }
     }
 
     public function postAuthorize()
     {
         $input = Request::all();
 
-        $input['user'] = json_decode($input['user'], true);
+        $input['permission'] = true;
 
-        $authCode = $this->authService->postAuthCode($input);
+        $authCode = $this->service()->postAuthCode($input);
 
-        return response()->json($authCode);
+        return response()->redirectTo($authCode);
+    }
+
+    public function deleteAuthorize()
+    {
+        $input = Request::all();
+
+        $input['permission'] = false;
+
+        $authCode = $this->service()->postAuthCode($input);
+
+        return response()->redirectTo($authCode);
     }
 
     public function postAccessToken()
     {
         $input = Request::all();
 
-        $response = $this->authService->generateAccessToken($input);
+        $response = $this->service()->generateAccessToken($input);
 
         return response()->json($response);
     }
 
-    public function getTokenData($token)
+    protected function renderAuthorizeError(\Throwable $e)
     {
-        $response = (new Auth\Service)->getTokenData($token);
+        $message = 'A server error occurred while serving this request.';
 
-        return response()->json($response);
+        //
+        // For local dev, print all errors
+        // For beta/prod, If the exception is an instance of the following,
+        // the exception message is public!
+        // For all other exceptions, we send a generic error message
+        //
+        if ((env('APP_DEBUG') === true) or
+            (($e instanceof BadRequestException) or
+            ($e instanceof OAuthBadRequestException)))
+        {
+            $message = $e->getMessage();
+        }
+
+        $error = [
+            'message' => $message
+        ];
+
+        // TODO: Think of displaying the request_id on the error page. Will help resolving issues.
+        return view('authorize_error')->with('error', $error);
+    }
+
+    protected function service()
+    {
+        return new Auth\Service();
     }
 }
 

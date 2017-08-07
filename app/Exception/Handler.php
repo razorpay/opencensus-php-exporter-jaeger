@@ -9,6 +9,8 @@ use App\Error\Error;
 use App\Error\ErrorCode;
 use Psr\Log\LoggerInterface;
 use App\Constants\TraceCode;
+use App\Exception\BaseException;
+use App\Exception\BadRequestException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -16,9 +18,10 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
-use Razorpay\OAuth\Exception\BadRequestException as BadRequestException;
-use Razorpay\OAuth\Exception\BaseException as BaseException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+
+use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
+use Razorpay\OAuth\Exception\BaseException as OAuthBaseException;
 
 class Handler extends ExceptionHandler
 {
@@ -65,6 +68,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, \Exception $e)
     {
+        if ($e instanceOf OAuthBaseException)
+        {
+            return $this->renderOAuthException($request, $e);
+        }
+
         switch (true)
         {
             case $e instanceOf NotFoundHttpException:
@@ -108,7 +116,7 @@ class Handler extends ExceptionHandler
         return $this->generateServerErrorResponse($this->isDebug(), $exception);
     }
 
-    protected function baseExceptionHandler(BaseException $exception)
+    protected function baseExceptionHandler(\Exception $exception)
     {
         // ServerError is fatal error and shoudn't be encountered
         // Let the higher-ups handle it. This function handles
@@ -116,14 +124,12 @@ class Handler extends ExceptionHandler
         if ($exception instanceof ServerErrorException)
             return;
 
-        \Trace::warn(
-            TraceCode::RECOVERABLE_EXCEPTION,
-            $this->getExceptionDetails($exception));
+        $this->traceException($exception, Trace::WARNING, TraceCode::RECOVERABLE_EXCEPTION);
 
         return $this->recoverableErrorResponse($this->isDebug(), $exception);
     }
 
-    public function traceException(\Exception $exception, $level = null, $code = null)
+    public function traceException(\Throwable $exception, $level = null, $code = null)
     {
         $traceData = $this->getExceptionDetails($exception);
 
@@ -145,7 +151,7 @@ class Handler extends ExceptionHandler
         \Trace::addRecord($level, $code, $traceData);
     }
 
-    protected function getExceptionDetails(\Exception $exception, $level = 0)
+    protected function getExceptionDetails(\Throwable $exception, $level = 0)
     {
         $previousException = $exception->getPrevious();
 
@@ -205,9 +211,7 @@ class Handler extends ExceptionHandler
             return false;
         }
 
-        \Trace::warn(
-            TraceCode::MISC_TOSTRING_ERROR,
-            $this->getExceptionDetails($exception));
+        $this->traceException($exception, Trace::WARNING, TraceCode::MISC_TOSTRING_ERROR);
 
         return true;
     }
@@ -268,9 +272,11 @@ class Handler extends ExceptionHandler
     {
         $this->ifTestingThenRethrowException($exception);
 
-        $httpStatusCode = $exception->getHttpStatusCode();
+        $error = $exception->getError();
 
-        $data = $debug ? $exception->toDebugArray() : $exception->toPublicArray();
+        $httpStatusCode = $error->getHttpStatusCode();
+
+        $data = $debug ? $error->toDebugArray() : $error->toPublicArray();
 
         return response()->json($data, $httpStatusCode);
     }
@@ -301,7 +307,7 @@ class Handler extends ExceptionHandler
 
     protected function ifTestingThenRethrowException($e)
     {
-        if ($this->isTesting())
+        if ($this->isTesting() === true)
         {
             throw $e;
         }
@@ -314,6 +320,78 @@ class Handler extends ExceptionHandler
 
     protected function isDebug()
     {
-        return config('app.debug');
+        return env('APP_DEBUG');
+    }
+
+    public function renderOAuthException($request, \Exception $e)
+    {
+        switch (true)
+        {
+            case $e instanceof OAuthBaseException:
+            case $e instanceof OAuthRecoverableException:
+                return $this->oauthRecoverableErrorResponse($this->isDebug(), $e);
+        }
+
+        return $this->oauthGenericExceptionHandler($e);
+    }
+
+    public function oauthRecoverableErrorResponse(bool $debug, \Exception $exception = null)
+    {
+        $this->traceException($exception, Trace::WARNING, TraceCode::RECOVERABLE_EXCEPTION);
+
+        $this->ifTestingThenRethrowException($exception);
+
+        $httpStatusCode = $exception->getHttpStatusCode();
+
+        $data = $debug ? $exception->toDebugArray() : $exception->toPublicArray();
+
+        return response()->json($data, $httpStatusCode);
+    }
+
+    protected function oauthGenericExceptionHandler(\Exception $exception)
+    {
+        if ($this->isToStringException($exception))
+        {
+            return $this->oauthToStringExceptionResponse($this->isDebug(), $exception);
+        }
+
+        $this->traceException($exception);
+
+        //
+        // When running in console, throw the exception, irrespective
+        // of debug config
+        //
+        $this->ifTestingThenRethrowException($exception);
+
+        return $this->oauthGenerateServerErrorResponse($this->isDebug(), $exception);
+    }
+
+    public function oauthToStringExceptionResponse(bool $debug, \Exception $exception)
+    {
+        $publicError = $exception->toPublicArray();
+
+        $httpStatusCode = $exception->getHttpStatusCode();
+
+        return response()->json($publicError, $httpStatusCode);
+    }
+
+    protected function oauthGenerateServerErrorResponse(bool $debug, \Exception $exception)
+    {
+        $publicError = $exception->toPublicArray();
+
+        $httpStatusCode = $exception->getHttpStatusCode();
+
+        if (($debug) and
+            ($exception !== null))
+        {
+            $publicError['exception'] = $this->getExceptionData($exception);
+
+            if (method_exists($exception, 'getData') === true)
+            {
+                $publicError['data'] = $exception->getData();
+            }
+        }
+
+        return response()->json($publicError, $httpStatusCode);
     }
 }
