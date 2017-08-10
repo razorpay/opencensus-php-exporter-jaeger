@@ -19,7 +19,11 @@ return [
             'content' => ['token'         => 'incorrect_response_type']
         ],
         'response' => [
-            'content' => ['error' => 'Missing argument or incorrect value provided for response_type'],
+            'content' => [
+                'error' => [
+                    'description' => 'Missing argument or incorrect value provided for response_type'
+                ],
+            ],
             'status_code' => 400
         ],
         'exception' => [
@@ -35,7 +39,11 @@ return [
             'content' => ['token'         => 'success']
         ],
         'response' => [
-            'content' => ['error' => 'Missing argument or User denied access'],
+            'content' => [
+                'error' => [
+                    'description' => 'Missing argument or User denied access'
+                ],
+            ],
             'status_code' => 401
         ],
         'exception' => [
@@ -69,7 +77,11 @@ return [
                          ]
         ],
         'response' => [
-            'content' => ['error' => 'Missing argument or incorrect value provided for response_type'],
+            'content' => [
+                'error' => [
+                    'description' => 'Missing argument or incorrect value provided for response_type'
+                ],
+            ],
             'status_code' => 400
         ],
         'exception' => [
@@ -87,7 +99,11 @@ return [
                          ]
         ],
         'response' => [
-            'content' => ['error' => 'Invalid request, please check for missing arguments or incorrect values or arguments repeating.'],
+            'content' => [
+                'error' => [
+                    'description' => 'Invalid request, please check for missing arguments or incorrect values or arguments repeating.'
+                ],
+            ],
             'status_code' => 400
         ],
         'exception' => [
@@ -105,7 +121,11 @@ return [
                          ]
         ],
         'response' => [
-            'content' => ['error' => 'Access denied'],
+            'content' => [
+                'error' => [
+                    'description' => 'Access denied'
+                ],
+            ],
             'status_code' => 401
         ],
         'exception' => [
@@ -123,7 +143,11 @@ return [
                          ]
         ],
         'response' => [
-            'content' => ['error' => 'No records found with the given Id'],
+            'content' => [
+                'error' => [
+                    'description' => 'No records found with the given Id'
+                ],
+            ],
             'status_code' => 400
         ],
         'exception' => [

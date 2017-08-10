@@ -198,7 +198,6 @@ class Error extends Fluent
         $array = array(
             self::PUBLIC_ERROR_CODE     => $this->getPublicErrorCode(),
             self::DESCRIPTION           => $this->getDescription(),
-            self::INTERNAL_ERROR_CODE   => $this->getInternalErrorCode()
         );
 
         $field = $this->getAttribute(self::FIELD);

@@ -5,6 +5,8 @@ namespace App\Tests\Concerns;
 use Closure;
 use Requests;
 
+use Razorpay\Spine\Exception\ValidationFailureException as SpineException;
+
 trait RequestResponseFlowTrait
 {
     // use EntityFetchTrait;
@@ -46,6 +48,13 @@ trait RequestResponseFlowTrait
 
     protected function generatePublicJsonResponse(\Exception $ex)
     {
+        if ($ex instanceOf SpineException)
+        {
+            $data = ['error' => ['description' => $ex->getMessage()]];
+
+            return response()->json($data, 500);
+        }
+
         $httpStatusCode = $ex->getHttpStatusCode();
 
         return response()->json($ex->toPublicArray(), $httpStatusCode);
@@ -61,7 +70,7 @@ trait RequestResponseFlowTrait
 
     public function processAndAssertException($actual, $expected)
     {
-        $class = (isset($expected['class'])) ? $expected['class'] : 'Raven\Exception\RecoverableException';
+        $class = (isset($expected['class'])) ? $expected['class'] : 'App\Exception\RecoverableException';
         $this->assertExceptionClass($actual, $class);
         $internalError = $actual->getMessage();
         $this->assertErrorMessageEquals($expected['message'], $internalError);
@@ -111,9 +120,10 @@ trait RequestResponseFlowTrait
             'files' => array());
 
         $request = array_merge($defaults, $request);
-        // $request['server'] = array_merge($request['server'], $this->ba->getCreds());
 
+        $creds = $this->getCreds() ?? [];
 
+        $request['server'] = array_merge($request['server'], $creds);
 
         $this->convertContentToString($request['content']);
 

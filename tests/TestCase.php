@@ -26,6 +26,20 @@ class TestCase extends LumenTestCase
     protected $testData;
 
     /**
+     * The auth params set for the test
+     *
+     * @var array
+     */
+    protected $auth;
+
+    /**
+     * The type of auth set.
+     *
+     * @var bool
+     */
+    protected $authType;
+
+    /**
      * @var string|null
      */
     protected $testDataFilePath = null;
@@ -66,7 +80,7 @@ class TestCase extends LumenTestCase
         $this->testData = $testData;
     }
 
-    protected function startTest($testDataToReplace = [])
+    protected function startTest(array $testDataToReplace = [])
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         $name = $trace[1]['function'];
@@ -85,5 +99,20 @@ class TestCase extends LumenTestCase
     public function tearDown()
     {
         parent::tearDown();
+    }
+
+    protected function setInternalAuth(string $username, string $pwd)
+    {
+        $this->auth = [
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW'   => $pwd
+        ];
+
+        $this->authType = 'internal';
+    }
+
+    public function getCreds(): array
+    {
+        return $this->auth ?? [];
     }
 }
