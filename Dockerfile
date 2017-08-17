@@ -6,8 +6,6 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 COPY . /app/
 
-RUN pip install razorpay.alohomora
-
 COPY ./dockerconf/boot.sh /boot.sh
 
 WORKDIR /app
