@@ -9,6 +9,8 @@ use Razorpay\OAuth;
 
 use App\Error\ErrorCode;
 use App\Constants\TraceCode;
+use App\Constants\RequestParams;
+use App\Models\Base\JitValidator;
 use App\Exception\BadRequestException;
 
 class Service
@@ -30,6 +32,8 @@ class Service
     public function getAuthorizeViewData(array $input): array
     {
         Trace::debug(TraceCode::AUTH_AUTHORIZE_REQUEST, $input);
+
+        $this->validateAuthorizeRequest($input);
 
         // TODO: Fetching client twice from DB, in each of the following functions; fix.
         $scopes = $this->oauthServer->validateAuthorizeRequestAndGetScopes($input);
@@ -148,5 +152,18 @@ class Service
         $apiService = new Services\Api($this->app);
 
         $apiService->notifyMerchant($clientId, $userId, $merchantId);
+    }
+
+    protected function validateAuthorizeRequest(array $input)
+    {
+        $rules = [
+            RequestParams::STATE        => 'required|string',
+            RequestParams::REDIRECT_URI => 'required|url'
+        ];
+
+        (new JitValidator)->rules($rules)
+                          ->input($input)
+                          ->strict(false)
+                          ->validate();
     }
 }
