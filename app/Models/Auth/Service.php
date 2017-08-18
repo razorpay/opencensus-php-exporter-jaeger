@@ -3,13 +3,13 @@
 namespace App\Models\Auth;
 
 use App;
-use App\Constants\RequestParams;
 use Trace;
 use App\Services;
 use Razorpay\OAuth;
 
 use App\Error\ErrorCode;
 use App\Constants\TraceCode;
+use App\Constants\RequestParams;
 use App\Models\Base\JitValidator;
 use App\Exception\BadRequestException;
 
