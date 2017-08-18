@@ -10,22 +10,16 @@ ALOHOMORA_BIN=$(which alohomora)
 echo "APP_MODE=${APP_MODE}" > /app/.env
 
 if [[ "${APP_MODE}" == "dev" ]]; then
-  cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf && \
+  cp dockerconf/auth.dev.nginx.conf /etc/nginx/conf.d/auth.conf && \
   cp environment/.env.docker environment/.env.testing && \
   cp environment/env.sample.php environment/env.php && \
   sed -i 's/dev/testing/g' ./environment/env.php
 else
-  # copy nginx config
-  cp dockerconf/auth.docker.conf /etc/nginx/conf.d/auth.conf
-  # change domain reference
-  if [[ "${APP_MODE}" != "prod" ]]; then
-    sed -i "s|auth.razorpay.dev|${APP_MODE}-auth.razorpay.com|g" /etc/nginx/conf.d/auth.conf
-  elif [[ "${APP_MODE}" == "prod" ]]; then
-    sed -i "s|auth.razorpay.dev|auth.razorpay.com|g" /etc/nginx/conf.d/auth.conf
-  fi
     # casting alohomora to unlock the secrets
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/.env.vault.j2"
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2"
+  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/auth.nginx.conf.j2"
+  cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
 fi
 
 # Fix permissions
