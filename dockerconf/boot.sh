@@ -31,7 +31,7 @@ echo "Starting Auth Service"
 
 echo "GIT_COMMIT_HASH=${GIT_COMMIT_HASH}" >> /app/.env
 
-# Start nginx
+# Start nginx. The PID file is created since nginx does not start without it
 mkdir /run/nginx
 touch /run/nginx/nginx.pid
 /usr/sbin/php-fpm7
