@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Factory as Auth;
 
 class ApiAuth {
     /**
@@ -18,7 +17,7 @@ class ApiAuth {
         if (($request->header('PHP_AUTH_USER', false) !== 'rzp') or
             ($request->header('PHP_AUTH_PW') !== env('APP_API_SECRET')))
         {
-            return response('Unauthorized.', 401);
+            return response(['error' => 'Unauthorized'], 401);
         }
 
         return $next($request);
