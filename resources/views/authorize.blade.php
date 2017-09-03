@@ -154,11 +154,11 @@
     <div class="inner-content">
         <div class="content-hero">
           <div class="hero-description">
-            Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis">Nestaway</span> account on Razorpay?
+            Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis merchant_name"></span> account on Razorpay?
           </div>
 
           <div class="app-logos">
-            <div class="logo-1 app-logo"></div>
+            <div class="logo-1 app-logo" src="{{$data['application']['logo']}}"></div>
             <div class="logo-2 app-logo"></div>
           </div>
         </div>
@@ -201,7 +201,9 @@
             buttons: $('.btn'),
             token: $('.verify_token'),
             error_pane: $('.error-container'),
-            page_container: $('.inner-content')
+            page_container: $('.inner-content'),
+            merchant_logo: $('.logo-2'),
+            merchant_name: $('.merchant_name')
         };
 
         var errorHtml = {
@@ -234,10 +236,14 @@
 
             verifyToken = data.token;
             elements.user_email.text(data.email);
+            var cdnName = window.location.hostname.indexOf('-') !== -1 ? 'betacdn' : 'cdn';
+            logoUrl = 'https://' + cdnName + '.razorpay.com' + data.logo.replace(/\.([^\.]+$)/, '_original.$1');
+            elements.merchant_logo.attr('src', logoUrl);
+            elements.merchant_name.text(data.merchant_name);
             elements.token.attr('value', verifyToken);
 
             enableButtonsAndShowEmail();
-        };
+        }
 
         function getUser() {
             var userUrl = dashboardUrl + '/user/session';
@@ -255,6 +261,7 @@
 
                 if (status === 200) {
                     if (res.success === true) {
+
                         if (res.data.role === 'owner') {
                             handleUserSuccess(res.data);
                         } else {
