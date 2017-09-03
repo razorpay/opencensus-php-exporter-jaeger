@@ -154,12 +154,12 @@
     <div class="inner-content">
         <div class="content-hero">
           <div class="hero-description">
-            Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis merchant_name"></span> account on Razorpay?
+            Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?
           </div>
 
           <div class="app-logos">
-            <div class="logo-1 app-logo" src="{{$data['application']['logo']}}"></div>
-            <div class="logo-2 app-logo"></div>
+            <div class="app-logo" src="{{$data['application']['logo']}}"></div>
+            <div class="merchant-logo app-logo"></div>
           </div>
         </div>
 
@@ -202,8 +202,8 @@
             token: $('.verify_token'),
             error_pane: $('.error-container'),
             page_container: $('.inner-content'),
-            merchant_logo: $('.logo-2'),
-            merchant_name: $('.merchant_name')
+            merchant_logo: $('.merchant-logo'),
+            merchant_name: $('.merchant-name')
         };
 
         var errorHtml = {
@@ -237,7 +237,9 @@
             verifyToken = data.token;
             elements.user_email.text(data.email);
             var cdnName = window.location.hostname.indexOf('-') !== -1 ? 'betacdn' : 'cdn';
-            logoUrl = 'https://' + cdnName + '.razorpay.com' + data.logo.replace(/\.([^\.]+$)/, '_original.$1');
+            // Constructing the cdn url for logo. We save multiple sizes of logo, using medium here
+            // by adding the `_medium` after the id.
+            logoUrl = 'https://' + cdnName + '.razorpay.com' + data.logo.replace(/\.([^\.]+$)/, '_medium.$1');
             elements.merchant_logo.attr('src', logoUrl);
             elements.merchant_name.text(data.merchant_name);
             elements.token.attr('value', verifyToken);
@@ -261,7 +263,6 @@
 
                 if (status === 200) {
                     if (res.success === true) {
-
                         if (res.data.role === 'owner') {
                             handleUserSuccess(res.data);
                         } else {

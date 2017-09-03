@@ -53,16 +53,6 @@ class AuthController extends Controller
 
             $data['query_params'] = request()->getQueryString();
 
-            if (empty($data['application']['logo']) === false)
-            {
-                $cdnName = env('APP_ENV') === 'prod' ? 'cdn' : 'betacdn';
-
-                $logoUrl = 'https://' . $cdnName . '.razorpay.com' .
-                    preg_replace('/\.([^\.]+$)/', '_original.$1', $data['application']['logo']);
-
-                $data['application']['logo'] = $logoUrl;
-            }
-
             return view('authorize')->with('data', $data);
         }
         catch (\Throwable $e)
