@@ -236,11 +236,7 @@
 
             verifyToken = data.token;
             elements.user_email.text(data.email);
-            var cdnName = window.location.hostname.indexOf('-') !== -1 ? 'betacdn' : 'cdn';
-            // Constructing the cdn url for logo. We save multiple sizes of logo, using medium here
-            // by adding the `_medium` after the id.
-            logoUrl = 'https://' + cdnName + '.razorpay.com' + data.logo.replace(/\.([^\.]+$)/, '_medium.$1');
-            elements.merchant_logo.attr('src', logoUrl);
+            elements.merchant_logo.attr('src', data.logo);
             elements.merchant_name.text(data.merchant_name);
             elements.token.attr('value', verifyToken);
 
