@@ -164,16 +164,14 @@
         </div>
 
         <div class="main-content">
-          <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to:</strong></p>
-          <ul>
-            <li>Read all your live transaction data from dashboard</li>
-            <li>Create live orders, transactions, refunds and all other entities</li>
-          </ul>
-          <p class="emphasis"><strong>The application will not be able to:</strong></p>
-          <ul>
-            <li>Access or change your API keys</li>
-            <li>Access your organization's private details</li>
-            <li>Update your account settings</li>
+          <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to take following actions:</strong></p>
+          <ul id="scopes">
+              @if($data['scopes'])
+                  @foreach($data['scopes'] as $item)
+                      <li> {{$item}}</li>
+                  @endforeach
+              @endif
+
           </ul>
         </div>
 
