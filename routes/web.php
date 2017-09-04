@@ -20,11 +20,6 @@ $app->post('/authorize', [
 	'uses' => 'AuthController@postAuthorize'
 ]);
 
-$app->delete('/authorize', [
-	'as'   => 'delete_auth_code',
-	'uses' => 'AuthController@deleteAuthorize'
-]);
-
 $app->post('/token', [
 	'as'   => 'post_access_token',
 	'uses' => 'AuthController@postAccessToken'

@@ -178,10 +178,12 @@
         <div class="button-toolbar">
           <form method="POST" action="/authorize">
             <input type="hidden" name="token" class="verify_token" value="" />
-            <button type="submit" class="btn btn-submit" disabled>Authorize</button>
+            <input type="hidden" name="permission" value="1" />
+            <button class="btn btn-submit" disabled>Authorize</button>
           </form>
-          <form method="DELETE" action="/authorize">
+          <form method='POST' action="/authorize">
             <input type="hidden" name="token" class="verify_token" value="" />
+            <input type="hidden" name="permission" value="0" />
             <button class="btn btn-default" disabled>Cancel</button>
           </form>
         </div>
