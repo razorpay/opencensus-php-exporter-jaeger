@@ -79,14 +79,14 @@ return [
         'response' => [
             'content' => [
                 'error' => [
-                    'description' => 'Missing argument or incorrect value provided for response_type'
+                    'description' => 'Check the `grant_type` parameter'
                 ],
             ],
             'status_code' => 400
         ],
         'exception' => [
             'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
-            'message' => 'Missing argument or incorrect value provided for response_type',
+            'message' => 'Check the `grant_type` parameter',
         ],
     ],
 
@@ -101,14 +101,14 @@ return [
         'response' => [
             'content' => [
                 'error' => [
-                    'description' => 'Invalid request, please check for missing arguments or incorrect values or arguments repeating.'
+                    'description' => 'Check the `code` parameter',
                 ],
             ],
             'status_code' => 400
         ],
         'exception' => [
             'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
-            'message' => 'Invalid request, please check for missing arguments or incorrect values or arguments repeating.',
+            'message' => 'Check the `code` parameter',
         ],
     ],
 
