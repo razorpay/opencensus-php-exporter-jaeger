@@ -158,7 +158,7 @@
           </div>
 
           <div class="app-logos">
-            <div class="app-logo" src="{{$data['application']['logo']}}"></div>
+            <div class="app-logo"><img src="{{$data['application']['logo']}}" /></div>
             <div class="merchant-logo app-logo"></div>
           </div>
         </div>
