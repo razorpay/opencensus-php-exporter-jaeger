@@ -16,7 +16,7 @@ class ApplicationController extends Controller
     {
         $input = Request::all();
 
-        $app = $this->service->createApplication($input);
+        $app = $this->service->create($input);
 
         return response()->json($app);
     }
