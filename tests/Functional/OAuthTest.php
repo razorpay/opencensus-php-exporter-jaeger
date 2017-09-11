@@ -46,6 +46,17 @@ class OAuthTest extends TestCase
         $this->assertContains($expectedString, $response->getContent());
     }
 
+    public function testGetAuthorizeUrlNoStateParam()
+    {
+        $data = $this->testData[$this->getName()];
+
+        $response = $this->sendRequest($data['request']);
+
+        $expectedString = 'Validation failed. The state field is required.';
+
+        $this->assertContains($expectedString, $response->getContent());
+    }
+
     public function testPostAuthCode()
     {
         $data = &$this->testData[__FUNCTION__];

@@ -37,6 +37,18 @@ return [
         ],
     ],
 
+    'testGetAuthorizeUrlNoStateParam' => [
+        'request'  => [
+            'method' => 'GET',
+            'url'    => '/authorize?response_type=code&client_id=86KC3q506ytUPA&redirect_uri=http://localhost&scope=read_only'
+        ],
+        'response' => [
+            'content' => [
+                'DB' => 'Ok',
+            ],
+        ],
+    ],
+
     'testPostAuthCode' => [
         'request'  => [
             'method'  => 'POST',
