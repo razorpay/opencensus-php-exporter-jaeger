@@ -2,15 +2,15 @@
 
 namespace App\Tests\Unit;
 
+use Requests_Exception;
 use App\Services\Dashboard;
 use App\Tests\TestCase as TestCase;
-use App\Exception\BadRequestException;
 
 class DashboardServiceTest extends TestCase
 {
     public function testDashboardService()
     {
-        $this->expectException(BadRequestException::class);
+        $this->expectException(Requests_Exception::class);
 
         $service = new Dashboard();
 
