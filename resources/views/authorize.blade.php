@@ -154,35 +154,34 @@
     <div class="inner-content">
         <div class="content-hero">
           <div class="hero-description">
-            Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis">Nestaway</span> account on Razorpay?
+            Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?
           </div>
 
           <div class="app-logos">
-            <div class="logo-1 app-logo"></div>
-            <div class="logo-2 app-logo"></div>
+            <div class="app-logo"><img src="{{$data['application']['logo']}}" /></div>
+            <div class="merchant-logo app-logo"></div>
           </div>
         </div>
 
         <div class="main-content">
-          <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to:</strong></p>
-          <ul>
-            <li>Read all your live transaction data from dashboard</li>
-            <li>Create live orders, transactions, refunds and all other entities</li>
-          </ul>
-          <p class="emphasis"><strong>The application will not be able to:</strong></p>
-          <ul>
-            <li>Access or change your API keys</li>
-            <li>Access your organization's private details</li>
-            <li>Update your account settings</li>
+          <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to take following actions:</strong></p>
+          <ul id="scopes">
+              @if($data['scopes'])
+                  @foreach($data['scopes'] as $item)
+                      <li> {{$item}}</li>
+                  @endforeach
+              @endif
+
           </ul>
         </div>
 
         <div class="button-toolbar">
           <form method="POST" action="/authorize">
             <input type="hidden" name="token" class="verify_token" value="" />
-            <button type="submit" class="btn btn-submit" disabled>Authorize</button>
+            <button class="btn btn-submit" disabled>Authorize</button>
           </form>
-          <form method="DELETE" action="/authorize">
+          <form method='POST' action="/authorize">
+            {{ method_field('DELETE') }}
             <input type="hidden" name="token" class="verify_token" value="" />
             <button class="btn btn-default" disabled>Cancel</button>
           </form>
@@ -201,7 +200,9 @@
             buttons: $('.btn'),
             token: $('.verify_token'),
             error_pane: $('.error-container'),
-            page_container: $('.inner-content')
+            page_container: $('.inner-content'),
+            merchant_logo: $('.merchant-logo'),
+            merchant_name: $('.merchant-name')
         };
 
         var errorHtml = {
@@ -234,10 +235,12 @@
 
             verifyToken = data.token;
             elements.user_email.text(data.email);
+            elements.merchant_logo.attr('src', data.logo);
+            elements.merchant_name.text(data.merchant_name);
             elements.token.attr('value', verifyToken);
 
             enableButtonsAndShowEmail();
-        };
+        }
 
         function getUser() {
             var userUrl = dashboardUrl + '/user/session';

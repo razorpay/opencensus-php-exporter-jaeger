@@ -43,9 +43,21 @@ class Service
         $authorizeData = [
             'application'   => $appData,
             'scopes'        => $this->parseScopesForDisplay($scopes),
-            'query_params'  => $input,
             'dashboard_url' => env('APP_DASHBOARD_URL')
         ];
+
+        if (empty($appData['application']['logo']) === false)
+        {
+            // We use betacdn for all non-prod envs
+            $cdnName = env('APP_ENV') === 'prod' ? 'cdn' : 'betacdn';
+
+            // Constructing the cdn url for logo. We save multiple sizes of logo, using medium here
+            // by adding the `_medium` after the id.
+            $logoUrl = 'https://' . $cdnName . '.razorpay.com' .
+                preg_replace('/\.([^\.]+$)/', '_medium.$1', $appData['application']['logo']);
+
+            $appData['application']['logo'] = $logoUrl;
+        }
 
         return $authorizeData;
     }
