@@ -55,9 +55,24 @@ trait RequestResponseFlowTrait
             return response()->json($data, 500);
         }
 
-        $httpStatusCode = $ex->getHttpStatusCode();
+        $error = null;
 
-        return response()->json($ex->toPublicArray(), $httpStatusCode);
+        if (method_exists($ex, 'getError') === true)
+        {
+            $error = $ex->getError();
+
+            $httpStatusCode = $error->getHttpStatusCode();
+
+            $data = $error->toPublicArray();
+        }
+        else
+        {
+            $httpStatusCode = $ex->getHttpStatusCode();
+
+            $data = $ex->toPublicArray();
+        }
+
+        return response()->json($data, $httpStatusCode);
     }
 
     protected function checkException($e, $data)

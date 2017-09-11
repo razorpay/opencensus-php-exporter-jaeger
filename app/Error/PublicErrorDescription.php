@@ -13,5 +13,6 @@ class PublicErrorDescription
 
     const BAD_REQUEST_UNAUTHORIZED             = 'Please provide your api key for authentication purposes.';
     const BAD_REQUEST_INVALID_CLIENT           = 'There was a problem with the application you are trying to connect to, please contact the application provider for support.';
+    const BAD_REQUEST_INVALID_CLIENT_OR_USER   = 'There was a problem with the application you are trying to connect to, please contact the application provider for support.';
     const BAD_REQUEST_ROLE_NOT_ALLOWED         = 'The current user profile is restricted from this action';
 }

@@ -2,7 +2,7 @@
 
 return [
     'testGetRoot' => [
-        'request' => [
+        'request'  => [
             'method' => 'GET',
             'url'    => '/'
         ],
@@ -14,7 +14,7 @@ return [
     ],
 
     'testGetStatus' => [
-        'request' => [
+        'request'  => [
             'method' => 'GET',
             'url'    => '/status'
         ],
@@ -26,10 +26,10 @@ return [
     ],
 
     'testPostAuthCode' => [
-        'request' => [
+        'request'  => [
             'method'  => 'POST',
             'url'     => '/authorize',
-            'content' => ['token'         => 'success']
+            'content' => ['token' => 'success']
         ],
         'response' => [
             'content' => [],
@@ -37,13 +37,13 @@ return [
     ],
 
     'testPostAuthCodeWithWrongResponseType' => [
-        'request' => [
+        'request'   => [
             'method'  => 'POST',
             'url'     => '/authorize',
-            'content' => ['token'         => 'incorrect_response_type']
+            'content' => ['token' => 'incorrect_response_type']
         ],
-        'response' => [
-            'content' => [
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Missing argument or incorrect value provided for response_type'
                 ],
@@ -56,14 +56,34 @@ return [
         ],
     ],
 
+    'testPostAuthCodeInvalidToken' => [
+        'request'   => [
+            'method'  => 'POST',
+            'url'     => '/authorize',
+            'content' => ['token' => 'invalid']
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'There was a problem with the application you are trying to connect to, please contact the application provider for support.'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'App\Exception\BadRequestException',
+            'message' => 'There was a problem with the application you are trying to connect to, please contact the application provider for support.',
+        ],
+    ],
+
     'testPostAuthCodeWithReject' => [
-        'request' => [
+        'request'   => [
             'method'  => 'delete',
             'url'     => '/authorize',
-            'content' => ['token'         => 'success']
+            'content' => ['token' => 'success']
         ],
-        'response' => [
-            'content' => [
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Missing argument or User denied access'
                 ],
@@ -77,31 +97,31 @@ return [
     ],
 
     'testPostAccessToken' => [
-        'request' => [
+        'request'  => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'    => 'authorization_code',
-                          'redirect_uri'  => 'https://www.example.com'
-                         ]
+            'content' => ['grant_type'   => 'authorization_code',
+                          'redirect_uri' => 'https://www.example.com'
+            ]
         ],
         'response' => [
-            'content' => [
-              'token_type' => 'Bearer',
+            'content'     => [
+                'token_type' => 'Bearer',
             ],
             'status_code' => 200
         ]
     ],
 
     'testPostAccessTokenWithInvalidGrant' => [
-        'request' => [
+        'request'   => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'    => 'some_code',
-                          'redirect_uri'  => 'https://www.example.com'
-                         ]
+            'content' => ['grant_type'   => 'some_code',
+                          'redirect_uri' => 'https://www.example.com'
+            ]
         ],
-        'response' => [
-            'content' => [
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Missing argument or incorrect value provided for response_type'
                 ],
@@ -115,15 +135,15 @@ return [
     ],
 
     'testPostAccessTokenWithMissingCode' => [
-        'request' => [
+        'request'   => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'    => 'authorization_code',
-                          'redirect_uri'  => 'https://www.example.com'
-                         ]
+            'content' => ['grant_type'   => 'authorization_code',
+                          'redirect_uri' => 'https://www.example.com'
+            ]
         ],
-        'response' => [
-            'content' => [
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Invalid request, please check for missing arguments or incorrect values or arguments repeating.'
                 ],
@@ -137,15 +157,15 @@ return [
     ],
 
     'testPostAccessTokenWithIncorrectSecret' => [
-        'request' => [
+        'request'   => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'    => 'authorization_code',
-                          'redirect_uri'  => 'https://www.example.com'
-                         ]
+            'content' => ['grant_type'   => 'authorization_code',
+                          'redirect_uri' => 'https://www.example.com'
+            ]
         ],
-        'response' => [
-            'content' => [
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Access denied'
                 ],
@@ -159,15 +179,15 @@ return [
     ],
 
     'testPostAccessTokenWithIncorrectClientId' => [
-        'request' => [
+        'request'   => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'    => 'authorization_code',
-                          'redirect_uri'  => 'https://www.example.com'
-                         ]
+            'content' => ['grant_type'   => 'authorization_code',
+                          'redirect_uri' => 'https://www.example.com'
+            ]
         ],
-        'response' => [
-            'content' => [
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'No records found with the given Id'
                 ],
@@ -183,11 +203,11 @@ return [
     'testGetTokenData' => [
         'request' => [
             'content' => [
-                'user_id'     => '20000000000000',
-                'user_email'  => 'test@razorpay.com',
-                'merchant_id' => 'merchant_id',
-                'role'        => 'owner',
-                'user'        => [
+                'user_id'      => '20000000000000',
+                'user_email'   => 'test@razorpay.com',
+                'merchant_id'  => 'merchant_id',
+                'role'         => 'owner',
+                'user'         => [
                     'id'             => '20000000000000',
                     'name'           => 'fdfd',
                     'email'          => 'fdsfsd@dfsd.dsfd',
@@ -205,11 +225,11 @@ return [
     'testGetTokenDataWrongResponseType' => [
         'request' => [
             'content' => [
-                'user_id'     => '20000000000000',
-                'user_email'  => 'test@razorpay.com',
-                'merchant_id' => 'merchant_id',
-                'role'        => 'owner',
-                'user'        => [
+                'user_id'      => '20000000000000',
+                'user_email'   => 'test@razorpay.com',
+                'merchant_id'  => 'merchant_id',
+                'role'         => 'owner',
+                'user'         => [
                     'id'             => '20000000000000',
                     'name'           => 'fdfd',
                     'email'          => 'fdsfsd@dfsd.dsfd',
@@ -225,13 +245,13 @@ return [
     ],
 
     'testGetTokenDataWithInvalidToken' => [
-        'request' => [
+        'request'  => [
             'content' => ['User data not found'],
         ],
         'response' => [
             'content' => [
                 'success' => false,
-                'errors' => ['User data not found'],
+                'errors'  => ['User data not found'],
             ],
         ],
     ],

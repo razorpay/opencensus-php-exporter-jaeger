@@ -21,6 +21,7 @@ class ErrorCode
 
     const BAD_REQUEST_URL_NOT_FOUND                                                 = 'BAD_REQUEST_URL_NOT_FOUND';
     const BAD_REQUEST_INVALID_CLIENT                                                = 'BAD_REQUEST_INVALID_CLIENT';
+    const BAD_REQUEST_INVALID_CLIENT_OR_USER                                        = 'BAD_REQUEST_INVALID_CLIENT_OR_USER';
     const BAD_REQUEST_ROLE_NOT_ALLOWED                                              = 'BAD_REQUEST_ROLE_NOT_ALLOWED';
 
     const SERVER_ERROR_INVALID_ARGUMENT                                             = 'SERVER_ERROR_INVALID_ARGUMENT';

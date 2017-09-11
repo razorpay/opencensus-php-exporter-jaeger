@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Error\ErrorCode;
+use App\Exception\BadRequestException;
 use Requests;
 
 class Dashboard
@@ -23,6 +25,11 @@ class Dashboard
         $body = $response->body;
 
         $jsonBody = json_decode($body, true);
+
+        if (isset($jsonBody['data']) === false)
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_CLIENT_OR_USER);
+        }
 
         return $jsonBody['data'];
     }
