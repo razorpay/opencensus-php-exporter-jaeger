@@ -2,7 +2,7 @@
 
 return [
     'testCreateApplication' => [
-        'request' => [
+        'request'  => [
             'url'     => '/applications',
             'method'  => 'POST',
             'content' => [
@@ -22,8 +22,27 @@ return [
         ]
     ],
 
+    'testCreateApplicationInvalidSecret' => [
+        'request'  => [
+            'url'     => '/applications',
+            'method'  => 'POST',
+            'content' => [
+                'name'        => 'app',
+                'website'     => 'https://www.example.com',
+                'logo_url'    => '/logo/app_logo.png',
+                'merchant_id' => '10000000000000',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'error' => 'Unauthorized'
+            ],
+            'status_code' => 401,
+        ],
+    ],
+
     'testCreateApplicationMissingInput' => [
-        'request' => [
+        'request'   => [
             'url'     => '/applications',
             'method'  => 'POST',
             'content' => [
@@ -32,8 +51,8 @@ return [
                 'merchant_id' => '10000000000000',
             ]
         ],
-        'response' => [
-            'content' => [
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Validation failed. The name field is required.',
                 ],
@@ -47,7 +66,7 @@ return [
     ],
 
     'testCreateApplicationInvalidInput' => [
-        'request' => [
+        'request'   => [
             'url'     => '/applications',
             'method'  => 'POST',
             'content' => [
@@ -57,8 +76,8 @@ return [
                 'merchant_id' => '10000000000000',
             ]
         ],
-        'response' => [
-            'content' => [
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Validation failed. The website format is invalid.',
                 ],
@@ -88,15 +107,15 @@ return [
     ],
 
     'testGetMissingApplication' => [
-        'request'  => [
+        'request'   => [
             'url'     => '/applications/dnk3ere',
             'method'  => 'GET',
             'content' => [
                 'merchant_id' => '10000000000000',
             ]
         ],
-        'response' => [
-            'content' => [
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'No records found with the given Id',
                 ],
@@ -111,7 +130,7 @@ return [
 
     'testGetApplications' => [
         'request'  => [
-            'url'     =>'applications',
+            'url'     => 'applications',
             'method'  => 'GET',
             'content' => [
                 'merchant_id' => '10000000000000',
@@ -140,7 +159,7 @@ return [
     ],
 
     'testUpdateApplicationInvalidInput' => [
-        'request'  => [
+        'request'   => [
             'method'  => 'PATCH',
             'content' => [
                 'merchant_id' => '10000000000000',
@@ -148,8 +167,8 @@ return [
                 'website'     => 'kfdsfs',
             ]
         ],
-        'response' => [
-            'content' => [
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Validation failed. The website format is invalid.',
                 ],
