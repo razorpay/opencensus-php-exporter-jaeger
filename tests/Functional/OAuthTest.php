@@ -25,6 +25,16 @@ class OAuthTest extends TestCase
         parent::setup();
     }
 
+    public function testGetRoot()
+    {
+        $this->startTest();
+    }
+
+    public function testGetStatus()
+    {
+        $this->startTest();
+    }
+
     public function testPostAuthCode()
     {
         $data = & $this->testData[__FUNCTION__];
@@ -204,11 +214,6 @@ class OAuthTest extends TestCase
 
         $data['request']['content'] = $content;
 
-        $this->startTest();
-    }
-
-    public function testGetRoot()
-    {
         $this->startTest();
     }
 

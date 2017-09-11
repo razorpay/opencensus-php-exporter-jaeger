@@ -1,6 +1,30 @@
 <?php
 
 return [
+    'testGetRoot' => [
+        'request' => [
+            'method' => 'GET',
+            'url'    => '/'
+        ],
+        'response' => [
+            'content' => [
+                'message' => 'Welcome to Razorpay Auth!',
+            ],
+        ],
+    ],
+
+    'testGetStatus' => [
+        'request' => [
+            'method' => 'GET',
+            'url'    => '/status'
+        ],
+        'response' => [
+            'content' => [
+                'DB' => 'Ok',
+            ],
+        ],
+    ],
+
     'testPostAuthCode' => [
         'request' => [
             'method'  => 'POST',
@@ -208,18 +232,6 @@ return [
             'content' => [
                 'success' => false,
                 'errors' => ['User data not found'],
-            ],
-        ],
-    ],
-
-    'testGetRoot' => [
-        'request' => [
-            'method' => 'GET',
-            'url'    => '/'
-        ],
-        'response' => [
-            'content' => [
-                'message' => 'Welcome to Razorpay Auth!',
             ],
         ],
     ],
