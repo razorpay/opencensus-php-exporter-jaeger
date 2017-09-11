@@ -46,6 +46,38 @@ class OAuthTest extends TestCase
         $this->assertContains($expectedString, $response->getContent());
     }
 
+    public function testGetAuthorizeUrlWithClient()
+    {
+        $application = factory(Application\Entity::class)->create();
+
+        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+
+        $devClient = factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $application->getId(),
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $data = [
+            'method' => 'get',
+            'url'    => '/authorize?response_type=code' .
+                        '&client_id=' . $devClient->getId() .
+                        '&redirect_uri=https://www.example.com' .
+                        '&scope=read_only' .
+                        '&state=123',
+        ];
+
+        $response = $this->sendRequest($data);
+
+        $expectedString = 'Allow <span class="emphasis">' .
+                          $application->getName() .
+                          '</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?';
+
+        $this->assertContains($expectedString, $response->getContent());
+    }
+
     public function testGetAuthorizeUrlNoStateParam()
     {
         $data = $this->testData[$this->getName()];
