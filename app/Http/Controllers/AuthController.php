@@ -35,11 +35,7 @@ class AuthController extends Controller
         }
         catch (\Throwable $t)
         {
-            $response = [
-                'error' => 'DB error',
-            ];
-
-            return response()->json($response, 500);
+            return response()->json(['error' => 'DB error'], 500);
         }
     }
 

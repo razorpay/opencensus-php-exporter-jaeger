@@ -35,6 +35,17 @@ class OAuthTest extends TestCase
         $this->startTest();
     }
 
+    public function testGetAuthorizeUrl()
+    {
+        $data = $this->testData[$this->getName()];
+
+        $response = $this->sendRequest($data['request']);
+
+        $expectedString = 'No records found with the given Id';
+
+        $this->assertContains($expectedString, $response->getContent());
+    }
+
     public function testPostAuthCode()
     {
         $data = &$this->testData[__FUNCTION__];
