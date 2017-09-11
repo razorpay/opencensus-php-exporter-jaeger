@@ -96,6 +96,26 @@ return [
         ],
     ],
 
+    'testPostAuthCodeInvalidRole' => [
+        'request'   => [
+            'method'  => 'delete',
+            'url'     => '/authorize',
+            'content' => ['token' => 'invalid_role']
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'The current user profile is restricted from this action'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'App\Exception\BadRequestException',
+            'message' => 'The current user profile is restricted from this action',
+        ],
+    ],
+
     'testPostAccessToken' => [
         'request'  => [
             'method'  => 'POST',

@@ -102,6 +102,27 @@ class OAuthTest extends TestCase
         $this->startTest();
     }
 
+    public function testPostAuthCodeInvalidRole()
+    {
+        $data = &$this->testData[__FUNCTION__];
+
+        $application = factory(Application\Entity::class)->create();
+
+        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
+
+        $devClient = factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $application->id,
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $data['request']['content']['client_id'] = $devClient->id;
+
+        $this->startTest();
+    }
+
     public function testPostAuthCodeWithReject()
     {
         $data = &$this->testData[__FUNCTION__];
