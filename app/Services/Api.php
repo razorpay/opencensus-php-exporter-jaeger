@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Requests;
 use Trace;
+use Requests;
 
 use App\Constants\TraceCode;
 
@@ -25,11 +25,7 @@ class Api
         }
         catch (\Exception $e)
         {
-            $exception = [
-                'class'   => get_class($e),
-                'code'    => $e->getCode(),
-                'message' => $e->getMessage()
-            ];
+            $exception = ['class' => get_class($e), 'code' => $e->getCode(), 'message' => $e->getMessage()];
 
             Trace::error(TraceCode::MERCHANT_NOTIFY_FAILED, $exception);
         }

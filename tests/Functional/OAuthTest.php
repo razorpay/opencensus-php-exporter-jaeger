@@ -37,7 +37,7 @@ class OAuthTest extends TestCase
 
     public function testPostAuthCode()
     {
-        $data = & $this->testData[__FUNCTION__];
+        $data = &$this->testData[__FUNCTION__];
 
         $application = factory(Application\Entity::class)->create();
 
@@ -45,10 +45,10 @@ class OAuthTest extends TestCase
 
         $devClient = factory(Client\Entity::class)->create(
             [
-                'id'    => '30000000000000',
+                'id'             => '30000000000000',
                 'application_id' => $application->id,
-                'redirect_url' => ['https://www.example.com'],
-                'environment' => 'dev'
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
             ]);
 
         $data['request']['content']['client_id'] = $devClient->id;
@@ -62,7 +62,7 @@ class OAuthTest extends TestCase
 
     public function testPostAuthCodeWithWrongResponseType()
     {
-        $data = & $this->testData[__FUNCTION__];
+        $data = &$this->testData[__FUNCTION__];
 
         $application = factory(Application\Entity::class)->create();
 
@@ -70,10 +70,10 @@ class OAuthTest extends TestCase
 
         $devClient = factory(Client\Entity::class)->create(
             [
-                'id'    => '30000000000000',
+                'id'             => '30000000000000',
                 'application_id' => $application->id,
-                'redirect_url' => ['https://www.example.com'],
-                'environment' => 'dev'
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
             ]);
 
         $data['request']['content']['client_id'] = $devClient->id;
@@ -83,7 +83,7 @@ class OAuthTest extends TestCase
 
     public function testPostAuthCodeWithReject()
     {
-        $data = & $this->testData[__FUNCTION__];
+        $data = &$this->testData[__FUNCTION__];
 
         $application = factory(Application\Entity::class)->create();
 
@@ -91,10 +91,10 @@ class OAuthTest extends TestCase
 
         $devClient = factory(Client\Entity::class)->create(
             [
-                'id'    => '30000000000000',
+                'id'             => '30000000000000',
                 'application_id' => $application->id,
-                'redirect_url' => ['https://www.example.com'],
-                'environment' => 'dev'
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
             ]);
 
         $data['request']['content']['client_id'] = $devClient->id;
@@ -108,7 +108,7 @@ class OAuthTest extends TestCase
 
         Request::clearResolvedInstances();
 
-        $data = & $this->testData[__FUNCTION__];
+        $data = &$this->testData[__FUNCTION__];
 
         $client = $this->devClient;
 
@@ -133,7 +133,7 @@ class OAuthTest extends TestCase
 
         Request::clearResolvedInstances();
 
-        $data = & $this->testData[__FUNCTION__];
+        $data = &$this->testData[__FUNCTION__];
 
         $client = $this->devClient;
 
@@ -156,7 +156,7 @@ class OAuthTest extends TestCase
 
         Request::clearResolvedInstances();
 
-        $data = & $this->testData[__FUNCTION__];
+        $data = &$this->testData[__FUNCTION__];
 
         $client = $this->devClient;
 
@@ -177,7 +177,7 @@ class OAuthTest extends TestCase
 
         Request::clearResolvedInstances();
 
-        $data = & $this->testData[__FUNCTION__];
+        $data = &$this->testData[__FUNCTION__];
 
         $client = $this->devClient;
 
@@ -200,7 +200,7 @@ class OAuthTest extends TestCase
 
         Request::clearResolvedInstances();
 
-        $data = & $this->testData[__FUNCTION__];
+        $data = &$this->testData[__FUNCTION__];
 
         $client = $this->devClient;
 
