@@ -20,3 +20,7 @@ Homestead.yaml
 environment/.env.dev
 environment/env.php
 !environment/*.j2
+
+# k8s files
+secrets.yaml
+registry.yaml

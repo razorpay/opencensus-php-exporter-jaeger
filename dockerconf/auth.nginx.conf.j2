@@ -18,6 +18,8 @@ server {
 
     charset utf-8;
 
+    location /commit.txt { alias /app/commit.txt ;}
+
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
