@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
+set -e
+
 echo "Creating Log Files"
 mkdir -p /var/log/nginx
 touch /var/log/nginx/auth.access.log
@@ -11,6 +13,8 @@ ALOHOMORA_BIN=$(which alohomora)
 # Lumen in docker picks system environment variable from .env
 echo "APP_MODE=${APP_MODE}" > /app/.env
 
+cat /app/.env
+
 $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/auth.nginx.conf.j2"
 cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
 
@@ -20,8 +24,9 @@ if [[ "${APP_MODE}" == "dev" ]]; then
   sed -i 's/dev/testing/g' ./environment/env.php && \
   sed -i "s|dev-auth.razorpay.com|auth.razorpay.dev|g" /etc/nginx/conf.d/auth.conf
 else
-    # casting alohomora to unlock the secrets
+  # casting alohomora to unlock the secrets
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/.env.vault.j2"
+  cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2"
 fi
 

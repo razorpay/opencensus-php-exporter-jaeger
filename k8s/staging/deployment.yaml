@@ -24,9 +24,9 @@ spec:
     spec:
       containers:
       - env:
-        - name: APP_ENV
+        - name: APP_MODE
           value: beta
-        image: razorpay/auth:eb4513dec14a9b215c2c37defbe0b912638f8079
+        image: razorpay/auth:c8e3db37804b9919922e2d6459548c0ee92b01fb
         imagePullPolicy: IfNotPresent
         name: auth
         ports:
@@ -35,7 +35,7 @@ spec:
         resources: {}
         readinessProbe:
           httpGet:
-            path: /
+            path: /status
             port: 80
             httpHeaders:
               - name: Host
