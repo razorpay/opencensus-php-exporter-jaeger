@@ -158,8 +158,8 @@
           </div>
 
           <div class="app-logos">
-            <div class="app-logo"><img src="{{$data['application']['logo']}}" /></div>
-            <div class="merchant-logo app-logo"></div>
+            <div class="app-logo"><img class="application-logo" /></div>
+            <div class="app-logo"><img class="merchant-logo" /></div>
           </div>
         </div>
 
@@ -202,7 +202,8 @@
             error_pane: $('.error-container'),
             page_container: $('.inner-content'),
             merchant_logo: $('.merchant-logo'),
-            merchant_name: $('.merchant-name')
+            merchant_name: $('.merchant-name'),
+            application_logo:$('.application-logo')
         };
 
         var errorHtml = {
@@ -281,14 +282,23 @@
             });
         }
 
+        function getAppLogoFullUrl(logoUrl) {
+          if (logoUrl !== null && !/^http/.test(logoUrl)) {
+            logoUrl = `https://cdn.razorpay.com${logoUrl.replace(/\.([^\.]+$)/, '_medium.$1')}`;
+          }
+          elements.application_logo.attr('src', logoUrl);
+        }
+
         window.RazorpayAuthorize = {
             getUser: getUser,
             verifyToken: verifyToken,
             showError: showError,
-            elements: elements
+            elements: elements,
+            getAppLogoFullUrl: getAppLogoFullUrl
         };
     })();
 
+    RazorpayAuthorize.getAppLogoFullUrl(`{{$data['application']['logo']}}`);
     RazorpayAuthorize.getUser();
 </script>
 </body>
