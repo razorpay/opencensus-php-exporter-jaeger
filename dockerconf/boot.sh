@@ -30,6 +30,8 @@ else
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2"
 fi
 
+composer install
+
 # Fix permissions
 echo  "Fix permissions"
 cd /app/ && chmod 777 -R storage

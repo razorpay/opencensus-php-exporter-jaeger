@@ -2,7 +2,7 @@ FROM razorpay/containers:base-nginx-php7
 
 ARG GIT_COMMIT_HASH
 
-ARG GITHUB_TOKEN
+ARG GIT_TOKEN
 
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 

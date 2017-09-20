@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+      args:
+       - GIT_TOKEN
     image: razorpay:auth
     volumes:
       - .:/app
