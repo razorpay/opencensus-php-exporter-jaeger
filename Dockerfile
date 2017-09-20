@@ -12,7 +12,7 @@ COPY ./dockerconf/boot.sh /boot.sh
 
 WORKDIR /app
 
-RUN composer config -g github-oauth.github.com ${GITHUB_TOKEN} && \
+RUN composer config -g github-oauth.github.com ${GIT_TOKEN} && \
     composer install --no-interaction
 
 RUN chown -R nginx.nginx /app
