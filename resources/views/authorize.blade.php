@@ -158,8 +158,8 @@
           </div>
 
           <div class="app-logos">
-            <div class="app-logo"><img class="application-logo" /></div>
-            <div class="app-logo"><img class="merchant-logo" /></div>
+            <div style="padding:0" class="app-logo"><img style="width:100%" class="application-logo" /></div>
+            <div style="padding:0" class="app-logo"><img style="width:100%" class="merchant-logo" /></div>
           </div>
         </div>
 
