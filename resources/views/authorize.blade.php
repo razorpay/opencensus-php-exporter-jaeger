@@ -68,7 +68,7 @@
             }
         }
         .app-logo {
-            display: inline-block;
+            display: inline-flex;
             background: #ccc;
             height: 72px;
             width: 72px;
