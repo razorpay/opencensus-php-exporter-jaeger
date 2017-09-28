@@ -29,7 +29,7 @@ spec:
             configMapKeyRef:
               name: auth
               key: APP_MODE
-        image: razorpay/auth:2eae1defd2f884a83682d2b8a8d56e590228f71d
+        image: razorpay/auth:961134ce638e58a9e753713cadcb754149aa4609
         imagePullPolicy: IfNotPresent
         name: auth
         ports:
