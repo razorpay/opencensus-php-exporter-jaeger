@@ -27,9 +27,9 @@ spec:
         - name: APP_MODE
           valueFrom:
             configMapKeyRef:
-              name: gimli
+              name: auth
               key: APP_MODE
-        image: razorpay/auth:c8e3db37804b9919922e2d6459548c0ee92b01fb
+        image: razorpay/auth:db0d4f67ae592dfd192fa2e027e8a136b3fedc81
         imagePullPolicy: IfNotPresent
         name: auth
         ports:
