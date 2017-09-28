@@ -79,6 +79,18 @@ class Service
 
         $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
 
+        /**
+         * In case of a wrong input (eg. wrong response_type), the redirect
+         * flow is not used and we just get an error in the response which
+         * we extract here and throw a relevant exception
+         */
+        if (empty($authCode->getHeaders()['Location']) === true)
+        {
+            $error = $authCode->getReasonPhrase();
+
+            throw new OAuth\Exception\BadRequestException($error, '', [], $authCode->getStatusCode());
+        }
+
         // TODO: Enqueue this request after checking response times
         if ($data['authorize'] === true)
         {

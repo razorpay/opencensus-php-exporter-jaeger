@@ -5,51 +5,22 @@ return [
         'request' => [
             'method'  => 'POST',
             'url'     => '/authorize',
-            'content' => ['token'         => 'success']
+            'content' => ['token' => 'success']
         ],
         'response' => [
             'content' => [],
         ]
     ],
 
-    'testPostAuthCodeWithWrongResponseType' => [
-        'request' => [
-            'method'  => 'POST',
-            'url'     => '/authorize',
-            'content' => ['token'         => 'incorrect_response_type']
-        ],
-        'response' => [
-            'content' => [
-                'error' => [
-                    'description' => 'Missing argument or incorrect value provided for response_type'
-                ],
-            ],
-            'status_code' => 400
-        ],
-        'exception' => [
-            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
-            'message' => 'Missing argument or incorrect value provided for response_type',
-        ],
-    ],
-
     'testPostAuthCodeWithReject' => [
         'request' => [
             'method'  => 'delete',
             'url'     => '/authorize',
-            'content' => ['token'         => 'success']
+            'content' => ['token' => 'success']
         ],
         'response' => [
-            'content' => [
-                'error' => [
-                    'description' => 'Missing argument or User denied access'
-                ],
-            ],
-            'status_code' => 401
-        ],
-        'exception' => [
-            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
-            'message' => 'Missing argument or User denied access',
-        ],
+            'content' => [],
+        ]
     ],
 
     'testPostAccessToken' => [
@@ -209,6 +180,26 @@ return [
                 'success' => false,
                 'errors' => ['User data not found'],
             ],
+        ],
+    ],
+
+    'testPostAuthCodeWithWrongResponseType' => [
+        'request' => [
+            'method'  => 'POST',
+            'url'     => '/authorize',
+            'content' => ['token' => 'incorrect_response_type']
+        ],
+        'response' => [
+            'content' => [
+                'error' => [
+                    'description' => 'Bad Request'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
+            'message' => 'Bad Request',
         ],
     ],
 

@@ -1174,12 +1174,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "285a4704673ad637cef8b65c0dca8728862e7db1"
+                "reference": "d7bf73f160518db5dd32cfe6463241228e814241"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/285a4704673ad637cef8b65c0dca8728862e7db1",
-                "reference": "285a4704673ad637cef8b65c0dca8728862e7db1",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/d7bf73f160518db5dd32cfe6463241228e814241",
+                "reference": "d7bf73f160518db5dd32cfe6463241228e814241",
                 "shasum": ""
             },
             "require": {
@@ -1218,7 +1218,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/master",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2017-09-06 08:55:19"
+            "time": "2017-09-17 21:24:41"
         },
         {
             "name": "razorpay/spine",
