@@ -18,14 +18,17 @@ spec:
   template:
     metadata:
       annotations:
-        iam.amazonaws.com/role: iam-beta-auth
+        iam.amazonaws.com/role: iam-stage-auth
       labels:
         name: auth
     spec:
       containers:
       - env:
         - name: APP_MODE
-          value: beta
+          valueFrom:
+            configMapKeyRef:
+              name: gimli
+              key: APP_MODE
         image: razorpay/auth:c8e3db37804b9919922e2d6459548c0ee92b01fb
         imagePullPolicy: IfNotPresent
         name: auth
@@ -39,7 +42,7 @@ spec:
             port: 80
             httpHeaders:
               - name: Host
-                value: beta-auth.razorpay.com
+                value: stage-auth.razorpay.com
           initialDelaySeconds: 60
           periodSeconds: 120
         livenessProbe:
@@ -48,7 +51,7 @@ spec:
             port: 80
             httpHeaders:
               - name: Host
-                value: beta-auth.razorpay.com
+                value: stage-auth.razorpay.com
           initialDelaySeconds: 60
           periodSeconds: 20
         lifecycle:
@@ -56,7 +59,13 @@ spec:
             exec:
               command: ["/usr/sbin/nginx","-s","quit"]
       terminationGracePeriodSeconds: 60
-      dnsPolicy: ClusterFirst
+      volumes:
+      - name: trace
+        hostPath:
+          path: /var/log/fluentd/gimli/trace
+      - name: nginx
+        hostPath:
+          path: /var/log/fluentd/gimli/nginx
       imagePullSecrets:
       - name: registry
       nodeSelector:

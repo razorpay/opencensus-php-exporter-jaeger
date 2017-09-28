@@ -8,7 +8,7 @@ metadata:
   namespace: auth
 spec:
   rules:
-  - host: beta-auth.razorpay.com
+  - host: stage-auth.razorpay.com
     http:
       paths:
       - backend:
