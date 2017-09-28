@@ -17,6 +17,7 @@ Homestead.yaml
 !environment/.env.alpha
 !environment/.env.sample
 !environment/.env.docker
+!environment/.env.stage
 environment/.env.dev
 environment/env.php
 !environment/*.j2
