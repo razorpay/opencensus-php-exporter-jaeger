@@ -1,27 +1,29 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  labels:
-    name: auth
   name: auth
   namespace: auth
 spec:
   replicas: 2
-  selector:
-    matchLabels:
-      name: auth
   strategy:
+    type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
-    type: RollingUpdate
+  selector:
+    matchLabels:
+      name: auth
   template:
     metadata:
-      annotations:
-        iam.amazonaws.com/role: iam-stage-auth
       labels:
         name: auth
+      annotations:
+        iam.amazonaws.com/role: iam-stage-auth
     spec:
+      imagePullSecrets:
+      - name: registry
+      nodeSelector:
+        node-role.kubernetes.io/node-components: ""
       containers:
       - env:
         - name: APP_MODE
@@ -29,13 +31,18 @@ spec:
             configMapKeyRef:
               name: auth
               key: APP_MODE
-        image: razorpay/auth:961134ce638e58a9e753713cadcb754149aa4609
-        imagePullPolicy: IfNotPresent
         name: auth
+        image: razorpay/auth:e2e9d8e06ac90db83d5717ed6993b142ec3b54c0
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
           protocol: TCP
         resources: {}
+        volumeMounts:
+          - name: trace
+            mountPath: /app/storage/logs/
+          - name: nginx
+            mountPath: /var/log/nginx/
         readinessProbe:
           httpGet:
             path: /status
@@ -58,19 +65,12 @@ spec:
           preStop:
             exec:
               command: ["/usr/sbin/nginx","-s","quit"]
-      terminationGracePeriodSeconds: 60
       volumes:
       - name: trace
         hostPath:
-          path: /var/log/fluentd/gimli/trace
+          path: /var/log/fluentd/auth/trace
       - name: nginx
         hostPath:
-          path: /var/log/fluentd/gimli/nginx
-      imagePullSecrets:
-      - name: registry
-      nodeSelector:
-        node-role.kubernetes.io/node-components: ""
+          path: /var/log/fluentd/auth/nginx
       restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 60
