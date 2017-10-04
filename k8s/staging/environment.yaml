@@ -3,7 +3,5 @@ kind: ConfigMap
 metadata:
   name: auth
   namespace: auth
-  labels:
-    name: auth
 data:
   APP_MODE: stage

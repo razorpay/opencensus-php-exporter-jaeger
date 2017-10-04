@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -e
+set -euo pipefail
 
 echo "Creating Log Files"
 mkdir -p /var/log/nginx
