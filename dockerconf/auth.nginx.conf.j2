@@ -8,7 +8,7 @@ server {
 server {
     listen 80;
     {% if env != 'prod' %}
-    server_name {{ env }}-auth.razorpay.com;
+    server_name {{ env }}-auth.razorpay.in;
     {% else %}
     server_name auth.razorpay.com;
     {% endif %}

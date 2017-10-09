@@ -7,7 +7,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-  - host: stage-auth.razorpay.com
+  - host: stage-auth.razorpay.in
     http:
       paths:
       - path: /
