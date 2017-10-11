@@ -68,9 +68,9 @@ spec:
       volumes:
       - name: trace
         hostPath:
-          path: /var/log/fluentd/auth/trace
+          path: /var/log/fluentd/splunk/auth/trace
       - name: nginx
         hostPath:
-          path: /var/log/fluentd/auth/nginx
+          path: /var/log/fluentd/splunk/auth/nginx
       restartPolicy: Always
       terminationGracePeriodSeconds: 60
