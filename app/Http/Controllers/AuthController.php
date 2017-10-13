@@ -9,6 +9,9 @@ use App\Models\Auth;
 use App\Exception\BadRequestException;
 use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
 
+use Trace;
+use App\Constants\TraceCode;
+
 class AuthController extends Controller
 {
     protected $authService;
@@ -30,6 +33,8 @@ class AuthController extends Controller
                     'DB' => 'Ok',
                 ];
 
+                Trace::info(TraceCode::AUTH_TEST_TRACE, $response);
+
                 return response()->json($response);
             }
         }
@@ -38,6 +43,8 @@ class AuthController extends Controller
             $response = [
                 'error' => 'DB error',
             ];
+            
+            Trace::info(TraceCode::AUTH_TEST_TRACE, $response);
 
             return response()->json($response, 500);
         }
