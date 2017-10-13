@@ -36,7 +36,7 @@ return [
 
     'mockAws' => false,
 
-    'fallback_email' => 'amit.mahbubani@razorpay.com',
+    'fallback_email' => 'developers@razorpay.com',
 
     'trace_code_class' => App\Constants\TraceCode::class,
 ];
