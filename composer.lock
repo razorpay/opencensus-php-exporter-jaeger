@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d20d79028a81746e6e4561624c907a9d",
-    "content-hash": "d047ef57209e12b93760e622653f1d51",
+    "content-hash": "04a9fba2d7d40d085586b2721bfcc0a6",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -1336,7 +1335,7 @@
                 "source": "https://github.com/razorpay/trace/tree/2.0.5",
                 "issues": "https://github.com/razorpay/trace/issues"
             },
-            "time": "2017-10-04 12:23:28"
+            "time": "2017-10-04T12:23:28+00:00"
         },
         {
             "name": "rmccue/requests",
