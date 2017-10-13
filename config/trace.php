@@ -16,7 +16,9 @@ return [
 
     'channel' => 'AUTH-SERVICE',
 
-    'cacheDir' => storage_path('framework/cache/'),
+    'cache' => storage_path('framework/cache/'),
+
+    'cloud' => ! env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -34,5 +36,7 @@ return [
 
     'mockAws' => false,
 
-    'fallbackEmail' => 'developers@razorpay.com'
+    'fallback_email' => 'developers@razorpay.com',
+
+    'trace_code_class' => App\Constants\TraceCode::class,
 ];
