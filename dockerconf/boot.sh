@@ -16,6 +16,7 @@ echo "APP_MODE=${APP_MODE}" > /app/.env
 cat /app/.env
 
 $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/auth.nginx.conf.j2"
+sed -i "s|NGINX_HOST|$HOSTNAME|g" dockerconf/auth.nginx.conf
 cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
 
 ## Copy the nginx fpm config. This is applicable across all environments. This is

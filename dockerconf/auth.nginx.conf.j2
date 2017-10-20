@@ -20,8 +20,8 @@ server {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
-    access_log /var/log/nginx/auth.access.log combined;
-    error_log  /var/log/nginx/auth.error.log error;
+    access_log /var/log/nginx/NGINX_HOST-{{ env }}-auth-access.log combined;
+    error_log  /var/log/nginx/NGINX_HOST-{{ env }}-auth-error.log error;
 
     sendfile off;
 
