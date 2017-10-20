@@ -34,9 +34,14 @@ else
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/.env.vault.j2"
   cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2"
+fi
+
+## enable newrelic only for prod and maybe later on for perf
+if [[ "${APP_MODE}" == "prod" ]]; then
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/newrelic.ini.j2"
   cp dockerconf/newrelic.ini /etc/php7/conf.d/newrelic.ini
 fi
+    
 
 
 ## opcache settings. These are independent of the environment
