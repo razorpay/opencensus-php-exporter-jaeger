@@ -22,7 +22,7 @@ cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
 ## needed for getting the OS environment variables where getenv does not get
 ## all the environment variables in nginx fpm mode. Details
 ## available at https://stackoverflow.com/questions/19659675/no-environment-variables-are-available-via-php-fpmnginx
-cp dockerconf/php-fpm-www.conf /etc/php7/php-fpm.d/www.confG
+cp dockerconf/php-fpm-www.conf /etc/php7/php-fpm.d/www.conf
 
 if [[ "${APP_MODE}" == "dev" ]]; then
   cp environment/.env.docker environment/.env.testing && \
