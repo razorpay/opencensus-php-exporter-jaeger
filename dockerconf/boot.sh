@@ -34,6 +34,8 @@ else
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/.env.vault.j2"
   cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2"
+  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/newrelic.ini.j2"
+  cp dockerconf/newrelic.ini /etc/php7/conf.d/newrelic.ini
 fi
 
 
