@@ -1,6 +1,11 @@
 <?php
 
-$hostname = getenv('HOSTNAME', true) ?: "localhost" ;
+$hostname = "localhost";
+
+if (getenv('HOSTNAME') !== false)
+{
+    $hostname = getenv('HOSTNAME');
+}
 
 return [
     /*
@@ -34,7 +39,6 @@ return [
     | Path for trace logs
     |--------------------------------------------------------------------------
     */
-    //'logpath' => storage_path('logs/trace.log'),
     'logpath' => storage_path().'/logs/'.$hostname.'-trace.log',
 
     'mockAws' => false,
