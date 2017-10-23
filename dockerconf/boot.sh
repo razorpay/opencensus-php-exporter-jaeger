@@ -16,13 +16,14 @@ echo "APP_MODE=${APP_MODE}" > /app/.env
 cat /app/.env
 
 $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/auth.nginx.conf.j2"
+sed -i "s|NGINX_HOST|$HOSTNAME|g" dockerconf/auth.nginx.conf
 cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
 
 ## Copy the nginx fpm config. This is applicable across all environments. This is
 ## needed for getting the OS environment variables where getenv does not get
 ## all the environment variables in nginx fpm mode. Details
 ## available at https://stackoverflow.com/questions/19659675/no-environment-variables-are-available-via-php-fpmnginx
-cp dockerconf/php-fpm-www.conf /etc/php7/php-fpm.d/www.confG
+cp dockerconf/php-fpm-www.conf /etc/php7/php-fpm.d/www.conf
 
 if [[ "${APP_MODE}" == "dev" ]]; then
   cp environment/.env.docker environment/.env.testing && \
@@ -34,6 +35,13 @@ else
   cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2"
 fi
+
+## enable newrelic only for prod and maybe later on for perf
+if [[ "${APP_MODE}" == "prod" ]]; then
+  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/newrelic.ini.j2"
+  cp dockerconf/newrelic.ini /etc/php7/conf.d/newrelic.ini
+fi
+    
 
 
 ## opcache settings. These are independent of the environment
