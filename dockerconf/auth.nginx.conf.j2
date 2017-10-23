@@ -1,14 +1,7 @@
 server {
-  listen 81;
-  location = /elb-ping {
-      return 200;
-  }
-}
-
-server {
     listen 80;
     {% if env != 'prod' %}
-    server_name {{ env }}-auth.razorpay.com;
+    server_name {{ env }}-auth.razorpay.in;
     {% else %}
     server_name auth.razorpay.com;
     {% endif %}
@@ -18,12 +11,16 @@ server {
 
     charset utf-8;
 
+    location /commit.txt {
+      alias /app/commit.txt;
+    }
+
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
-    access_log /var/log/nginx/auth.access.log combined;
-    error_log  /var/log/nginx/auth.error.log error;
+    access_log /var/log/nginx/NGINX_HOST-{{ env }}-auth-access.log combined;
+    error_log  /var/log/nginx/NGINX_HOST-{{ env }}-auth-error.log error;
 
     sendfile off;
 

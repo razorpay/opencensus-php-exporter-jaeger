@@ -1,12 +1,16 @@
 FROM razorpay/containers:base-nginx-php7
 
-VOLUME ['/app']
+ARG GIT_TOKEN
+ARG GIT_COMMIT_HASH
+ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
-RUN chown -R nginx.nginx /app
+VOLUME ['/app']
 
 COPY ./dockerconf/boot.sh /boot.sh
 
 WORKDIR /app
+
+RUN chown -R nginx.nginx /app
 
 EXPOSE 80
 
