@@ -7,6 +7,10 @@ Homestead.yaml
 /.wercker
 /storage
 
+# Docker generated files
+commit.txt
+dockerconf/auth.nginx.conf
+
 # Env files
 .env
 .env.*
