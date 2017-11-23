@@ -64,7 +64,10 @@ return [
         'request' => [
             'method'  => 'POST',
             'url'     => '/authorize',
-            'content' => ['token' => 'incorrect_response_type']
+            'content' => [
+                'token'     => 'incorrect_response_type',
+                'client_id' => '30000000000000'
+            ]
         ],
         'response' => [
             'content' => [
@@ -84,7 +87,10 @@ return [
         'request'   => [
             'method'  => 'POST',
             'url'     => '/authorize',
-            'content' => ['token' => 'invalid']
+            'content' => [
+                'token'     => 'invalid',
+                'client_id' => '30000000000000'
+            ]
         ],
         'response'  => [
             'content'     => [
@@ -104,7 +110,9 @@ return [
         'request'   => [
             'method'  => 'delete',
             'url'     => '/authorize',
-            'content' => ['token' => 'success']
+            'content' => [
+                'token' => 'success'
+            ]
         ],
         'response'  => [
             'content'     => [
@@ -124,7 +132,10 @@ return [
         'request'   => [
             'method'  => 'delete',
             'url'     => '/authorize',
-            'content' => ['token' => 'invalid_role']
+            'content' => [
+                'token'     => 'invalid_role',
+                'client_id' => '30000000000000',
+            ]
         ],
         'response'  => [
             'content'     => [
@@ -144,8 +155,10 @@ return [
         'request'  => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'   => 'authorization_code',
-                          'redirect_uri' => 'https://www.example.com'
+            'content' => [
+                'client_id'    => '30000000000000',
+                'grant_type'   => 'authorization_code',
+                'redirect_uri' => 'https://www.example.com',
             ]
         ],
         'response' => [
@@ -157,11 +170,13 @@ return [
     ],
 
     'testPostAccessTokenWithInvalidGrant' => [
-        'request'   => [
+        'request' => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'   => 'some_code',
-                          'redirect_uri' => 'https://www.example.com'
+            'content' => [
+                'grant_type'   => 'some_code',
+                'redirect_uri' => 'https://www.example.com',
+                'client_id'    => '30000000000000',
             ]
         ],
         'response'  => [
@@ -182,8 +197,10 @@ return [
         'request'   => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'   => 'authorization_code',
-                          'redirect_uri' => 'https://www.example.com'
+            'content' => [
+                'grant_type'   => 'authorization_code',
+                'redirect_uri' => 'https://www.example.com',
+                'client_id'    => '30000000000000',
             ]
         ],
         'response'  => [
@@ -204,8 +221,10 @@ return [
         'request'   => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'   => 'authorization_code',
-                          'redirect_uri' => 'https://www.example.com'
+            'content' => [
+                'grant_type'   => 'authorization_code',
+                'redirect_uri' => 'https://www.example.com',
+                'client_id'    => '30000000000000',
             ]
         ],
         'response'  => [
@@ -226,8 +245,10 @@ return [
         'request'   => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'   => 'authorization_code',
-                          'redirect_uri' => 'https://www.example.com'
+            'content' => [
+                'client_id'    => 'invalidClient',
+                'grant_type'   => 'authorization_code',
+                'redirect_uri' => 'https://www.example.com',
             ]
         ],
         'response'  => [
