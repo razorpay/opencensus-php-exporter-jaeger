@@ -114,27 +114,6 @@ class OAuthTest extends TestCase
         $this->assertContains('http://localhost?code=', $content);
     }
 
-    public function testPostAuthCodeWithWrongResponseType()
-    {
-        $data = &$this->testData[__FUNCTION__];
-
-        $application = factory(Application\Entity::class)->create();
-
-        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
-
-        $devClient = factory(Client\Entity::class)->create(
-            [
-                'id'             => '30000000000000',
-                'application_id' => $application->id,
-                'redirect_url'   => ['https://www.example.com'],
-                'environment'    => 'dev'
-            ]);
-
-        $data['request']['content']['client_id'] = $devClient->id;
-
-        $this->startTest();
-    }
-
     public function testPostAuthCodeInvalidToken()
     {
         $data = &$this->testData[__FUNCTION__];
@@ -193,9 +172,11 @@ class OAuthTest extends TestCase
                 'environment'    => 'dev'
             ]);
 
-        $data['request']['content']['client_id'] = $devClient->id;
+        $content = $this->sendRequest($data['request']);
 
-        $content = $this->startTest();
+        $content = urldecode($content->getContent());
+
+        $this->assertContains('error=access_denied', $content);
     }
 
     public function testPostAccessToken()
@@ -309,6 +290,26 @@ class OAuthTest extends TestCase
         $content['client_secret'] = $client->getSecret();
 
         $data['request']['content'] = $content;
+
+        $this->startTest();
+    }
+
+    public function testPostAuthCodeWithWrongResponseType()
+    {
+        $data = & $this->testData[__FUNCTION__];
+        $application = factory(Application\Entity::class)->create();
+
+        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
+
+        $devClient = factory(Client\Entity::class)->create(
+            [
+                'id'    => '30000000000000',
+                'application_id' => $application->id,
+                'redirect_url' => ['https://www.example.com'],
+                'environment' => 'dev'
+            ]);
+
+        $data['request']['content']['client_id'] = $devClient->id;
 
         $this->startTest();
     }

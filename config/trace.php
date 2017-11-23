@@ -1,5 +1,12 @@
 <?php
 
+$hostname = "localhost";
+
+if (getenv('HOSTNAME') !== false)
+{
+    $hostname = getenv('HOSTNAME');
+}
+
 return [
     /*
      * The following debug options come
@@ -16,7 +23,9 @@ return [
 
     'channel' => 'AUTH-SERVICE',
 
-    'cacheDir' => storage_path('framework/cache/'),
+    'cache' => storage_path('framework/cache/'),
+
+    'cloud' => ! env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,9 +39,11 @@ return [
     | Path for trace logs
     |--------------------------------------------------------------------------
     */
-    'logpath' => storage_path('logs/trace.log'),
+    'logpath' => storage_path().'/logs/'.$hostname.'-trace.log',
 
     'mockAws' => false,
 
-    'fallbackEmail' => 'developers@razorpay.com'
+    'fallback_email' => 'developers@razorpay.com',
+
+    'trace_code_class' => App\Constants\TraceCode::class,
 ];

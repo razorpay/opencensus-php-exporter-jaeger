@@ -61,22 +61,22 @@ return [
     ],
 
     'testPostAuthCodeWithWrongResponseType' => [
-        'request'   => [
+        'request' => [
             'method'  => 'POST',
             'url'     => '/authorize',
             'content' => ['token' => 'incorrect_response_type']
         ],
-        'response'  => [
-            'content'     => [
+        'response' => [
+            'content' => [
                 'error' => [
-                    'description' => 'Missing argument or incorrect value provided for response_type'
+                    'description' => 'Bad Request'
                 ],
             ],
             'status_code' => 400
         ],
         'exception' => [
             'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
-            'message' => 'Missing argument or incorrect value provided for response_type',
+            'message' => 'Bad Request',
         ],
     ],
 
@@ -295,7 +295,7 @@ return [
         'response' => [
             'content' => [
                 'success' => false,
-                'errors'  => ['User data not found'],
+                'errors' => ['User data not found'],
             ],
         ],
     ],

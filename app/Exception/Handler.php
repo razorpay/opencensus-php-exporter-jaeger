@@ -3,14 +3,12 @@
 namespace App\Exception;
 
 use App;
-use Razorpay\Trace\Trace;
+use Razorpay\Trace\Logger as Trace;
 use Response;
 use App\Error\Error;
 use App\Error\ErrorCode;
 use Psr\Log\LoggerInterface;
 use App\Constants\TraceCode;
-use App\Exception\BaseException;
-use App\Exception\BadRequestException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -20,8 +18,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
-use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
 use Razorpay\OAuth\Exception\BaseException as OAuthBaseException;
+use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
 
 class Handler extends ExceptionHandler
 {
@@ -328,7 +326,7 @@ class Handler extends ExceptionHandler
         switch (true)
         {
             case $e instanceof OAuthBaseException:
-            case $e instanceof OAuthRecoverableException:
+            case $e instanceof OAuthBadRequestException:
                 return $this->oauthRecoverableErrorResponse($this->isDebug(), $e);
         }
 

@@ -20,5 +20,6 @@ class TraceCode extends BaseTraceCode
     const ERROR_EXCEPTION                                           = 'ERROR_EXCEPTION';
     const MISC_TRACE_CODE                                           = 'MISC_TRACE_CODE';
     const API_REQUEST                                               = 'API_REQUEST';
+    const AUTH_TEST_TRACE                                           = 'AUTH_TEST_TRACE';
 }
 

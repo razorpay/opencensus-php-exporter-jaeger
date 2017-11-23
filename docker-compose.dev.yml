@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+      args:
+       - GIT_TOKEN
     image: razorpay:auth
     volumes:
       - .:/app
@@ -19,6 +21,8 @@ services:
       DB_USERNAME: auth
       DB_PASSWORD: 123
       APP_CONTEXT: dev
+      APP_MODE: dev
+      GIT_COMMIT_HASH: dev-commit
   db-auth:
       image: mysql:5.6
       ports:
