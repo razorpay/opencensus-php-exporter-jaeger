@@ -4,25 +4,32 @@ namespace App\Services;
 
 use Requests;
 
+use App\Error\ErrorCode;
+use App\Exception\BadRequestException;
+
 class Dashboard
 {
     public function getTokenData(string $token)
     {
-        $options = [
-            'auth' => ['rzp_auth', env('APP_DASHBOARD_SECRET')]
-        ];
+        $dashBoardUrl = env('APP_DASHBOARD_URL');
+        $secret       = env('APP_DASHBOARD_SECRET');
 
-        $response = Requests::get(
-            env('APP_DASHBOARD_URL') . '/user/token/' . $token . '/details',
-            [],
-            $options
-        );
+        $url = $dashBoardUrl . '/user/token/' . $token . '/details';
+
+        $options = ['auth' => ['rzp_auth', $secret]];
+
+        $response = Requests::get($url, [], $options);
 
         // TODO: Handle failures
 
         $body = $response->body;
 
         $jsonBody = json_decode($body, true);
+
+        if (isset($jsonBody['data']) === false)
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_CLIENT_OR_USER);
+        }
 
         return $jsonBody['data'];
     }

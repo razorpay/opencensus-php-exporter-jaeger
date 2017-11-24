@@ -3,8 +3,10 @@
 namespace App\Tests\Functional;
 
 use DB;
+use Trace;
 use Crypt;
 use Request;
+
 use Razorpay\OAuth\Token;
 use Razorpay\OAuth\Client;
 use Razorpay\OAuth\OAuthServer;
@@ -18,11 +20,88 @@ class OAuthTest extends TestCase
     use RequestResponseFlowTrait;
     use CryptTrait;
 
+    /**
+     * @var Client\Entity
+     */
+    protected $devClient;
+
+    /**
+     * @var Application\Entity
+     */
+    protected $application;
+
     public function setup()
     {
         $this->testDataFilePath = __DIR__ . '/OAuthTestData.php';
 
         parent::setup();
+    }
+
+    public function testGetRoot()
+    {
+        $this->startTest();
+    }
+
+    public function testGetStatus()
+    {
+        $this->startTest();
+    }
+
+    public function testGetAuthorizeUrl()
+    {
+        $data = $this->testData[$this->getName()];
+
+        $response = $this->sendRequest($data['request']);
+
+        $expectedString = 'No records found with the given Id';
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertContains($expectedString, $response->getContent());
+    }
+
+    public function testGetAuthorizeUrlWithClient()
+    {
+        $application = factory(Application\Entity::class)->create();
+
+        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+
+        $devClient = factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $application->getId(),
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $data = [
+            'method' => 'get',
+            'url'    => '/authorize?response_type=code' .
+                        '&client_id=' . $devClient->getId() .
+                        '&redirect_uri=https://www.example.com' .
+                        '&scope=read_only' .
+                        '&state=123',
+        ];
+
+        $response = $this->sendRequest($data);
+
+        $expectedString = 'Allow <span class="emphasis">' .
+                          $application->getName() .
+                          '</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?';
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertContains($expectedString, $response->getContent());
+    }
+
+    public function testGetAuthorizeUrlNoStateParam()
+    {
+        $data = $this->testData[$this->getName()];
+
+        $response = $this->sendRequest($data['request']);
+
+        $expectedString = 'Validation failed. The state field is required.';
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertContains($expectedString, $response->getContent());
     }
 
     public function testPostAuthCode()
@@ -31,47 +110,77 @@ class OAuthTest extends TestCase
 
         $application = factory(Application\Entity::class)->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
+        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
 
-        $devClient = factory(Client\Entity::class)->create(
+        factory(Client\Entity::class)->create(
             [
-                'id'    => '30000000000000',
-                'application_id' => $application->id,
-                'redirect_url' => ['https://www.example.com'],
-                'environment' => 'dev'
+                'id'             => '30000000000000',
+                'application_id' => $application->getId(),
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
             ]);
 
-        $data['request']['content']['client_id'] = $devClient->id;
+        $response = $this->sendRequest($data['request']);
 
-        $content = $this->sendRequest($data['request']);
+        $content = urldecode($response->getContent());
 
-        $content = urldecode($content->getContent());
-
+        $this->assertEquals(302, $response->getStatusCode());
         $this->assertContains('http://localhost?code=', $content);
+    }
+
+    public function testPostAuthCodeInvalidToken()
+    {
+        $application = factory(Application\Entity::class)->create();
+
+        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+
+        factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $application->getId(),
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $this->startTest();
+    }
+
+    public function testPostAuthCodeInvalidRole()
+    {
+        $application = factory(Application\Entity::class)->create();
+
+        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+
+        factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $application->getId(),
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $this->startTest();
     }
 
     public function testPostAuthCodeWithReject()
     {
-        $data = & $this->testData[__FUNCTION__];
-
         $application = factory(Application\Entity::class)->create();
 
         factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
 
-        $devClient = factory(Client\Entity::class)->create(
+        factory(Client\Entity::class)->create(
             [
-                'id'    => '30000000000000',
+                'id'             => '30000000000000',
                 'application_id' => $application->id,
-                'redirect_url' => ['https://www.example.com'],
-                'environment' => 'dev'
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
             ]);
 
-        $data['request']['content']['client_id'] = $devClient->id;
+        $response = $this->sendRequest($this->testData[__FUNCTION__]['request']);
 
-        $content = $this->sendRequest($data['request']);
+        $content = urldecode($response->getContent());
 
-        $content = urldecode($content->getContent());
-
+        $this->assertEquals(302, $response->getStatusCode());
         $this->assertContains('error=access_denied', $content);
     }
 
@@ -83,20 +192,17 @@ class OAuthTest extends TestCase
 
         $data = & $this->testData[__FUNCTION__];
 
-        $client = $this->devClient;
+        $params = [
+            'client_secret' => $this->devClient->getSecret(),
+            'code'          => $authCode,
+        ];
 
-        $data['request']['content']['client_id'] = $client->id;
-
-        $data['request']['content']['client_secret'] = $client->getSecret();
-
-        $data['request']['content']['code'] = $authCode;
+        $this->addRequestParameters($data['request']['content'], $params);
 
         $content = $this->runRequestResponseFlow($data);
 
         $this->assertArrayHasKey('access_token', $content);
-
         $this->assertArrayHasKey('refresh_token', $content);
-
         $this->assertArrayHasKey('expires_in', $content);
     }
 
@@ -108,38 +214,29 @@ class OAuthTest extends TestCase
 
         $data = & $this->testData[__FUNCTION__];
 
-        $client = $this->devClient;
+        $params = [
+            'client_secret' => $this->devClient->getSecret(),
+            'code'          => $authCode,
+        ];
 
-        $content = $data['request']['content'];
-
-        $content['code'] = $authCode;
-
-        $content['client_id'] = $client->id;
-
-        $content['client_secret'] = $client->getSecret();
-
-        $data['request']['content'] = $content;
+        $this->addRequestParameters($data['request']['content'], $params);
 
         $this->startTest();
     }
 
     public function testPostAccessTokenWithMissingCode()
     {
-        $authCode = $this->generateAuthCode();
+        $this->generateAuthCode();
 
         Request::clearResolvedInstances();
 
         $data = & $this->testData[__FUNCTION__];
 
-        $client = $this->devClient;
+        $params = [
+            'client_secret' => $this->devClient->getSecret()
+        ];
 
-        $content = $data['request']['content'];
-
-        $content['client_id'] = $client->id;
-
-        $content['client_secret'] = $client->getSecret();
-
-        $data['request']['content'] = $content;
+        $this->addRequestParameters($data['request']['content'], $params);
 
         $this->startTest();
     }
@@ -152,17 +249,12 @@ class OAuthTest extends TestCase
 
         $data = & $this->testData[__FUNCTION__];
 
-        $client = $this->devClient;
+        $params = [
+            'client_secret' => 'wrongSecret',
+            'code'          => $authCode,
+        ];
 
-        $content = $data['request']['content'];
-
-        $content['code'] = $authCode;
-
-        $content['client_id'] = $client->id;
-
-        $content['client_secret'] = 'wrongSecret';
-
-        $data['request']['content'] = $content;
+        $this->addRequestParameters($data['request']['content'], $params);
 
         $this->startTest();
     }
@@ -175,43 +267,30 @@ class OAuthTest extends TestCase
 
         $data = & $this->testData[__FUNCTION__];
 
-        $client = $this->devClient;
+        $params = [
+            'client_secret' => 'wrongSecret',
+            'code'          => $authCode,
+        ];
 
-        $content = $data['request']['content'];
-
-        $content['code'] = $authCode;
-
-        $content['client_id'] = 'clientId';
-
-        $content['client_secret'] = $client->getSecret();
-
-        $data['request']['content'] = $content;
+        $this->addRequestParameters($data['request']['content'], $params);
 
         $this->startTest();
     }
 
     public function testPostAuthCodeWithWrongResponseType()
     {
-        $data = & $this->testData[__FUNCTION__];
         $application = factory(Application\Entity::class)->create();
 
         factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
 
-        $devClient = factory(Client\Entity::class)->create(
+        factory(Client\Entity::class)->create(
             [
-                'id'    => '30000000000000',
+                'id'             => '30000000000000',
                 'application_id' => $application->id,
-                'redirect_url' => ['https://www.example.com'],
-                'environment' => 'dev'
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
             ]);
 
-        $data['request']['content']['client_id'] = $devClient->id;
-
-        $this->startTest();
-    }
-
-    public function testGetRoot()
-    {
         $this->startTest();
     }
 
@@ -233,14 +312,18 @@ class OAuthTest extends TestCase
 
         $data['request']['content']['client_id'] = $this->devClient->id;
 
-        $content = ($this->sendRequest($data['request']))->getContent();
+        $response = ($this->sendRequest($data['request']))->getContent();
 
-        $content = urldecode($content);
+        $content = urldecode($response);
 
         $pos = strpos($content, 'code=');
-
         $end = strpos($content, '" />', $pos);
 
         return substr($content, $pos + 5, $end - $pos - 5);
+    }
+
+    protected function addRequestParameters(array & $content, array $parameters)
+    {
+        $content = array_merge($content, $parameters);
     }
 }

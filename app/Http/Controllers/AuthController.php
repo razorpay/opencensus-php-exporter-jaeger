@@ -40,13 +40,8 @@ class AuthController extends Controller
         }
         catch (\Throwable $t)
         {
-            $response = [
-                'error' => 'DB error',
-            ];
-            
-            Trace::info(TraceCode::AUTH_TEST_TRACE, $response);
 
-            return response()->json($response, 500);
+            return response()->json(['error' => 'DB error'], 500);
         }
     }
 

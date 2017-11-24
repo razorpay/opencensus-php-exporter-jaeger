@@ -2,52 +2,132 @@
 
 namespace App\Services\Mock;
 
+use App\Error\ErrorCode;
+use App\Exception\BadRequestException;
+
 class Dashboard
 {
     protected $config;
+
     protected $trace;
 
     public function getTokenData(string $token)
     {
-        $this->testDataFilePath = __DIR__ . '/../../../tests/Functional/OAuthTestData.php';
-
-        $this->testData = require $this->testDataFilePath;
+        $response = [];
 
         switch ($token)
         {
             case 'success':
-                return $this->correctResponse();
+                $response = $this->correctResponse();
+                break;
 
             case 'invalid':
-                return $this->invalidTokenResponse();
+                $response = $this->invalidTokenResponse();
+                break;
 
             case 'incorrect_response_type':
-                return $this->invalidResponseTypeResponse();
-            
-            default:
-                # code...
+                $response = $this->invalidResponseTypeResponse();
                 break;
+
+            case 'invalid_role':
+                $response = $this->invalidRoleResponse();
+                break;
+
         }
+
+        if (isset($response['data']) === false)
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_CLIENT_OR_USER);
+        }
+
+        return $response['data'];
     }
 
-    public function correctResponse()
+    protected function correctResponse()
     {
-        return $this->testData['testGetTokenData']['request']['content'];
-    }
-
-    public function invalidTokenResponse()
-    {
-        $content = $this->testData['testGetTokenDataWithInvalidToken']['request']['content'];
-
         $data = [
-            'success' => false,
-            'errors'    => $content,
+            'user_id'      => '20000000000000',
+            'user_email'   => 'test@razorpay.com',
+            'merchant_id'  => 'merchant_id',
+            'role'         => 'owner',
+            'user'         => [
+                'id'             => '20000000000000',
+                'name'           => 'fdfd',
+                'email'          => 'fdsfsd@dfsd.dsfd',
+                'contact_mobile' => '9999999999',
+                'created_at'     => '1497678977',
+                'updated_at'     => '1497678977',
+                'merchant_id'    => '10000000000000',
+                'confirmed'      => true
+            ],
+            'query_params' => 'client_id=30000000000000&amp;redirect_uri=http%3A%2F%2Flocalhost&amp;response_type=code&amp;scope=read_only'
         ];
-        return $data;
+
+        return [
+            'success' => true,
+            'data'    => $data
+        ];
     }
 
-    public function invalidResponseTypeResponse()
+    protected function invalidTokenResponse()
     {
-        return $this->testData['testGetTokenDataWrongResponseType']['request']['content'];
+        $errors = ['User data not found'];
+
+        return [
+            'success' => false,
+            'errors'  => $errors,
+        ];
+    }
+
+    protected function invalidResponseTypeResponse()
+    {
+        $data = [
+            'user_id'      => '20000000000000',
+            'user_email'   => 'test@razorpay.com',
+            'merchant_id'  => 'merchant_id',
+            'role'         => 'owner',
+            'user'         => [
+                'id'             => '20000000000000',
+                'name'           => 'fdfd',
+                'email'          => 'fdsfsd@dfsd.dsfd',
+                'contact_mobile' => '9999999999',
+                'created_at'     => '1497678977',
+                'updated_at'     => '1497678977',
+                'merchant_id'    => '10000000000000',
+                'confirmed'      => true
+            ],
+            'query_params' => 'client_id=30000000000000&amp;redirect_uri=http%3A%2F%2Flocalhost&amp;response_type=invalid&amp;scope=read_only'
+        ];
+
+        return [
+            'success' => true,
+            'data'    => $data,
+        ];
+    }
+
+    protected function invalidRoleResponse()
+    {
+        $data = [
+            'user_id'      => '20000000000000',
+            'user_email'   => 'test@razorpay.com',
+            'merchant_id'  => 'merchant_id',
+            'role'         => 'support',
+            'user'         => [
+                'id'             => '20000000000000',
+                'name'           => 'fdfd',
+                'email'          => 'fdsfsd@dfsd.dsfd',
+                'contact_mobile' => '9999999999',
+                'created_at'     => '1497678977',
+                'updated_at'     => '1497678977',
+                'merchant_id'    => '10000000000000',
+                'confirmed'      => true
+            ],
+            'query_params' => 'client_id=30000000000000&amp;redirect_uri=http%3A%2F%2Flocalhost&amp;response_type=invalid&amp;scope=read_only'
+        ];
+
+        return [
+            'success' => true,
+            'data'    => $data,
+        ];
     }
 }

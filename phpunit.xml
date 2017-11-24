@@ -17,6 +17,9 @@
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./app</directory>
+            <exclude>
+                <directory suffix=".php">./app/Exception</directory>
+            </exclude>
         </whitelist>
     </filter>
     <php>

@@ -1,39 +1,170 @@
 <?php
 
 return [
-    'testPostAuthCode' => [
-        'request' => [
-            'method'  => 'POST',
-            'url'     => '/authorize',
-            'content' => ['token' => 'success']
-        ],
-        'response' => [
-            'content' => [],
-        ]
-    ],
-
-    'testPostAuthCodeWithReject' => [
-        'request' => [
-            'method'  => 'delete',
-            'url'     => '/authorize',
-            'content' => ['token' => 'success']
-        ],
-        'response' => [
-            'content' => [],
-        ]
-    ],
-
-    'testPostAccessToken' => [
-        'request' => [
-            'method'  => 'POST',
-            'url'     => '/token',
-            'content' => ['grant_type'    => 'authorization_code',
-                          'redirect_uri'  => 'https://www.example.com'
-                         ]
+    'testGetRoot' => [
+        'request'  => [
+            'method' => 'GET',
+            'url'    => '/'
         ],
         'response' => [
             'content' => [
-              'token_type' => 'Bearer',
+                'message' => 'Welcome to Razorpay Auth!',
+            ],
+        ],
+    ],
+
+    'testGetStatus' => [
+        'request'  => [
+            'method' => 'GET',
+            'url'    => '/status'
+        ],
+        'response' => [
+            'content' => [
+                'DB' => 'Ok',
+            ],
+        ],
+    ],
+
+    'testGetAuthorizeUrl' => [
+        'request'  => [
+            'method' => 'GET',
+            'url'    => '/authorize?response_type=code&client_id=86KC3q506ytUPA&redirect_uri=http://localhost&scope=read_only&state=123'
+        ],
+        'response' => [
+            'content' => [],
+        ],
+    ],
+
+    'testGetAuthorizeUrlNoStateParam' => [
+        'request'  => [
+            'method' => 'GET',
+            'url'    => '/authorize?response_type=code&client_id=86KC3q506ytUPA&redirect_uri=http://localhost&scope=read_only'
+        ],
+        'response' => [
+            'content' => [
+                'DB' => 'Ok',
+            ],
+        ],
+    ],
+
+    'testPostAuthCode' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/authorize',
+            'content' => [
+                'client_id' => '30000000000000',
+                'token'     => 'success'
+            ]
+        ],
+        'response' => [
+            'content' => [],
+        ]
+    ],
+
+    'testPostAuthCodeWithWrongResponseType' => [
+        'request' => [
+            'method'  => 'POST',
+            'url'     => '/authorize',
+            'content' => [
+                'token'     => 'incorrect_response_type',
+                'client_id' => '30000000000000'
+            ]
+        ],
+        'response' => [
+            'content' => [
+                'error' => [
+                    'description' => 'Bad Request'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
+            'message' => 'Bad Request',
+        ],
+    ],
+
+    'testPostAuthCodeInvalidToken' => [
+        'request'   => [
+            'method'  => 'POST',
+            'url'     => '/authorize',
+            'content' => [
+                'token'     => 'invalid',
+                'client_id' => '30000000000000'
+            ]
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'There was a problem with the application you are trying to connect to, please contact the application provider for support.'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'App\Exception\BadRequestException',
+            'message' => 'There was a problem with the application you are trying to connect to, please contact the application provider for support.',
+        ],
+    ],
+
+    'testPostAuthCodeWithReject' => [
+        'request'   => [
+            'method'  => 'delete',
+            'url'     => '/authorize',
+            'content' => [
+                'token' => 'success'
+            ]
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Missing argument or User denied access'
+                ],
+            ],
+            'status_code' => 401
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
+            'message' => 'Missing argument or User denied access',
+        ],
+    ],
+
+    'testPostAuthCodeInvalidRole' => [
+        'request'   => [
+            'method'  => 'delete',
+            'url'     => '/authorize',
+            'content' => [
+                'token'     => 'invalid_role',
+                'client_id' => '30000000000000',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'The current user profile is restricted from this action'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'App\Exception\BadRequestException',
+            'message' => 'The current user profile is restricted from this action',
+        ],
+    ],
+
+    'testPostAccessToken' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/token',
+            'content' => [
+                'client_id'    => '30000000000000',
+                'grant_type'   => 'authorization_code',
+                'redirect_uri' => 'https://www.example.com',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'token_type' => 'Bearer',
             ],
             'status_code' => 200
         ]
@@ -43,12 +174,14 @@ return [
         'request' => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'    => 'some_code',
-                          'redirect_uri'  => 'https://www.example.com'
-                         ]
-        ],
-        'response' => [
             'content' => [
+                'grant_type'   => 'some_code',
+                'redirect_uri' => 'https://www.example.com',
+                'client_id'    => '30000000000000',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Check the `grant_type` parameter'
                 ],
@@ -62,15 +195,17 @@ return [
     ],
 
     'testPostAccessTokenWithMissingCode' => [
-        'request' => [
+        'request'   => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'    => 'authorization_code',
-                          'redirect_uri'  => 'https://www.example.com'
-                         ]
-        ],
-        'response' => [
             'content' => [
+                'grant_type'   => 'authorization_code',
+                'redirect_uri' => 'https://www.example.com',
+                'client_id'    => '30000000000000',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Check the `code` parameter',
                 ],
@@ -84,15 +219,17 @@ return [
     ],
 
     'testPostAccessTokenWithIncorrectSecret' => [
-        'request' => [
+        'request'   => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'    => 'authorization_code',
-                          'redirect_uri'  => 'https://www.example.com'
-                         ]
-        ],
-        'response' => [
             'content' => [
+                'grant_type'   => 'authorization_code',
+                'redirect_uri' => 'https://www.example.com',
+                'client_id'    => '30000000000000',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'Access denied'
                 ],
@@ -106,15 +243,17 @@ return [
     ],
 
     'testPostAccessTokenWithIncorrectClientId' => [
-        'request' => [
+        'request'   => [
             'method'  => 'POST',
             'url'     => '/token',
-            'content' => ['grant_type'    => 'authorization_code',
-                          'redirect_uri'  => 'https://www.example.com'
-                         ]
-        ],
-        'response' => [
             'content' => [
+                'client_id'    => 'invalidClient',
+                'grant_type'   => 'authorization_code',
+                'redirect_uri' => 'https://www.example.com',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
                 'error' => [
                     'description' => 'No records found with the given Id'
                 ],
@@ -130,11 +269,11 @@ return [
     'testGetTokenData' => [
         'request' => [
             'content' => [
-                'user_id'     => '20000000000000',
-                'user_email'  => 'test@razorpay.com',
-                'merchant_id' => 'merchant_id',
-                'role'        => 'owner',
-                'user'        => [
+                'user_id'      => '20000000000000',
+                'user_email'   => 'test@razorpay.com',
+                'merchant_id'  => 'merchant_id',
+                'role'         => 'owner',
+                'user'         => [
                     'id'             => '20000000000000',
                     'name'           => 'fdfd',
                     'email'          => 'fdsfsd@dfsd.dsfd',
@@ -152,11 +291,11 @@ return [
     'testGetTokenDataWrongResponseType' => [
         'request' => [
             'content' => [
-                'user_id'     => '20000000000000',
-                'user_email'  => 'test@razorpay.com',
-                'merchant_id' => 'merchant_id',
-                'role'        => 'owner',
-                'user'        => [
+                'user_id'      => '20000000000000',
+                'user_email'   => 'test@razorpay.com',
+                'merchant_id'  => 'merchant_id',
+                'role'         => 'owner',
+                'user'         => [
                     'id'             => '20000000000000',
                     'name'           => 'fdfd',
                     'email'          => 'fdsfsd@dfsd.dsfd',
@@ -172,45 +311,13 @@ return [
     ],
 
     'testGetTokenDataWithInvalidToken' => [
-        'request' => [
+        'request'  => [
             'content' => ['User data not found'],
         ],
         'response' => [
             'content' => [
                 'success' => false,
                 'errors' => ['User data not found'],
-            ],
-        ],
-    ],
-
-    'testPostAuthCodeWithWrongResponseType' => [
-        'request' => [
-            'method'  => 'POST',
-            'url'     => '/authorize',
-            'content' => ['token' => 'incorrect_response_type']
-        ],
-        'response' => [
-            'content' => [
-                'error' => [
-                    'description' => 'Bad Request'
-                ],
-            ],
-            'status_code' => 400
-        ],
-        'exception' => [
-            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
-            'message' => 'Bad Request',
-        ],
-    ],
-
-    'testGetRoot' => [
-        'request' => [
-            'method' => 'GET',
-            'url'    => '/'
-        ],
-        'response' => [
-            'content' => [
-                'message' => 'Welcome to Razorpay Auth!',
             ],
         ],
     ],

@@ -26,6 +26,13 @@ class ApplicationTest extends TestCase
         $this->startTest();
     }
 
+    public function testCreateApplicationInvalidSecret()
+    {
+        $this->setInternalAuth('rzp', 'dummy_secret');
+
+        $this->startTest();
+    }
+
     public function testCreateApplicationMissingInput()
     {
         $this->startTest();
