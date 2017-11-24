@@ -3,8 +3,10 @@
 namespace App\Tests\Functional;
 
 use DB;
+use Trace;
 use Crypt;
 use Request;
+
 use Razorpay\OAuth\Token;
 use Razorpay\OAuth\Client;
 use Razorpay\OAuth\OAuthServer;
@@ -108,17 +110,15 @@ class OAuthTest extends TestCase
 
         $application = factory(Application\Entity::class)->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
+        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
 
-        $devClient = factory(Client\Entity::class)->create(
+        factory(Client\Entity::class)->create(
             [
                 'id'             => '30000000000000',
-                'application_id' => $application->id,
+                'application_id' => $application->getId(),
                 'redirect_url'   => ['https://www.example.com'],
                 'environment'    => 'dev'
             ]);
-
-        $data['request']['content']['client_id'] = $devClient->id;
 
         $response = $this->sendRequest($data['request']);
 

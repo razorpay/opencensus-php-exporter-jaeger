@@ -51,7 +51,10 @@ return [
         'request'  => [
             'method'  => 'POST',
             'url'     => '/authorize',
-            'content' => ['token' => 'success']
+            'content' => [
+                'client_id' => '30000000000000',
+                'token'     => 'success'
+            ]
         ],
         'response' => [
             'content' => [],
