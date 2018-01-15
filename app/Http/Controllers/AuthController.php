@@ -33,14 +33,11 @@ class AuthController extends Controller
                     'DB' => 'Ok',
                 ];
 
-                Trace::info(TraceCode::AUTH_TEST_TRACE, $response);
-
                 return response()->json($response);
             }
         }
         catch (\Throwable $t)
         {
-
             return response()->json(['error' => 'DB error'], 500);
         }
     }
