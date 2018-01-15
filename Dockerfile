@@ -14,7 +14,7 @@ WORKDIR /app
 RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
     && composer install --no-interaction \
     && mkdir /opt && cd /opt \
-    && wget https://download.newrelic.com/php_agent/release/newrelic-php5-7.6.0.201-linux-musl.tar.gz \
+    && wget https://download.newrelic.com/php_agent/archive/7.6.0.201/newrelic-php5-7.6.0.201-linux-musl.tar.gz \
     && tar -xzvf newrelic-php5-7.6.0.201-linux-musl.tar.gz \
     && ./newrelic-php5-7.6.0.201-linux-musl/newrelic-install install
 
