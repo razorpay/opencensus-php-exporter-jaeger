@@ -13,8 +13,9 @@ WORKDIR /app
 RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
     && composer install --no-interaction \
     && mkdir /opt \
-    && cd /opt \
-    && chown -R nginx.nginx /app
+    && cd /opt
+
+RUN chown -R nginx.nginx /app
 
 EXPOSE 80
 
