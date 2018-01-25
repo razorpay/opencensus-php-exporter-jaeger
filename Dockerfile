@@ -4,6 +4,8 @@ ARG GIT_COMMIT_HASH
 ARG GIT_TOKEN
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
+RUN mkdir /app/
+
 COPY . /app/
 
 COPY ./dockerconf/boot.sh /boot.sh
@@ -13,7 +15,8 @@ WORKDIR /app
 RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
     && composer install --no-interaction \
     && mkdir /opt \
-    && cd /opt
+    && cd /opt \
+    && composer clear-cache
 
 RUN chown -R nginx.nginx /app
 
