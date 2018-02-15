@@ -1,0 +1,127 @@
+pipeline:
+  clone:
+    image: plugins/git
+    when:
+      event:
+        exclude: [deployment]
+        include: [push]
+  test:
+    image: razorpay/pithos:rzp-php7.1-nginx
+    pull: true
+    secrets: [docker_username, docker_password, git_token]
+    environment:
+      - DB_HOST=db-auth
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - DB_DATABASE=auth_test
+    commands:
+      - ./dockerconf/run_drone_tests.sh
+    when:
+      event:
+        exclude: [deployment]
+        include: [push]
+  build:
+    image: plugins/docker
+    repo: razorpay/auth-service
+    secrets: [docker_username, docker_password, git_token]
+    build_args_from_env: [git_token]
+    build_args:
+     - GIT_COMMIT_HASH=${DRONE_COMMIT_SHA}
+    tags: ${DRONE_COMMIT_SHA}
+    when:
+      status: [success]
+      event:
+        exclude: [deployment]
+        include: [push]
+  build-notify:
+    image: plugins/slack
+    secrets: [slack_webhook]
+    channel: tech_distelli
+    username: drone
+    icon_url: https://avatars2.githubusercontent.com/u/2181346?s=200&v=4
+    template: >
+      {{#success build.status}}
+        Build succeeded.
+      {{else}}
+        Build failed.
+      {{/success}}
+        Build No:{{build.number}}
+        Branch: {{build.branch}}
+        Commit: {{build.commit}}
+        Author: {{build.author}}
+        Started at: {{build.started}}
+        Time taken: {{since build.started}}
+        Link: {{build.link}}
+    when:
+      event:
+        exclude: [deployment]
+        include: [push]
+services:
+  db-auth:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=auth_test
+    when:
+      event:
+        exclude: [deployment]
+        include: [push]
+pipeline:
+  deploy-stage:
+    image: razorpay/drone-kubernetes:latest
+    pull: true
+    secrets:
+      - docker_username
+      - docker_password
+      - server_url_stage
+      - server_cert_stage
+      - client_cert_stage
+      - client_key_stage
+    user: drone
+    cluster: stage
+    auth_mode: client-cert
+    deployment: auth
+    repo: razorpay/auth-service
+    container: auth
+    namespace: auth
+    tag:
+      - ${DRONE_COMMIT_SHA}
+    when:
+      environment: stage
+      event:
+        exclude: [push]
+        include: [deployment]
+  deploy-prod:
+    image: razorpay/drone-kubernetes:latest
+    pull: true
+    secrets:
+      - docker_username
+      - docker_password
+      - server_url_prod
+      - server_cert_prod
+      - client_cert_prod
+      - client_key_prod
+    user: drone
+    cluster: prod
+    auth_mode: client-cert
+    deployment: auth
+    repo: razorpay/auth-service
+    container: auth
+    namespace: auth
+    tag:
+      - ${DRONE_COMMIT_SHA}
+    when:
+      environment: prod
+      event:
+        exclude: [push]
+        include: [deployment]
+      branch: master
+  build-falcon-notify:
+    image: plugins/webhook
+    urls:
+      - https://falcon.razorpay.com/update
+    secrets:
+      - plugin_headers
+    when:
+      status: [ success, failure ]
