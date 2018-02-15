@@ -1,8 +1,8 @@
 #!/bin/sh
 set -euo pipefail
 
-SRC_DIR=/drone/src/github.com/razorpay/auth
-auth_TMP_DIR=/tmp/auth ## defined in the environment file
+SRC_DIR=/drone/src/github.com/razorpay/auth-service
+auth_TMP_DIR=/tmp/auth-service ## defined in the environment file
 
 function init_setup
 {
