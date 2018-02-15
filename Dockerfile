@@ -13,10 +13,6 @@ COPY ./dockerconf/boot.sh /boot.sh
 WORKDIR /app
 
 RUN apk update \
-    && apk add --no-cache \
-    php7-xmlwriter \
-    php7-tokenizer \
-    php7-simplexml \
     && composer config -g github-oauth.github.com ${GIT_TOKEN} \
     && composer install --no-interaction \
     && mkdir /opt \
