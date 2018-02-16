@@ -16,9 +16,9 @@ class TokenTest extends TestCase
     {
         $this->testDataFilePath = __DIR__ . '/TokenTestData.php';
 
-        $this->setInternalAuth('rzp', 'RANDOM_API_PASSWORD');
-
         parent::setup();
+
+        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
     }
 
     public function testGetToken()
