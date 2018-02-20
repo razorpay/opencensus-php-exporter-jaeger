@@ -23,7 +23,7 @@ pipeline:
         include: [push]
   build:
     image: plugins/docker
-    repo: razorpay/auth-service
+    repo: razorpay/auth
     secrets: [docker_username, docker_password, git_token]
     build_args_from_env: [git_token]
     build_args:
