@@ -82,7 +82,7 @@ pipeline:
     cluster: stage
     auth_mode: client-cert
     deployment: auth
-    repo: razorpay/auth-service
+    repo: razorpay/auth
     container: auth
     namespace: auth
     tag:
@@ -106,7 +106,7 @@ pipeline:
     cluster: prod
     auth_mode: client-cert
     deployment: auth
-    repo: razorpay/auth-service
+    repo: razorpay/auth
     container: auth
     namespace: auth
     tag:
