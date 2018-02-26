@@ -183,7 +183,7 @@ return [
 
     'testDeleteApplication' => [
         'request'  => [
-            'method'  => 'DELETE',
+            'method'  => 'PUT',
             'content' => [
                 'merchant_id' => '10000000000000',
             ]

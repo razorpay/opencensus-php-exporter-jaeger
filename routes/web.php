@@ -48,7 +48,7 @@ $app->get('/applications', [
 	'uses'       => 'ApplicationController@getMultiple'
 ]);
 
-$app->delete('/applications/{id}', [
+$app->put('/applications/{id}', [
 	'middleware' => 'auth.api',
 	'as'         => 'delete_application',
 	'uses'       => 'ApplicationController@delete'
@@ -72,7 +72,7 @@ $app->get('/tokens', [
 	'uses'       => 'TokenController@getAll'
 ]);
 
-$app->delete('/tokens/{id}', [
+$app->put('/tokens/{id}', [
 	'middleware' => 'auth.api',
 	'as'         => 'delete_token',
 	'uses'       => 'TokenController@revoke'
