@@ -32,12 +32,18 @@ spec:
               name: auth
               key: APP_MODE
         name: auth
-        image: razorpay/auth:e2e9d8e06ac90db83d5717ed6993b142ec3b54c0
+        image: razorpay/auth:301971
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
           protocol: TCP
-        resources: {}
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
+          limits:
+            cpu: 100m
+            memory: 200Mi
         volumeMounts:
           - name: trace
             mountPath: /app/storage/logs/
