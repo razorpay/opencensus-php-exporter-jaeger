@@ -1298,12 +1298,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "d7bf73f160518db5dd32cfe6463241228e814241"
+                "reference": "115b9d7d87eb7f64ce1d696e3ff8f8f3503bfc66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/d7bf73f160518db5dd32cfe6463241228e814241",
-                "reference": "d7bf73f160518db5dd32cfe6463241228e814241",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/115b9d7d87eb7f64ce1d696e3ff8f8f3503bfc66",
+                "reference": "115b9d7d87eb7f64ce1d696e3ff8f8f3503bfc66",
                 "shasum": ""
             },
             "require": {
@@ -1342,7 +1342,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/master",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2017-09-17T21:24:41+00:00"
+            "time": "2018-02-26 06:57:45"
         },
         {
             "name": "razorpay/spine",
@@ -1393,7 +1393,7 @@
                 "source": "https://github.com/razorpay/spine/tree/laravel5.4",
                 "issues": "https://github.com/razorpay/spine/issues"
             },
-            "time": "2017-07-03T03:54:18+00:00"
+            "time": "2017-07-03 03:54:18"
         },
         {
             "name": "razorpay/trace",

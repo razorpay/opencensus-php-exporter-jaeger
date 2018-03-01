@@ -12,6 +12,7 @@ use App\Constants\TraceCode;
 use App\Constants\RequestParams;
 use App\Models\Base\JitValidator;
 use App\Exception\BadRequestException;
+use Razorpay\OAuth\Token\Entity as Token;
 
 class Service
 {
@@ -91,10 +92,19 @@ class Service
             throw new OAuth\Exception\BadRequestException($error, '', [], $authCode->getStatusCode());
         }
 
+        $clientId = $queryParamsArray[Token::CLIENT_ID];
+
+        $merchantId = $data[Token::MERCHANT_ID];
+
         // TODO: Enqueue this request after checking response times
         if ($data['authorize'] === true)
         {
-            $this->notifyMerchantApplicationAuthorized($queryParamsArray['client_id'], $data['user_id'], $data['merchant_id']);
+            $this->notifyMerchantApplicationAuthorized(
+                $clientId,
+                $data[Token::USER_ID],
+                $merchantId);
+
+            $this->mapMerchantToApplication($clientId, $merchantId);
         }
 
         return $authCode->getHeaders()['Location'][0];
@@ -126,9 +136,21 @@ class Service
         return new Services\Dashboard($this->app);
     }
 
+    public function getApiService()
+    {
+        $apiMock = env('APP_API_MOCK', false);
+
+        if ($apiMock === true)
+        {
+            return new Services\Mock\Api();
+        }
+
+        return new Services\Api();
+    }
+
     protected function validateAndGetApplicationDataForAuthorize(array $input): array
     {
-        $clientId = $input['client_id'];
+        $clientId = $input[Token::CLIENT_ID];
 
         $client = (new OAuth\Client\Repository)->find($clientId);
 
@@ -164,18 +186,25 @@ class Service
         return $scopesArray;
     }
 
-    protected function notifyMerchantApplicationAuthorized(string $clientId, string $userId, string $merchantId)
+    protected function notifyMerchantApplicationAuthorized(
+        string $clientId,
+        string $userId,
+        string $merchantId)
     {
-        $apiMock = env('APP_API_MOCK', false);
-
-        if ($apiMock === true)
-        {
-            return;
-        }
-
-        $apiService = new Services\Api($this->app);
+        $apiService = $this->getApiService();
 
         $apiService->notifyMerchant($clientId, $userId, $merchantId);
+    }
+
+    protected function mapMerchantToApplication(string $clientId, string $merchantId)
+    {
+        $apiService = $this->getApiService();
+
+        $client = (new OAuth\Client\Repository)->findOrFailPublic($clientId);
+
+        $appId = $client->getApplicationId();
+
+        $apiService->mapMerchantToApplication($appId, $merchantId);
     }
 
     protected function validateAuthorizeRequest(array $input)
