@@ -273,7 +273,7 @@
                 if (xhr.status === 401) {
                     pageUrl = window.location.href;
                     var pageUrl = encodeURIComponent(pageUrl);
-                    var signinUrl = dashboardUrl + '#/access/signin?next=' + pageUrl;
+                    var signinUrl = dashboardUrl + '?next=' + pageUrl;
 
                     window.location.href = signinUrl;
                 } else {
