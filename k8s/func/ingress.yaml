@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: auth
+  namespace: auth
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: func-auth.razorpay.in
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: auth
+          servicePort: 80
