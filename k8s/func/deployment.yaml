@@ -18,8 +18,9 @@ spec:
       labels:
         name: auth
       annotations:
-        iam.amazonaws.com/role: func-api
+        iam.amazonaws.com/role: func-auth
     spec:
+      dnsPolicy: Default
       imagePullSecrets:
       - name: registry
       nodeSelector:
