@@ -53,18 +53,12 @@ spec:
           httpGet:
             path: /status
             port: 80
-            httpHeaders:
-              - name: Host
-                value: func-auth.razorpay.in
           initialDelaySeconds: 60
           periodSeconds: 120
         livenessProbe:
           httpGet:
             path: /commit.txt
             port: 80
-            httpHeaders:
-              - name: Host
-                value: perf-auth.razorpay.in
           initialDelaySeconds: 60
           periodSeconds: 20
         lifecycle:

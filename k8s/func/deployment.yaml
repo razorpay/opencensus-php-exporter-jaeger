@@ -32,7 +32,7 @@ spec:
               name: auth
               key: APP_MODE
         name: auth
-        image: razorpay/auth:e2e9d8e06ac90db83d5717ed6993b142ec3b54c0
+        image: razorpay/auth:d552769f9b9adc9495f4ccdd9019ab1d638312e0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
@@ -53,18 +53,12 @@ spec:
           httpGet:
             path: /status
             port: 80
-            httpHeaders:
-              - name: Host
-                value: func-auth.razorpay.in
           initialDelaySeconds: 60
           periodSeconds: 120
         livenessProbe:
           httpGet:
             path: /commit.txt
             port: 80
-            httpHeaders:
-              - name: Host
-                value: func-auth.razorpay.in
           initialDelaySeconds: 60
           periodSeconds: 20
         lifecycle:
