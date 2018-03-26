@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "13334c77c41b531b12c81ce8c9f28744",
+    "content-hash": "e7ab6a5386d5ffe0d85384f290d1c27c",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -1397,16 +1397,16 @@
         },
         {
             "name": "razorpay/trace",
-            "version": "2.0.5",
+            "version": "2.0.11",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/trace.git",
-                "reference": "73d6907e9d0d147b38a7ad4819fbec09ea05d978"
+                "reference": "3197dd6bcc32ab7f614c6a4b46bb52083816991d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/trace/zipball/73d6907e9d0d147b38a7ad4819fbec09ea05d978",
-                "reference": "73d6907e9d0d147b38a7ad4819fbec09ea05d978",
+                "url": "https://api.github.com/repos/razorpay/trace/zipball/3197dd6bcc32ab7f614c6a4b46bb52083816991d",
+                "reference": "3197dd6bcc32ab7f614c6a4b46bb52083816991d",
                 "shasum": ""
             },
             "require": {
@@ -1419,14 +1419,27 @@
             },
             "require-dev": {
                 "codacy/coverage": "dev-master",
+                "kint-php/kint": "^2.1",
                 "phpunit/phpunit": "^4.7",
                 "zendframework/zend-diactoros": "dev-master"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Razorpay\\Trace\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "Trace": "Razorpay\\Trace\\Facades\\Trace"
+                    }
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "Razorpay\\Trace\\": "src/",
-                    "Razorpay\\Trace\\Tests\\": "tests/"
+                    "Razorpay\\Trace\\": [
+                        "src/",
+                        "tests/"
+                    ]
                 }
             },
             "license": [
@@ -1446,12 +1459,17 @@
                     "email": "vivek@razorpay.com"
                 }
             ],
-            "description": "Logging solution for razorpay projects, uses monolog",
+            "description": "Logging solution for razorpay projects",
+            "keywords": [
+                "log",
+                "monolog",
+                "trace"
+            ],
             "support": {
-                "source": "https://github.com/razorpay/trace/tree/master",
+                "source": "https://github.com/razorpay/trace/tree/2.0.11",
                 "issues": "https://github.com/razorpay/trace/issues"
             },
-            "time": "2017-04-06T07:28:45+00:00"
+            "time": "2018-03-14T07:28:59+00:00"
         },
         {
             "name": "rmccue/requests",
