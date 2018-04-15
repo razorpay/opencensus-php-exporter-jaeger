@@ -29,6 +29,9 @@ class Service
      * @param array $input
      *
      * @return array
+     * @throws BadRequestException
+     * @throws OAuth\Exception\BadRequestException
+     * @throws OAuth\Exception\ServerException
      */
     public function getAuthorizeViewData(array $input): array
     {

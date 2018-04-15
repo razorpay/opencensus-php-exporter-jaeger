@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Request;
 use Razorpay\OAuth\Token;
-use Razorpay\OAuth\Client;
 
 use App\Models\Auth;
 
@@ -52,11 +51,12 @@ class TokenController extends Controller
     {
         $merchantId = $input[Token\Entity::MERCHANT_ID];
 
+        //
         // We get the application id from the token client and then fetch all tokens
         // of all clients of that app. If no such token is active then we delete
         // the mapping on API side from merchant_access_map table so that flows like
-        // webhooks won't fire for apps that don't have any more ctive tokens.
-
+        // webhooks won't fire for apps that don't have any more active tokens.
+        //
         $client = $token->client;
 
         $appId = $client->getApplicationId();
