@@ -72,5 +72,6 @@ spec:
       - name: nginx
         hostPath:
           path: /var/log/fluentd/splunk/auth/nginx
+      dnsPolicy: Default
       restartPolicy: Always
       terminationGracePeriodSeconds: 60
