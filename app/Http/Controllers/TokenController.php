@@ -47,6 +47,15 @@ class TokenController extends Controller
         return response()->json([]);
     }
 
+    public function createForPartner()
+    {
+        $input = Request::all();
+
+        $token = $this->service->createPartnerToken($input['application_id'], $input['partner_merchant_id'], $input['sub_merchant_id']);
+
+        return response()->json($token);
+    }
+
     protected function revokeMerchantApplicationMapping(Token\Entity $token, array $input)
     {
         $merchantId = $input[Token\Entity::MERCHANT_ID];

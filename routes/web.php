@@ -1,8 +1,8 @@
 <?php
 
 $app->get('/', [
-	'as'   => 'get_root',
-	'uses' => 'AuthController@getRoot'
+    'as'   => 'get_root',
+    'uses' => 'AuthController@getRoot'
 ]);
 
 $app->get('/status', [
@@ -11,13 +11,13 @@ $app->get('/status', [
 ]);
 
 $app->get('/authorize', [
-	'as'   => 'get_auth_code',
-	'uses' => 'AuthController@getAuthorize'
+    'as'   => 'get_auth_code',
+    'uses' => 'AuthController@getAuthorize'
 ]);
 
 $app->post('/authorize', [
-	'as'   => 'post_auth_code',
-	'uses' => 'AuthController@postAuthorize'
+    'as'   => 'post_auth_code',
+    'uses' => 'AuthController@postAuthorize'
 ]);
 
 $app->delete('/authorize', [
@@ -26,54 +26,60 @@ $app->delete('/authorize', [
 ]);
 
 $app->post('/token', [
-	'as'   => 'post_access_token',
-	'uses' => 'AuthController@postAccessToken'
+    'as'   => 'post_access_token',
+    'uses' => 'AuthController@postAccessToken'
 ]);
 
 $app->post('/applications', [
-	'middleware' => 'auth.api',
-	'as'         => 'create_application',
-	'uses'       => 'ApplicationController@create'
+    'middleware' => 'auth.api',
+    'as'         => 'create_application',
+    'uses'       => 'ApplicationController@create'
 ]);
 
 $app->get('/applications/{id}', [
-	'middleware' => 'auth.api',
-	'as'         => 'get_application',
-	'uses'       => 'ApplicationController@get'
+    'middleware' => 'auth.api',
+    'as'         => 'get_application',
+    'uses'       => 'ApplicationController@get'
 ]);
 
 $app->get('/applications', [
-	'middleware' => 'auth.api',
-	'as'         => 'get_multiple_applications',
-	'uses'       => 'ApplicationController@getMultiple'
+    'middleware' => 'auth.api',
+    'as'         => 'get_multiple_applications',
+    'uses'       => 'ApplicationController@getMultiple'
 ]);
 
 $app->put('/applications/{id}', [
-	'middleware' => 'auth.api',
-	'as'         => 'delete_application',
-	'uses'       => 'ApplicationController@delete'
+    'middleware' => 'auth.api',
+    'as'         => 'delete_application',
+    'uses'       => 'ApplicationController@delete'
 ]);
 
 $app->patch('/applications/{id}', [
-	'middleware' => 'auth.api',
-	'as'         => 'update_application',
-	'uses'       => 'ApplicationController@update'
+    'middleware' => 'auth.api',
+    'as'         => 'update_application',
+    'uses'       => 'ApplicationController@update'
 ]);
 
 $app->get('/tokens/{id}', [
-	'middleware' => 'auth.api',
-	'as'         => 'get_token',
-	'uses'       => 'TokenController@get'
+    'middleware' => 'auth.api',
+    'as'         => 'get_token',
+    'uses'       => 'TokenController@get'
 ]);
 
 $app->get('/tokens', [
-	'middleware' => 'auth.api',
-	'as'         => 'get_multiple_tokens',
-	'uses'       => 'TokenController@getAll'
+    'middleware' => 'auth.api',
+    'as'         => 'get_multiple_tokens',
+    'uses'       => 'TokenController@getAll'
 ]);
 
 $app->put('/tokens/{id}', [
-	'middleware' => 'auth.api',
-	'as'         => 'delete_token',
-	'uses'       => 'TokenController@revoke'
+    'middleware' => 'auth.api',
+    'as'         => 'delete_token',
+    'uses'       => 'TokenController@revoke'
+]);
+
+$app->post('/tokens/partner', [
+    'middleware' => 'auth.api',
+    'as'         => 'create_token_partner',
+    'uses'       => 'TokenController@createForPartner'
 ]);
