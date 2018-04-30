@@ -51,7 +51,10 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
-        $token = $this->service->createPartnerToken($input['application_id'], $input['partner_merchant_id'], $input['sub_merchant_id']);
+        $token = $this->service->createPartnerToken(
+            $input['application_id'],
+            $input['partner_merchant_id'],
+            $input['sub_merchant_id']);
 
         return response()->json($token);
     }
