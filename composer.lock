@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab0c5e7d5484d60bce4a9a53193d5031",
+    "content-hash": "70acea79a62874d02b9e02f1382b78f4",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -1294,16 +1294,16 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "dev-partner_v0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "4b64aab05506a9d4f3bd399c356a01ca6741e8b5"
+                "reference": "30ddaf70d47fa7d073b4189a60ed59f5fb26599f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/4b64aab05506a9d4f3bd399c356a01ca6741e8b5",
-                "reference": "4b64aab05506a9d4f3bd399c356a01ca6741e8b5",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/30ddaf70d47fa7d073b4189a60ed59f5fb26599f",
+                "reference": "30ddaf70d47fa7d073b4189a60ed59f5fb26599f",
                 "shasum": ""
             },
             "require": {
@@ -1339,10 +1339,10 @@
                 "service"
             ],
             "support": {
-                "source": "https://github.com/razorpay/oauth/tree/partner_v0",
+                "source": "https://github.com/razorpay/oauth/tree/master",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2018-05-03T05:25:55+00:00"
+            "time": "2018-05-03T10:59:39+00:00"
         },
         {
             "name": "razorpay/spine",
