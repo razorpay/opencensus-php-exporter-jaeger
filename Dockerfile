@@ -23,5 +23,4 @@ RUN chown -R nginx.nginx /app
 
 EXPOSE 80
 
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
-CMD ["/boot.sh"]
+ENTRYPOINT ["/boot.sh"]

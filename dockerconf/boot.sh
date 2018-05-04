@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/dumb-init /bin/sh
 set -euo pipefail
 
 echo "Creating Log Files"
@@ -28,7 +28,7 @@ cp dockerconf/php-fpm-www.conf /etc/php7/php-fpm.d/www.conf
 if [[ "${APP_MODE}" == "dev" ]]; then
   cp environment/.env.docker environment/.env.testing && \
   cp environment/env.sample.php environment/env.php && \
-  sed -i 's/dev/testing/g' ./environment/env.php 
+  sed -i 's/dev/testing/g' ./environment/env.php
 else
   # casting alohomora to unlock the secrets
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/.env.vault.j2"
@@ -41,11 +41,11 @@ if [[ "${APP_MODE}" == "prod" ]]; then
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/newrelic.ini.j2"
   cp dockerconf/newrelic.ini /etc/php7/conf.d/newrelic.ini
 fi
-    
+
 
 
 ## opcache settings. These are independent of the environment
-## Note: whenever opcache needs to be enabled, uncomment the 
+## Note: whenever opcache needs to be enabled, uncomment the
 ## below settings
 #sed -i 's/;opcache.enable=0/opcache.enable=1/g' /etc/php7/php.ini
 ## below not needed for this app. But just keeping it for consistency
