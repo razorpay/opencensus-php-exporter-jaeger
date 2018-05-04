@@ -11,6 +11,10 @@ class TokenController extends Controller
 {
     protected $service;
 
+    const APPLICATION_ID      = 'application_id';
+    const PARTNER_MERCHANT_ID = 'partner_merchant_id';
+    const SUB_MERCHANT_ID     = 'sub_merchant_id';
+
     public function __construct()
     {
         $this->service = new Token\Service;
@@ -52,9 +56,9 @@ class TokenController extends Controller
         $input = Request::all();
 
         $token = $this->service->createPartnerToken(
-            $input['application_id'],
-            $input['partner_merchant_id'],
-            $input['sub_merchant_id']);
+            $input[self::APPLICATION_ID],
+            $input[self::PARTNER_MERCHANT_ID],
+            $input[self::SUB_MERCHANT_ID]);
 
         return response()->json($token);
     }
