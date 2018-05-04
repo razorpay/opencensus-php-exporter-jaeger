@@ -6,7 +6,7 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 RUN mkdir /app/
 
-COPY . /app/
+COPY --chown=nginx:nginx . /app/
 
 COPY ./dockerconf/boot.sh /boot.sh
 
@@ -17,9 +17,9 @@ RUN apk update \
     && composer install --no-interaction \
     && mkdir /opt \
     && cd /opt \
-    && composer clear-cache
-
-RUN chown -R nginx.nginx /app
+    && composer clear-cache \
+    # Disable opcache for now
+    && rm /etc/php7/conf.d/00_opcache.ini
 
 EXPOSE 80
 
