@@ -59,7 +59,7 @@ pipeline:
         include: [push]
 services:
   db-auth:
-    image: mysql
+    image: mysql:5.6
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=auth_test

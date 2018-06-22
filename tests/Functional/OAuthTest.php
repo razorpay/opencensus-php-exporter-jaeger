@@ -3,13 +3,9 @@
 namespace App\Tests\Functional;
 
 use DB;
-use Trace;
-use Crypt;
 use Request;
 
-use Razorpay\OAuth\Token;
 use Razorpay\OAuth\Client;
-use Razorpay\OAuth\OAuthServer;
 use Razorpay\OAuth\Application;
 use App\Tests\TestCase as TestCase;
 use League\OAuth2\Server\CryptTrait;
@@ -201,9 +197,47 @@ class OAuthTest extends TestCase
 
         $content = $this->runRequestResponseFlow($data);
 
-        $this->assertArrayHasKey('access_token', $content);
-        $this->assertArrayHasKey('refresh_token', $content);
-        $this->assertArrayHasKey('expires_in', $content);
+        $this->assertValidAccessToken($content);
+    }
+
+    public function testPostAuthCodeAndGenerateAccessToken()
+    {
+        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
+
+        $this->createAndSetClientWithEnvironment();
+
+        Request::clearResolvedInstances();
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $params = [
+            'client_id'    => $this->devClient->getId(),
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $content = $this->runRequestResponseFlow($data);
+
+        $this->assertValidAccessToken($content);
+    }
+
+    public function testPostAuthCodeAndGenerateAccessTokenInvalidInput()
+    {
+        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
+
+        $this->createAndSetClientWithEnvironment();
+
+        Request::clearResolvedInstances();
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $params = [
+            'client_id'    => $this->devClient->getId(),
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data);
     }
 
     public function testPostAccessTokenWithInvalidGrant()
@@ -325,5 +359,28 @@ class OAuthTest extends TestCase
     protected function addRequestParameters(array & $content, array $parameters)
     {
         $content = array_merge($content, $parameters);
+    }
+
+    protected function createAndSetClientWithEnvironment(string $env = 'dev')
+    {
+        $this->application = factory(Application\Entity::class)->create();
+
+        $clientName = $env . 'Client';
+
+        $this->{$clientName} = factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $this->application->id,
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => $env,
+            ]);
+    }
+
+    protected function assertValidAccessToken(array $content)
+    {
+        $this->assertArrayHasKey('access_token', $content);
+        $this->assertArrayHasKey('refresh_token', $content);
+        $this->assertArrayHasKey('expires_in', $content);
+        $this->assertArrayHasKey('public_token', $content);
     }
 }

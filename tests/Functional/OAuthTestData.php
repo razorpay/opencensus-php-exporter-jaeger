@@ -170,6 +170,48 @@ return [
         ]
     ],
 
+    'testPostAuthCodeAndGenerateAccessToken' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/tokens/internal',
+            'content' => [
+                'merchant_id'  => '10000000000000',
+                'user_id'      => '20000000000000',
+                'redirect_uri' => 'https://www.example.com',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'token_type' => 'Bearer',
+            ],
+            'status_code' => 200
+        ]
+    ],
+
+    'testPostAuthCodeAndGenerateAccessTokenInvalidInput' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/tokens/internal',
+            'content' => [
+                'merchant_id'  => '10000000000000A',
+                'user_id'      => '20000000000000',
+                'redirect_uri' => 'https://www.example.com',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Validation failed. The merchant id must be 14 characters.'
+                ],
+            ],
+            'status_code' => 500
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\Spine\Exception\ValidationFailureException',
+            'message' => 'Validation failed. The merchant id must be 14 characters.',
+        ],
+    ],
+
     'testPostAccessTokenWithInvalidGrant' => [
         'request' => [
             'method'  => 'POST',

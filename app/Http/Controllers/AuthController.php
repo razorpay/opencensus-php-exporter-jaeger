@@ -93,6 +93,15 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
+    public function createPartnerToken()
+    {
+        $input = Request::all();
+
+        $response = $this->service()->postAuthCodeAndGenerateAccessToken($input);
+
+        return response()->json($response);
+    }
+
     protected function renderAuthorizeError(\Throwable $e)
     {
         $message = 'A server error occurred while serving this request.';

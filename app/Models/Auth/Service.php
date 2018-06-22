@@ -8,9 +8,9 @@ use App\Services;
 use Razorpay\OAuth;
 
 use App\Error\ErrorCode;
+use Razorpay\OAuth\Client;
 use App\Constants\TraceCode;
 use App\Constants\RequestParams;
-use App\Models\Base\JitValidator;
 use App\Exception\BadRequestException;
 use Razorpay\OAuth\Token\Entity as Token;
 
@@ -37,7 +37,7 @@ class Service
     {
         Trace::debug(TraceCode::AUTH_AUTHORIZE_REQUEST, $input);
 
-        $this->validateAuthorizeRequest($input);
+        (new Validator)->validateAuthorizeRequest($input);
 
         // TODO: Fetching client twice from DB, in each of the following functions; fix.
         $scopes = $this->oauthServer->validateAuthorizeRequestAndGetScopes($input);
@@ -83,17 +83,7 @@ class Service
 
         $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
 
-        /**
-         * In case of a wrong input (eg. wrong response_type), the redirect
-         * flow is not used and we just get an error in the response which
-         * we extract here and throw a relevant exception
-         */
-        if (empty($authCode->getHeaders()['Location']) === true)
-        {
-            $error = $authCode->getReasonPhrase();
-
-            throw new OAuth\Exception\BadRequestException($error, '', [], $authCode->getStatusCode());
-        }
+        $this->validateLocationheader($authCode);
 
         $clientId = $queryParamsArray[Token::CLIENT_ID];
 
@@ -111,6 +101,89 @@ class Service
         }
 
         return $authCode->getHeaders()['Location'][0];
+    }
+
+    public function postAuthCodeAndGenerateAccessToken(array $input)
+    {
+        (new Validator)->validateRequestAccessTokenMigration($input);
+
+        list($userInput, $userData) = $this->getAuthCodeInput($input);
+
+        $authCode = $this->oauthServer->getAuthCode($userInput, $userData);
+
+        $this->validateLocationheader($authCode);
+
+        $code = $this->extractAuthCode($authCode);
+
+        //
+        // Mapping of app to merchant should happen in the API batch processing
+        //
+
+        $accessTokenData = $this->getAccessTokenInput($code, $input);
+
+        $tokenResponse = $this->generateAccessToken($accessTokenData);
+
+        return $tokenResponse;
+    }
+
+    private function validateLocationheader($authCode)
+    {
+        /**
+         * In case of a wrong input (eg. wrong response_type), the redirect
+         * flow is not used and we just get an error in the response which
+         * we extract here and throw a relevant exception
+         */
+        if (empty($authCode->getHeaders()['Location']) === true)
+        {
+            $error = $authCode->getReasonPhrase();
+
+            throw new OAuth\Exception\BadRequestException($error, '', [], $authCode->getStatusCode());
+        }
+    }
+
+    private function extractAuthCode($authCode)
+    {
+        $code = $authCode->getHeaders()['Location'][0];
+
+        $parts = parse_url($code);
+        parse_str($parts['query'], $query);
+
+        return $query['code'];
+    }
+
+    private function getAuthCodeInput(array $input)
+    {
+        $userInput = [
+            'response_type' => 'code',
+            'client_id'     => $input['client_id'],
+            'redirect_uri'  => $input['redirect_uri'],
+            'scope'         => 'read_write',
+            'state'         => 'current_state',
+        ];
+
+        $userData = [
+            'role'        => 'owner',
+            'user_id'     => $input['user_id'],
+            'merchant_id' => $input['merchant_id'],
+            'authorize'   => true,
+        ];
+
+        return [$userInput, $userData];
+    }
+
+    private function getAccessTokenInput(string $code, array $input)
+    {
+        $clientId = $input[Token::CLIENT_ID];
+
+        $client = (new Client\Repository)->findOrFailPublic($clientId);
+
+        return [
+            'code'          => $code,
+            'client_id'     => $clientId,
+            'grant_type'    => RequestParams::AUTHORIZATION_CODE,
+            'client_secret' => $client->getSecret(),
+            'redirect_uri'  => $input[RequestParams::REDIRECT_URI],
+        ];
     }
 
     public function generateAccessToken(array $input)
@@ -208,18 +281,5 @@ class Service
         $appId = $client->getApplicationId();
 
         $apiService->mapMerchantToApplication($appId, $merchantId);
-    }
-
-    protected function validateAuthorizeRequest(array $input)
-    {
-        $rules = [
-            RequestParams::STATE        => 'required|string',
-            RequestParams::REDIRECT_URI => 'required|url'
-        ];
-
-        (new JitValidator)->rules($rules)
-                          ->input($input)
-                          ->strict(false)
-                          ->validate();
     }
 }

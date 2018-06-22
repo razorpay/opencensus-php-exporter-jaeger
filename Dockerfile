@@ -4,8 +4,6 @@ ARG GIT_COMMIT_HASH
 ARG GIT_TOKEN
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
-RUN mkdir /app/
-
 COPY --chown=nginx:nginx . /app/
 
 COPY ./dockerconf/boot.sh /boot.sh

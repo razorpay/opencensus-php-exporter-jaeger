@@ -83,3 +83,9 @@ $app->post('/tokens/partner', [
     'as'         => 'create_token_partner',
     'uses'       => 'TokenController@createForPartner'
 ]);
+
+$app->post('/tokens/internal', [
+    'middleware' => 'auth.api',
+    'as'         => 'create_partner_token',
+    'uses'       => 'AuthController@createPartnerToken'
+]);
