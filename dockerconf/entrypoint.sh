@@ -10,40 +10,60 @@ echo $GIT_COMMIT_HASH > /app/public/commit.txt
 
 ALOHOMORA_BIN=$(which alohomora)
 
-# Lumen in docker picks system environment variable from .env
+# Lumen in docker picks system environment variables from .env
 echo "APP_MODE=${APP_MODE}" > /app/.env
+echo "GIT_COMMIT_HASH=${GIT_COMMIT_HASH}" >> /app/.env
 
-cat /app/.env
-
+# Nginx Conf
+echo "Casting alohomora - nginx conf"
 $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/auth.nginx.conf.j2"
-sed -i "s|NGINX_HOST|$HOSTNAME|g" dockerconf/auth.nginx.conf
+echo "Copying nginx conf"
 cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
 
+# Env files
 if [[ "${APP_MODE}" == "dev" ]]; then
   cp environment/.env.docker environment/.env.testing && \
   cp environment/env.sample.php environment/env.php && \
   sed -i 's/dev/testing/g' ./environment/env.php
 else
   # casting alohomora to unlock the secrets
-  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/.env.vault.j2"
-  cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
-  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2"
+  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2" "environment/.env.vault.j2"
 fi
 
-## enable newrelic only for prod and maybe later on for perf
+## enable NewRelic only for prod
 if [[ "${APP_MODE}" == "prod" ]]; then
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/newrelic.ini.j2"
   cp dockerconf/newrelic.ini /etc/php7/conf.d/newrelic.ini
 fi
 
+## Enable stdout logging
+TRACE_LOG_PATH="/app/storage/logs/$HOSTNAME-trace.log"
+LARAVEL_LOG_PATH="/app/storage/logs/laravel.log"
+if [ ! -f $TRACE_LOG_PATH ]
+then
+    touch $TRACE_LOG_PATH && chmod 777 $TRACE_LOG_PATH
+fi
+if [ ! -f $LARAVEL_LOG_PATH ]
+then
+    touch $LARAVEL_LOG_PATH && chmod 777 $LARAVEL_LOG_PATH
+fi
+
 # Fix permissions
-echo  "Fix permissions"
+echo  "Fix storage permissions"
 cd /app/ && chmod 777 -R storage
 
-## Start the Harvester Process
-echo "Starting Auth Service"
+tail -f $TRACE_LOG_PATH >> /dev/stdout 2>&1 &
+tail -f $LARAVEL_LOG_PATH >> /dev/stdout 2>&1 &
 
-echo "GIT_COMMIT_HASH=${GIT_COMMIT_HASH}" >> /app/.env
+# Run Migrations
+echo  "Running DB migrate"
+php artisan migrate --force
 
+# Fix permissions
+echo  "Fix file owner"
+chown -R nginx.nginx /app
+
+echo "Starting Auth Service - PHP-FPM"
 /usr/sbin/php-fpm7
-nginx -g 'daemon off;'
+echo "Starting Auth Service - Nginx"
+/usr/sbin/nginx -g 'daemon off;'
