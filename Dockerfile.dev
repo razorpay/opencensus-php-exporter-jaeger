@@ -6,7 +6,7 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 VOLUME ['/app']
 
-COPY ./dockerconf/boot.sh /boot.sh
+COPY ./dockerconf/entrypoint.sh /entrypoint.sh
 
 WORKDIR /app
 
@@ -14,4 +14,4 @@ RUN chown -R nginx.nginx /app
 
 EXPOSE 80
 
-ENTRYPOINT ["/boot.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

@@ -6,19 +6,14 @@ ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 COPY --chown=nginx:nginx . /app/
 
-COPY ./dockerconf/boot.sh /boot.sh
-
 WORKDIR /app
 
-RUN apk update \
-    && composer config -g github-oauth.github.com ${GIT_TOKEN} \
-    && composer install --no-interaction \
-    && mkdir /opt \
-    && cd /opt \
+RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
+    && composer install --no-interaction --no-dev \
     && composer clear-cache \
     # Disable opcache for now
     && rm /etc/php7/conf.d/00_opcache.ini
 
 EXPOSE 80
 
-ENTRYPOINT ["/boot.sh"]
+ENTRYPOINT ["/app/dockerconf/entrypoint.sh"]
