@@ -6,7 +6,6 @@ mkdir -p /var/log/nginx
 touch /var/log/nginx/auth.access.log
 touch /var/log/nginx/auth.error.log
 
-echo $GIT_COMMIT_HASH > /app/commit.txt
 echo $GIT_COMMIT_HASH > /app/public/commit.txt
 
 ALOHOMORA_BIN=$(which alohomora)

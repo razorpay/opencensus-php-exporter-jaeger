@@ -5,6 +5,7 @@ server {
     {% else %}
     server_name auth.razorpay.com;
     {% endif %}
+
     root "/app/public";
 
     index index.php;
@@ -12,15 +13,16 @@ server {
     charset utf-8;
 
     location /commit.txt {
-      alias /app/commit.txt;
+      alias /app/public/commit.txt;
+      access_log  off;
     }
 
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
-    access_log /var/log/nginx/NGINX_HOST-{{ env }}-auth-access.log combined;
-    error_log  /var/log/nginx/NGINX_HOST-{{ env }}-auth-error.log error;
+    access_log /dev/stdout combined;
+    error_log  /dev/stderr error;
 
     sendfile off;
 
