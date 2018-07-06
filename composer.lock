@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "70acea79a62874d02b9e02f1382b78f4",
@@ -480,7 +480,7 @@
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
                     "email": "lcobucci@gmail.com",
-                    "role": "developer"
+                    "role": "Developer"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",
@@ -1298,12 +1298,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "30ddaf70d47fa7d073b4189a60ed59f5fb26599f"
+                "reference": "a178cee3befbc9ced0c23061ba4ef21bd602b5b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/30ddaf70d47fa7d073b4189a60ed59f5fb26599f",
-                "reference": "30ddaf70d47fa7d073b4189a60ed59f5fb26599f",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/a178cee3befbc9ced0c23061ba4ef21bd602b5b0",
+                "reference": "a178cee3befbc9ced0c23061ba4ef21bd602b5b0",
                 "shasum": ""
             },
             "require": {
@@ -1342,7 +1342,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/master",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2018-05-03T10:59:39+00:00"
+            "time": "2018-06-26T17:54:18+00:00"
         },
         {
             "name": "razorpay/spine",

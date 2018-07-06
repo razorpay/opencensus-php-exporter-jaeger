@@ -40,10 +40,11 @@ class Validator extends \Razorpay\Spine\Validation\Validator
     public function validateRequestAccessTokenMigration(array $input)
     {
         $rules = [
-            RequestParams::CLIENT_ID    => 'required|alpha_num|size:14',
-            RequestParams::MERCHANT_ID  => 'required|alpha_num|size:14',
-            RequestParams::USER_ID      => 'required|alpha_num|size:14',
-            RequestParams::REDIRECT_URI => 'required|url',
+            RequestParams::CLIENT_ID           => 'required|alpha_num|size:14',
+            RequestParams::MERCHANT_ID         => 'required|alpha_num|size:14',
+            RequestParams::USER_ID             => 'required|alpha_num|size:14',
+            RequestParams::REDIRECT_URI        => 'required|url',
+            RequestParams::PARTNER_MERCHANT_ID => 'required|alpha_num|size:14',
         ];
 
         (new JitValidator)->rules($rules)

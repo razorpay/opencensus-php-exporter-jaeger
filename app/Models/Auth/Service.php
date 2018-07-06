@@ -6,13 +6,14 @@ use App;
 use Trace;
 use App\Services;
 use Razorpay\OAuth;
+use Razorpay\OAuth\Client;
+use Razorpay\OAuth\Token\Entity as Token;
 
 use App\Error\ErrorCode;
-use Razorpay\OAuth\Client;
 use App\Constants\TraceCode;
 use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
-use Razorpay\OAuth\Token\Entity as Token;
+use App\Exception\BadRequestValidationFailureException;
 
 class Service
 {
@@ -107,6 +108,8 @@ class Service
     {
         (new Validator)->validateRequestAccessTokenMigration($input);
 
+        $this->validatePartnerClient($input);
+
         list($userInput, $userData) = $this->getAuthCodeInput($input);
 
         $authCode = $this->oauthServer->getAuthCode($userInput, $userData);
@@ -124,6 +127,16 @@ class Service
         $tokenResponse = $this->generateAccessToken($accessTokenData);
 
         return $tokenResponse;
+    }
+
+    private function validatePartnerClient(array $input)
+    {
+        $client = (new Client\Repository)->findOrFail($input[RequestParams::CLIENT_ID]);
+
+        if ($client->application->getMerchantId() !== $input[RequestParams::PARTNER_MERCHANT_ID])
+        {
+            throw new BadRequestValidationFailureException('Incorrect client id for partner');
+        }
     }
 
     private function validateLocationheader($authCode)
