@@ -175,9 +175,10 @@ return [
             'method'  => 'POST',
             'url'     => '/tokens/internal',
             'content' => [
-                'merchant_id'  => '10000000000000',
-                'user_id'      => '20000000000000',
-                'redirect_uri' => 'https://www.example.com',
+                'merchant_id'         => '10000000000000',
+                'user_id'             => '20000000000000',
+                'redirect_uri'        => 'https://www.example.com',
+                'partner_merchant_id' => '10000000000000',
             ]
         ],
         'response' => [
@@ -193,9 +194,10 @@ return [
             'method'  => 'POST',
             'url'     => '/tokens/internal',
             'content' => [
-                'merchant_id'  => '10000000000000A',
-                'user_id'      => '20000000000000',
-                'redirect_uri' => 'https://www.example.com',
+                'merchant_id'         => '10000000000000A',
+                'user_id'             => '20000000000000',
+                'redirect_uri'        => 'https://www.example.com',
+                'partner_merchant_id' => '10000000000000',
             ]
         ],
         'response'  => [
