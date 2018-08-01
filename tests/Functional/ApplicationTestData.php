@@ -141,6 +141,20 @@ return [
         ]
     ],
 
+    'testGetApplicationsByType' => [
+        'request'  => [
+            'url'     => 'applications',
+            'method'  => 'GET',
+            'content' => [
+                'merchant_id' => '10000000000000',
+                'type'        => 'partner',
+            ]
+        ],
+        'response' => [
+            'content' => []
+        ]
+    ],
+
     'testUpdateApplication' => [
         'request'  => [
             'method'  => 'PATCH',

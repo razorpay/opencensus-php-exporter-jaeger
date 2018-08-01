@@ -63,9 +63,13 @@ class ApplicationTest extends TestCase
 
         $appData2 = ['name' => 'apptest2', 'website' => 'https://www.example2.com'];
 
+        $appData3 = ['name' => 'apptest3', 'website' => 'https://www.example2.com', 'type' => 'partner'];
+
         $this->createTestApp($appData1);
 
         $this->createTestApp($appData2);
+
+        $this->createTestApp($appData3);
 
         $data = & $this->testData[__FUNCTION__];
 
@@ -78,6 +82,27 @@ class ApplicationTest extends TestCase
         $this->assertEquals('apptest1', $content['items'][0]['name']);
 
         $this->assertEquals('apptest2', $content['items'][1]['name']);
+    }
+
+    public function testGetApplicationsByType()
+    {
+        $appData1 = ['name' => 'apptest1', 'website' => 'https://www.example1.com', 'type' => 'partner'];
+
+        $appData2 = ['name' => 'apptest2', 'website' => 'https://www.example2.com'];
+
+        $this->createTestApp($appData1);
+
+        $this->createTestApp($appData2);
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $content = $this->makeRequestAndGetContent($data['request']);
+
+        $this->assertEquals(1, $content['count']);
+
+        $this->assertEquals('collection', $content['entity']);
+
+        $this->assertEquals('apptest1', $content['items'][0]['name']);
     }
 
     public function testUpdateApplication()
