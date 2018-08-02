@@ -182,15 +182,14 @@ class OAuthTest extends TestCase
 
     public function testPostAccessToken()
     {
-        $authCode = $this->generateAuthCode();
-
-        Request::clearResolvedInstances();
+        $authCode = $this->generateAuthCodeAndClearResolvedInstances();
 
         $data = & $this->testData[__FUNCTION__];
 
         $params = [
             'client_secret' => $this->devClient->getSecret(),
             'code'          => $authCode,
+            'redirect_uri'  => 'http://localhost',
         ];
 
         $this->addRequestParameters($data['request']['content'], $params);
@@ -198,6 +197,27 @@ class OAuthTest extends TestCase
         $content = $this->runRequestResponseFlow($data);
 
         $this->assertValidAccessToken($content);
+    }
+
+    /**
+     * We send a redirect uri from the valid list of client uris but not
+     * the one used for auth code generation.
+     */
+    public function testPostAccessTokenValidWrongRedirectUri()
+    {
+        $authCode = $this->generateAuthCodeAndClearResolvedInstances();
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $params = [
+            'client_secret' => $this->devClient->getSecret(),
+            'code'          => $authCode,
+            'redirect_uri'  => 'https://www.example.com',
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data);
     }
 
     public function testPostAuthCodeAndGenerateAccessToken()
@@ -242,9 +262,7 @@ class OAuthTest extends TestCase
 
     public function testPostAccessTokenWithInvalidGrant()
     {
-        $authCode = $this->generateAuthCode();
-
-        Request::clearResolvedInstances();
+        $authCode = $this->generateAuthCodeAndClearResolvedInstances();
 
         $data = & $this->testData[__FUNCTION__];
 
@@ -260,9 +278,7 @@ class OAuthTest extends TestCase
 
     public function testPostAccessTokenWithMissingCode()
     {
-        $this->generateAuthCode();
-
-        Request::clearResolvedInstances();
+        $authCode = $this->generateAuthCodeAndClearResolvedInstances();
 
         $data = & $this->testData[__FUNCTION__];
 
@@ -277,9 +293,7 @@ class OAuthTest extends TestCase
 
     public function testPostAccessTokenWithIncorrectSecret()
     {
-        $authCode = $this->generateAuthCode();
-
-        Request::clearResolvedInstances();
+        $authCode = $this->generateAuthCodeAndClearResolvedInstances();
 
         $data = & $this->testData[__FUNCTION__];
 
@@ -295,9 +309,7 @@ class OAuthTest extends TestCase
 
     public function testPostAccessTokenWithIncorrectClientId()
     {
-        $authCode = $this->generateAuthCode();
-
-        Request::clearResolvedInstances();
+        $authCode = $this->generateAuthCodeAndClearResolvedInstances();
 
         $data = & $this->testData[__FUNCTION__];
 
@@ -382,5 +394,14 @@ class OAuthTest extends TestCase
         $this->assertArrayHasKey('refresh_token', $content);
         $this->assertArrayHasKey('expires_in', $content);
         $this->assertArrayHasKey('public_token', $content);
+    }
+
+    protected function generateAuthCodeAndClearResolvedInstances()
+    {
+        $authCode = $this->generateAuthCode();
+
+        Request::clearResolvedInstances();
+
+        return $authCode;
     }
 }

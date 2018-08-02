@@ -170,6 +170,29 @@ return [
         ]
     ],
 
+    'testPostAccessTokenValidWrongRedirectUri' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/token',
+            'content' => [
+                'client_id'    => '30000000000000',
+                'grant_type'   => 'authorization_code',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Invalid redirect URI',
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
+            'message' => 'Invalid redirect URI',
+        ],
+    ],
+
     'testPostAuthCodeAndGenerateAccessToken' => [
         'request'  => [
             'method'  => 'POST',
