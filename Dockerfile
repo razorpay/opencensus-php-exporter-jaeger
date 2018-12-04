@@ -9,6 +9,7 @@ COPY --chown=nginx:nginx . /app/
 WORKDIR /app
 
 RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
+    && composer global require hirak/prestissimo \
     && composer install --no-interaction --no-dev \
     && composer clear-cache \
     # Disable opcache for now

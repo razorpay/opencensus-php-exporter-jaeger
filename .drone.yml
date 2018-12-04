@@ -6,6 +6,7 @@ pipeline:
         exclude: [deployment]
         include: [push]
   test:
+    group: A
     image: razorpay/pithos:rzp-php7.1-nginx
     pull: true
     secrets: [docker_username, docker_password, git_token]
@@ -22,6 +23,7 @@ pipeline:
         exclude: [deployment]
         include: [push]
   build:
+    group: A
     image: plugins/docker
     repo: razorpay/auth
     secrets: [docker_username, docker_password, git_token]

@@ -15,6 +15,7 @@ function init_setup
 
     echo "running composer install"
     composer config -g github-oauth.github.com ${GIT_TOKEN}
+    composer global require hirak/prestissimo
     composer install --no-interaction
 
     if [ ! -d "$auth_TMP_DIR" ]; then
