@@ -291,9 +291,8 @@ class Service
 
         $client = (new OAuth\Client\Repository)->findOrFailPublic($clientId);
 
-        $application = $client->application;
-        $appId       = $application->getId();
-        $partnerId   = $application->getMerchantId();
+        $appId = $client->getApplicationId();
+        $partnerId = $client->getMerchantId();
 
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId);
     }
