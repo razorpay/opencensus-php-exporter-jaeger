@@ -51,12 +51,13 @@ class Api
         }
     }
 
-    public function mapMerchantToApplication(string $appId, string $merchantId)
+    public function mapMerchantToApplication(string $appId, string $merchantId, string $partnerId)
     {
         $url = $this->apiUrl . '/merchants/' . $merchantId . '/applications';
 
         $postPayload = [
             'application_id'   => $appId,
+            'partner_id'       => $partnerId,
         ];
 
         try
