@@ -57,7 +57,7 @@ class Api
 
         $postPayload = [
             'application_id'   => $appId,
-            'partner_id'       => $partnerId
+            'partner_id'       => $partnerId,
         ];
 
         try
