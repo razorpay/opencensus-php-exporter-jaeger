@@ -138,20 +138,24 @@
         },
         {
             "name": "erusev/parsedown",
-            "version": "1.6.3",
+            "version": "1.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/erusev/parsedown.git",
-                "reference": "728952b90a333b5c6f77f06ea9422b94b585878d"
+                "reference": "6d893938171a817f4e9bc9e86f2da1e370b7bcd7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/erusev/parsedown/zipball/728952b90a333b5c6f77f06ea9422b94b585878d",
-                "reference": "728952b90a333b5c6f77f06ea9422b94b585878d",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/6d893938171a817f4e9bc9e86f2da1e370b7bcd7",
+                "reference": "6d893938171a817f4e9bc9e86f2da1e370b7bcd7",
                 "shasum": ""
             },
             "require": {
+                "ext-mbstring": "*",
                 "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35"
             },
             "type": "library",
             "autoload": {
@@ -176,7 +180,7 @@
                 "markdown",
                 "parser"
             ],
-            "time": "2017-05-14T14:47:48+00:00"
+            "time": "2019-03-17T18:48:37+00:00"
         },
         {
             "name": "intouch/newrelic",
@@ -696,12 +700,12 @@
             "version": "v1.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mikey179/vfsStream.git",
+                "url": "https://github.com/bovigo/vfsStream.git",
                 "reference": "8571f349567e02af1b7efc0fc4e3a4a1c98e664e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/8571f349567e02af1b7efc0fc4e3a4a1c98e664e",
+                "url": "https://api.github.com/repos/bovigo/vfsStream/zipball/8571f349567e02af1b7efc0fc4e3a4a1c98e664e",
                 "reference": "8571f349567e02af1b7efc0fc4e3a4a1c98e664e",
                 "shasum": ""
             },
@@ -1350,12 +1354,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/spine.git",
-                "reference": "a52f5703ecda722f493c9da3d82f228489e04945"
+                "reference": "5d2a7cd15c02853ceaa9a3464fe03396b0a5b3bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/spine/zipball/a52f5703ecda722f493c9da3d82f228489e04945",
-                "reference": "a52f5703ecda722f493c9da3d82f228489e04945",
+                "url": "https://api.github.com/repos/razorpay/spine/zipball/5d2a7cd15c02853ceaa9a3464fe03396b0a5b3bf",
+                "reference": "5d2a7cd15c02853ceaa9a3464fe03396b0a5b3bf",
                 "shasum": ""
             },
             "require": {
@@ -1390,10 +1394,10 @@
                 "spine"
             ],
             "support": {
-                "source": "https://github.com/razorpay/spine/tree/master",
+                "source": "https://github.com/razorpay/spine/tree/0.1.2",
                 "issues": "https://github.com/razorpay/spine/issues"
             },
-            "time": "2018-04-11T12:56:36+00:00"
+            "time": "2019-03-23T07:20:42+00:00"
         },
         {
             "name": "razorpay/trace",
@@ -3534,6 +3538,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2017-06-30T08:15:21+00:00"
         },
         {
