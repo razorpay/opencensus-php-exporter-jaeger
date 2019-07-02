@@ -178,11 +178,13 @@
         <div class="button-toolbar">
           <form method="POST" action="/authorize">
             <input type="hidden" name="token" class="verify_token" value="" />
+            <input type="hidden" name="merchant_id" class="merchant-id" value="" />
             <button class="btn btn-submit" disabled>Authorize</button>
           </form>
           <form method='POST' action="/authorize">
             {{ method_field('DELETE') }}
             <input type="hidden" name="token" class="verify_token" value="" />
+            <input type="hidden" name="merchant_id" class="merchant-id" value="" />
             <button class="btn btn-default" disabled>Cancel</button>
           </form>
         </div>
@@ -203,6 +205,7 @@
             page_container: $('.inner-content'),
             merchant_logo: $('.merchant-logo'),
             merchant_name: $('.merchant-name'),
+            merchant_id: $('.merchant-id'),
             application_logo:$('.application-logo')
         };
 
@@ -239,6 +242,7 @@
             elements.merchant_logo.attr('src', data.logo);
             elements.merchant_name.text(data.merchant_name);
             elements.token.attr('value', verifyToken);
+            elements.merchant_id.attr('value', data.merchant_id);
 
             enableButtonsAndShowEmail();
         }

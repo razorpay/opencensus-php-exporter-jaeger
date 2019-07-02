@@ -52,8 +52,9 @@ return [
             'method'  => 'POST',
             'url'     => '/authorize',
             'content' => [
-                'client_id' => '30000000000000',
-                'token'     => 'success'
+                'client_id'   => '30000000000000',
+                'token'       => 'success',
+                'merchant_id' => '10000000000000',
             ]
         ],
         'response' => [
@@ -66,8 +67,9 @@ return [
             'method'  => 'POST',
             'url'     => '/authorize',
             'content' => [
-                'token'     => 'incorrect_response_type',
-                'client_id' => '30000000000000'
+                'token'       => 'incorrect_response_type',
+                'client_id'   => '30000000000000',
+                'merchant_id' => '10000000000000',
             ]
         ],
         'response' => [
@@ -89,8 +91,9 @@ return [
             'method'  => 'POST',
             'url'     => '/authorize',
             'content' => [
-                'token'     => 'invalid',
-                'client_id' => '30000000000000'
+                'token'       => 'invalid',
+                'client_id'   => '30000000000000',
+                'merchant_id' => '10000000000000',
             ]
         ],
         'response'  => [
@@ -112,7 +115,8 @@ return [
             'method'  => 'delete',
             'url'     => '/authorize',
             'content' => [
-                'token' => 'success'
+                'token'       => 'success',
+                'merchant_id' => '10000000000000',
             ]
         ],
         'response'  => [
@@ -134,8 +138,9 @@ return [
             'method'  => 'delete',
             'url'     => '/authorize',
             'content' => [
-                'token'     => 'invalid_role',
-                'client_id' => '30000000000000',
+                'token'       => 'invalid_role',
+                'client_id'   => '30000000000000',
+                'merchant_id' => '10000000000000',
             ]
         ],
         'response'  => [

@@ -5,7 +5,10 @@ namespace App\Services;
 use Trace;
 use Requests;
 
+use Illuminate\Support\Str;
+
 use App\Constants\TraceCode;
+use App\Exception\LogicException;
 
 class Api
 {
@@ -49,6 +52,45 @@ class Api
 
             Trace::critical(TraceCode::MERCHANT_NOTIFY_FAILED, $tracePayload);
         }
+    }
+
+    public function getMerchantOrgDetails(string $merchantId): array
+    {
+        $url = $this->apiUrl . '/merchants/' . $merchantId . '/org';
+
+        try
+        {
+            $response = Requests::get($url, [], $this->options);
+
+            return json_decode($response->body, true);
+        }
+        catch (\Throwable $e)
+        {
+            $tracePayload = [
+                'class'   => get_class($e),
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::critical(TraceCode::ORG_DETAILS_FETCH_FAILED, $tracePayload);
+        }
+
+        throw new LogicException('Error when fetching org data');
+    }
+
+    public function getOrgHostName(string $merchantId): string
+    {
+        $orgDetails = $this->getMerchantOrgDetails($merchantId);
+
+        $protocolIdentifier = '';
+
+        if (Str::startsWith($orgDetails['primary_host_name'], 'http') === false)
+        {
+            $protocolIdentifier = ((env('APP_ENV') === 'dev')
+                                   or (env('APP_ENV') === 'docker')) ? 'http://' : 'https://';
+        }
+
+        return $protocolIdentifier.$orgDetails['primary_host_name'];
     }
 
     public function mapMerchantToApplication(string $appId, string $merchantId, string $partnerId)

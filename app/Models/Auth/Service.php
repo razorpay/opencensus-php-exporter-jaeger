@@ -45,13 +45,15 @@ class Service
 
         $appData = $this->validateAndGetApplicationDataForAuthorize($input);
 
+        $hostName = $this->getApiService()->getOrgHostName($appData['merchant_id']);
+
         $authorizeData = [
             'application'   => $appData,
             'scopes'        => $this->parseScopesForDisplay($scopes),
-            'dashboard_url' => env('APP_DASHBOARD_URL')
+            'dashboard_url' => $hostName,
         ];
 
-        if (empty($appData['application']['logo']) === false)
+        if (empty($authorizeData['application']['logo']) === false)
         {
             // We use betacdn for all non-prod envs
             $cdnName = env('APP_ENV') === 'prod' ? 'cdn' : 'betacdn';
@@ -59,9 +61,9 @@ class Service
             // Constructing the cdn url for logo. We save multiple sizes of logo, using medium here
             // by adding the `_medium` after the id.
             $logoUrl = 'https://' . $cdnName . '.razorpay.com' .
-                preg_replace('/\.([^\.]+$)/', '_medium.$1', $appData['application']['logo']);
+                preg_replace('/\.([^\.]+$)/', '_medium.$1', $authorizeData['application']['logo']);
 
-            $appData['application']['logo'] = $logoUrl;
+            $authorizeData['application']['logo'] = $logoUrl;
         }
 
         return $authorizeData;
@@ -69,7 +71,12 @@ class Service
 
     public function postAuthCode(array $input)
     {
-        $data = $this->resolveTokenOnDashboard($input['token']);
+        if (isset($input['merchant_id']) === false)
+        {
+            throw new BadRequestValidationFailureException('Invalid id passed for merchant');
+        }
+
+        $data = $this->resolveTokenOnDashboard($input['token'], $input['merchant_id']);
 
         if ($data['role'] !== 'owner')
         {
@@ -206,11 +213,11 @@ class Service
         return json_decode($data->getBody(), true);
     }
 
-    protected function resolveTokenOnDashboard(string $token)
+    protected function resolveTokenOnDashboard(string $token, string $merchantId)
     {
         $dashboard = $this->getDashboardService();
 
-        return $dashboard->getTokenData($token);
+        return $dashboard->getTokenData($token, $merchantId);
     }
 
     protected function getDashboardService()
@@ -255,9 +262,10 @@ class Service
         $application = $client->application;
 
         $data = [
-            'name' => $application->getName(),
-            'url'  => $application->getWebsite(),
-            'logo' => $application->getLogoUrl()
+            'name'        => $application->getName(),
+            'url'         => $application->getWebsite(),
+            'logo'        => $application->getLogoUrl(),
+            'merchant_id' => $application->getMerchantId(),
         ];
 
         return $data;

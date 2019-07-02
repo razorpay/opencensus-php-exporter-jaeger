@@ -11,7 +11,7 @@ class Dashboard
 
     protected $trace;
 
-    public function getTokenData(string $token)
+    public function getTokenData(string $token, string $merchantId)
     {
         $response = [];
 
