@@ -89,3 +89,15 @@ $app->post('/tokens/internal', [
     'as'         => 'create_partner_token',
     'uses'       => 'AuthController@createPartnerToken'
 ]);
+
+$app->get('/admin/entities/{entity_type}', [
+    'middleware' => 'auth.api',
+    'as'         => 'get_admin_entities',
+    'uses'       => 'AdminController@fetchMultipleForAdmin'
+]);
+
+$app->get('/admin/entities/{entity_type}/{id}', [
+    'middleware' => 'auth.api',
+    'as'         => 'get_admin_entities',
+    'uses'       => 'AdminController@fetchByIdForAdmin'
+]);
