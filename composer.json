@@ -8,7 +8,7 @@
         "php": ">=5.6.4",
         "rmccue/requests": ">=1.0",
         "vlucas/phpdotenv": "~2.2",
-        "razorpay/trace": "~2.0",
+        "razorpay/trace": "~2.3",
         "laravel/lumen-framework": "5.4.*",
         "razorpay/spine": "dev-master",
         "razorpay/oauth": "dev-master",
@@ -26,6 +26,10 @@
         {
             "type": "vcs",
             "url": "git@github.com:razorpay/trace.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:razorpay/metrics-php.git"
         }
     ],
     "require-dev": {
