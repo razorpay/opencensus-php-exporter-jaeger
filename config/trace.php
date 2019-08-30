@@ -46,4 +46,6 @@ return [
     'fallback_email' => 'developers@razorpay.com',
 
     'trace_code_class' => App\Constants\TraceCode::class,
+
+    'metrics' => require __DIR__ . '/metrics.php',
 ];
