@@ -86,8 +86,8 @@ class Api
 
         if (Str::startsWith($orgDetails['primary_host_name'], 'http') === false)
         {
-            $protocolIdentifier = ((env('APP_ENV') === 'dev')
-                                   or (env('APP_ENV') === 'docker')) ? 'http://' : 'https://';
+            $protocolIdentifier = ((env('APP_MODE') === 'dev')
+                                   or (env('APP_MODE') === 'docker')) ? 'http://' : 'https://';
         }
 
         return $protocolIdentifier.$orgDetails['primary_host_name'];

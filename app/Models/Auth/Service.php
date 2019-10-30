@@ -56,7 +56,7 @@ class Service
         if (empty($authorizeData['application']['logo']) === false)
         {
             // We use betacdn for all non-prod envs
-            $cdnName = env('APP_ENV') === 'prod' ? 'cdn' : 'betacdn';
+            $cdnName = env('APP_MODE') === 'prod' ? 'cdn' : 'betacdn';
 
             // Constructing the cdn url for logo. We save multiple sizes of logo, using medium here
             // by adding the `_medium` after the id.
