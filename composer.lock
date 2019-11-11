@@ -723,9 +723,9 @@
             "authors": [
                 {
                     "name": "Alex Bilbie",
-                    "role": "Developer",
                     "email": "hello@alexbilbie.com",
-                    "homepage": "http://www.alexbilbie.com"
+                    "homepage": "http://www.alexbilbie.com",
+                    "role": "Developer"
                 }
             ],
             "description": "A lightweight and powerful OAuth 2.0 authorization and resource server library with support for all the core specification grants. This library will allow you to secure your API with OAuth and allow your applications users to approve apps that want to access their data from your API.",
@@ -1436,7 +1436,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/master",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2019-07-25T12:50:21+00:00"
+            "time": "2019-08-13T09:02:30+00:00"
         },
         {
             "name": "razorpay/spine",
@@ -1444,12 +1444,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/spine.git",
-                "reference": "5d2a7cd15c02853ceaa9a3464fe03396b0a5b3bf"
+                "reference": "c58d5e6921c022b83a8afc09182cdfac080958d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/spine/zipball/5d2a7cd15c02853ceaa9a3464fe03396b0a5b3bf",
-                "reference": "5d2a7cd15c02853ceaa9a3464fe03396b0a5b3bf",
+                "url": "https://api.github.com/repos/razorpay/spine/zipball/c58d5e6921c022b83a8afc09182cdfac080958d3",
+                "reference": "c58d5e6921c022b83a8afc09182cdfac080958d3",
                 "shasum": ""
             },
             "require": {
@@ -1484,10 +1484,10 @@
                 "spine"
             ],
             "support": {
-                "source": "https://github.com/razorpay/spine/tree/0.1.2",
+                "source": "https://github.com/razorpay/spine/tree/0.1.4",
                 "issues": "https://github.com/razorpay/spine/issues"
             },
-            "time": "2019-03-23T07:20:42+00:00"
+            "time": "2019-07-15T07:13:16+00:00"
         },
         {
             "name": "razorpay/trace",
@@ -3301,8 +3301,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "role": "lead",
-                    "email": "sb@sebastian-bergmann.de"
+                    "email": "sb@sebastian-bergmann.de",
+                    "role": "lead"
                 }
             ],
             "description": "Library that provides collection, processing, and rendering functionality for PHP code coverage information.",
@@ -3571,8 +3571,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "role": "lead",
-                    "email": "sebastian@phpunit.de"
+                    "email": "sebastian@phpunit.de",
+                    "role": "lead"
                 }
             ],
             "description": "The PHP Unit Testing framework.",
