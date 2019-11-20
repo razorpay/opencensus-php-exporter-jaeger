@@ -11,7 +11,7 @@ class JitValidator extends Validator
      */
     protected $caller;
 
-    protected static $rules = [];
+    protected static $Rules = [];
 
     protected $input = [];
 
@@ -26,7 +26,7 @@ class JitValidator extends Validator
 
     public function rules(array $rules)
     {
-        static::$rules = $rules;
+        static::$Rules = $rules;
 
         return $this;
     }
