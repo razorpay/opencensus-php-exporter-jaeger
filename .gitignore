@@ -22,6 +22,7 @@ dockerconf/auth.nginx.conf
 !environment/.env.sample
 !environment/.env.docker
 !environment/.env.stage
+!environment/.env.omega
 environment/.env.dev
 environment/env.php
 !environment/*.j2
