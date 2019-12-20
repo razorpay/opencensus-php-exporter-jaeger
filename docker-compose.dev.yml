@@ -5,8 +5,11 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       args:
-       - GIT_TOKEN
+        - GIT_TOKEN
     image: razorpay:auth
+    container_name: razorpay-auth
+    networks:
+      - api_default
     volumes:
       - .:/app
     links:
@@ -14,7 +17,7 @@ services:
     depends_on:
       - db-auth
     ports:
-      - 28095:80
+      - 28095:8888
     environment:
       DB_HOST: db-auth
       DB_DATABASE: auth
@@ -24,11 +27,16 @@ services:
       APP_MODE: dev
       GIT_COMMIT_HASH: dev-commit
   db-auth:
-      image: mysql:5.6
-      ports:
-        - 23309:3306
-      environment:
-        MYSQL_ROOT_PASSWORD: 123
-        MYSQL_DATABASE: auth
-        MYSQL_USER: auth
-        MYSQL_PASSWORD: 123
+    image: mysql:5.7
+    networks:
+      - api_default
+    ports:
+      - 23309:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: auth
+      MYSQL_USER: auth
+      MYSQL_PASSWORD: 123
+networks:
+  api_default:
+    external: true
