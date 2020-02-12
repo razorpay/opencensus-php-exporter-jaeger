@@ -55,7 +55,17 @@ return [
             'charset'   => 'utf8',
             'collation' => 'utf8_bin',
             'prefix'    => '',
-            'strict'    => true
+            'strict'    => true,
+            // Ref- https://github.com/laravel/framework/pull/24038/files.
+            // Once laravel/lumen-framework is upgraded this(below) will no longer be required.
+            'modes'     => [
+                'ONLY_FULL_GROUP_BY',
+                'STRICT_TRANS_TABLES',
+                'NO_ZERO_IN_DATE',
+                'NO_ZERO_DATE',
+                'ERROR_FOR_DIVISION_BY_ZERO',
+                'NO_ENGINE_SUBSTITUTION',
+            ],
         ],
     ],
 
