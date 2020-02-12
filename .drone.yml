@@ -146,11 +146,3 @@ pipeline:
         exclude: [push]
         include: [deployment]
       branch: master
-  build-falcon-notify:
-    image: plugins/webhook
-    urls:
-      - https://falcon.razorpay.com/update
-    secrets:
-      - plugin_headers
-    when:
-      status: [ success, failure ]
