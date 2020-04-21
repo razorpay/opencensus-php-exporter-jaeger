@@ -56,8 +56,8 @@ tail -f $TRACE_LOG_PATH >> /dev/stdout 2>&1 &
 tail -f $LARAVEL_LOG_PATH >> /dev/stdout 2>&1 &
 
 # Run Migrations
-echo  "Running DB migrate"
-php artisan migrate --force
+# echo  "Running DB migrate"
+# php artisan migrate --force
 
 # Fix permissions
 echo  "Fix file owner"
