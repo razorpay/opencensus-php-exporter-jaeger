@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "da74b187f73c32bc20f3a89038342512",
+    "content-hash": "e4b553c296517b982112c8c95f441fc1",
     "packages": [
         {
             "name": "datadog/php-datadogstatsd",
@@ -1492,16 +1492,16 @@
         },
         {
             "name": "razorpay/trace",
-            "version": "2.4",
+            "version": "2.4.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/trace.git",
-                "reference": "2522ca661d13ae0aa8356cd1d14631d36561fa48"
+                "reference": "11169b611c717dc5b81888716e62b8814cb20630"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/trace/zipball/2522ca661d13ae0aa8356cd1d14631d36561fa48",
-                "reference": "2522ca661d13ae0aa8356cd1d14631d36561fa48",
+                "url": "https://api.github.com/repos/razorpay/trace/zipball/11169b611c717dc5b81888716e62b8814cb20630",
+                "reference": "11169b611c717dc5b81888716e62b8814cb20630",
                 "shasum": ""
             },
             "require": {
@@ -1562,10 +1562,10 @@
                 "trace"
             ],
             "support": {
-                "source": "https://github.com/razorpay/trace/tree/2.4",
+                "source": "https://github.com/razorpay/trace/tree/2.4.3",
                 "issues": "https://github.com/razorpay/trace/issues"
             },
-            "time": "2019-11-22T04:28:28+00:00"
+            "time": "2020-04-17T10:22:09+00:00"
         },
         {
             "name": "rmccue/requests",
