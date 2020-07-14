@@ -11,8 +11,7 @@
         "razorpay/trace": "~2.4.3",
         "laravel/lumen-framework": "5.4.*",
         "razorpay/spine": "dev-master",
-        "razorpay/oauth": "dev-master",
-        "nordsoftware/lumen-newrelic": "^1.1"
+        "razorpay/oauth": "dev-master"
     },
     "repositories": [
         {

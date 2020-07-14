@@ -30,12 +30,6 @@ else
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2" "environment/.env.vault.j2"
 fi
 
-## enable NewRelic only for prod
-if [[ "${APP_MODE}" == "prod" ]]; then
-  $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/newrelic.ini.j2"
-  cp dockerconf/newrelic.ini /etc/php7/conf.d/newrelic.ini
-fi
-
 ## Enable stdout logging
 TRACE_LOG_PATH="/app/storage/logs/$HOSTNAME-trace.log"
 LARAVEL_LOG_PATH="/app/storage/logs/laravel.log"

@@ -83,11 +83,7 @@ if (class_exists('Crypt') === false)
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exception\Handler::class,
-    new Nord\Lumen\ChainedExceptionHandler\ChainedExceptionHandler(
-        new Laravel\Lumen\Exceptions\Handler(),
-        [new Nord\Lumen\NewRelic\NewRelicExceptionHandler()]
-    )
+    App\Exception\Handler::class
 );
 
 $app->singleton(
@@ -109,10 +105,6 @@ $app->singleton(
 // $app->middleware([
 //    App\Http\Middleware\ExampleMiddleware::class
 // ]);
-
-$app->middleware([
-    Nord\Lumen\NewRelic\NewRelicMiddleware::class,
-]);
 
 $app->routeMiddleware([
     'auth.api' => App\Http\Middleware\ApiAuth::class,
@@ -138,7 +130,6 @@ $app->register(\Razorpay\Trace\ServiceProvider::class);
 $app->register(\Razorpay\OAuth\OAuthServiceProvider::class);
 
 $app->configure('trace');
-$app->register(Nord\Lumen\NewRelic\NewRelicServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
