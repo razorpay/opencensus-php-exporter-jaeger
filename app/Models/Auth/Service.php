@@ -36,7 +36,7 @@ class Service
      */
     public function getAuthorizeViewData(array $input): array
     {
-        Trace::debug(TraceCode::AUTH_AUTHORIZE_REQUEST, $input);
+        Trace::info(TraceCode::AUTH_AUTHORIZE_REQUEST, $input);
 
         (new Validator)->validateAuthorizeRequest($input);
 
@@ -71,6 +71,8 @@ class Service
 
     public function postAuthCode(array $input)
     {
+        Trace::info(TraceCode::POST_AUTHORIZE_REQUEST, ['merchant_id' => $input['merchant_id']]);
+
         if (isset($input['merchant_id']) === false)
         {
             throw new BadRequestValidationFailureException('Invalid id passed for merchant');

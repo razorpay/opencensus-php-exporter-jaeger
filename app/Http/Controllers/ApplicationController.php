@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Trace;
 use Request;
+use App\Constants\TraceCode;
 use Razorpay\OAuth\Application;
 
 class ApplicationController extends Controller
@@ -16,6 +18,8 @@ class ApplicationController extends Controller
     {
         $input = Request::all();
 
+        Trace::info(TraceCode::CREATE_APPLICATION_REQUEST, $input);
+
         $app = $this->service->create($input);
 
         return response()->json($app);
@@ -24,6 +28,8 @@ class ApplicationController extends Controller
     public function get(string $id)
     {
         $input = Request::all();
+
+        Trace::info(TraceCode::GET_APPLICATION_REQUEST, compact('id', 'input'));
 
         $app = $this->service->fetch($id, $input);
 
@@ -34,6 +40,8 @@ class ApplicationController extends Controller
     {
         $input = Request::all();
 
+        Trace::info(TraceCode::GET_APPLICATIONS_REQUEST, $input);
+
         $apps = $this->service->fetchMultiple($input);
 
         return response()->json($apps);
@@ -43,6 +51,8 @@ class ApplicationController extends Controller
     {
         $input = Request::all();
 
+        Trace::info(TraceCode::DELETE_APPLICATION_REQUEST, compact('id', 'input'));
+
         $this->service->delete($id, $input);
 
         return response()->json([]);
@@ -51,6 +61,8 @@ class ApplicationController extends Controller
     public function update(string $id)
     {
         $input = Request::all();
+
+        Trace::info(TraceCode::UPDATE_APPLICATION_REQUEST, compact('id', 'input'));
 
         $app = $this->service->update($id, $input);
 

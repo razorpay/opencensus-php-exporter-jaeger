@@ -1,6 +1,13 @@
 <?php
 
+use App\Constants\Metric;
+use App\Trace\Metrics\DimensionsProcessor;
+
 return [
+
+    'processors' => [
+        DimensionsProcessor::class,
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -17,7 +24,10 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'namespace'  => 'api',
+    'namespace'  => 'auth_service',
+
+    'whitelisted_label_values' => [],
+    'default_label_value' => Metric::LABEL_DEFAULT_VALUE,
 
     /*
     |--------------------------------------------------------------------------

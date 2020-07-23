@@ -8,6 +8,15 @@ class TraceCode extends BaseTraceCode
 {
     // ----- Debug Codes ------
     const AUTH_AUTHORIZE_REQUEST                                    = 'AUTH_AUTHORIZE_REQUEST';
+    const POST_AUTHORIZE_REQUEST                                    = 'POST_AUTHORIZE_REQUEST';
+    const GET_TOKENS_REQUEST                                        = 'GET_TOKENS_REQUEST';
+    const GET_TOKEN_REQUEST                                         = 'GET_TOKEN_REQUEST';
+    const REVOKE_TOKEN_REQUEST                                      = 'REVOKE_TOKEN_REQUEST';
+    const CREATE_APPLICATION_REQUEST                                = 'CREATE_APPLICATION_REQUEST';
+    const GET_APPLICATION_REQUEST                                   = 'GET_APPLICATION_REQUEST';
+    const UPDATE_APPLICATION_REQUEST                                = 'UPDATE_APPLICATION_REQUEST';
+    const DELETE_APPLICATION_REQUEST                                = 'DELETE_APPLICATION_REQUEST';
+    const GET_APPLICATIONS_REQUEST                                  = 'GET_APPLICATIONS_REQUEST';
 
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';

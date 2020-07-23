@@ -24,6 +24,7 @@ $app = new Laravel\Lumen\Application(
  */
 
 require __DIR__ . '/environment.php';
+require __DIR__ . '/../app/lib/utility.php';
 
 /*
  |-------------------------------------------------------------------------
@@ -105,6 +106,10 @@ $app->singleton(
 // $app->middleware([
 //    App\Http\Middleware\ExampleMiddleware::class
 // ]);
+
+ $app->middleware([
+    App\Http\Middleware\Metrics::class
+ ]);
 
 $app->routeMiddleware([
     'auth.api' => App\Http\Middleware\ApiAuth::class,

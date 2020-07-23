@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Trace;
 use Request;
 use Razorpay\OAuth\Token;
+use App\Constants\TraceCode;
 
 use App\Models\Auth;
 
@@ -24,6 +26,8 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
+        Trace::info(TraceCode::GET_TOKENS_REQUEST, $input);
+
         $tokens = $this->service->getAllTokens($input);
 
         return response()->json($tokens);
@@ -33,6 +37,8 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
+        Trace::info(TraceCode::GET_TOKEN_REQUEST, compact('input', 'id'));
+
         $token = $this->service->getToken($id, $input);
 
         return response()->json($token);
@@ -41,6 +47,8 @@ class TokenController extends Controller
     public function revoke(string $id)
     {
         $input = Request::all();
+
+        Trace::info(TraceCode::REVOKE_TOKEN_REQUEST, compact('input', 'id'));
 
         $token = (new Token\Repository)->findOrFailPublic($id);
 
