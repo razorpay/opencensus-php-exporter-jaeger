@@ -7,7 +7,7 @@ pipeline:
         include: [push]
   test:
     group: A
-    image: razorpay/pithos:rzp-php7.1-nginx
+    image: razorpay/onggi:php-7.1-nginx
     pull: true
     secrets: [docker_username, docker_password, git_token]
     environment:

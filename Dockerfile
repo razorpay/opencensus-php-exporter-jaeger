@@ -1,4 +1,4 @@
-FROM razorpay/pithos:rzp-php7.1-nginx
+FROM razorpay/onggi:php-7.1-nginx
 
 ARG GIT_COMMIT_HASH
 ARG GIT_TOKEN
