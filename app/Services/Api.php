@@ -137,4 +137,33 @@ class Api
             Trace::critical(TraceCode::MERCHANT_APP_MAPPING_FAILED, $tracePayload);
         }
     }
+
+    public function triggerBankingAccountsWebhook(string $merchantId)
+    {
+        $url = $this->apiUrl . '/merchant/' . $merchantId . '/banking_accounts/';
+
+        Trace::info(TraceCode::BANKING_ACCOUNTS_WEBHOOK_REQUEST, [
+            'url'        => $url,
+            'merchantId' => $merchantId,
+        ]);
+
+        try
+        {
+            $response = Requests::get($url, [], $this->options);
+
+            return json_decode($response->body, true);
+        }
+        catch (\Throwable $e)
+        {
+            $tracePayload = [
+                'class'   => get_class($e),
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::critical(TraceCode::MERCHANT_BANKING_ACCOUNTS_WEBHOOK_FAILED, $tracePayload);
+        }
+
+        throw new LogicException('Error when triggering merchant banking webhooks');
+    }
 }
