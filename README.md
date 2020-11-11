@@ -34,7 +34,7 @@ Razorpay's Auth Microservice - Powers OAuth and auth.razorpay.com
   - inside environment folder
     - create env.php file and copy env.sample.php file to env.php
     - create .env.dev file and copy .env.sample to .env.dev
-    - set env.php to return `dev`
+    - set env.php to return `dev` and
       set below values accordingly in .env.dev file
       - `APP_ENV=testing`
       - `APP_DEBUG=true`
