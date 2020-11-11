@@ -25,7 +25,7 @@ Razorpay's Auth Microservice - Powers OAuth and auth.razorpay.com
 
 ## Non docker setup
 - open /etc/hosts file and add `127.0.0.1	auth.razorpay.in` in a new line
-- open /httpd-vhosts.conf file and add a new virtual hosts for auth. 
+- open /httpd-vhosts.conf file and add a new virtual hosts for auth
 - update `ServerName`, `DocumentRoot` and `Directory` path accordingly
 - restart apache server
 - create `auth` database (if not already created)
