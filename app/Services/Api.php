@@ -149,7 +149,7 @@ class Api
 
         try
         {
-            $response = Requests::get($url, [], $this->options);
+            $response = Requests::post($url, [], [], $this->options);
 
             return json_decode($response->body, true);
         }

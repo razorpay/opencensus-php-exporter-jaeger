@@ -216,9 +216,9 @@ class Service
 
         //send banking accounts via webhook. TODO: send accounts webhook only once. check for previous access token present or not.
 
-        $token = (new OAuth\OAuthServer)->authenticateWithPublicToken($response['public_token']);
+        $token = (new OAuth\OAuthServer)->authenticateWithPublicToken($response[Token::PUBLIC_TOKEN]);
 
-        $this->getApiService()->triggerBankingAccountsWebhook($token['merchant_id']);
+        $this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID]);
 
         return $response;
     }
