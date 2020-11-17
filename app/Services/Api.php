@@ -138,8 +138,13 @@ class Api
         }
     }
 
-    public function triggerBankingAccountsWebhook(string $merchantId)
+    public function triggerBankingAccountsWebhook(string $merchantId, string $mode)
     {
+        if($mode === 'test')
+        {
+            $this->options = ['auth' => ['rzp_test', $this->secret]];
+        }
+
         $url = $this->apiUrl . '/merchant/' . $merchantId . '/banking_accounts/';
 
         Trace::info(TraceCode::BANKING_ACCOUNTS_WEBHOOK_REQUEST, [
