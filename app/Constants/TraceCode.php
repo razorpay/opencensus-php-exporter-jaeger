@@ -17,6 +17,7 @@ class TraceCode extends BaseTraceCode
     const UPDATE_APPLICATION_REQUEST                                = 'UPDATE_APPLICATION_REQUEST';
     const DELETE_APPLICATION_REQUEST                                = 'DELETE_APPLICATION_REQUEST';
     const GET_APPLICATIONS_REQUEST                                  = 'GET_APPLICATIONS_REQUEST';
+    const BANKING_ACCOUNTS_WEBHOOK_REQUEST                          = 'BANKING_ACCOUNTS_WEBHOOK_REQUEST';
 
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';
@@ -25,6 +26,7 @@ class TraceCode extends BaseTraceCode
     const ORG_DETAILS_FETCH_FAILED                                  = 'ORG_DETAILS_FETCH_FAILED';
     const MERCHANT_APP_MAPPING_FAILED                               = 'MERCHANT_APP_MAPPING_FAILED';
     const MERCHANT_APP_MAPPING_REVOKE_FAILED                        = 'MERCHANT_APP_MAPPING_REVOKE_FAILED';
+    const MERCHANT_BANKING_ACCOUNTS_WEBHOOK_FAILED                  = 'MERCHANT_BANKING_ACCOUNTS_WEBHOOK_FAILED';
 
     // ----- Generic Codes ----
     const MISC_TOSTRING_ERROR                                       = 'MISC_TOSTRING_ERROR';
