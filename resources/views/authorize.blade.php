@@ -191,7 +191,7 @@
         <div>
             <input type="checkbox" class="checkbox">
             <span class="tc-content">
-                I've read <a href='https://razorpay.com/terms/razorpayx/partnership/' class="tc-link">Terms & Condition</a> before granting access to my Razorpay Account.
+                I've read <a href='https://razorpay.com/terms/razorpayx/partnership/' target="_blank" class="tc-link">Terms & Condition</a> before granting access to my Razorpay Account.
             </span>
         </div>
         <div class="button-toolbar">
@@ -232,6 +232,14 @@
             invalid_role: '<strong>You are not allowed to authorize this app.</strong> <br /> Contact one of your admins to add this app to your dashboard.',
             unknown_error: '<strong>An unknown error occurred.</strong> <br /> Please contact Razorpay support to report this issue.'
         };
+
+        $('.checkbox').change(function() {
+            if ($(this).is(':checked')) {
+                $('.btn-submit').prop("disabled", false);
+            } else {
+                $('.btn-submit').prop("disabled", true);
+            }
+        });
 
         function showError(type) {
             var error = errorHtml[type];
