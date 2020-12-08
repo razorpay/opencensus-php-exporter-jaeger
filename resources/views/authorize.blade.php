@@ -191,7 +191,7 @@
         <div>
             <input type="checkbox" class="checkbox">
             <span class="tc-content">
-                I've read <a href='https://google.com' class="tc-link">Terms & Condition</a> before granting access to my Razorpay Account.
+                I've read <a href='https://razorpay.com/terms/razorpayx/partnership/' class="tc-link">Terms & Condition</a> before granting access to my Razorpay Account.
             </span>
         </div>
         <div class="button-toolbar">
