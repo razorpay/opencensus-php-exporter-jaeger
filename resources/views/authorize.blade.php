@@ -257,7 +257,7 @@
         }
 
         function enableButtonsAndShowEmail() {
-            elements.buttons.prop('disabled', false);
+            //elements.buttons.prop('disabled', false);
             elements.user_details.show();
         }
 
