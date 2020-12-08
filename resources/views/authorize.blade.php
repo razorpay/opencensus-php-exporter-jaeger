@@ -140,6 +140,19 @@
         .close-window {
             color: #907545;
         }
+        .tc-link{
+            color:#3987F0;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .line-break{
+            border: 1px solid #E6EBF3;
+            margin: 16px 0;
+        }
+        .tc-content{
+            position: relative;
+            top: -2px;
+        }
     </style>
 </head>
 <body>
@@ -153,40 +166,46 @@
 
     <div class="inner-content">
         <div class="content-hero">
-          <div class="hero-description">
-            Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?
-          </div>
+            <div class="hero-description">
+                Allow <span class="emphasis">{{$data['application']['name']}}</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?
+            </div>
 
-          <div class="app-logos">
-            <div style="padding:0" class="app-logo"><img style="width:100%" class="application-logo" /></div>
-            <div style="padding:0" class="app-logo"><img style="width:100%" class="merchant-logo" /></div>
-          </div>
+            <div class="app-logos">
+                <div style="padding:0" class="app-logo"><img style="width:100%" class="application-logo" /></div>
+                <div style="padding:0" class="app-logo"><img style="width:100%" class="merchant-logo" /></div>
+            </div>
         </div>
 
         <div class="main-content">
-          <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to take following actions:</strong></p>
-          <ul id="scopes">
-              @if($data['scopes'])
-                  @foreach($data['scopes'] as $item)
-                      <li> {{$item}}</li>
-                  @endforeach
-              @endif
+            <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to take following actions:</strong></p>
+            <ul id="scopes">
+                @if($data['scopes'])
+                    @foreach($data['scopes'] as $item)
+                        <li> {{$item}}</li>
+                    @endforeach
+                @endif
 
-          </ul>
+            </ul>
         </div>
-
+        <div class="line-break"></div>
+        <div>
+            <input type="checkbox" class="checkbox">
+            <span class="tc-content">
+                I've read <a href='https://razorpay.com/terms/razorpayx/partnership/' target="_blank" class="tc-link">Terms & Condition</a> before granting access to my Razorpay Account.
+            </span>
+        </div>
         <div class="button-toolbar">
-          <form method="POST" action="/authorize">
-            <input type="hidden" name="token" class="verify_token" value="" />
-            <input type="hidden" name="merchant_id" class="merchant-id" value="" />
-            <button class="btn btn-submit" disabled>Authorize</button>
-          </form>
-          <form method='POST' action="/authorize">
-            {{ method_field('DELETE') }}
-            <input type="hidden" name="token" class="verify_token" value="" />
-            <input type="hidden" name="merchant_id" class="merchant-id" value="" />
-            <button class="btn btn-default" disabled>Cancel</button>
-          </form>
+            <form method="POST" action="/authorize">
+                <input type="hidden" name="token" class="verify_token" value="" />
+                <input type="hidden" name="merchant_id" class="merchant-id" value="" />
+                <button class="btn btn-submit" disabled>Authorize</button>
+            </form>
+            <form method='POST' action="/authorize">
+                {{ method_field('DELETE') }}
+                <input type="hidden" name="token" class="verify_token" value="" />
+                <input type="hidden" name="merchant_id" class="merchant-id" value="" />
+                <button class="btn btn-default" disabled>Cancel</button>
+            </form>
         </div>
     </div>
 </div>
@@ -214,6 +233,14 @@
             unknown_error: '<strong>An unknown error occurred.</strong> <br /> Please contact Razorpay support to report this issue.'
         };
 
+        $('.checkbox').change(function() {
+            if ($(this).is(':checked')) {
+                $('.btn-submit').prop("disabled", false);
+            } else {
+                $('.btn-submit').prop("disabled", true);
+            }
+        });
+
         function showError(type) {
             var error = errorHtml[type];
 
@@ -230,7 +257,8 @@
         }
 
         function enableButtonsAndShowEmail() {
-            elements.buttons.prop('disabled', false);
+            //elements.buttons.prop('disabled', false);
+            $('.btn-default').prop("disabled", false);
             elements.user_details.show();
         }
 
@@ -254,43 +282,43 @@
                 data: {query: queryParams},
                 dataType: "json",
                 xhrFields: {
-                   withCredentials: true
+                    withCredentials: true
                 },
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             })
-            .done(function(res, textStatus, xhr) {
-                var status = xhr.status;
+                .done(function(res, textStatus, xhr) {
+                    var status = xhr.status;
 
-                if (status === 200) {
-                    if (res.success === true) {
-                        if (res.data.role === 'owner') {
-                            handleUserSuccess(res.data);
+                    if (status === 200) {
+                        if (res.success === true) {
+                            if (res.data.role === 'owner') {
+                                handleUserSuccess(res.data);
+                            } else {
+                                showError('invalid_role');
+                            }
                         } else {
-                            showError('invalid_role');
+                            showError('unknown_error');
                         }
+                    }
+                })
+                .fail(function(xhr, textStatus, thrownError) {
+                    if (xhr.status === 401) {
+                        pageUrl = window.location.href;
+                        var pageUrl = encodeURIComponent(pageUrl);
+                        var signinUrl = dashboardUrl + '?next=' + pageUrl;
+
+                        window.location.href = signinUrl;
                     } else {
                         showError('unknown_error');
                     }
-                }
-            })
-            .fail(function(xhr, textStatus, thrownError) {
-                if (xhr.status === 401) {
-                    pageUrl = window.location.href;
-                    var pageUrl = encodeURIComponent(pageUrl);
-                    var signinUrl = dashboardUrl + '?next=' + pageUrl;
-
-                    window.location.href = signinUrl;
-                } else {
-                    showError('unknown_error');
-                }
-            });
+                });
         }
 
         function getAppLogoFullUrl(logoUrl) {
-          if (logoUrl !== null && !/^http/.test(logoUrl)) {
-            logoUrl = `https://cdn.razorpay.com${logoUrl.replace(/\.([^\.]+$)/, '_medium.$1')}`;
-          }
-          elements.application_logo.attr('src', logoUrl);
+            if (logoUrl !== null && !/^http/.test(logoUrl)) {
+                logoUrl = `https://cdn.razorpay.com${logoUrl.replace(/\.([^\.]+$)/, '_medium.$1')}`;
+            }
+            elements.application_logo.attr('src', logoUrl);
         }
 
         window.RazorpayAuthorize = {
