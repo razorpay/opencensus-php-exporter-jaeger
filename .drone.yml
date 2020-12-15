@@ -7,9 +7,15 @@ pipeline:
         include: [push]
   test:
     group: A
-    image: razorpay/onggi:php-7.1-nginx
+    image: c.rzp.io/razorpay/onggi:php-7.1-nginx
     pull: true
-    secrets: [docker_username, docker_password, git_token]
+    secrets:
+      - source: harbor_docker_username
+        target: docker_username
+      - source: harbor_docker_password
+        target: docker_password
+      - source: git_token
+        target: GIT_TOKEN
     environment:
       - DB_HOST=db-auth
       - DB_PORT=3306
@@ -25,8 +31,15 @@ pipeline:
   build:
     group: A
     image: plugins/docker
-    repo: razorpay/auth
-    secrets: [docker_username, docker_password, git_token]
+    registry: c.rzp.io
+    repo: c.rzp.io/razorpay/auth
+    secrets:
+      - source: harbor_docker_username
+        target: docker_username
+      - source: harbor_docker_password
+        target: docker_password
+      - source: git_token
+        target: GIT_TOKEN
     build_args_from_env: [git_token]
     build_args:
      - GIT_COMMIT_HASH=${DRONE_COMMIT_SHA}
@@ -71,11 +84,12 @@ services:
         include: [push]
 pipeline:
   deploy-stage:
-    image: razorpay/drone-kubernetes:latest
+    image: c.rzp.io/razorpay/drone-kubernetes:latest
+    registry: c.rzp.io
     pull: true
     secrets:
-      - docker_username
-      - docker_password
+      - harbor_docker_username
+      - harbor_docker_password
       - server_url_stage
       - server_cert_stage
       - client_cert_stage
@@ -84,7 +98,7 @@ pipeline:
     cluster: stage
     auth_mode: client-cert
     deployment: auth
-    repo: razorpay/auth
+    repo: c.rzp.io/razorpay/auth
     container: auth
     namespace: auth
     tag:
@@ -96,11 +110,12 @@ pipeline:
         include: [deployment]
   deploy-prod-blue:
     group: PROD_DEPLOY
-    image: razorpay/drone-kubernetes:latest
+    image: c.rzp.io/razorpay/drone-kubernetes:latest
+    registry: c.rzp.io
     pull: true
     secrets:
-      - docker_username
-      - docker_password
+      - harbor_docker_username
+      - harbor_docker_password
       - server_url_prodblue
       - server_cert_prodblue
       - client_cert_prodblue
@@ -109,7 +124,7 @@ pipeline:
     cluster: prod-blue
     auth_mode: client-cert
     deployment: auth
-    repo: razorpay/auth
+    repo: c.rzp.io/razorpay/auth
     container: auth
     namespace: auth
     tag:
@@ -122,11 +137,12 @@ pipeline:
       branch: master
   deploy-prod-green:
     group: PROD_DEPLOY
-    image: razorpay/drone-kubernetes:latest
+    image: c.rzp.io/razorpay/drone-kubernetes:latest
+    registry: c.rzp.io
     pull: true
     secrets:
-      - docker_username
-      - docker_password
+      - harbor_docker_username
+      - harbor_docker_password
       - server_url_prodgreen
       - server_cert_prodgreen
       - client_cert_prodgreen
@@ -135,7 +151,7 @@ pipeline:
     cluster: prod-green
     auth_mode: client-cert
     deployment: auth
-    repo: razorpay/auth
+    repo: c.rzp.io/razorpay/auth
     container: auth
     namespace: auth
     tag:
