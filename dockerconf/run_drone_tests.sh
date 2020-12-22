@@ -13,7 +13,7 @@ function init_setup
     cd $SRC_DIR
 
     echo "copying env file for testing"
-    cp ./environment/.env.sample ./environment/.env.testing
+    cp ${SRC_DIR}/environment/.env.sample ${SRC_DIR}/environment/.env.testing
 
     echo "running composer install"
     composer config -g github-oauth.github.com ${GIT_TOKEN}
