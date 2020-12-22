@@ -4,7 +4,7 @@ set -euo pipefail
 #SRC_DIR=/drone/src/github.com/razorpay/auth-service
 
 ORIG_DIR=/github/workspace/
-SRC_DIR=/go/src/github.com/razorpay/auth-service
+SRC_DIR=/drone/src/github.com/razorpay/auth-service
 auth_TMP_DIR=/tmp/auth-service ## defined in the environment file
 
 function init_setup
@@ -17,12 +17,12 @@ function init_setup
     cp -r workspace/* .
     echo "copying env file for testing"
     cp ${SRC_DIR}/environment/.env.sample ${SRC_DIR}/environment/.env.testing
-
-    echo "installing composer"
-    -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-    composer-setup.php
-    -r "unlink('composer-setup.php');"
+#
+#    echo "installing composer"
+#    -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+#    -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+#    composer-setup.php
+#    -r "unlink('composer-setup.php');"
 
     echo "running composer install"
     composer config -g github-oauth.github.com ${GIT_TOKEN}
