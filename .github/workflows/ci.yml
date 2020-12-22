@@ -1,0 +1,142 @@
+name: CI
+on: [push]
+jobs:
+  cancel:
+    runs-on: [self-hosted]
+    name: Cancel Previous Runs
+    if: always()
+    steps:
+      - uses: styfle/cancel-workflow-action@d57d93c
+        if: github.ref != 'refs/heads/master'
+        name: cancel old workflows
+        id: cancel
+        with:
+          access_token: ${{ github.token }}
+      - if: github.ref == 'refs/heads/master'
+        name: Don't cancel old workflows
+        id: dont_cancel
+        run: |
+          echo "Don't cancel old workflow"
+  build:
+    runs-on: [ self-hosted ]
+    needs: [ cancel ]
+    continue-on-error: false
+    name: Build Image
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker login
+        uses: docker/login-action@v1
+        with:
+          registry: c.rzp.io
+          username: ${{ secrets.HARBOR_DOCKER_USERNAME }}
+          password: ${{ secrets.HARBOR_DOCKER_PASSWORD }}
+      - name: Build and push
+        uses: docker/build-push-action@v1
+        with:
+          registry: c.rzp.io
+          username: ${{ secrets.HARBOR_DOCKER_USERNAME }}
+          password: ${{ secrets.HARBOR_DOCKER_PASSWORD }}
+          repository: ${{ github.repository }}
+          dockerfile: ./Dockerfile
+          build_args: GIT_COMMIT_HASH=${{ github.sha }},GIT_TOKEN=${{ secrets.GIT_TOKEN }}
+          push: true
+          tags: ${{ github.sha }}
+  run_test:
+    name: Test Suite
+    runs-on: [ self-hosted ]
+    needs: [ cancel, build ]
+    continue-on-error: false
+    steps:
+      - name: checkout
+        id: checkout
+        uses: actions/checkout@v2
+      - name: Docker login
+        uses: docker/login-action@v1
+        with:
+          registry: c.rzp.io
+          username: ${{ secrets.HARBOR_DOCKER_USERNAME }}
+          password: ${{ secrets.HARBOR_DOCKER_PASSWORD }}
+      - name: Running tests
+        id: running_test
+        uses: docker://golang:1.13-alpine3.10
+        with:
+          entrypoint: /bin/sh
+          args: ./dockerconf/run_drone_tests.sh
+        env:
+          DB_HOST: "db-auth"
+          DB_PORT: "3306"
+          DB_USERNAME: "root"
+          DB_PASSWORD: "root"
+          DB_DATABASE: "auth_test"
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+    services:
+      database:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: auth_test
+  slack-notify:
+    runs-on: [ self-hosted ]
+    name: Notify build
+    needs: [ run_test, build ]
+    steps:
+      - name: Sending build success notification (Slack)
+        if: needs.run_test.result == 'success' && needs.build.result == 'success'
+        env:
+          SLACK_MESSAGE: 'Build success.'
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_USERNAME: Github Actions # Optional. (defaults to webhook app)
+          SLACK_CHANNEL: tech_distelli # Optional. (defaults to webhook)
+          SLACK_ICON: https://avatars2.githubusercontent.com/u/2181346?s=200&v=4 # Optional. can be (repository, sender, an URL) (defaults to webhook app avatar)
+        uses: rtCamp/action-slack-notify@ca2febb
+      - name: Sending build failed notification (Slack)
+        if: needs.run_test.result != 'success' || needs.build.result != 'success'
+        env:
+          SLACK_MESSAGE: 'Build failed.'
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: '#8B0000'
+          SLACK_USERNAME: Github Actions # Optional. (defaults to webhook app)
+          SLACK_CHANNEL: tech_distelli # Optional. (defaults to webhook)
+          SLACK_ICON: https://avatars3.githubusercontent.com/u/9919?s=40&v=4 # Optional. can be (repository, sender, an URL) (defaults to webhook app avatar)
+        uses: rtCamp/action-slack-notify@ca2febb
+  workflow_status:
+    runs-on: [ self-hosted ]
+    name: Update Status Check
+    needs: [ build, run_test ]
+    if: always()
+    steps:
+      - name: Failed
+        id: failed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo 'Failing the workflow for github status check.'
+          curl -X POST -H "Content-Type: application/json" -H "Authorization: token ${{ github.token }}" \
+          -d '{ "state" : "failure" , "context" : "github/combined-status-check" , "description" : "github/combined-status-check", "target_url" : "https://github.com/${{ github.repository }}" }' \
+          https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}
+          exit 1
+      - name: Success
+        if: steps.failed.conclusion == 'skipped'
+        run: |
+          echo 'Status check has passed!'
+          curl -X POST -H "Content-Type: application/json" -H "Authorization: token ${{ github.token }}" \
+          -d '{ "state" : "success" , "context" : "github/combined-status-check" , "description" : "github/combined-status-check", "target_url" : "https://github.com/${{ github.repository }}" }' \
+          https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}
+          exit 0
+  trigger_regression_suite:
+    name: Regression Suite
+    runs-on: [ self-hosted ]
+    needs: [ workflow_status ]
+    continue-on-error: false
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Run Suite
+        id: run_suite
+        env:
+          SPINNAKER_USERNAME: ${{ secrets.SPINNAKER_USER_NAME }}
+          SPINNAKER_PASSWORD: ${{ secrets.SPINNAKER_PASSWORD }}
+        run: |
+          curl -X POST -u $SPINNAKER_USERNAME:$SPINNAKER_PASSWORD https://deploy-api.razorpay.com/webhooks/webhook/x-regression -H "content-type: application/json" -d "{ "branch" : "${{ steps.extract_branch.outputs.branch }}", "commit": "${{ github.sha }}" , "status": "${{ steps.run_test.outputs.result }}" , "repo": "${{ github.repository }}"}"
