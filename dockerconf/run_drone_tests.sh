@@ -1,12 +1,14 @@
 #!/bin/sh
 set -euo pipefail
 
-SRC_DIR=/drone/src/github.com/razorpay/auth-service
+#SRC_DIR=/drone/src/github.com/razorpay/auth-service
+SRC_DIR=/go/src/github.com/razorpay/auth-service
 auth_TMP_DIR=/tmp/auth-service ## defined in the environment file
 
 function init_setup
 {
     apk update
+    mkdir -p /go/src/github.com/razorpay/auth-service
     echo "changing dir to $SRC_DIR"
     cd $SRC_DIR
 
