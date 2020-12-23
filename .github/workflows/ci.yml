@@ -56,7 +56,7 @@ jobs:
           DB_PORT: 3306
           DB_USERNAME: root
           DB_PASSWORD: root
-          DB_DATABASE: auth_test
+          DB_DATABASE: auth
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
     services:
       database:
