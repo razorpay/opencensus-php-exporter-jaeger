@@ -27,6 +27,13 @@ function init_setup
 #    composer-setup.php
 #    -r "unlink('composer-setup.php');"
 
+    touch /etc/php7/conf.d/assertion.ini
+    echo "zend.assertions=1" >> /etc/php7/conf.d/assertion.ini
+    echo "assert.exception=1" >> /etc/php7/conf.d/assertion.ini
+    php -m
+    chmod 777 -R storage
+    git config --global user.name $GIT_USERNAME
+
     echo "running composer install"
     composer config -g github-oauth.github.com ${GIT_TOKEN}
     echo "running composer install"
