@@ -45,24 +45,18 @@ jobs:
       - name: checkout
         id: checkout
         uses: actions/checkout@v2
-      - name: Docker login
-        uses: docker/login-action@v1
-        with:
-          registry: c.rzp.io
-          username: ${{ secrets.HARBOR_DOCKER_USERNAME }}
-          password: ${{ secrets.HARBOR_DOCKER_PASSWORD }}
       - name: Running tests
         id: running_test
-        uses: docker://golang:1.13-alpine3.10
+        uses: docker://razorpay/onggi:golang-1.13-alpine3.10
         with:
           entrypoint: /bin/sh
           args: ./dockerconf/run_drone_tests.sh
         env:
-          DB_HOST: "db-auth"
-          DB_PORT: "3306"
-          DB_USERNAME: "root"
-          DB_PASSWORD: "root"
-          DB_DATABASE: "auth_test"
+          DB_HOST: db-auth
+          DB_PORT: 3306
+          DB_USERNAME: root
+          DB_PASSWORD: root
+          DB_DATABASE: auth_test
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
     services:
       database:
