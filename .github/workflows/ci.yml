@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Running tests
         id: running_test
-        uses: c.rzp.io://razorpay/onggi:golang-1.13-alpine3.10
+        uses: c.rzp.io/razorpay/onggi:php-7.1-nginx
         with:
           entrypoint: /bin/sh
           args: ./dockerconf/run_drone_tests.sh
