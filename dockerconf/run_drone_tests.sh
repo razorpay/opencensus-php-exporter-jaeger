@@ -7,13 +7,12 @@ set -euo pipefail
 #SRC_DIR=/drone/src/github.com/razorpay/auth-service
 auth_TMP_DIR=/tmp/auth-service ## defined in the environment file
 
-SRC_DIR = /github/workspace/
+SRC_DIR=/github/workspace/
 
 function init_setup
 {
     apk update
     #mkdir -p /go/src/github.com/razorpay/auth-service
-    mkdir -p /github/workspace/
     #cp -Rp $ORIG_DIR $SRC_DIR
     echo "changing dir to $SRC_DIR"
     cd $SRC_DIR
