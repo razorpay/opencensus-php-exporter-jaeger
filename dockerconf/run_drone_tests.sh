@@ -29,8 +29,11 @@ function init_setup
 
     echo "running composer install"
     composer config -g github-oauth.github.com ${GIT_TOKEN}
+    echo "running composer install"
     composer config -g repos.packagist composer https://packagist.rzp.io
+    echo "running composer install"
     composer global require hirak/prestissimo
+    echo "running composer install"
     #composer install --no-interaction
     composer install --no-interaction --optimize-autoloader
 
