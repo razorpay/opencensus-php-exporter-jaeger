@@ -16,9 +16,10 @@ function init_setup
     #cp -Rp $ORIG_DIR $SRC_DIR
     echo "changing dir to $SRC_DIR"
     cd $SRC_DIR
-    cp -r workspace/* .
+    #cp -r workspace/* .
     echo "copying env file for testing"
-    cp ${SRC_DIR}/environment/.env.sample ${SRC_DIR}/environment/.env.testing
+    #cp ${SRC_DIR}/environment/.env.sample ${SRC_DIR}/environment/.env.testing
+    cp ./environment/.env.sample ./environment/.env.testing
 #
 #    echo "installing composer"
 #    -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
