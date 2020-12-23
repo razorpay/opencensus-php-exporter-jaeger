@@ -13,6 +13,7 @@ function init_setup
 {
     apk update
     #mkdir -p /go/src/github.com/razorpay/auth-service
+    mkdir -p /github/workspace/
     #cp -Rp $ORIG_DIR $SRC_DIR
     echo "changing dir to $SRC_DIR"
     cd $SRC_DIR
