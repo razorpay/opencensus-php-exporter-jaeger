@@ -63,7 +63,7 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: auth_test
+          MYSQL_DATABASE: auth
   slack-notify:
     runs-on: [ self-hosted ]
     name: Notify build
