@@ -70,7 +70,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
   slack-notify:
     runs-on: [ self-hosted ]
-    name: Notify build
+    name: Build Notify
     needs: [ run_test, build ]
     steps:
       - name: Sending build success notification (Slack)
