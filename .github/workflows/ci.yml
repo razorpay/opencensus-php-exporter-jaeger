@@ -7,12 +7,12 @@ jobs:
     if: always()
     steps:
       - uses: styfle/cancel-workflow-action@d57d93c
-        if: github.ref != 'refs/heads/master'
+        if: ${{ github.ref != 'refs/heads/master' }}
         name: cancel old workflows
         id: cancel
         with:
           access_token: ${{ github.token }}
-      - if: github.ref == 'refs/heads/master'
+      - if: ${{ github.ref == 'refs/heads/master' }}
         name: Don't cancel old workflows
         id: dont_cancel
         run: |
@@ -50,7 +50,7 @@ jobs:
         uses: docker://razorpay/onggi:php-7.2-nginx
         with:
           entrypoint: /bin/sh
-          args: ./dockerconf/run_drone_tests.sh
+          args: ci-assets/run_unit_tests.sh
         env:
           DB_HOST: db-auth
           DB_PORT: 3306
@@ -115,21 +115,3 @@ jobs:
           -d '{ "state" : "success" , "context" : "github/combined-status-check" , "description" : "github/combined-status-check", "target_url" : "https://github.com/${{ github.repository }}" }' \
           https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}
           exit 0
-  trigger_regression_suite:
-    name: Regression Suite
-    runs-on: [ self-hosted ]
-    needs: [ workflow_status ]
-    continue-on-error: false
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
-      - name: Run Suite
-        id: run_suite
-        env:
-          SPINNAKER_USERNAME: ${{ secrets.SPINNAKER_USER_NAME }}
-          SPINNAKER_PASSWORD: ${{ secrets.SPINNAKER_PASSWORD }}
-        run: |
-          curl -X POST -u $SPINNAKER_USERNAME:$SPINNAKER_PASSWORD https://deploy-api.razorpay.com/webhooks/webhook/x-regression -H "content-type: application/json" -d "{ "branch" : "${{ steps.extract_branch.outputs.branch }}", "commit": "${{ github.sha }}" , "status": "${{ steps.run_test.outputs.result }}" , "repo": "${{ github.repository }}"}"
