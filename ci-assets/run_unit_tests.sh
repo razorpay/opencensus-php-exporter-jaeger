@@ -1,22 +1,29 @@
 #!/bin/sh
 set -euo pipefail
 
-SRC_DIR=/drone/src/github.com/razorpay/auth-service
 auth_TMP_DIR=/tmp/auth-service ## defined in the environment file
+
+SRC_DIR=/github/workspace/
 
 function init_setup
 {
+    echo "initiate setup"
     apk update
-    echo "changing dir to $SRC_DIR"
-    cd $SRC_DIR
 
     echo "copying env file for testing"
     cp ./environment/.env.sample ./environment/.env.testing
 
+    touch /etc/php7/conf.d/assertion.ini
+    echo "zend.assertions=1" >> /etc/php7/conf.d/assertion.ini
+    echo "assert.exception=1" >> /etc/php7/conf.d/assertion.ini
+    php -m
+    chmod 777 -R storage
+
     echo "running composer install"
     composer config -g github-oauth.github.com ${GIT_TOKEN}
+    composer config -g repos.packagist composer https://packagist.rzp.io
     composer global require hirak/prestissimo
-    composer install --no-interaction
+    composer install --no-interaction --optimize-autoloader
 
     if [ ! -d "$auth_TMP_DIR" ]; then
         mkdir -p $auth_TMP_DIR
