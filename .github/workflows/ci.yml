@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Running tests
         id: running_test
-        uses: docker://razorpay/onggi:php-7.1-nginx
+        uses: docker://razorpay/onggi:php-7.2-nginx
         with:
           entrypoint: /bin/sh
           args: ci-assets/run_unit_tests.sh

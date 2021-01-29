@@ -363,7 +363,7 @@ class OAuthTest extends TestCase
         $content = urldecode($response);
 
         $pos = strpos($content, 'code=');
-        $end = strpos($content, '" />', $pos);
+        $end = strpos($content, '\'" />', $pos);
 
         return substr($content, $pos + 5, $end - $pos - 5);
     }

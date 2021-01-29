@@ -19,6 +19,11 @@ function init_setup
     php -m
     chmod 777 -R storage
 
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php composer-setup.php --version="1.10.16" && \
+    mv composer.phar /usr/local/bin/composer && \
+    rm -f composer-setup.php
+
     echo "running composer install"
     composer config -g github-oauth.github.com ${GIT_TOKEN}
     composer config -g repos.packagist composer https://packagist.rzp.io
