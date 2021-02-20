@@ -60,6 +60,18 @@ $app->patch('/applications/{id}', [
     'uses'       => 'ApplicationController@update'
 ]);
 
+$app->post('/clients', [
+    'middleware' => 'auth.api',
+    'as'         => 'create_application_clients',
+    'uses'       => 'ClientController@createClients'
+]);
+
+$app->delete('/clients/{id}', [
+    'middleware' => 'auth.api',
+    'as'         => 'delete_application_client',
+    'uses'       => 'ClientController@delete'
+]);
+
 $app->get('/tokens/{id}', [
     'middleware' => 'auth.api',
     'as'         => 'get_token',

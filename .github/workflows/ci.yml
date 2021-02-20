@@ -6,7 +6,7 @@ jobs:
     name: Cancel Previous Runs
     if: always()
     steps:
-      - uses: styfle/cancel-workflow-action@d57d93c
+      - uses: styfle/cancel-workflow-action@d57d93c3a8110b00c3a2c0b64b8516013c9fd4c9
         if: ${{ github.ref != 'refs/heads/master' }}
         name: cancel old workflows
         id: cancel
@@ -81,7 +81,7 @@ jobs:
           SLACK_USERNAME: Github Actions # Optional. (defaults to webhook app)
           SLACK_CHANNEL: tech_distelli # Optional. (defaults to webhook)
           SLACK_ICON: https://avatars2.githubusercontent.com/u/2181346?s=200&v=4 # Optional. can be (repository, sender, an URL) (defaults to webhook app avatar)
-        uses: rtCamp/action-slack-notify@ca2febb
+        uses: rtCamp/action-slack-notify@ca2febb266f78a54a245d815081549c522099b76
       - name: Sending build failed notification (Slack)
         if: needs.run_test.result != 'success' || needs.build.result != 'success'
         env:
@@ -91,7 +91,7 @@ jobs:
           SLACK_USERNAME: Github Actions # Optional. (defaults to webhook app)
           SLACK_CHANNEL: tech_distelli # Optional. (defaults to webhook)
           SLACK_ICON: https://avatars3.githubusercontent.com/u/9919?s=40&v=4 # Optional. can be (repository, sender, an URL) (defaults to webhook app avatar)
-        uses: rtCamp/action-slack-notify@ca2febb
+        uses: rtCamp/action-slack-notify@ca2febb266f78a54a245d815081549c522099b76
   workflow_status:
     runs-on: [ self-hosted ]
     name: Update Status Check
