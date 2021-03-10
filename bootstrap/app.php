@@ -133,6 +133,7 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(\Razorpay\Trace\ServiceProvider::class);
 
 $app->register(\Razorpay\OAuth\OAuthServiceProvider::class);
+$app->register(\Razorpay\Outbox\OutboxServiceProvider::class);
 
 $app->configure('trace');
 

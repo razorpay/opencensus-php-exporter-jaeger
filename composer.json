@@ -11,7 +11,8 @@
         "razorpay/trace": "^2.4.5",
         "laravel/lumen-framework": "5.5.*",
         "razorpay/spine": "^0.1.3",
-        "razorpay/oauth": "0.1.6"
+        "razorpay/oauth": "dev-outbox-integration",
+        "razorpay/outbox-php": "^0.1.1"
     },
     "repositories": [
         {
@@ -29,6 +30,10 @@
         {
             "type": "vcs",
             "url": "git@github.com:razorpay/metrics-php.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:razorpay/outbox-php.git"
         }
     ],
     "require-dev": {
