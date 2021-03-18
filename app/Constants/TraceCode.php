@@ -26,9 +26,12 @@ class TraceCode extends BaseTraceCode
     const AUTH_ACCESS_TOKEN_FAILURE                                 = 'AUTH_ACCESS_TOKEN_FAILURE';
     const MERCHANT_NOTIFY_FAILED                                    = 'MERCHANT_NOTIFY_FAILED';
     const ORG_DETAILS_FETCH_FAILED                                  = 'ORG_DETAILS_FETCH_FAILED';
+    const USER_DETAILS_FETCH_FAILED                                 = 'USER_DETAILS_FETCH_FAILED';
     const MERCHANT_APP_MAPPING_FAILED                               = 'MERCHANT_APP_MAPPING_FAILED';
     const MERCHANT_APP_MAPPING_REVOKE_FAILED                        = 'MERCHANT_APP_MAPPING_REVOKE_FAILED';
     const MERCHANT_BANKING_ACCOUNTS_WEBHOOK_FAILED                  = 'MERCHANT_BANKING_ACCOUNTS_WEBHOOK_FAILED';
+    const RAVEN_GENERATE_OTP_FAILED                                 = 'RAVEN_GENERATE_OTP_FAILED';
+    const RAVEN_VERIFY_OTP_FAILED                                   = 'RAVEN_VERIFY_OTP_FAILED';
 
     // ----- Generic Codes ----
     const MISC_TOSTRING_ERROR                                       = 'MISC_TOSTRING_ERROR';

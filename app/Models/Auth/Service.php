@@ -8,6 +8,7 @@ use App\Services;
 use Razorpay\OAuth;
 use Razorpay\OAuth\Client;
 use Razorpay\OAuth\Token\Entity as Token;
+use Razorpay\OAuth\Application\Type as ApplicationType;
 
 use App\Error\ErrorCode;
 use App\Constants\TraceCode;
@@ -113,6 +114,36 @@ class Service
         return $authCode->getHeaders()['Location'][0];
     }
 
+    public function validateNativeAuthUser(array $input)
+    {
+        // Validate client_id (14char) and login_id (valid email format) with validator rules
+        (new Validator)->validateNativeAuthorizeRequest($input);
+
+        // Get application details using client and check that type is native and not public or partner
+        $client = (new Client\Repository)->findOrFail($input[RequestParams::CLIENT_ID]);
+        if ($client->application->getType() !== ApplicationType::NATIVE)
+        {
+            throw new BadRequestValidationFailureException('Incorrect Application Type');
+        }
+
+        // Get user details filter by email_id
+        $user = $this->getApiService()->getUserDetails($input[RequestParams::LOGIN_ID]);
+
+        // check merchant_id is mapped to the user also
+        if($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0]['id'])
+        {
+            throw new BadRequestValidationFailureException('Merchant does not map with the user credentials');
+        }
+
+        // Call raven to generate OTP
+        $raven = $this->getRavenService()->generateOTP($input[RequestParams::CLIENT_ID], $user['id'], $input[RequestParams::LOGIN_ID]);
+
+        // call api to send the otp via email
+        $this->getApiService()->sendOTPViaMail($input[RequestParams::CLIENT_ID], $user['id'], $input[RequestParams::MERCHANT_ID], $raven['otp'],
+            $input[RequestParams::LOGIN_ID], 'native_auth_otp');
+
+    }
+
     public function postAuthCodeAndGenerateAccessToken(array $input)
     {
         (new Validator)->validateRequestAccessTokenMigration($input);
@@ -134,6 +165,58 @@ class Service
         $accessTokenData = $this->getAccessTokenInput($code, $input);
 
         $tokenResponse = $this->generateAccessToken($accessTokenData);
+
+        return $tokenResponse;
+    }
+
+    public function tokenNativeAuth(array $input)
+    {
+        (new Validator)->validateNativeRequestAccessTokenRequest($input);
+
+        // Validate Client_id and Client_secret
+        $client = (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], '', $input[RequestParams::CLIENT_SECRET], true);
+
+        // Get user details filter by email_id
+        $user = $this->getApiService()->getUserDetails($input[RequestParams::LOGIN_ID]);
+
+        // check merchant_id is mapped to the user also
+        if($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0]['id'])
+        {
+            throw new BadRequestValidationFailureException('Merchant does not map with the user credentials');
+        }
+
+        // hit raven to verify OTP with body
+        $otpResponse = $this->getRavenService()->verifyOTP($input[RequestParams::CLIENT_ID], $user['id'], $input[RequestParams::LOGIN_ID], $input['pin']);
+
+        if($otpResponse['success'] !== true)
+        {
+            throw new BadRequestValidationFailureException('Invalid OTP');
+        }
+
+        list($userInput, $userData) = $this->getAuthCodeInput($input, $user['id']);
+
+        $userInput['scope'] = 'native_read_write';
+        $userInput['grant_type'] = $input['grant_type'];
+
+        $authCode = $this->oauthServer->getAuthCode($userInput, $userData);
+
+        $this->validateLocationheader($authCode);
+
+        $code = $this->extractAuthCode($authCode);
+
+        // map and notify merchant
+        $this->notifyMerchantApplicationAuthorized(
+            $input[RequestParams::CLIENT_ID],
+            $user['id'],
+            $input[RequestParams::MERCHANT_ID]);
+
+        $this->mapMerchantToApplication($input[RequestParams::CLIENT_ID], $input[RequestParams::MERCHANT_ID]);
+
+        $accessTokenData = $this->getNativeAccessTokenInput($code, $input);
+
+        $tokenResponse = $this->generateAccessToken($accessTokenData);
+
+        unset($tokenResponse['refresh_token']);
 
         return $tokenResponse;
     }
@@ -173,19 +256,19 @@ class Service
         return $query['code'];
     }
 
-    private function getAuthCodeInput(array $input)
+    private function getAuthCodeInput(array $input, string $userId = "")
     {
         $userInput = [
             'response_type' => 'code',
             'client_id'     => $input['client_id'],
-            'redirect_uri'  => $input['redirect_uri'],
+            'redirect_uri'  => $input['redirect_uri'] ?? "https://www.test.com",
             'scope'         => 'read_write',
             'state'         => 'current_state',
         ];
 
         $userData = [
             'role'        => 'owner',
-            'user_id'     => $input['user_id'],
+            'user_id'     => $input['user_id'] ?? $userId,
             'merchant_id' => $input['merchant_id'],
             'authorize'   => true,
         ];
@@ -205,6 +288,17 @@ class Service
             'grant_type'    => RequestParams::AUTHORIZATION_CODE,
             'client_secret' => $client->getSecret(),
             'redirect_uri'  => $input[RequestParams::REDIRECT_URI],
+        ];
+    }
+
+    private function getNativeAccessTokenInput(string $code, array $input)
+    {
+        return [
+            'code'          => $code,
+            'client_id'     => $input[RequestParams::CLIENT_ID],
+            'grant_type'    => RequestParams::NATIVE_AUTHORIZATION_CODE,
+            'client_secret' => $input[RequestParams::CLIENT_SECRET],
+            'redirect_uri'  => "https://www.test.com",
         ];
     }
 
@@ -252,6 +346,18 @@ class Service
         }
 
         return new Services\Api();
+    }
+
+    public function getRavenService()
+    {
+        $ravenMock = env('APP_RAVEN_MOCK', false);
+
+        if ($ravenMock === true)
+        {
+            return new Services\Mock\Raven();
+        }
+
+        return new Services\Raven();
     }
 
     protected function validateAndGetApplicationDataForAuthorize(array $input): array

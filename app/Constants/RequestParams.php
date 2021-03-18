@@ -8,8 +8,11 @@ class RequestParams
     const REDIRECT_URI        = 'redirect_uri';
 
     const CLIENT_ID           = 'client_id';
+    const CLIENT_SECRET       = 'client_secret';
+    const LOGIN_ID            = 'login_id';
     const MERCHANT_ID         = 'merchant_id';
     const USER_ID             = 'user_id';
     const AUTHORIZATION_CODE  = 'authorization_code';
+    const NATIVE_AUTHORIZATION_CODE  = 'native_authorization_code';
     const PARTNER_MERCHANT_ID = 'partner_merchant_id';
 }

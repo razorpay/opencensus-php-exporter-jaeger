@@ -73,6 +73,17 @@ class AuthController extends Controller
         return response()->redirectTo($authCode);
     }
 
+    public function postNativeAuthorize()
+    {
+        $input = Request::all();
+
+        $input['permission'] = true;
+
+        $response = $this->service()->validateNativeAuthUser($input);
+
+        return response()->json($response);
+    }
+
     public function deleteAuthorize()
     {
         $input = Request::all();
@@ -98,6 +109,15 @@ class AuthController extends Controller
         $input = Request::all();
 
         $response = $this->service()->postAuthCodeAndGenerateAccessToken($input);
+
+        return response()->json($response);
+    }
+
+    public function createNativeToken()
+    {
+        $input = Request::all();
+
+        $response = $this->service()->tokenNativeAuth($input);
 
         return response()->json($response);
     }

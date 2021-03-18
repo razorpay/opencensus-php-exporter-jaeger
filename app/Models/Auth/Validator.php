@@ -37,6 +37,37 @@ class Validator extends \Razorpay\Spine\Validation\Validator
                           ->validate();
     }
 
+    public function validateNativeRequestAccessTokenRequest(array $input)
+    {
+        $rules = [
+            RequestParams::CLIENT_ID           => 'required|alpha_num|size:14',
+            RequestParams::CLIENT_SECRET       => 'required|string',
+            RequestParams::MERCHANT_ID         => 'required|alpha_num|size:14',
+            RequestParams::LOGIN_ID            => 'required|email',
+            'grant_type'                       => 'required|string|in:native_authorization_code',
+            'pin'                              => 'required'
+        ];
+
+        (new JitValidator)->rules($rules)
+            ->input($input)
+            ->strict(false)
+            ->validate();
+    }
+
+    public function validateNativeAuthorizeRequest(array $input)
+    {
+        $rules = [
+            RequestParams::CLIENT_ID           => 'required|alpha_num|size:14',
+            RequestParams::MERCHANT_ID         => 'required|alpha_num|size:14',
+            RequestParams::LOGIN_ID            => 'required|email',
+        ];
+
+        (new JitValidator)->rules($rules)
+            ->input($input)
+            ->strict(false)
+            ->validate();
+    }
+
     public function validateRequestAccessTokenMigration(array $input)
     {
         $rules = [

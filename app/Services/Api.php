@@ -54,6 +54,40 @@ class Api
         }
     }
 
+    public function sendOTPViaMail(
+        string $clientId,
+        string $userId,
+        string $merchantId,
+        string $otp,
+        string $email,
+        string $type = 'native_auth_otp')
+    {
+        $url = $this->apiUrl . '/oauth/notify/' . $type;
+
+        $postPayload = [
+            'client_id'   => $clientId,
+            'user_id'     => $userId,
+            'merchant_id' => $merchantId,
+            'otp'   => $otp,
+            'email' => $email
+        ];
+
+        try
+        {
+            $response = Requests::post($url, [], $postPayload, $this->options);
+        }
+        catch (\Throwable $e)
+        {
+            $tracePayload = [
+                'class'   => get_class($e),
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::critical(TraceCode::MERCHANT_NOTIFY_FAILED, $tracePayload);
+        }
+    }
+
     public function getMerchantOrgDetails(string $merchantId): array
     {
         $url = $this->apiUrl . '/merchants/' . $merchantId . '/org';
@@ -76,6 +110,41 @@ class Api
         }
 
         throw new LogicException('Error when fetching org data');
+    }
+
+    public function getUserDetails(string $login_id): array
+    {
+        $url = $this->apiUrl . '/users';
+
+        $payload = [
+            'email'   => $login_id
+        ];
+
+        try
+        {
+            $response = Requests::request($url, [], $payload, Requests::GET, $this->options);
+
+            $userResponse = json_decode($response->body, true);
+
+            if(array_pull($userResponse, 'error', null) !== null)
+            {
+                throw new LogicException('Invalid user');
+            }
+
+            return $userResponse;
+        }
+        catch (\Throwable $e)
+        {
+            $tracePayload = [
+                'class'   => get_class($e),
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::critical(TraceCode::USER_DETAILS_FETCH_FAILED, $tracePayload);
+        }
+
+        throw new LogicException('Error when fetching user data');
     }
 
     public function getOrgHostName(string $merchantId): string

@@ -15,6 +15,11 @@ $app->get('/authorize', [
     'uses' => 'AuthController@getAuthorize'
 ]);
 
+$app->post('/authorize/native', [
+    'as'   => 'post_auth_code',
+    'uses' => 'AuthController@postNativeAuthorize'
+]);
+
 $app->post('/authorize', [
     'as'   => 'post_auth_code',
     'uses' => 'AuthController@postAuthorize'
@@ -100,6 +105,11 @@ $app->post('/tokens/internal', [
     'middleware' => 'auth.api',
     'as'         => 'create_partner_token',
     'uses'       => 'AuthController@createPartnerToken'
+]);
+
+$app->post('/tokens/native', [
+    'as'         => 'create_native_token',
+    'uses'       => 'AuthController@createNativeToken'
 ]);
 
 $app->get('/admin/entities/{entity_type}', [
