@@ -1684,7 +1684,7 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "0.1.6",
+            "version": "dev-native_auth",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
