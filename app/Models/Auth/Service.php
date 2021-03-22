@@ -118,6 +118,8 @@ class Service
 
     public function validateNativeAuthUser(array $input)
     {
+        Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $input);
+
         // Validate client_id (14char) and login_id (valid email format) with validator rules
         (new Validator)->validateNativeAuthorizeRequest($input);
 
@@ -184,6 +186,12 @@ class Service
 
     public function tokenNativeAuth(array $input)
     {
+        Trace::info(TraceCode::TOKEN_NATIVE_AUTH_REQUEST, [
+            RequestParams::CLIENT_ID => $input[RequestParams::CLIENT_ID],
+            RequestParams::LOGIN_ID => $input[RequestParams::LOGIN_ID],
+            RequestParams::MERCHANT_ID => $input[RequestParams::MERCHANT_ID]
+        ]);
+
         (new Validator)->validateNativeRequestAccessTokenRequest($input);
 
         // Validate Client_id and Client_secret
