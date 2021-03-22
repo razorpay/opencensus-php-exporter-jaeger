@@ -1,9 +1,13 @@
 <?php
 
+namespace App\Services;
+
 use Trace;
 use Requests;
 use App\Constants\TraceCode;
 use App\Exception\LogicException;
+use App\Exception\BadRequestException;
+use App\Exception\BadRequestValidationFailureException;
 
 class Raven
 {
@@ -16,9 +20,15 @@ class Raven
         $this->ravenUrl = env('APP_RAVEN_URL');
         $this->secret = env('APP_RAVEN_SECRET');
 
-        $this->options = ['auth' => ['rzp_live', $this->secret]];
+        $this->options = ['auth' => ['rzp', $this->secret]];
     }
 
+    /**
+     * @param string $clientId
+     * @param string $userId
+     * @param string $loginId
+     * @return mixed
+     */
     public function generateOTP(
         string $clientId,
         string $userId,
@@ -34,7 +44,9 @@ class Raven
 
         try {
 
-            Requests::post($url, [], $postPayload, $this->options);
+            $response = Requests::post($url, [], $postPayload, $this->options);
+
+            return json_decode($response->body, true);
 
         } catch (\Throwable $e) {
 
@@ -45,6 +57,7 @@ class Raven
             ];
 
             Trace::critical(TraceCode::RAVEN_GENERATE_OTP_FAILED, $tracePayload);
+            throw $e;
         }
     }
 
@@ -67,12 +80,7 @@ class Raven
 
             $response = Requests::post($url, [], $postPayload, $this->options);
 
-            $isSuccess = json_decode($response->body, true)['success'];
-
-            if($isSuccess === false)
-            {
-                throw new LogicException('Invalid OTP');
-            }
+            return json_decode($response->body, true);
 
         } catch (\Throwable $e) {
 
@@ -83,6 +91,7 @@ class Raven
             ];
 
             Trace::critical(TraceCode::RAVEN_VERIFY_OTP_FAILED, $tracePayload);
+            throw $e;
         }
     }
 }

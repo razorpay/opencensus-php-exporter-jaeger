@@ -138,10 +138,21 @@ class Service
         // Call raven to generate OTP
         $raven = $this->getRavenService()->generateOTP($input[RequestParams::CLIENT_ID], $user['id'], $input[RequestParams::LOGIN_ID]);
 
+        if($raven['otp'] === null)
+        {
+            throw new BadRequestValidationFailureException('OTP generation failed.');
+        }
+
         // call api to send the otp via email
-        $this->getApiService()->sendOTPViaMail($input[RequestParams::CLIENT_ID], $user['id'], $input[RequestParams::MERCHANT_ID], $raven['otp'],
+        $mailResponse = $this->getApiService()->sendOTPViaMail($input[RequestParams::CLIENT_ID], $user['id'], $input[RequestParams::MERCHANT_ID], $raven['otp'],
             $input[RequestParams::LOGIN_ID], 'native_auth_otp');
 
+        if($mailResponse['success'] !== true)
+        {
+            throw new BadRequestValidationFailureException('OTP send via mail failed.');
+        }
+
+        return ["success" => true];
     }
 
     public function postAuthCodeAndGenerateAccessToken(array $input)

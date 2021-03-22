@@ -75,6 +75,8 @@ class Api
         try
         {
             $response = Requests::post($url, [], $postPayload, $this->options);
+
+            return json_decode($response->body, true);
         }
         catch (\Throwable $e)
         {
@@ -86,6 +88,8 @@ class Api
 
             Trace::critical(TraceCode::MERCHANT_NOTIFY_FAILED, $tracePayload);
         }
+
+        throw new LogicException('Error when sending OTP via mail.');
     }
 
     public function getMerchantOrgDetails(string $merchantId): array
