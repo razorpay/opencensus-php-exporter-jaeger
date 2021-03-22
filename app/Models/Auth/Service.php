@@ -274,7 +274,7 @@ class Service
         $userInput = [
             'response_type' => 'code',
             'client_id'     => $input['client_id'],
-            'redirect_uri'  => $input['redirect_uri'] ?? "https://www.test.com",
+            'redirect_uri'  => $input['redirect_uri'] ?? "",
             'scope'         => 'read_write',
             'state'         => 'current_state',
         ];
@@ -300,7 +300,6 @@ class Service
             'client_id'     => $clientId,
             'grant_type'    => RequestParams::AUTHORIZATION_CODE,
             'client_secret' => $client->getSecret(),
-            'redirect_uri'  => $input[RequestParams::REDIRECT_URI],
         ];
     }
 
