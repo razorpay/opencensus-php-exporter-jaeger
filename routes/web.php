@@ -16,7 +16,7 @@ $app->get('/authorize', [
 ]);
 
 $app->post('/authorize/native', [
-    'as'   => 'post_auth_code',
+    'as'   => 'post_native_auth_code',
     'uses' => 'AuthController@postNativeAuthorize'
 ]);
 
