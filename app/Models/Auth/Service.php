@@ -18,6 +18,8 @@ use App\Exception\BadRequestValidationFailureException;
 
 class Service
 {
+    const ID           = 'id';
+
     public function __construct()
     {
         $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'));
@@ -130,13 +132,13 @@ class Service
         $user = $this->getApiService()->getUserDetails($input[RequestParams::LOGIN_ID]);
 
         // check merchant_id is mapped to the user also
-        if($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0]['id'])
+        if($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0][self::ID])
         {
             throw new BadRequestValidationFailureException('Merchant does not map with the user credentials');
         }
 
         // Call raven to generate OTP
-        $raven = $this->getRavenService()->generateOTP($input[RequestParams::CLIENT_ID], $user['id'], $input[RequestParams::LOGIN_ID]);
+        $raven = $this->getRavenService()->generateOTP($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::LOGIN_ID]);
 
         if($raven['otp'] === null)
         {
@@ -144,7 +146,7 @@ class Service
         }
 
         // call api to send the otp via email
-        $mailResponse = $this->getApiService()->sendOTPViaMail($input[RequestParams::CLIENT_ID], $user['id'], $input[RequestParams::MERCHANT_ID], $raven['otp'],
+        $mailResponse = $this->getApiService()->sendOTPViaMail($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::MERCHANT_ID], $raven['otp'],
             $input[RequestParams::LOGIN_ID], 'native_auth_otp');
 
         if($mailResponse['success'] !== true)
@@ -191,20 +193,20 @@ class Service
         $user = $this->getApiService()->getUserDetails($input[RequestParams::LOGIN_ID]);
 
         // check merchant_id is mapped to the user also
-        if($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0]['id'])
+        if($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0][self::ID])
         {
             throw new BadRequestValidationFailureException('Merchant does not map with the user credentials');
         }
 
         // hit raven to verify OTP with body
-        $otpResponse = $this->getRavenService()->verifyOTP($input[RequestParams::CLIENT_ID], $user['id'], $input[RequestParams::LOGIN_ID], $input['pin']);
+        $otpResponse = $this->getRavenService()->verifyOTP($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::LOGIN_ID], $input['pin']);
 
         if($otpResponse['success'] !== true)
         {
             throw new BadRequestValidationFailureException('Invalid OTP');
         }
 
-        list($userInput, $userData) = $this->getAuthCodeInput($input, $user['id']);
+        list($userInput, $userData) = $this->getAuthCodeInput($input, $user[self::ID]);
 
         $userInput['scope'] = 'native_read_write';
         $userInput['grant_type'] = $input['grant_type'];
@@ -218,7 +220,7 @@ class Service
         // map and notify merchant
         $this->notifyMerchantApplicationAuthorized(
             $input[RequestParams::CLIENT_ID],
-            $user['id'],
+            $user[self::ID],
             $input[RequestParams::MERCHANT_ID]);
 
         $this->mapMerchantToApplication($input[RequestParams::CLIENT_ID], $input[RequestParams::MERCHANT_ID]);
