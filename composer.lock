@@ -1688,12 +1688,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "08a71f707b38b0f7364be4c84654e4cc96c5c65f"
+                "reference": "d4827c038897e792a46475bfccd3469d1a8eabdd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/08a71f707b38b0f7364be4c84654e4cc96c5c65f",
-                "reference": "08a71f707b38b0f7364be4c84654e4cc96c5c65f",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/d4827c038897e792a46475bfccd3469d1a8eabdd",
+                "reference": "d4827c038897e792a46475bfccd3469d1a8eabdd",
                 "shasum": ""
             },
             "require": {
