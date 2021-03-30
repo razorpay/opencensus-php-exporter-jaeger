@@ -309,6 +309,7 @@ class Service
             'client_id'     => $clientId,
             'grant_type'    => RequestParams::AUTHORIZATION_CODE,
             'client_secret' => $client->getSecret(),
+            'redirect_uri'  => $input[RequestParams::REDIRECT_URI],
         ];
     }
 
