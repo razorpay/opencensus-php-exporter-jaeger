@@ -242,6 +242,90 @@ return [
         ],
     ],
 
+    'testValidateNativeAuthUser' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/authorize/native',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'login_id'            => 'test@razorpay.com',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'success' => true,
+            ],
+            'status_code' => 200
+        ]
+    ],
+
+    'testValidateNativeAuthUserInvalidInput' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/authorize/native',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'login_id'            => 'test@razorpay.com',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Incorrect Application Type'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'App\Exception\BadRequestValidationFailureException',
+            'message' => 'Incorrect Application Type',
+        ],
+    ],
+
+    'testNativeToken' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/tokens/native',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'grant_type'          => 'native_authorization_code',
+                'pin'                 => '0007',
+                'login_id'            => 'test@razorpay.com',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'token_type' => 'Bearer',
+            ],
+            'status_code' => 200
+        ]
+    ],
+
+    'testNativeTokenInvalidInput' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/tokens/native',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'grant_type'          => 'native_authorization_code1',
+                'pin'                 => '0007',
+                'login_id'            => 'test@razorpay.com',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Validation failed. The selected grant type is invalid.'
+                ],
+            ],
+            'status_code' => 500
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\Spine\Exception\ValidationFailureException',
+            'message' => 'Validation failed. The selected grant type is invalid.',
+        ],
+    ],
+
     'testPostAccessTokenWithInvalidGrant' => [
         'request' => [
             'method'  => 'POST',

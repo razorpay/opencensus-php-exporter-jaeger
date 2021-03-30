@@ -260,6 +260,96 @@ class OAuthTest extends TestCase
         $this->runRequestResponseFlow($data);
     }
 
+    public function testValidateNativeAuthUser()
+    {
+        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
+
+        $this->application = factory(Application\Entity::class)->create(
+            [
+                'type'          =>  'native',
+            ]
+        );
+
+        $this->devClient = factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $this->application->id,
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev',
+            ]);
+
+        Request::clearResolvedInstances();
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $params = [
+            'client_id'         => $this->devClient->getId(),
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data);
+    }
+
+    public function testValidateNativeAuthUserInvalidInput()
+    {
+        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
+
+        $this->createAndSetClientWithEnvironment();
+
+        Request::clearResolvedInstances();
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $params = [
+            'client_id'         => $this->devClient->getId(),
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data);
+    }
+
+    public function testNativeToken()
+    {
+        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
+
+        $this->createAndSetClientWithEnvironment();
+
+        Request::clearResolvedInstances();
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $params = [
+            'client_id'         => $this->devClient->getId(),
+            'client_secret'     => $this->devClient->getSecret(),
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data);
+    }
+
+    public function testNativeTokenInvalidInput()
+    {
+        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
+
+        $this->createAndSetClientWithEnvironment();
+
+        Request::clearResolvedInstances();
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $params = [
+            'client_id'         => $this->devClient->getId(),
+            'client_secret'     => $this->devClient->getSecret(),
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data);
+    }
+
     public function testPostAccessTokenWithInvalidGrant()
     {
         $authCode = $this->generateAuthCodeAndClearResolvedInstances();
