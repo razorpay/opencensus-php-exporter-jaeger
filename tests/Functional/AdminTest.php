@@ -20,7 +20,7 @@ class AdminTest extends TestCase
 
     protected $refreshToken;
 
-    public function setup()
+    public function setup(): void
     {
         $this->testDataFilePath = __DIR__ . '/AdminTestData.php';
 
