@@ -127,6 +127,7 @@ class Service
 
         // Get application details using client and check that type is native and not public or partner
         $client = (new Client\Repository)->findOrFail($input[RequestParams::CLIENT_ID]);
+
         if ($client->application->getType() !== ApplicationType::NATIVE)
         {
             throw new BadRequestValidationFailureException('Incorrect Application Type');
