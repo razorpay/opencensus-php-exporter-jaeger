@@ -191,7 +191,7 @@ class Service
         return $tokenResponse;
     }
 
-    public function generateNativeAtuhAccessToken(array $input)
+    public function generateNativeAuthAccessToken(array $input)
     {
         Trace::info(TraceCode::TOKEN_NATIVE_AUTH_REQUEST, [
             RequestParams::CLIENT_ID => $input[RequestParams::CLIENT_ID],

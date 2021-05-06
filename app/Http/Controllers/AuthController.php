@@ -117,7 +117,7 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
-        $response = $this->service()->generateNativeAtuhAccessToken($input);
+        $response = $this->service()->generateNativeAuthAccessToken($input);
 
         return response()->json($response);
     }
