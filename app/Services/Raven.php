@@ -68,7 +68,7 @@ class Raven
 
     public function verifyOTP(
         string $loginId,
-        srting $context,
+        string $context,
         string $otp)
     {
         $url = $this->ravenUrl . self::OTP_VERIFY_ROUTE;
