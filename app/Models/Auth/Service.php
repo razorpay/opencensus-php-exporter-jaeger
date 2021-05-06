@@ -18,7 +18,9 @@ use App\Exception\BadRequestValidationFailureException;
 
 class Service
 {
-    const ID           = 'id';
+    const ID            = 'id';
+
+    const REFRESH_TOKEN = 'refresh_token';
 
     public function __construct()
     {
@@ -215,7 +217,11 @@ class Service
             throw new BadRequestValidationFailureException('Invalid OTP');
         }
 
-        list($userInput, $userData) = $this->getAuthCodeInput($input, $user[self::ID]);
+        $input['redirect_uri'] = "";
+
+        $input['user_id'] = $user[self::ID];
+
+        list($userInput, $userData) = $this->getAuthCodeInput($input);
 
         $userInput['scope'] = 'native_read_write';
 
@@ -241,7 +247,7 @@ class Service
 
         $tokenResponse = $this->generateAccessToken($accessTokenData);
 
-        unset($tokenResponse['refresh_token']);
+        unset($tokenResponse[self::REFRESH_TOKEN]);
 
         return $tokenResponse;
     }
@@ -281,19 +287,19 @@ class Service
         return $query['code'];
     }
 
-    private function getAuthCodeInput(array $input, string $userId = "")
+    private function getAuthCodeInput(array $input)
     {
         $userInput = [
             'response_type' => 'code',
             'client_id'     => $input['client_id'],
-            'redirect_uri'  => $input['redirect_uri'] ?? "",
+            'redirect_uri'  => $input['redirect_uri'],
             'scope'         => 'read_write',
             'state'         => 'current_state',
         ];
 
         $userData = [
             'role'        => 'owner',
-            'user_id'     => $input['user_id'] ?? $userId,
+            'user_id'     => $input['user_id'],
             'merchant_id' => $input['merchant_id'],
             'authorize'   => true,
         ];
