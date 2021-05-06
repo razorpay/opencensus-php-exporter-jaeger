@@ -11,6 +11,8 @@ use App\Exception\BadRequestValidationFailureException;
 
 class Raven
 {
+    const SOURCE_TALLY = 'native_auth.tally.accounting_payouts';
+
     protected $ravenUrl;
 
     protected $secret;
@@ -39,7 +41,7 @@ class Raven
         $postPayload = [
             'context' => $userId . '_' . $clientId,
             'receiver' => $loginId,
-            'source' => 'native_auth.tally.accounting_payouts'
+            'source' => self::SOURCE_TALLY
         ];
 
         try {
@@ -57,6 +59,7 @@ class Raven
             ];
 
             Trace::critical(TraceCode::RAVEN_GENERATE_OTP_FAILED, $tracePayload);
+
             throw $e;
         }
     }
@@ -72,7 +75,7 @@ class Raven
         $postPayload = [
             'context' => $userId . '_' . $clientId,
             'receiver' => $loginId,
-            'source' => 'native_auth.tally.accounting_payouts',
+            'source' => self::SOURCE_TALLY,
             'otp'   => $otp
         ];
 
@@ -91,6 +94,7 @@ class Raven
             ];
 
             Trace::critical(TraceCode::RAVEN_VERIFY_OTP_FAILED, $tracePayload);
+
             throw $e;
         }
     }
