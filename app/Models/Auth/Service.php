@@ -120,7 +120,6 @@ class Service
     {
         Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $input);
 
-        // Validate client_id (14char) and login_id (valid email format) with validator rules
         (new Validator)->validateNativeAuthorizeRequest($input);
 
         // Get application details using client and check that type is native and not public or partner
