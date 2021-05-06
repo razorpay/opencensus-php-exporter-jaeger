@@ -54,7 +54,7 @@ class Api
         string $merchantId,
         string $otp,
         string $email,
-        string $type = 'native_auth_otp')
+        string $type)
     {
         if($email === 'test@razorpay.com')
         {

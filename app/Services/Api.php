@@ -12,6 +12,14 @@ use App\Exception\LogicException;
 
 class Api
 {
+
+    const OAUTH_NOTIFY = '/oauth/notify/';
+    const CLIENT_ID = 'client_id';
+    const USER_ID = 'user_id';
+    const MERCHANT_ID = 'merchant_id';
+    const OTP = 'otp';
+    const EMAIL = 'email';
+
     protected $apiUrl;
 
     protected $secret;
@@ -30,12 +38,12 @@ class Api
         string $merchantId,
         string $type = 'app_authorized')
     {
-        $url = $this->apiUrl . '/oauth/notify/' . $type;
+        $url = $this->apiUrl . self::OAUTH_NOTIFY . $type;
 
         $postPayload = [
-            'client_id'   => $clientId,
-            'user_id'     => $userId,
-            'merchant_id' => $merchantId
+            self::CLIENT_ID => $clientId,
+            self::USER_ID  => $userId,
+            self::MERCHANT_ID => $merchantId
         ];
 
         try
@@ -60,16 +68,16 @@ class Api
         string $merchantId,
         string $otp,
         string $email,
-        string $type = 'native_auth_otp')
+        string $type)
     {
-        $url = $this->apiUrl . '/oauth/notify/' . $type;
+        $url = $this->apiUrl . self::OAUTH_NOTIFY . $type;
 
         $postPayload = [
-            'client_id'   => $clientId,
-            'user_id'     => $userId,
-            'merchant_id' => $merchantId,
-            'otp'   => $otp,
-            'email' => $email
+            self::CLIENT_ID   => $clientId,
+            self::USER_ID     => $userId,
+            self::MERCHANT_ID => $merchantId,
+            self::OTP         => $otp,
+            self::EMAIL       => $email
         ];
 
         try
@@ -121,7 +129,7 @@ class Api
         $url = $this->apiUrl . '/users';
 
         $payload = [
-            'email'   => $login_id
+            self::EMAIL => $login_id
         ];
 
         try
