@@ -79,7 +79,7 @@ class AuthController extends Controller
 
         $input['permission'] = true;
 
-        $response = $this->service()->validateNativeAuthUser($input);
+        $response = $this->service()->validateNativeAuthUserAndSendOtp($input);
 
         return response()->json($response);
     }
@@ -117,7 +117,7 @@ class AuthController extends Controller
     {
         $input = Request::all();
 
-        $response = $this->service()->tokenNativeAuth($input);
+        $response = $this->service()->generateNativeAtuhAccessToken($input);
 
         return response()->json($response);
     }

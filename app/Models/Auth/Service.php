@@ -116,7 +116,7 @@ class Service
         return $authCode->getHeaders()['Location'][0];
     }
 
-    public function validateNativeAuthUser(array $input)
+    public function validateNativeAuthUserAndSendOtp(array $input)
     {
         Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, [
             RequestParams::CLIENT_ID    => $input[RequestParams::CLIENT_ID],
@@ -186,7 +186,7 @@ class Service
         return $tokenResponse;
     }
 
-    public function tokenNativeAuth(array $input)
+    public function generateNativeAtuhAccessToken(array $input)
     {
         Trace::info(TraceCode::TOKEN_NATIVE_AUTH_REQUEST, [
             RequestParams::CLIENT_ID => $input[RequestParams::CLIENT_ID],
