@@ -118,7 +118,10 @@ class Service
 
     public function validateNativeAuthUser(array $input)
     {
-        Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $input);
+        Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, [
+            RequestParams::CLIENT_ID    => $input[RequestParams::CLIENT_ID],
+            RequestParams::MERCHANT_ID  => $input[RequestParams::MERCHANT_ID]
+        ]);
 
         (new Validator)->validateNativeAuthorizeRequest($input);
 
@@ -187,7 +190,6 @@ class Service
     {
         Trace::info(TraceCode::TOKEN_NATIVE_AUTH_REQUEST, [
             RequestParams::CLIENT_ID => $input[RequestParams::CLIENT_ID],
-            RequestParams::LOGIN_ID => $input[RequestParams::LOGIN_ID],
             RequestParams::MERCHANT_ID => $input[RequestParams::MERCHANT_ID]
         ]);
 
