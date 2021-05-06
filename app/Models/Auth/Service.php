@@ -333,7 +333,7 @@ class Service
             'client_id'     => $input[RequestParams::CLIENT_ID],
             'grant_type'    => RequestParams::NATIVE_AUTHORIZATION_CODE,
             'client_secret' => $input[RequestParams::CLIENT_SECRET],
-            'redirect_uri'  => "https://www.test.com",
+            'redirect_uri'  => "",
         ];
     }
 
