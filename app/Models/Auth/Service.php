@@ -143,8 +143,10 @@ class Service
             throw new BadRequestValidationFailureException('Merchant does not map with the user credentials');
         }
 
+        $context = $user[self::ID] . '_' . $input[RequestParams::CLIENT_ID];
+
         // Call raven to generate OTP
-        $raven = $this->getRavenService()->generateOTP($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::LOGIN_ID]);
+        $raven = $this->getRavenService()->generateOTP($input[RequestParams::LOGIN_ID], $context);
 
         if($raven['otp'] === null)
         {
@@ -209,8 +211,10 @@ class Service
             throw new BadRequestValidationFailureException('Merchant does not map with the user credentials');
         }
 
+        $context = $user[self::ID] . '_' . $input[RequestParams::CLIENT_ID];
+
         // hit raven to verify OTP with body
-        $otpResponse = $this->getRavenService()->verifyOTP($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::LOGIN_ID], $input['pin']);
+        $otpResponse = $this->getRavenService()->verifyOTP($input[RequestParams::LOGIN_ID], $context, $input['pin']);
 
         if($otpResponse['success'] !== true)
         {

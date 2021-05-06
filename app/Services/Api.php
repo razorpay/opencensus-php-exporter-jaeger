@@ -13,12 +13,13 @@ use App\Exception\LogicException;
 class Api
 {
 
-    const OAUTH_NOTIFY = '/oauth/notify/';
-    const CLIENT_ID = 'client_id';
-    const USER_ID = 'user_id';
-    const MERCHANT_ID = 'merchant_id';
-    const OTP = 'otp';
-    const EMAIL = 'email';
+    const CLIENT_ID          = 'client_id';
+    const USER_ID            = 'user_id';
+    const MERCHANT_ID        = 'merchant_id';
+    const OTP                = 'otp';
+    const EMAIL              = 'email';
+    const OAUTH_NOTIFY_ROUTE = '/oauth/notify/';
+    const USERS_ROUTE        = '/users';
 
     protected $apiUrl;
 
@@ -38,7 +39,7 @@ class Api
         string $merchantId,
         string $type = 'app_authorized')
     {
-        $url = $this->apiUrl . self::OAUTH_NOTIFY . $type;
+        $url = $this->apiUrl . self::OAUTH_NOTIFY_ROUTE . $type;
 
         $postPayload = [
             self::CLIENT_ID => $clientId,
@@ -70,7 +71,7 @@ class Api
         string $email,
         string $type)
     {
-        $url = $this->apiUrl . self::OAUTH_NOTIFY . $type;
+        $url = $this->apiUrl . self::OAUTH_NOTIFY_ROUTE . $type;
 
         $postPayload = [
             self::CLIENT_ID   => $clientId,
@@ -124,12 +125,12 @@ class Api
         throw new LogicException('Error when fetching org data');
     }
 
-    public function getUserByEmail(string $login_id): array
+    public function getUserByEmail(string $emailId): array
     {
-        $url = $this->apiUrl . '/users';
+        $url = $this->apiUrl . self::USERS_ROUTE;
 
         $payload = [
-            self::EMAIL => $login_id
+            self::EMAIL => $emailId
         ];
 
         try

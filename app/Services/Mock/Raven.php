@@ -7,17 +7,15 @@ namespace App\Services\Mock;
 class Raven
 {
     public function generateOTP(
-        string $clientId,
-        string $userId,
-        string $loginId)
+        string $loginId,
+        string $context)
     {
         return ['otp' => '0007'];
     }
 
     public function verifyOTP(
-        string $clientId,
-        string $userId,
         string $loginId,
+        string $context,
         string $otp)
     {
         if($otp !== '0007')

@@ -11,7 +11,9 @@ use App\Exception\BadRequestValidationFailureException;
 
 class Raven
 {
-    const SOURCE_TALLY = 'native_auth.tally.accounting_payouts';
+    const SOURCE_TALLY       = 'native_auth.tally.accounting_payouts';
+    const OTP_GENERATE_ROUTE = '/otp/generate';
+    const OTP_VERIFY_ROUTE         = '/otp/verify';
 
     protected $ravenUrl;
 
@@ -20,6 +22,7 @@ class Raven
     public function __construct()
     {
         $this->ravenUrl = env('APP_RAVEN_URL');
+
         $this->secret = env('APP_RAVEN_SECRET');
 
         $this->options = ['auth' => ['rzp', $this->secret]];
@@ -32,16 +35,15 @@ class Raven
      * @return mixed
      */
     public function generateOTP(
-        string $clientId,
-        string $userId,
-        string $loginId)
+        string $loginId,
+        string $context)
     {
-        $url = $this->ravenUrl . '/otp/generate';
+        $url = $this->ravenUrl . self::OTP_GENERATE_ROUTE;
 
         $postPayload = [
-            'context' => $userId . '_' . $clientId,
+            'context'  => $context,
             'receiver' => $loginId,
-            'source' => self::SOURCE_TALLY
+            'source'   => self::SOURCE_TALLY
         ];
 
         try {
@@ -65,18 +67,17 @@ class Raven
     }
 
     public function verifyOTP(
-        string $clientId,
-        string $userId,
         string $loginId,
+        srting $context,
         string $otp)
     {
-        $url = $this->ravenUrl . '/otp/verify';
+        $url = $this->ravenUrl . self::OTP_VERIFY_ROUTE;
 
         $postPayload = [
-            'context' => $userId . '_' . $clientId,
+            'context'  => $context,
             'receiver' => $loginId,
-            'source' => self::SOURCE_TALLY,
-            'otp'   => $otp
+            'source'   => self::SOURCE_TALLY,
+            'otp'      => $otp
         ];
 
         try {
