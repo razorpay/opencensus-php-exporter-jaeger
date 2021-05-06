@@ -11,7 +11,7 @@ class Api
         return;
     }
 
-    public function getUserDetails(string $login_id): array
+    public function getUserByEmail(string $login_id): array
     {
         if($login_id === 'test@razorpay.com')
         {

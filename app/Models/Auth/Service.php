@@ -133,8 +133,7 @@ class Service
             throw new BadRequestValidationFailureException('Incorrect Application Type');
         }
 
-        // Get user details filter by email_id
-        $user = $this->getApiService()->getUserDetails($input[RequestParams::LOGIN_ID]);
+        $user = $this->getApiService()->getUserByEmail($input[RequestParams::LOGIN_ID]);
 
         // check merchant_id is mapped to the user also
         if($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0][self::ID])
@@ -200,7 +199,7 @@ class Service
         $client = (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], '', $input[RequestParams::CLIENT_SECRET], true);
 
         // Get user details filter by email_id
-        $user = $this->getApiService()->getUserDetails($input[RequestParams::LOGIN_ID]);
+        $user = $this->getApiService()->getUserByEmail($input[RequestParams::LOGIN_ID]);
 
         // check merchant_id is mapped to the user also
         if($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0][self::ID])
@@ -219,7 +218,9 @@ class Service
         list($userInput, $userData) = $this->getAuthCodeInput($input, $user[self::ID]);
 
         $userInput['scope'] = 'native_read_write';
+
         $userInput['response_type'] = 'native_code';
+
         $userInput['grant_type'] = $input['grant_type'];
 
         $authCode = $this->oauthServer->getAuthCode($userInput, $userData);

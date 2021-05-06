@@ -116,7 +116,7 @@ class Api
         throw new LogicException('Error when fetching org data');
     }
 
-    public function getUserDetails(string $login_id): array
+    public function getUserByEmail(string $login_id): array
     {
         $url = $this->apiUrl . '/users';
 
