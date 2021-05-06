@@ -18,9 +18,10 @@ use App\Exception\BadRequestValidationFailureException;
 
 class Service
 {
-    const ID            = 'id';
-
-    const REFRESH_TOKEN = 'refresh_token';
+    const ID              = 'id';
+    const REFRESH_TOKEN   = 'refresh_token';
+    const NATIVE_AUTH_OTP = 'native_auth_otp';
+    const OTP             = 'otp';
 
     public function __construct()
     {
@@ -138,7 +139,7 @@ class Service
         $user = $this->getApiService()->getUserByEmail($input[RequestParams::LOGIN_ID]);
 
         // check merchant_id is mapped to the user also
-        if($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0][self::ID])
+        if ($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0][self::ID])
         {
             throw new BadRequestValidationFailureException('Merchant does not map with the user credentials');
         }
@@ -148,16 +149,16 @@ class Service
         // Call raven to generate OTP
         $raven = $this->getRavenService()->generateOTP($input[RequestParams::LOGIN_ID], $context);
 
-        if($raven['otp'] === null)
+        if ($raven[self::OTP] === null)
         {
             throw new BadRequestValidationFailureException('OTP generation failed.');
         }
 
         // call api to send the otp via email
-        $mailResponse = $this->getApiService()->sendOTPViaMail($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::MERCHANT_ID], $raven['otp'],
-            $input[RequestParams::LOGIN_ID], 'native_auth_otp');
+        $mailResponse = $this->getApiService()->sendOTPViaMail($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::MERCHANT_ID], $raven[self::OTP],
+            $input[RequestParams::LOGIN_ID], self::NATIVE_AUTH_OTP);
 
-        if($mailResponse['success'] !== true)
+        if ($mailResponse['success'] !== true)
         {
             throw new BadRequestValidationFailureException('OTP send via mail failed.');
         }
@@ -200,13 +201,13 @@ class Service
         (new Validator)->validateNativeRequestAccessTokenRequest($input);
 
         // Validate Client_id and Client_secret
-        $client = (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], '', $input[RequestParams::CLIENT_SECRET], true);
+        (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], '', $input[RequestParams::CLIENT_SECRET], true);
 
         // Get user details filter by email_id
         $user = $this->getApiService()->getUserByEmail($input[RequestParams::LOGIN_ID]);
 
         // check merchant_id is mapped to the user also
-        if($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0][self::ID])
+        if ($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0][self::ID])
         {
             throw new BadRequestValidationFailureException('Merchant does not map with the user credentials');
         }
@@ -216,7 +217,7 @@ class Service
         // hit raven to verify OTP with body
         $otpResponse = $this->getRavenService()->verifyOTP($input[RequestParams::LOGIN_ID], $context, $input['pin']);
 
-        if($otpResponse['success'] !== true)
+        if ($otpResponse['success'] !== true)
         {
             throw new BadRequestValidationFailureException('Invalid OTP');
         }

@@ -13,7 +13,7 @@ class Raven
 {
     const SOURCE_TALLY       = 'native_auth.tally.accounting_payouts';
     const OTP_GENERATE_ROUTE = '/otp/generate';
-    const OTP_VERIFY_ROUTE         = '/otp/verify';
+    const OTP_VERIFY_ROUTE   = '/otp/verify';
 
     protected $ravenUrl;
 
