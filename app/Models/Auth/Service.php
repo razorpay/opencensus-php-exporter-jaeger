@@ -169,14 +169,18 @@ class Service
     }
 
     public function validateMerchant(string $merchantId, array $user){
-        // check merchant_id is mapped to the user also
-        if ($merchantId !== $user['merchants'][0][self::ID])
+        if (isset($user['merchants']))
         {
-            return false;
+            foreach ($user['merchants'] as $merchant)
+            {
+                if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId)
+                {
+                    return true;
+                }
+            }
         }
 
-        return true;
-
+        return false;
     }
 
     public function postAuthCodeAndGenerateAccessToken(array $input)
