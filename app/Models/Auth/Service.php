@@ -129,7 +129,7 @@ class Service
         (new Validator)->validateNativeAuthorizeRequest($input);
 
         // Get application details using client and check that type is native and not public or partner
-        $client = (new Client\Repository)->findOrFail($input[RequestParams::CLIENT_ID]);
+        $client = (new Client\Repository)->findOrFailPublic($input[RequestParams::CLIENT_ID]);
 
         if ($client->application->getType() !== ApplicationType::NATIVE)
         {
@@ -202,7 +202,7 @@ class Service
         (new Validator)->validateNativeRequestAccessTokenRequest($input);
 
         // Validate Client_id and Client_secret
-        (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], '', $input[RequestParams::CLIENT_SECRET], true);
+        (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], $input[RequestParams::GRANT_TYPE], $input[RequestParams::CLIENT_SECRET], true);
 
         // Get user details filter by email_id
         $user = $this->getApiService()->getUserByEmail($input[RequestParams::LOGIN_ID]);
