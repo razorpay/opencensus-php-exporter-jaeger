@@ -129,22 +129,11 @@ class Service
 
         (new Validator)->validateNativeAuthorizeRequest($input);
 
-        // Get application details using client and check that type is native and not public or partner
-        $client = (new Client\Repository)->findOrFailPublic($input[RequestParams::CLIENT_ID]);
-
-        if ($client->application->getType() !== ApplicationType::NATIVE)
-        {
-            throw new BadRequestValidationFailureException('Invalid client');
-        }
+        $this->verifyNativeClient($input[RequestParams::CLIENT_ID]);
 
         $user = $this->getApiService()->getUserByEmail($input[RequestParams::LOGIN_ID]);
 
-        $isMerchantValid = $this->validateMerchant();
-
-        if (!$isMerchantValid)
-        {
-            throw new BadRequestValidationFailureException('Invalid merchant/user');
-        }
+        $this->validateMerchant($input[RequestParams::MERCHANT_ID], $user);
 
         $ravenContext = $user[self::ID] . '_' . $input[RequestParams::CLIENT_ID];
 
@@ -153,7 +142,7 @@ class Service
 
         if (!isset($raven[self::OTP]))
         {
-            throw new BadRequestValidationFailureException('OTP generation failed.');
+            throw new BadRequestValidationFailureException('OTP generation failed');
         }
 
         // call api to send the otp via email
@@ -162,7 +151,7 @@ class Service
 
         if (isset($mailResponse['success'])  !== true || $mailResponse['success'] !== true)
         {
-            throw new BadRequestValidationFailureException('OTP send via mail failed.');
+            throw new BadRequestValidationFailureException('OTP send via mail failed');
         }
 
         return ["success" => true];
@@ -175,12 +164,23 @@ class Service
             {
                 if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId)
                 {
-                    return true;
+                    return;
                 }
             }
         }
 
-        return false;
+        // If provided merchantId does not map to any of the merchants for the user, throw invalid merchant/user exception
+        throw new BadRequestValidationFailureException('Invalid merchant/user');
+    }
+
+    private function verifyNativeClient(string $clientId){
+        // Get application details using client and check that type is native and not public or partner
+        $client = (new Client\Repository)->findOrFailPublic($clientId);
+
+        if ($client->application->getType() !== ApplicationType::NATIVE)
+        {
+            throw new BadRequestValidationFailureException('Invalid client');
+        }
     }
 
     public function postAuthCodeAndGenerateAccessToken(array $input)
@@ -218,31 +218,28 @@ class Service
 
         (new Validator)->validateNativeRequestAccessTokenRequest($input);
 
-        // Validate Client_id and Client_secret
+        $this->verifyNativeClient($input[RequestParams::CLIENT_ID]);
+
         (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], $input[RequestParams::GRANT_TYPE], $input[RequestParams::CLIENT_SECRET], true);
 
         // Get user details filter by email_id
         $user = $this->getApiService()->getUserByEmail($input[RequestParams::LOGIN_ID]);
 
-        // check merchant_id is mapped to the user also
-        if ($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0][self::ID])
-        {
-            throw new BadRequestValidationFailureException('Merchant does not map with the user credentials');
-        }
+        $this->validateMerchant($input[RequestParams::MERCHANT_ID], $user);
 
-        $context = $user[self::ID] . '_' . $input[RequestParams::CLIENT_ID];
+        $ravenContext = $user[self::ID] . '_' . $input[RequestParams::CLIENT_ID];
 
         // hit raven to verify OTP with body
-        $otpResponse = $this->getRavenService()->verifyOTP($input[RequestParams::LOGIN_ID], $context, $input['pin']);
+        $otpResponse = $this->getRavenService()->verifyOTP($input[RequestParams::LOGIN_ID], $ravenContext, $input[RequestParams::PIN]);
 
-        if ($otpResponse['success'] !== true)
+        if (isset($otpResponse['success']) !== true || $otpResponse['success'] !== true)
         {
             throw new BadRequestValidationFailureException('Invalid OTP');
         }
 
-        $input['redirect_uri'] = "";
+        $input[RequestParams::REDIRECT_URI] = "";
 
-        $input['user_id'] = $user[self::ID];
+        $input[RequestParams::USER_ID] = $user[self::ID];
 
         list($userInput, $userData) = $this->getAuthCodeInput($input);
 
@@ -250,7 +247,7 @@ class Service
 
         $userInput['response_type'] = 'native_code';
 
-        $userInput['grant_type'] = $input['grant_type'];
+        $userInput[RequestParams::GRANT_TYPE] = $input[RequestParams::GRANT_TYPE];
 
         $authCode = $this->oauthServer->getAuthCode($userInput, $userData);
 
