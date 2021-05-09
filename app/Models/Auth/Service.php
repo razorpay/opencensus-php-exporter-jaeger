@@ -160,7 +160,7 @@ class Service
         $mailResponse = $this->getApiService()->sendOTPViaMail($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::MERCHANT_ID], $raven[self::OTP],
             $input[RequestParams::LOGIN_ID], self::NATIVE_AUTH_OTP);
 
-        if (!isset($mailResponse['success'])  || $mailResponse['success'] !== true)
+        if (isset($mailResponse['success'])  !== true || $mailResponse['success'] !== true)
         {
             throw new BadRequestValidationFailureException('OTP send via mail failed.');
         }
