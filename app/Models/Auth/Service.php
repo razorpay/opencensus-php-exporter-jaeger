@@ -22,6 +22,7 @@ class Service
     const REFRESH_TOKEN   = 'refresh_token';
     const NATIVE_AUTH_OTP = 'native_auth_otp';
     const OTP             = 'otp';
+    const KEY_NOT_FOUND   = "key not found";
 
     public function __construct()
     {
@@ -122,8 +123,8 @@ class Service
     public function validateNativeAuthUserAndSendOtp(array $input)
     {
         Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, [
-            RequestParams::CLIENT_ID    => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : "not found",
-            RequestParams::MERCHANT_ID  => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : "not found"
+            RequestParams::CLIENT_ID    => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : self::KEY_NOT_FOUND,
+            RequestParams::MERCHANT_ID  => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : self::KEY_NOT_FOUND
         ]);
 
         (new Validator)->validateNativeAuthorizeRequest($input);
@@ -133,23 +134,24 @@ class Service
 
         if ($client->application->getType() !== ApplicationType::NATIVE)
         {
-            throw new BadRequestValidationFailureException('Incorrect Application Type');
+            throw new BadRequestValidationFailureException('Invalid client');
         }
 
         $user = $this->getApiService()->getUserByEmail($input[RequestParams::LOGIN_ID]);
 
-        // check merchant_id is mapped to the user also
-        if ($input[RequestParams::MERCHANT_ID] !== $user['merchants'][0][self::ID])
+        $isMerchantValid = $this->validateMerchant();
+
+        if (!$isMerchantValid)
         {
-            throw new BadRequestValidationFailureException('Merchant does not map with the user credentials');
+            throw new BadRequestValidationFailureException('Invalid merchant/user');
         }
 
-        $context = $user[self::ID] . '_' . $input[RequestParams::CLIENT_ID];
+        $ravenContext = $user[self::ID] . '_' . $input[RequestParams::CLIENT_ID];
 
         // Call raven to generate OTP
-        $raven = $this->getRavenService()->generateOTP($input[RequestParams::LOGIN_ID], $context);
+        $raven = $this->getRavenService()->generateOTP($input[RequestParams::LOGIN_ID], $ravenContext);
 
-        if ($raven[self::OTP] === null)
+        if (!isset($raven[self::OTP]))
         {
             throw new BadRequestValidationFailureException('OTP generation failed.');
         }
@@ -158,12 +160,23 @@ class Service
         $mailResponse = $this->getApiService()->sendOTPViaMail($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::MERCHANT_ID], $raven[self::OTP],
             $input[RequestParams::LOGIN_ID], self::NATIVE_AUTH_OTP);
 
-        if ($mailResponse['success'] !== true)
+        if (!isset($mailResponse['success'])  || $mailResponse['success'] !== true)
         {
             throw new BadRequestValidationFailureException('OTP send via mail failed.');
         }
 
         return ["success" => true];
+    }
+
+    public function validateMerchant(string $merchantId, array $user){
+        // check merchant_id is mapped to the user also
+        if ($merchantId !== $user['merchants'][0][self::ID])
+        {
+            return false;
+        }
+
+        return true;
+
     }
 
     public function postAuthCodeAndGenerateAccessToken(array $input)
@@ -194,9 +207,9 @@ class Service
     public function generateNativeAuthAccessToken(array $input)
     {
         Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, [
-            RequestParams::CLIENT_ID   => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : "not found",
-            RequestParams::MERCHANT_ID => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : "not found",
-            RequestParams::GRANT_TYPE  => isset($input[RequestParams::GRANT_TYPE]) ? $input[RequestParams::GRANT_TYPE] : "not found"
+            RequestParams::CLIENT_ID   => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : self::KEY_NOT_FOUND,
+            RequestParams::MERCHANT_ID => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : self::KEY_NOT_FOUND,
+            RequestParams::GRANT_TYPE  => isset($input[RequestParams::GRANT_TYPE]) ? $input[RequestParams::GRANT_TYPE] : self::KEY_NOT_FOUND
         ]);
 
         (new Validator)->validateNativeRequestAccessTokenRequest($input);
