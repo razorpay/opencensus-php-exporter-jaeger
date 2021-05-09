@@ -179,7 +179,7 @@ class Service
 
         if ($client->application->getType() !== ApplicationType::NATIVE)
         {
-            throw new BadRequestValidationFailureException('Invalid client');
+            throw new BadRequestValidationFailureException('Incorrect client id for native');
         }
     }
 
