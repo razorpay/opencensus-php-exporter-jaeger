@@ -122,8 +122,8 @@ class Service
     public function validateNativeAuthUserAndSendOtp(array $input)
     {
         Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, [
-            RequestParams::CLIENT_ID    => $input[RequestParams::CLIENT_ID],
-            RequestParams::MERCHANT_ID  => $input[RequestParams::MERCHANT_ID]
+            RequestParams::CLIENT_ID    => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : "not found",
+            RequestParams::MERCHANT_ID  => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : "not found"
         ]);
 
         (new Validator)->validateNativeAuthorizeRequest($input);
@@ -193,9 +193,10 @@ class Service
 
     public function generateNativeAuthAccessToken(array $input)
     {
-        Trace::info(TraceCode::TOKEN_NATIVE_AUTH_REQUEST, [
-            RequestParams::CLIENT_ID => $input[RequestParams::CLIENT_ID],
-            RequestParams::MERCHANT_ID => $input[RequestParams::MERCHANT_ID]
+        Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, [
+            RequestParams::CLIENT_ID   => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : "not found",
+            RequestParams::MERCHANT_ID => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : "not found",
+            RequestParams::GRANT_TYPE  => isset($input[RequestParams::GRANT_TYPE]) ? $input[RequestParams::GRANT_TYPE] : "not found"
         ]);
 
         (new Validator)->validateNativeRequestAccessTokenRequest($input);

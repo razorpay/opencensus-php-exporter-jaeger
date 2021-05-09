@@ -13,6 +13,8 @@ class RequestParams
     const MERCHANT_ID               = 'merchant_id';
     const USER_ID                   = 'user_id';
     const AUTHORIZATION_CODE        = 'authorization_code';
+    const GRANT_TYPE                = 'grant_type';
+    const PIN                       = 'pin';
     const NATIVE_AUTHORIZATION_CODE = 'native_authorization_code';
     const PARTNER_MERCHANT_ID       = 'partner_merchant_id';
 }

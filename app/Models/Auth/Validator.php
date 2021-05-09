@@ -40,12 +40,12 @@ class Validator extends \Razorpay\Spine\Validation\Validator
     public function validateNativeRequestAccessTokenRequest(array $input)
     {
         $rules = [
-            RequestParams::CLIENT_ID           => 'required|alpha_num|size:14',
-            RequestParams::CLIENT_SECRET       => 'required|string',
-            RequestParams::MERCHANT_ID         => 'required|alpha_num|size:14',
-            RequestParams::LOGIN_ID            => 'required|email',
-            'grant_type'                       => 'required|string|in:native_authorization_code',
-            'pin'                              => 'required'
+            RequestParams::CLIENT_ID     => 'required|alpha_num|size:14',
+            RequestParams::CLIENT_SECRET => 'required|string',
+            RequestParams::MERCHANT_ID   => 'required|alpha_num|size:14',
+            RequestParams::LOGIN_ID      => 'required|email',
+            RequestParams::GRANT_TYPE    => 'required|string|in:native_authorization_code',
+            RequestParams::PIN           => 'required'
         ];
 
         (new JitValidator)->rules($rules)
