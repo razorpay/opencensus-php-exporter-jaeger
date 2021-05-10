@@ -151,7 +151,9 @@ class Service
 
         if (isset($mailResponse['success'])  !== true || $mailResponse['success'] !== true)
         {
-            throw new BadRequestValidationFailureException('OTP send via mail failed');
+            Trace::critical(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $mailResponse);
+
+            throw new BadRequestValidationFailureException('OTP generation failed');
         }
 
         return ["success" => true];
