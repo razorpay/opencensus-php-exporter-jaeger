@@ -24,6 +24,30 @@ class Validator extends \Razorpay\Spine\Validation\Validator
         'state'         => 'sometimes'
     ];
 
+    public static $nativeAccessTokenRequestRules = [
+        RequestParams::CLIENT_ID     => 'required|alpha_num|size:14',
+        RequestParams::CLIENT_SECRET => 'required|string',
+        RequestParams::MERCHANT_ID   => 'required|alpha_num|size:14',
+        RequestParams::LOGIN_ID      => 'required|email',
+        RequestParams::GRANT_TYPE    => 'required|string|in:native_authorization_code',
+        RequestParams::PIN           => 'required'
+    ];
+
+    public static $nativeAuthorizeRequestRules = [
+        RequestParams::CLIENT_ID   => 'required|alpha_num|size:14',
+        RequestParams::MERCHANT_ID => 'required|alpha_num|size:14',
+        RequestParams::LOGIN_ID    => 'required|email',
+    ];
+
+    public function validateRequest(array $input, array $rules)
+    {
+        (new JitValidator)->rules($rules)
+            ->input($input)
+            ->strict(false)
+            ->validate();
+    }
+
+
     public function validateAuthorizeRequest(array $input)
     {
         $rules = [
@@ -35,37 +59,6 @@ class Validator extends \Razorpay\Spine\Validation\Validator
                           ->input($input)
                           ->strict(false)
                           ->validate();
-    }
-
-    public function validateNativeRequestAccessTokenRequest(array $input)
-    {
-        $rules = [
-            RequestParams::CLIENT_ID     => 'required|alpha_num|size:14',
-            RequestParams::CLIENT_SECRET => 'required|string',
-            RequestParams::MERCHANT_ID   => 'required|alpha_num|size:14',
-            RequestParams::LOGIN_ID      => 'required|email',
-            RequestParams::GRANT_TYPE    => 'required|string|in:native_authorization_code',
-            RequestParams::PIN           => 'required'
-        ];
-
-        (new JitValidator)->rules($rules)
-            ->input($input)
-            ->strict(false)
-            ->validate();
-    }
-
-    public function validateNativeAuthorizeRequest(array $input)
-    {
-        $rules = [
-            RequestParams::CLIENT_ID           => 'required|alpha_num|size:14',
-            RequestParams::MERCHANT_ID         => 'required|alpha_num|size:14',
-            RequestParams::LOGIN_ID            => 'required|email',
-        ];
-
-        (new JitValidator)->rules($rules)
-            ->input($input)
-            ->strict(false)
-            ->validate();
     }
 
     public function validateRequestAccessTokenMigration(array $input)

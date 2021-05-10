@@ -127,7 +127,7 @@ class Service
             RequestParams::MERCHANT_ID  => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : self::KEY_NOT_FOUND
         ]);
 
-        (new Validator)->validateNativeAuthorizeRequest($input);
+        (new Validator)->validateRequest($input, Validator::$nativeAuthorizeRequestRules);
 
         $this->verifyNativeClient($input[RequestParams::CLIENT_ID]);
 
@@ -216,7 +216,7 @@ class Service
             RequestParams::GRANT_TYPE  => isset($input[RequestParams::GRANT_TYPE]) ? $input[RequestParams::GRANT_TYPE] : self::KEY_NOT_FOUND
         ]);
 
-        (new Validator)->validateNativeRequestAccessTokenRequest($input);
+        (new Validator)->validateRequest($input, Validator::$nativeAccessTokenRequestRules);
 
         $this->verifyNativeClient($input[RequestParams::CLIENT_ID]);
 
