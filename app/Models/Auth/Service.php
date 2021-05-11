@@ -135,6 +135,11 @@ class Service
 
         $this->validateMerchant($input[RequestParams::MERCHANT_ID], $user);
 
+        if (!isset($user[self::ID]))
+        {
+            throw new App\Exception\LogicException("user_id not found");
+        }
+
         $ravenContext = $user[self::ID] . '_' . $input[RequestParams::CLIENT_ID];
 
         // Call raven to generate OTP
