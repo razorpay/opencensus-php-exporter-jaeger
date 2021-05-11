@@ -3,6 +3,7 @@
 namespace App\Models\Auth;
 
 use App\Constants\RequestParams;
+use App\Exception\BadRequestValidationFailureException;
 use App\Models\Base\JitValidator;
 
 class Validator extends \Razorpay\Spine\Validation\Validator
@@ -41,10 +42,19 @@ class Validator extends \Razorpay\Spine\Validation\Validator
 
     public function validateRequest(array $input, array $rules)
     {
-        (new JitValidator)->rules($rules)
-            ->input($input)
-            ->strict(false)
-            ->validate();
+        try
+        {
+            (new JitValidator)->rules($rules)
+                ->input($input)
+                ->strict(false)
+                ->validate();
+
+        }catch (\Throwable $e)
+        {
+            // Throw a validation failure instead of server error
+            throw new BadRequestValidationFailureException($e->getMessage());
+        }
+
     }
 
 

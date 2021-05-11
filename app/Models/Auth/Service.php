@@ -176,13 +176,28 @@ class Service
     }
 
     private function verifyNativeClient(string $clientId){
-        // Get application details using client and check that type is native and not public or partner
-        $client = (new Client\Repository)->findOrFailPublic($clientId);
-
-        if ($client->application->getType() !== ApplicationType::NATIVE)
+        try
         {
-            throw new BadRequestValidationFailureException('Incorrect client id for native');
+            // Get application details using client and check that type is native and not public or partner
+            $client = (new Client\Repository)->findOrFailPublic($clientId);
+
+            if ($client->application->getType() == ApplicationType::NATIVE)
+            {
+                return;
+            }
+
+        }catch (\Throwable $e) {
+
+            $tracePayload = [
+                'class' => get_class($e),
+                'code' => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $tracePayload);
         }
+
+        throw new BadRequestValidationFailureException('Invalid client');
     }
 
     public function postAuthCodeAndGenerateAccessToken(array $input)
