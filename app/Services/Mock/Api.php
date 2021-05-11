@@ -48,7 +48,7 @@ class Api
         throw new LogicException('Error when fetching user data');
     }
 
-    public function sendOTPViaMail(
+    public function sendOTPViaEmail(
         string $clientId,
         string $userId,
         string $merchantId,

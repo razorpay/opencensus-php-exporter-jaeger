@@ -150,7 +150,7 @@ class Service
         }
 
         // call api to send the otp via email
-        $mailResponse = $this->getApiService()->sendOTPViaMail($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::MERCHANT_ID], $raven[self::OTP],
+        $mailResponse = $this->getApiService()->sendOTPViaEmail($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::MERCHANT_ID], $raven[self::OTP],
             $input[RequestParams::LOGIN_ID], self::NATIVE_AUTH_OTP);
 
         if (isset($mailResponse['success'])  !== true || $mailResponse['success'] !== true)

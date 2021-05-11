@@ -63,7 +63,7 @@ class Api
         }
     }
 
-    public function sendOTPViaMail(
+    public function sendOTPViaEmail(
         string $clientId,
         string $userId,
         string $merchantId,
