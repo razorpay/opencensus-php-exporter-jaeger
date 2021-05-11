@@ -22,7 +22,6 @@ class Service
     const REFRESH_TOKEN   = 'refresh_token';
     const NATIVE_AUTH_OTP = 'native_auth_otp';
     const OTP             = 'otp';
-    const KEY_NOT_FOUND   = "key not found";
 
     public function __construct()
     {
@@ -123,8 +122,8 @@ class Service
     public function validateNativeAuthUserAndSendOtp(array $input)
     {
         Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, [
-            RequestParams::CLIENT_ID    => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : self::KEY_NOT_FOUND,
-            RequestParams::MERCHANT_ID  => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : self::KEY_NOT_FOUND
+            RequestParams::CLIENT_ID    => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : null,
+            RequestParams::MERCHANT_ID  => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : null
         ]);
 
         (new Validator)->validateRequest($input, Validator::$nativeAuthorizeRequestRules);
@@ -233,9 +232,9 @@ class Service
     public function generateNativeAuthAccessToken(array $input)
     {
         Trace::info(TraceCode::TOKEN_NATIVE_AUTH_REQUEST, [
-            RequestParams::CLIENT_ID   => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : self::KEY_NOT_FOUND,
-            RequestParams::MERCHANT_ID => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : self::KEY_NOT_FOUND,
-            RequestParams::GRANT_TYPE  => isset($input[RequestParams::GRANT_TYPE]) ? $input[RequestParams::GRANT_TYPE] : self::KEY_NOT_FOUND
+            RequestParams::CLIENT_ID   => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : null,
+            RequestParams::MERCHANT_ID => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : null,
+            RequestParams::GRANT_TYPE  => isset($input[RequestParams::GRANT_TYPE]) ? $input[RequestParams::GRANT_TYPE] : null
         ]);
 
         (new Validator)->validateRequest($input, Validator::$nativeAccessTokenRequestRules);
