@@ -130,16 +130,9 @@ class Service
 
         $this->verifyNativeClient($input[RequestParams::CLIENT_ID]);
 
-        $user = $this->getApiService()->getUserByEmail($input[RequestParams::LOGIN_ID]);
+        $userId = $this->validateMerchantUser($input[RequestParams::LOGIN_ID], $input[RequestParams::MERCHANT_ID]);
 
-        $this->validateMerchant($input[RequestParams::MERCHANT_ID], $user);
-
-        if (!isset($user[self::ID]))
-        {
-            throw new App\Exception\LogicException("user_id not found");
-        }
-
-        $ravenContext = $user[self::ID] . '_' . $input[RequestParams::CLIENT_ID];
+        $ravenContext = $userId . '_' . $input[RequestParams::CLIENT_ID];
 
         // Call raven to generate OTP
         $raven = $this->getRavenService()->generateOTP($input[RequestParams::LOGIN_ID], $ravenContext);
@@ -150,7 +143,7 @@ class Service
         }
 
         // call api to send the otp via email
-        $mailResponse = $this->getApiService()->sendOTPViaEmail($input[RequestParams::CLIENT_ID], $user[self::ID], $input[RequestParams::MERCHANT_ID], $raven[self::OTP],
+        $mailResponse = $this->getApiService()->sendOTPViaEmail($input[RequestParams::CLIENT_ID], $userId, $input[RequestParams::MERCHANT_ID], $raven[self::OTP],
             $input[RequestParams::LOGIN_ID], self::NATIVE_AUTH_OTP);
 
         if (isset($mailResponse['success'])  !== true || $mailResponse['success'] !== true)
@@ -163,19 +156,35 @@ class Service
         return ["success" => true];
     }
 
-    public function validateMerchant(string $merchantId, array $user){
-        if (isset($user['merchants']))
-        {
-            foreach ($user['merchants'] as $merchant)
-            {
-                if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId)
-                {
-                    return;
+    public function validateMerchantUser(string $loginId, string $merchantId)
+    {
+        try {
+            // Get user details filter by email_id
+            $user = $this->getApiService()->getUserByEmail($loginId);
+
+            if (!isset($user[self::ID])) {
+                throw new App\Exception\LogicException("user_id not found");
+            }
+
+            if (isset($user['merchants'])) {
+                foreach ($user['merchants'] as $merchant) {
+                    if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId) {
+                        return $user[self::ID];
+                    }
                 }
             }
+            // If provided merchantId does not map to any of the merchants for the user, throw invalid merchant/user exception
+        } catch (\Throwable $e) {
+
+            $tracePayload = [
+                'class' => get_class($e),
+                'code' => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $tracePayload);
         }
 
-        // If provided merchantId does not map to any of the merchants for the user, throw invalid merchant/user exception
         throw new BadRequestValidationFailureException('Invalid merchant/user');
     }
 
@@ -243,12 +252,9 @@ class Service
 
         (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], $input[RequestParams::GRANT_TYPE], $input[RequestParams::CLIENT_SECRET], true);
 
-        // Get user details filter by email_id
-        $user = $this->getApiService()->getUserByEmail($input[RequestParams::LOGIN_ID]);
+        $userId = $this->validateMerchantUser($input[RequestParams::LOGIN_ID], $input[RequestParams::MERCHANT_ID]);
 
-        $this->validateMerchant($input[RequestParams::MERCHANT_ID], $user);
-
-        $ravenContext = $user[self::ID] . '_' . $input[RequestParams::CLIENT_ID];
+        $ravenContext = $userId . '_' . $input[RequestParams::CLIENT_ID];
 
         // hit raven to verify OTP with body
         $otpResponse = $this->getRavenService()->verifyOTP($input[RequestParams::LOGIN_ID], $ravenContext, $input[RequestParams::PIN]);
@@ -260,7 +266,7 @@ class Service
 
         $input[RequestParams::REDIRECT_URI] = "";
 
-        $input[RequestParams::USER_ID] = $user[self::ID];
+        $input[RequestParams::USER_ID] = $userId;
 
         list($userInput, $userData) = $this->getAuthCodeInput($input);
 
@@ -279,7 +285,7 @@ class Service
         // map and notify merchant
         $this->notifyMerchantApplicationAuthorized(
             $input[RequestParams::CLIENT_ID],
-            $user[self::ID],
+            $userId,
             $input[RequestParams::MERCHANT_ID]);
 
         $this->mapMerchantToApplication($input[RequestParams::CLIENT_ID], $input[RequestParams::MERCHANT_ID]);
