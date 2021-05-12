@@ -20,6 +20,17 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
+        $this->app->singleton('raven', function ($app) {
+            $ravenMock = env('APP_RAVEN_MOCK', false);
+
+            if ($ravenMock === true)
+            {
+                return new \App\Services\Mock\Raven();
+            }
+
+            return new \App\Services\Raven();
+        });
+
         $this->registerValidatorResolver();
     }
 

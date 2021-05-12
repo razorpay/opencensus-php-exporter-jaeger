@@ -23,11 +23,15 @@ class Service
     const NATIVE_AUTH_OTP = 'native_auth_otp';
     const OTP             = 'otp';
 
+    protected $raven;
+
     public function __construct()
     {
         $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'));
 
         $this->app = App::getFacadeRoot();
+
+        $this->raven = $this->app['raven'];
     }
 
     /**
@@ -135,7 +139,7 @@ class Service
         $ravenContext = $userId . '_' . $input[RequestParams::CLIENT_ID];
 
         // Call raven to generate OTP
-        $raven = $this->getRavenService()->generateOTP($input[RequestParams::LOGIN_ID], $ravenContext);
+        $raven = $this->raven->generateOTP($input[RequestParams::LOGIN_ID], $ravenContext);
 
         if (!isset($raven[self::OTP]))
         {
@@ -257,7 +261,7 @@ class Service
         $ravenContext = $userId . '_' . $input[RequestParams::CLIENT_ID];
 
         // hit raven to verify OTP with body
-        $otpResponse = $this->getRavenService()->verifyOTP($input[RequestParams::LOGIN_ID], $ravenContext, $input[RequestParams::PIN]);
+        $otpResponse = $this->raven->verifyOTP($input[RequestParams::LOGIN_ID], $ravenContext, $input[RequestParams::PIN]);
 
         if (isset($otpResponse['success']) !== true || $otpResponse['success'] !== true)
         {
@@ -424,18 +428,6 @@ class Service
         }
 
         return new Services\Api();
-    }
-
-    public function getRavenService()
-    {
-        $ravenMock = env('APP_RAVEN_MOCK', false);
-
-        if ($ravenMock === true)
-        {
-            return new Services\Mock\Raven();
-        }
-
-        return new Services\Raven();
     }
 
     protected function validateAndGetApplicationDataForAuthorize(array $input): array
