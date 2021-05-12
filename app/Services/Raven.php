@@ -11,9 +11,11 @@ use App\Exception\BadRequestValidationFailureException;
 
 class Raven
 {
-    const SOURCE_TALLY       = 'native_auth.tally.accounting_payouts';
-    const OTP_GENERATE_ROUTE = '/otp/generate';
-    const OTP_VERIFY_ROUTE   = '/otp/verify';
+    const SOURCE_TALLY          = 'native_auth.tally.accounting_payouts';
+    const OTP_GENERATE_ROUTE    = '/otp/generate';
+    const OTP_VERIFY_ROUTE      = '/otp/verify';
+    const OTP_GENERATION_FAILED = 'OTP generation failed';
+    const INVALID_OTP           = 'Invalid OTP';
 
     protected $ravenUrl;
 
@@ -50,7 +52,16 @@ class Raven
 
             $response = Requests::post($url, [], $postPayload, $this->options);
 
-            return json_decode($response->body, true);
+            $ravenResponse = json_decode($response->body, true);
+
+            if ($response->status_code === 200 && isset($ravenResponse['error']) === false)
+            {
+                return $ravenResponse;
+            }
+
+            Trace::critical(TraceCode::RAVEN_GENERATE_OTP_FAILED, $ravenResponse);
+
+            throw new BadRequestException(self::OTP_GENERATION_FAILED);
 
         } catch (\Throwable $e) {
 
@@ -84,7 +95,16 @@ class Raven
 
             $response = Requests::post($url, [], $postPayload, $this->options);
 
-            return json_decode($response->body, true);
+            $ravenResponse = json_decode($response->body, true);
+
+            if ($response->status_code === 200 && isset($ravenResponse['error']) === false)
+            {
+                return $ravenResponse;
+            }
+
+            Trace::critical(TraceCode::RAVEN_VERIFY_OTP_FAILED, $ravenResponse);
+
+            throw new BadRequestException(self::INVALID_OTP);
 
         } catch (\Throwable $e) {
 

@@ -139,7 +139,7 @@ class Service
 
         if (!isset($raven[self::OTP]))
         {
-            throw new BadRequestValidationFailureException('OTP generation failed');
+            throw new BadRequestValidationFailureException(Services\Raven::OTP_GENERATION_FAILED);
         }
 
         // call api to send the otp via email
@@ -150,7 +150,7 @@ class Service
         {
             Trace::critical(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $mailResponse);
 
-            throw new BadRequestValidationFailureException('OTP generation failed');
+            throw new BadRequestValidationFailureException(Services\Raven::OTP_GENERATION_FAILED);
         }
 
         return ["success" => true];
@@ -261,7 +261,7 @@ class Service
 
         if (isset($otpResponse['success']) !== true || $otpResponse['success'] !== true)
         {
-            throw new BadRequestValidationFailureException('Invalid OTP');
+            throw new BadRequestValidationFailureException(Services\Raven::INVALID_OTP);
         }
 
         $input[RequestParams::REDIRECT_URI] = "";

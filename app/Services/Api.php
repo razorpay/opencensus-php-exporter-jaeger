@@ -85,7 +85,14 @@ class Api
         {
             $response = Requests::post($url, [], $postPayload, $this->options);
 
-            return json_decode($response->body, true);
+            $apiResponse = json_decode($response->body, true);
+
+            if ($response->status_code === 200 && isset($apiResponse['error']) === false)
+            {
+                return $apiResponse;
+            }
+
+            Trace::critical(TraceCode::MERCHANT_NOTIFY_FAILED, $apiResponse);
         }
         catch (\Throwable $e)
         {
@@ -137,14 +144,14 @@ class Api
         {
             $response = Requests::request($url, [], $payload, Requests::GET, $this->options);
 
-            $userResponse = json_decode($response->body, true);
+            $apiResponse = json_decode($response->body, true);
 
-            if(array_pull($userResponse, 'error', null) !== null)
+            if ($response->status_code === 200 && isset($apiResponse['error']) === false)
             {
-                throw new LogicException('Invalid user');
+                return $apiResponse;
             }
 
-            return $userResponse;
+            Trace::critical(TraceCode::USER_DETAILS_FETCH_FAILED, $apiResponse);
         }
         catch (\Throwable $e)
         {
