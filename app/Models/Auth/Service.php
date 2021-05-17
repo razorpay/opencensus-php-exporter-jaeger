@@ -162,9 +162,10 @@ class Service
 
     public function validateMerchantUser(string $loginId, string $merchantId)
     {
+        // Get user details filter by email_id
+        $user = $this->getApiService()->getUserByEmail($loginId);
+
         try {
-            // Get user details filter by email_id
-            $user = $this->getApiService()->getUserByEmail($loginId);
 
             if (!isset($user[self::ID])) {
                 throw new App\Exception\LogicException("user_id not found");
@@ -177,7 +178,6 @@ class Service
                     }
                 }
             }
-            // If provided merchantId does not map to any of the merchants for the user, throw invalid merchant/user exception
         } catch (\Throwable $e) {
 
             $tracePayload = [
@@ -189,6 +189,7 @@ class Service
             Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $tracePayload);
         }
 
+        // If provided merchantId does not map to any of the merchants for the user, throw invalid merchant/user exception
         throw new BadRequestValidationFailureException('Invalid merchant/user');
     }
 
