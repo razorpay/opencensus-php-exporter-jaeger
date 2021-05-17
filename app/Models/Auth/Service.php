@@ -165,28 +165,16 @@ class Service
         // Get user details filter by email_id
         $user = $this->getApiService()->getUserByEmail($loginId);
 
-        try {
+        if (!isset($user[self::ID])) {
+            throw new App\Exception\LogicException("user_id not found");
+        }
 
-            if (!isset($user[self::ID])) {
-                throw new App\Exception\LogicException("user_id not found");
-            }
-
-            if (isset($user['merchants'])) {
-                foreach ($user['merchants'] as $merchant) {
-                    if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId) {
-                        return $user[self::ID];
-                    }
+        if (isset($user['merchants'])) {
+            foreach ($user['merchants'] as $merchant) {
+                if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId) {
+                    return $user[self::ID];
                 }
             }
-        } catch (\Throwable $e) {
-
-            $tracePayload = [
-                'class' => get_class($e),
-                'code' => $e->getCode(),
-                'message' => $e->getMessage(),
-            ];
-
-            Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $tracePayload);
         }
 
         // If provided merchantId does not map to any of the merchants for the user, throw invalid merchant/user exception
