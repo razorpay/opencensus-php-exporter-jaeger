@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Razorpay\OAuth\Application\Entity as Application;
+use Razorpay\OAuth\Client\Core;
 use Razorpay\OAuth\Client\Entity as Client;
 
 class ClientMigrate extends Command
@@ -42,23 +42,12 @@ class ClientMigrate extends Command
     public function handle()
     {
         DB::transaction(function () {
+            $core = new Core;
             foreach (Client::all() as $client) {
-                app("outbox")->send("create_client", $this->getOutboxPayload($client));
+                app("outbox")->send("create_client", $core->getOutboxPayload($client, $client->application));
             }
         });
 
         return null;
-    }
-
-    private function getOutboxPayload(Client $client)
-    {
-        $payload[Client::SECRET]         = $client->getSecret();
-        $payload[Client::ID]             = $client->getId();
-        $payload[Client::REDIRECT_URL]   = $client->getRedirectUrl();
-        $payload[Client::ENVIRONMENT]    = $client->getEnvironment();
-        $payload[Client::MERCHANT_ID]    = $client->getMerchantId();
-        $payload[Client::APPLICATION_ID] = $client->getApplicationId();
-        $payload[Application::NAME]      = $client->getName();
-        return $payload;
     }
 }
