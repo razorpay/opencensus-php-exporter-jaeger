@@ -4,8 +4,12 @@
 namespace App\Services\Mock;
 
 
+use App\Exception\BadRequestException;
+
 class Raven
 {
+    const INVALID_OTP           = 'Invalid OTP';
+
     public function generateOTP(
         string $loginId,
         string $context)
@@ -20,7 +24,7 @@ class Raven
     {
         if($otp !== '0007')
         {
-            throw new LogicException('Invalid OTP');
+            throw new BadRequestException(self::INVALID_OTP);
         }
         else
         {
