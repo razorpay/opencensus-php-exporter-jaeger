@@ -12,7 +12,7 @@ class ApplicationTest extends TestCase
 
     protected $application;
 
-    public function setup()
+    public function setup(): void
     {
         $this->testDataFilePath = __DIR__ . '/ApplicationTestData.php';
 

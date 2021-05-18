@@ -12,7 +12,7 @@ class TokenTest extends TestCase
 
     protected $token;
 
-    public function setup()
+    public function setup(): void
     {
         $this->testDataFilePath = __DIR__ . '/TokenTestData.php';
 
