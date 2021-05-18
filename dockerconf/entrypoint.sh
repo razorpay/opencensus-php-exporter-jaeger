@@ -53,6 +53,13 @@ tail -f $LARAVEL_LOG_PATH >> /dev/stdout 2>&1 &
 echo  "Running DB migrate"
 php artisan migrate --force
 
+# If ARTISAN_COMMAND env is set, run the command and exit
+if [ -n "${ARTISAN_COMMAND+x}" ]; then
+  cd /app
+  php artisan "$ARTISAN_COMMAND"
+  exit 0
+fi
+
 # Fix permissions
 echo  "Fix file owner"
 chown -R nginx.nginx /app
