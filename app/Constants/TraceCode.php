@@ -20,6 +20,7 @@ class TraceCode extends BaseTraceCode
     const BANKING_ACCOUNTS_WEBHOOK_REQUEST                          = 'BANKING_ACCOUNTS_WEBHOOK_REQUEST';
     const CREATE_CLIENTS_REQUEST                                    = 'CREATE_CLIENTS_REQUEST';
     const DELETE_CLIENT_REQUEST                                     = 'DELETE_CLIENT_REQUEST';
+    const MIGRATE_CLIENT_REQUEST                                    = 'MIGRATE_CLIENT_REQUEST';
 
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';

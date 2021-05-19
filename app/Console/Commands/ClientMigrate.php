@@ -2,10 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Constants\TraceCode;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Razorpay\OAuth\Client\Core;
 use Razorpay\OAuth\Client\Entity as Client;
+use Razorpay\Trace\Facades\Trace;
 
 class ClientMigrate extends Command
 {
@@ -41,12 +43,15 @@ class ClientMigrate extends Command
      */
     public function handle()
     {
-        DB::transaction(function () {
-            $core = new Core;
-            foreach (Client::all() as $client) {
+        $count = 0;
+        $core  = new Core;
+        foreach (Client::all() as $client) {
+            $count++;
+            Trace::info(TraceCode::MIGRATE_CLIENT_REQUEST, array('count' => $count, 'client_id' => $client->getId()));
+            DB::transaction(function () use ($client, $core) {
                 app("outbox")->send("create_client", $core->getOutboxPayload($client, $client->application));
-            }
-        });
+            });
+        }
 
         return null;
     }
