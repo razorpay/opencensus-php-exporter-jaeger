@@ -257,10 +257,11 @@ class Service
             throw new BadRequestValidationFailureException(Services\Raven::INVALID_OTP);
         }
 
-        $accessTokenData =  [
+        $accessTokenData = [
             'client_id'     => $input[RequestParams::CLIENT_ID],
             'grant_type'    => $input[RequestParams::GRANT_TYPE],
             'client_secret' => $input[RequestParams::CLIENT_SECRET],
+            'scope'         => 'native_read_write',
         ];
 
         $tokenResponse = $this->generateAccessToken($accessTokenData);
