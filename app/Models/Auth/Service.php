@@ -257,37 +257,13 @@ class Service
             throw new BadRequestValidationFailureException(Services\Raven::INVALID_OTP);
         }
 
-        $input[RequestParams::REDIRECT_URI] = "";
-
-        $input[RequestParams::USER_ID] = $userId;
-
-        list($userInput, $userData) = $this->getAuthCodeInput($input);
-
-        $userInput['scope'] = 'native_read_write';
-
-        $userInput['response_type'] = 'native_code';
-
-        $userInput[RequestParams::GRANT_TYPE] = $input[RequestParams::GRANT_TYPE];
-
-        $authCode = $this->oauthServer->getAuthCode($userInput, $userData);
-
-        $this->validateLocationheader($authCode);
-
-        $code = $this->extractAuthCode($authCode);
-
-        // map and notify merchant
-        $this->notifyMerchantApplicationAuthorized(
-            $input[RequestParams::CLIENT_ID],
-            $userId,
-            $input[RequestParams::MERCHANT_ID]);
-
-        $this->mapMerchantToApplication($input[RequestParams::CLIENT_ID], $input[RequestParams::MERCHANT_ID]);
-
-        $accessTokenData = $this->getNativeAccessTokenInput($code, $input);
+        $accessTokenData =  [
+            'client_id'     => $input[RequestParams::CLIENT_ID],
+            'grant_type'    => $input[RequestParams::GRANT_TYPE],
+            'client_secret' => $input[RequestParams::CLIENT_SECRET],
+        ];
 
         $tokenResponse = $this->generateAccessToken($accessTokenData);
-
-        unset($tokenResponse[self::REFRESH_TOKEN]);
 
         return $tokenResponse;
     }

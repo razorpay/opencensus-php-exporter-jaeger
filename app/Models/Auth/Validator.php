@@ -30,7 +30,7 @@ class Validator extends \Razorpay\Spine\Validation\Validator
         RequestParams::CLIENT_SECRET => 'required|string',
         RequestParams::MERCHANT_ID   => 'required|alpha_num|size:14',
         RequestParams::LOGIN_ID      => 'required|email',
-        RequestParams::GRANT_TYPE    => 'required|string|in:native_authorization_code',
+        RequestParams::GRANT_TYPE    => 'required|string|in:tally_client_credentials',
         RequestParams::PIN           => 'required'
     ];
 
