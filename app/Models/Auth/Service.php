@@ -187,7 +187,7 @@ class Service
             // Get application details using client and check that type is native and not public or partner
             $client = (new Client\Repository)->findOrFailPublic($clientId);
 
-            if ($client->application->getType() == ApplicationType::NATIVE)
+            if ($client->application->getType() == ApplicationType::TALLY)
             {
                 return;
             }
@@ -261,7 +261,7 @@ class Service
             'client_id'     => $input[RequestParams::CLIENT_ID],
             'grant_type'    => $input[RequestParams::GRANT_TYPE],
             'client_secret' => $input[RequestParams::CLIENT_SECRET],
-            'scope'         => 'native_read_write',
+            'scope'         => 'tally_read_write',
         ];
 
         $tokenResponse = $this->generateAccessToken($accessTokenData);
