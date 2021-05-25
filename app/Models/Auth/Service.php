@@ -125,7 +125,7 @@ class Service
 
     public function validateTallyUserAndSendOtp(array $input)
     {
-        Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, [
+        Trace::info(TraceCode::TALLY_AUTHORIZE_REQUEST, [
             RequestParams::CLIENT_ID    => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : null,
             RequestParams::MERCHANT_ID  => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : null
         ]);
@@ -152,7 +152,7 @@ class Service
 
         if (isset($mailResponse['success'])  !== true || $mailResponse['success'] !== true)
         {
-            Trace::critical(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $mailResponse);
+            Trace::critical(TraceCode::TALLY_AUTHORIZE_REQUEST, $mailResponse);
 
             throw new BadRequestValidationFailureException(Services\Raven::OTP_GENERATION_FAILED);
         }
@@ -200,7 +200,7 @@ class Service
                 'message' => $e->getMessage(),
             ];
 
-            Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, $tracePayload);
+            Trace::info(TraceCode::TALLY_AUTHORIZE_REQUEST, $tracePayload);
         }
 
         throw new BadRequestValidationFailureException('Invalid client');
@@ -233,7 +233,7 @@ class Service
 
     public function generateTallyAccessToken(array $input)
     {
-        Trace::info(TraceCode::TOKEN_NATIVE_AUTH_REQUEST, [
+        Trace::info(TraceCode::TALLY_TOKEN_REQUEST, [
             RequestParams::CLIENT_ID   => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : null,
             RequestParams::MERCHANT_ID => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : null,
             RequestParams::GRANT_TYPE  => isset($input[RequestParams::GRANT_TYPE]) ? $input[RequestParams::GRANT_TYPE] : null

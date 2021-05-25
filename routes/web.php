@@ -120,6 +120,6 @@ $app->post('/authorize/tally', [
 ]);
 
 $app->post('/tokens/tally', [
-    'as'         => 'create_native_token',
-    'uses'       => 'AuthController@createTallyToken'
+    'as'   => 'create_native_token',
+    'uses' => 'AuthController@createTallyToken'
 ]);

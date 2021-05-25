@@ -21,8 +21,8 @@ class TraceCode extends BaseTraceCode
     const CREATE_CLIENTS_REQUEST                                    = 'CREATE_CLIENTS_REQUEST';
     const DELETE_CLIENT_REQUEST                                     = 'DELETE_CLIENT_REQUEST';
     const MIGRATE_CLIENT_REQUEST                                    = 'MIGRATE_CLIENT_REQUEST';
-    const VALIDATE_NATIVE_AUTH_REQUEST                              = 'VALIDATE_NATIVE_AUTH_REQUEST';
-    const TOKEN_NATIVE_AUTH_REQUEST                                 = 'TOKEN_NATIVE_AUTH_REQUEST';
+    const TALLY_AUTHORIZE_REQUEST                                   = 'TALLY_AUTHORIZE_REQUEST';
+    const TALLY_TOKEN_REQUEST                                       = 'TALLY_TOKEN_REQUEST';
 
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';
