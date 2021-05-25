@@ -339,17 +339,6 @@ class Service
         ];
     }
 
-    private function getNativeAccessTokenInput(string $code, array $input)
-    {
-        return [
-            'code'          => $code,
-            'client_id'     => $input[RequestParams::CLIENT_ID],
-            'grant_type'    => RequestParams::NATIVE_AUTHORIZATION_CODE,
-            'client_secret' => $input[RequestParams::CLIENT_SECRET],
-            'redirect_uri'  => "",
-        ];
-    }
-
     public function generateAccessToken(array $input)
     {
         $data = $this->oauthServer->getAccessToken($input);
