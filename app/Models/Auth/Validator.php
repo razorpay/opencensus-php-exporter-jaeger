@@ -25,7 +25,7 @@ class Validator extends \Razorpay\Spine\Validation\Validator
         'state'         => 'sometimes'
     ];
 
-    public static $nativeAccessTokenRequestRules = [
+    public static $tallyAccessTokenRequestRules = [
         RequestParams::CLIENT_ID     => 'required|alpha_num|size:14',
         RequestParams::CLIENT_SECRET => 'required|string',
         RequestParams::MERCHANT_ID   => 'required|alpha_num|size:14',
@@ -34,7 +34,7 @@ class Validator extends \Razorpay\Spine\Validation\Validator
         RequestParams::PIN           => 'required'
     ];
 
-    public static $nativeAuthorizeRequestRules = [
+    public static $tallyAuthorizeRequestRules = [
         RequestParams::CLIENT_ID   => 'required|alpha_num|size:14',
         RequestParams::MERCHANT_ID => 'required|alpha_num|size:14',
         RequestParams::LOGIN_ID    => 'required|email',

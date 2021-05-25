@@ -130,7 +130,7 @@ class Service
             RequestParams::MERCHANT_ID  => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : null
         ]);
 
-        (new Validator)->validateRequest($input, Validator::$nativeAuthorizeRequestRules);
+        (new Validator)->validateRequest($input, Validator::$tallyAuthorizeRequestRules);
 
         $this->verifyTallyClient($input[RequestParams::CLIENT_ID]);
 
@@ -239,7 +239,7 @@ class Service
             RequestParams::GRANT_TYPE  => isset($input[RequestParams::GRANT_TYPE]) ? $input[RequestParams::GRANT_TYPE] : null
         ]);
 
-        (new Validator)->validateRequest($input, Validator::$nativeAccessTokenRequestRules);
+        (new Validator)->validateRequest($input, Validator::$tallyAccessTokenRequestRules);
 
         $this->verifyTallyClient($input[RequestParams::CLIENT_ID]);
 
