@@ -15,11 +15,6 @@ $app->get('/authorize', [
     'uses' => 'AuthController@getAuthorize'
 ]);
 
-$app->post('/authorize/native', [
-    'as'   => 'post_native_auth_code',
-    'uses' => 'AuthController@postNativeAuthorize'
-]);
-
 $app->post('/authorize', [
     'as'   => 'post_auth_code',
     'uses' => 'AuthController@postAuthorize'
@@ -107,9 +102,14 @@ $app->post('/tokens/internal', [
     'uses'       => 'AuthController@createPartnerToken'
 ]);
 
-$app->post('/tokens/native', [
+$app->post('/authorize/tally', [
+    'as'   => 'post_native_auth_code',
+    'uses' => 'AuthController@postTallyAuthorize'
+]);
+
+$app->post('/tokens/tally', [
     'as'         => 'create_native_token',
-    'uses'       => 'AuthController@createNativeToken'
+    'uses'       => 'AuthController@createTallyToken'
 ]);
 
 $app->get('/admin/entities/{entity_type}', [

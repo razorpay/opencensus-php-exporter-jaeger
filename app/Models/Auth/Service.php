@@ -123,7 +123,7 @@ class Service
         return $authCode->getHeaders()['Location'][0];
     }
 
-    public function validateNativeAuthUserAndSendOtp(array $input)
+    public function validateTallyUserAndSendOtp(array $input)
     {
         Trace::info(TraceCode::VALIDATE_NATIVE_AUTH_REQUEST, [
             RequestParams::CLIENT_ID    => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : null,
@@ -132,7 +132,7 @@ class Service
 
         (new Validator)->validateRequest($input, Validator::$nativeAuthorizeRequestRules);
 
-        $this->verifyNativeClient($input[RequestParams::CLIENT_ID]);
+        $this->verifyTallyClient($input[RequestParams::CLIENT_ID]);
 
         $userId = $this->validateMerchantUser($input[RequestParams::LOGIN_ID], $input[RequestParams::MERCHANT_ID]);
 
@@ -181,7 +181,7 @@ class Service
         throw new BadRequestValidationFailureException('Invalid merchant/user');
     }
 
-    private function verifyNativeClient(string $clientId){
+    private function verifyTallyClient(string $clientId){
         try
         {
             // Get application details using client and check that type is native and not public or partner
@@ -231,7 +231,7 @@ class Service
         return $tokenResponse;
     }
 
-    public function generateNativeAuthAccessToken(array $input)
+    public function generateTallyAccessToken(array $input)
     {
         Trace::info(TraceCode::TOKEN_NATIVE_AUTH_REQUEST, [
             RequestParams::CLIENT_ID   => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : null,
@@ -241,7 +241,7 @@ class Service
 
         (new Validator)->validateRequest($input, Validator::$nativeAccessTokenRequestRules);
 
-        $this->verifyNativeClient($input[RequestParams::CLIENT_ID]);
+        $this->verifyTallyClient($input[RequestParams::CLIENT_ID]);
 
         (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], $input[RequestParams::GRANT_TYPE], $input[RequestParams::CLIENT_SECRET], true);
 

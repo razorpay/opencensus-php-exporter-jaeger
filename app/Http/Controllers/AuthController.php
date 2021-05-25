@@ -73,13 +73,13 @@ class AuthController extends Controller
         return response()->redirectTo($authCode);
     }
 
-    public function postNativeAuthorize()
+    public function postTallyAuthorize()
     {
         $input = Request::all();
 
         $input['permission'] = true;
 
-        $response = $this->service()->validateNativeAuthUserAndSendOtp($input);
+        $response = $this->service()->validateTallyUserAndSendOtp($input);
 
         return response()->json($response);
     }
@@ -113,11 +113,11 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
-    public function createNativeToken()
+    public function createTallyToken()
     {
         $input = Request::all();
 
-        $response = $this->service()->generateNativeAuthAccessToken($input);
+        $response = $this->service()->generateTallyAccessToken($input);
 
         return response()->json($response);
     }

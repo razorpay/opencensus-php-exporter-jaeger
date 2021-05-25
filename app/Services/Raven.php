@@ -11,7 +11,7 @@ use App\Exception\BadRequestValidationFailureException;
 
 class Raven
 {
-    const SOURCE_TALLY          = 'native_auth.tally.accounting_payouts';
+    const SOURCE_TALLY          = 'tally.accounting_integration';
     const OTP_GENERATE_ROUTE    = '/otp/generate';
     const OTP_VERIFY_ROUTE      = '/otp/verify';
     const OTP_GENERATION_FAILED = 'OTP generation failed';
