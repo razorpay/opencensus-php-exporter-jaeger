@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Error\ErrorCode;
 use App\Exception\BadRequestException;
 use Trace;
 use Requests;
@@ -152,9 +153,7 @@ class Api
                 return $apiResponse;
             }
 
-            Trace::critical(TraceCode::USER_DETAILS_FETCH_FAILED, $apiResponse);
-
-            throw new BadRequestException('Invalid merchant/user');
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
         }
         catch (\Throwable $e)
         {

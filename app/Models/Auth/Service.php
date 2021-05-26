@@ -178,7 +178,7 @@ class Service
         }
 
         // If provided merchantId does not map to any of the merchants for the user, throw invalid merchant/user exception
-        throw new BadRequestValidationFailureException('Invalid merchant/user');
+        throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
     }
 
     private function verifyTallyClient(string $clientId){
