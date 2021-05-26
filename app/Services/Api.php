@@ -93,8 +93,6 @@ class Api
             {
                 return $apiResponse;
             }
-
-            Trace::critical(TraceCode::MERCHANT_NOTIFY_FAILED, $apiResponse);
         }
         catch (\Throwable $e)
         {
