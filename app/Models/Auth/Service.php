@@ -173,7 +173,7 @@ class Service
         if (isset($user['merchants'])) {
             foreach ($user['merchants'] as $merchant) {
                 if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId) {
-                    if (isset($merchant[self::ROLE]) && $merchant[self::ROLE] === self.self::OWNER) {
+                    if (isset($merchant[self::ROLE]) && $merchant[self::ROLE] === self::OWNER) {
                         return $user[self::ID];
                     }
                 }
