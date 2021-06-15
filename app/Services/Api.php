@@ -21,7 +21,7 @@ class Api
     const OTP                = 'otp';
     const EMAIL              = 'email';
     const OAUTH_NOTIFY_ROUTE = '/oauth/notify/';
-    const USERS_ROUTE        = '/users';
+    const USERS_ROUTE        = '/users_unified';
 
     protected $apiUrl;
 
