@@ -88,11 +88,6 @@ class Api
             $response = Requests::post($url, [], $postPayload, $this->options);
 
             $apiResponse = json_decode($response->body, true);
-
-            if ($response->status_code === 200 && isset($apiResponse['error']) === false)
-            {
-                return $apiResponse;
-            }
         }
         catch (\Throwable $e)
         {
@@ -103,9 +98,16 @@ class Api
             ];
 
             Trace::critical(TraceCode::MERCHANT_NOTIFY_FAILED, $tracePayload);
+
+            throw new LogicException('Error when sending OTP via mail.');
         }
 
-        throw new LogicException('Error when sending OTP via mail.');
+        if ($response->status_code === 200 && isset($apiResponse['error']) === false)
+        {
+            return $apiResponse;
+        }
+
+        throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
     }
 
     public function getMerchantOrgDetails(string $merchantId): array
@@ -145,13 +147,6 @@ class Api
             $response = Requests::request($url, [], $payload, Requests::GET, $this->options);
 
             $apiResponse = json_decode($response->body, true);
-
-            if ($response->status_code === 200 && isset($apiResponse['error']) === false)
-            {
-                return $apiResponse;
-            }
-
-            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
         }
         catch (\Throwable $e)
         {
@@ -162,9 +157,16 @@ class Api
             ];
 
             Trace::critical(TraceCode::USER_DETAILS_FETCH_FAILED, $tracePayload);
+
+            throw new LogicException('Error when fetching user data');
         }
 
-        throw new LogicException('Error when fetching user data');
+        if ($response->status_code === 200 && isset($apiResponse['error']) === false)
+        {
+            return $apiResponse;
+        }
+
+        throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
     }
 
     public function getOrgHostName(string $merchantId): string
