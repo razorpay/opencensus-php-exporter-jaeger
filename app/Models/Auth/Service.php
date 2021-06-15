@@ -18,10 +18,11 @@ use App\Exception\BadRequestValidationFailureException;
 
 class Service
 {
-    const ID              = 'id';
-    const REFRESH_TOKEN   = 'refresh_token';
-    const NATIVE_AUTH_OTP = 'native_auth_otp';
-    const OTP             = 'otp';
+    const ID                = 'id';
+    const ROLE              = 'role';
+    const OWNER             = 'owner';
+    const TALLY_AUTH_OTP    = 'tally_auth_otp';
+    const OTP               = 'otp';
 
     protected $raven;
 
@@ -148,7 +149,7 @@ class Service
 
         // call api to send the otp via email
         $mailResponse = $this->getApiService()->sendOTPViaEmail($input[RequestParams::CLIENT_ID], $userId, $input[RequestParams::MERCHANT_ID], $raven[self::OTP],
-            $input[RequestParams::LOGIN_ID], self::NATIVE_AUTH_OTP);
+            $input[RequestParams::LOGIN_ID], self::TALLY_AUTH_OTP);
 
         if (isset($mailResponse['success'])  !== true || $mailResponse['success'] !== true)
         {
@@ -172,7 +173,9 @@ class Service
         if (isset($user['merchants'])) {
             foreach ($user['merchants'] as $merchant) {
                 if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId) {
-                    return $user[self::ID];
+                    if (isset($merchant[self::Role]) && $merchant[self::ROLE] === self.self::OWNER) {
+                        return $user[self::ID];
+                    }
                 }
             }
         }
