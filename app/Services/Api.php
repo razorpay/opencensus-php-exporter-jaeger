@@ -88,6 +88,11 @@ class Api
             $response = Requests::post($url, [], $postPayload, $this->options);
 
             $apiResponse = json_decode($response->body, true);
+
+            if ($response->status_code === 200 && isset($apiResponse['error']) === false)
+            {
+                return $apiResponse;
+            }
         }
         catch (\Throwable $e)
         {
@@ -98,16 +103,9 @@ class Api
             ];
 
             Trace::critical(TraceCode::MERCHANT_NOTIFY_FAILED, $tracePayload);
-
-            throw new LogicException('Error when sending OTP via mail.');
         }
 
-        if ($response->status_code === 200 && isset($apiResponse['error']) === false)
-        {
-            return $apiResponse;
-        }
-
-        throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
+        throw new LogicException('Error when sending OTP via mail.');
     }
 
     public function getMerchantOrgDetails(string $merchantId): array
