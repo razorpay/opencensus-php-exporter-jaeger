@@ -291,24 +291,36 @@ class OAuthTest extends TestCase
         $this->runRequestResponseFlow($data);
     }
 
-//    public function testValidateTallyAuthUserInvalidInput()
-//    {
-//        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
-//
-//        $this->createAndSetClientWithEnvironment();
-//
-//        Request::clearResolvedInstances();
-//
-//        $data = & $this->testData[__FUNCTION__];
-//
-//        $params = [
-//            'client_id'         => $this->devClient->getId(),
-//        ];
-//
-//        $this->addRequestParameters($data['request']['content'], $params);
-//
-//        $this->runRequestResponseFlow($data);
-//    }
+    public function testValidateTallyAuthUserInvalidInput()
+    {
+        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
+
+        $this->application = factory(Application\Entity::class)->create(
+            [
+                'type'          =>  'public',
+            ]
+        );
+
+        $this->devClient = factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $this->application->id,
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev',
+            ]);
+
+        Request::clearResolvedInstances();
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $params = [
+            'client_id'         => $this->devClient->getId(),
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data);
+    }
 
     public function testTallyToken()
     {
@@ -341,7 +353,9 @@ class OAuthTest extends TestCase
 
         $content = $this->runRequestResponseFlow($data);
 
-        $this->assertValidAccessToken($content);
+        $this->assertArrayHasKey('access_token', $content);
+
+        $this->assertArrayHasKey('expires_in', $content);
     }
 
 //    public function testTallyTokenInvalidInput()
