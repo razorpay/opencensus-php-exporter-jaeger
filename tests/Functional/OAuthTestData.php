@@ -242,10 +242,10 @@ return [
         ],
     ],
 
-    'testValidateNativeAuthUser' => [
+    'testValidateTallyAuthUser' => [
         'request'  => [
             'method'  => 'POST',
-            'url'     => '/authorize/native',
+            'url'     => '/authorize/tally',
             'content' => [
                 'merchant_id'         => '10000000000000',
                 'login_id'            => 'test@razorpay.com',
@@ -259,10 +259,10 @@ return [
         ]
     ],
 
-    'testValidateNativeAuthUserInvalidInput' => [
+    'testValidateTallyAuthUserInvalidInput' => [
         'request'  => [
             'method'  => 'POST',
-            'url'     => '/authorize/native',
+            'url'     => '/authorize/tally',
             'content' => [
                 'merchant_id'         => '10000000000000',
                 'login_id'            => 'test@razorpay.com',
@@ -282,13 +282,13 @@ return [
         ],
     ],
 
-    'testNativeToken' => [
+    'testTallyToken' => [
         'request'  => [
             'method'  => 'POST',
-            'url'     => '/tokens/native',
+            'url'     => '/tokens/tally',
             'content' => [
                 'merchant_id'         => '10000000000000',
-                'grant_type'          => 'native_authorization_code',
+                'grant_type'          => 'tally_client_credentials',
                 'pin'                 => '0007',
                 'login_id'            => 'test@razorpay.com',
             ]
@@ -301,13 +301,13 @@ return [
         ]
     ],
 
-    'testNativeTokenInvalidInput' => [
+    'testTallyTokenInvalidInput' => [
         'request'  => [
             'method'  => 'POST',
-            'url'     => '/tokens/native',
+            'url'     => '/tokens/tally',
             'content' => [
                 'merchant_id'         => '10000000000000',
-                'grant_type'          => 'native_authorization_code1',
+                'grant_type'          => 'tally_client_credentials_invalid',
                 'pin'                 => '0007',
                 'login_id'            => 'test@razorpay.com',
             ]

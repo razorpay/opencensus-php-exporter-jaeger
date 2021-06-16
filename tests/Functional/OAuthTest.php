@@ -260,13 +260,13 @@ class OAuthTest extends TestCase
         $this->runRequestResponseFlow($data);
     }
 
-    public function testValidateNativeAuthUser()
+    public function testValidateTallyAuthUser()
     {
         $this->setInternalAuth('rzp', env('APP_API_SECRET'));
 
         $this->application = factory(Application\Entity::class)->create(
             [
-                'type'          =>  'native',
+                'type'          =>  'tally',
             ]
         );
 
@@ -291,7 +291,7 @@ class OAuthTest extends TestCase
         $this->runRequestResponseFlow($data);
     }
 
-    public function testValidateNativeAuthUserInvalidInput()
+    public function testValidateTallyAuthUserInvalidInput()
     {
         $this->setInternalAuth('rzp', env('APP_API_SECRET'));
 
@@ -310,7 +310,7 @@ class OAuthTest extends TestCase
         $this->runRequestResponseFlow($data);
     }
 
-    public function testNativeToken()
+    public function testTallyToken()
     {
         $this->setInternalAuth('rzp', env('APP_API_SECRET'));
 
@@ -330,7 +330,7 @@ class OAuthTest extends TestCase
         $this->runRequestResponseFlow($data);
     }
 
-    public function testNativeTokenInvalidInput()
+    public function testTallyTokenInvalidInput()
     {
         $this->setInternalAuth('rzp', env('APP_API_SECRET'));
 
