@@ -16,34 +16,34 @@ class Api
         if($login_id === 'test@razorpay.com')
         {
             return [
-                    "name" => "Test User Account",
-                    "email" => "test@razorpay.com",
-                    "contact_mobile" => "9999999999",
-                    "contact_mobile_verified" => false,
-                    "account_locked" => false,
-                    "confirmed" => true,
-                    "merchants" => [
-                        [
-                            "gstin" => null,
-                            "pan" => null,
-                            "billing_address" => [
-                            "line1" => null,
-                                "line2" => null,
-                                "city" => null,
-                                "state" => null,
-                                "country" => "India",
-                                "zipcode" => null
-                            ],
-                            "description" => null,
-                            "id" => "10000000000000",
-                            "activated" => true,
-                            "website" => null,
-                            "name" => "Test Account",
-                            "billing_label" => "Test Account"
-                        ]
-                    ],
-                    "id" => "20000000000000"
-                ];
+                "id" => "20000000000000",
+                "name" => "Test User Account",
+                "email" => "test@razorpay.com",
+                "merchants" => [
+                    [
+                        "id" => "10000000000000",
+                        "name" => "Test Account",
+                        "billing_label" => "Test Account",
+                        "email" => "test@razorpay.com",
+                        "activated" => false,
+                        "activated_at" => null,
+                        "archived_at" => null,
+                        "suspended_at" => null,
+                        "has_key_access" => false,
+                        "logo_url" => null,
+                        "display_name" => null,
+                        "refund_source" => "balance",
+                        "partner_type" => null,
+                        "restricted" => false,
+                        "created_at" => 1623844064,
+                        "updated_at" => 1623844064,
+                        "second_factor_auth" => false,
+                        "role" => "owner",
+                        "product" => "primary",
+                        "banking_role" => null
+                    ]
+                ]
+            ];
         }
         throw new LogicException('Error when fetching user data');
     }
