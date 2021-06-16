@@ -271,14 +271,14 @@ return [
         'response'  => [
             'content'     => [
                 'error' => [
-                    'description' => 'Incorrect Application Type'
+                    'description' => 'Invalid client'
                 ],
             ],
             'status_code' => 400
         ],
         'exception' => [
             'class'   => 'App\Exception\BadRequestValidationFailureException',
-            'message' => 'Incorrect Application Type',
+            'message' => 'Invalid client',
         ],
     ],
 
