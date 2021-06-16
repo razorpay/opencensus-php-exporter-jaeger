@@ -291,8 +291,8 @@ class OAuthTest extends TestCase
         $this->runRequestResponseFlow($data);
     }
 
-    public function testValidateTallyAuthUserInvalidInput()
-    {
+//    public function testValidateTallyAuthUserInvalidInput()
+//    {
 //        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
 //
 //        $this->createAndSetClientWithEnvironment();
@@ -308,13 +308,25 @@ class OAuthTest extends TestCase
 //        $this->addRequestParameters($data['request']['content'], $params);
 //
 //        $this->runRequestResponseFlow($data);
-    }
+//    }
 
     public function testTallyToken()
     {
         $this->setInternalAuth('rzp', env('APP_API_SECRET'));
 
-        $this->createAndSetClientWithEnvironment();
+        $this->application = factory(Application\Entity::class)->create(
+            [
+                'type'          =>  'tally',
+            ]
+        );
+
+        $this->devClient = factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $this->application->id,
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev',
+            ]);
 
         Request::clearResolvedInstances();
 
@@ -330,8 +342,8 @@ class OAuthTest extends TestCase
         $this->runRequestResponseFlow($data);
     }
 
-    public function testTallyTokenInvalidInput()
-    {
+//    public function testTallyTokenInvalidInput()
+//    {
 //        $this->setInternalAuth('rzp', env('APP_API_SECRET'));
 //
 //        $this->createAndSetClientWithEnvironment();
@@ -348,7 +360,7 @@ class OAuthTest extends TestCase
 //        $this->addRequestParameters($data['request']['content'], $params);
 //
 //        $this->runRequestResponseFlow($data);
-    }
+//    }
 
     public function testPostAccessTokenWithInvalidGrant()
     {
