@@ -339,7 +339,9 @@ class OAuthTest extends TestCase
 
         $this->addRequestParameters($data['request']['content'], $params);
 
-        $this->runRequestResponseFlow($data);
+        $content = $this->runRequestResponseFlow($data);
+
+        $this->assertValidAccessToken($content);
     }
 
 //    public function testTallyTokenInvalidInput()
