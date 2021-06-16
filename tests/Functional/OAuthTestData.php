@@ -321,7 +321,7 @@ return [
             'status_code' => 400
         ],
         'exception' => [
-            'class'   => 'Razorpay\Spine\Exception\ValidationFailureException',
+            'class'   => 'App\Exception\BadRequestValidationFailureException',
             'message' => 'Validation failed. The selected grant type is invalid.',
         ],
     ],
