@@ -4,6 +4,8 @@
 namespace App\Services\Mock;
 
 
+use App\Error\Error;
+use App\Error\ErrorCode;
 use App\Exception\BadRequestException;
 
 class Raven
@@ -24,7 +26,7 @@ class Raven
     {
         if($otp !== '0007')
         {
-            throw new BadRequestException(self::INVALID_OTP);
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_OTP);
         }
         else
         {

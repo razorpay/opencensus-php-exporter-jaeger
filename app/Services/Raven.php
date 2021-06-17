@@ -2,20 +2,17 @@
 
 namespace App\Services;
 
+use App\Error\ErrorCode;
 use Trace;
 use Requests;
 use App\Constants\TraceCode;
-use App\Exception\LogicException;
 use App\Exception\BadRequestException;
-use App\Exception\BadRequestValidationFailureException;
 
 class Raven
 {
     const SOURCE_TALLY          = 'tally.accounting_integration';
     const OTP_GENERATE_ROUTE    = '/otp/generate';
     const OTP_VERIFY_ROUTE      = '/otp/verify';
-    const OTP_GENERATION_FAILED = 'OTP generation failed';
-    const INVALID_OTP           = 'Invalid OTP';
 
     protected $ravenUrl;
 
@@ -54,15 +51,6 @@ class Raven
 
             $ravenResponse = json_decode($response->body, true);
 
-            if ($response->status_code === 200 && isset($ravenResponse['error']) === false)
-            {
-                return $ravenResponse;
-            }
-
-            Trace::critical(TraceCode::RAVEN_GENERATE_OTP_FAILED, $ravenResponse);
-
-            throw new BadRequestException(self::OTP_GENERATION_FAILED);
-
         } catch (\Throwable $e) {
 
             $tracePayload = [
@@ -75,6 +63,15 @@ class Raven
 
             throw $e;
         }
+
+        if ($response->status_code === 200 && isset($ravenResponse['error']) === false)
+        {
+            return $ravenResponse;
+        }
+
+        Trace::critical(TraceCode::RAVEN_GENERATE_OTP_FAILED, $ravenResponse);
+
+        throw new BadRequestException(ErrorCode::BAD_REQUEST_OTP_GENERATION_FAILED);
     }
 
     public function verifyOTP(
@@ -92,19 +89,9 @@ class Raven
         ];
 
         try {
-
             $response = Requests::post($url, [], $postPayload, $this->options);
 
             $ravenResponse = json_decode($response->body, true);
-
-            if ($response->status_code === 200 && isset($ravenResponse['error']) === false)
-            {
-                return $ravenResponse;
-            }
-
-            Trace::critical(TraceCode::RAVEN_VERIFY_OTP_FAILED, $ravenResponse);
-
-            throw new BadRequestException(self::INVALID_OTP);
 
         } catch (\Throwable $e) {
 
@@ -118,5 +105,14 @@ class Raven
 
             throw $e;
         }
+
+        if ($response->status_code === 200 && isset($ravenResponse['error']) === false)
+        {
+            return $ravenResponse;
+        }
+
+        Trace::critical(TraceCode::RAVEN_VERIFY_OTP_FAILED, $ravenResponse);
+
+        throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_OTP);
     }
 }

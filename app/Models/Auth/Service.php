@@ -144,7 +144,7 @@ class Service
 
         if (!isset($raven[self::OTP]))
         {
-            throw new BadRequestValidationFailureException(Services\Raven::OTP_GENERATION_FAILED);
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_OTP_GENERATION_FAILED);
         }
 
         // call api to send the otp via email
@@ -155,7 +155,7 @@ class Service
         {
             Trace::critical(TraceCode::TALLY_AUTHORIZE_REQUEST, $mailResponse);
 
-            throw new BadRequestValidationFailureException(Services\Raven::OTP_GENERATION_FAILED);
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_OTP_GENERATION_FAILED);
         }
 
         return ["success" => true];
@@ -181,6 +181,8 @@ class Service
                     {
                         return $user[self::ID];
                     }
+
+                    throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
                 }
             }
         }
@@ -262,7 +264,7 @@ class Service
 
         if (isset($otpResponse['success']) !== true || $otpResponse['success'] !== true)
         {
-            throw new BadRequestValidationFailureException(Services\Raven::INVALID_OTP);
+            throw new BadRequestValidationFailureException(ErrorCode::BAD_REQUEST_INVALID_OTP);
         }
 
         $accessTokenData = [

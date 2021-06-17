@@ -16,4 +16,6 @@ class PublicErrorDescription
     const BAD_REQUEST_INVALID_CLIENT_OR_USER   = 'There was a problem with the application you are trying to connect to, please contact the application provider for support.';
     const BAD_REQUEST_ROLE_NOT_ALLOWED         = 'The current user profile is restricted from this action';
     const BAD_REQUEST_INVALID_MERCHANT_OR_USER = 'Invalid merchant/user';
+    const BAD_REQUEST_INVALID_OTP              = 'Invalid OTP';
+    const BAD_REQUEST_OTP_GENERATION_FAILED    = 'OTP generation failed';
 }

@@ -24,6 +24,8 @@ class ErrorCode
     const BAD_REQUEST_INVALID_CLIENT_OR_USER                                        = 'BAD_REQUEST_INVALID_CLIENT_OR_USER';
     const BAD_REQUEST_ROLE_NOT_ALLOWED                                              = 'BAD_REQUEST_ROLE_NOT_ALLOWED';
     const BAD_REQUEST_INVALID_MERCHANT_OR_USER                                      = 'BAD_REQUEST_INVALID_MERCHANT_OR_USER';
+    const BAD_REQUEST_INVALID_OTP                                                   = 'BAD_REQUEST_INVALID_OTP';
+    const BAD_REQUEST_OTP_GENERATION_FAILED                                         = 'BAD_REQUEST_OTP_GENERATION_FAILED';
 
     const SERVER_ERROR_INVALID_ARGUMENT                                             = 'SERVER_ERROR_INVALID_ARGUMENT';
     const SERVER_ERROR_DB_QUERY_FAILED                                              = 'SERVER_ERROR_DB_QUERY_FAILED';
