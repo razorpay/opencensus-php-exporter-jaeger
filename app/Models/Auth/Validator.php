@@ -46,7 +46,7 @@ class Validator extends \Razorpay\Spine\Validation\Validator
         {
             (new JitValidator)->rules($rules)
                 ->input($input)
-                ->strict(false)
+                ->strict(true)
                 ->validate();
 
         }catch (\Throwable $e)
@@ -56,7 +56,6 @@ class Validator extends \Razorpay\Spine\Validation\Validator
         }
 
     }
-
 
     public function validateAuthorizeRequest(array $input)
     {
