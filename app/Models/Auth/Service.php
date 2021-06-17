@@ -166,14 +166,19 @@ class Service
         // Get user details filter by email_id
         $user = $this->getApiService()->getUserByEmail($loginId);
 
-        if (!isset($user[self::ID])) {
+        if (!isset($user[self::ID]))
+        {
             throw new App\Exception\LogicException("user_id not found");
         }
 
-        if (isset($user['merchants'])) {
-            foreach ($user['merchants'] as $merchant) {
-                if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId) {
-                    if (isset($merchant[self::ROLE]) && $merchant[self::ROLE] === self::OWNER) {
+        if (isset($user['merchants']))
+        {
+            foreach ($user['merchants'] as $merchant)
+            {
+                if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId)
+                {
+                    if (isset($merchant[self::ROLE]) && $merchant[self::ROLE] === self::OWNER)
+                    {
                         return $user[self::ID];
                     }
                 }
