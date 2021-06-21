@@ -271,6 +271,7 @@ class Service
             'client_id'     => $input[RequestParams::CLIENT_ID],
             'grant_type'    => $input[RequestParams::GRANT_TYPE],
             'client_secret' => $input[RequestParams::CLIENT_SECRET],
+            'merchant_id'   => $input[RequestParams::MERCHANT_ID],
             'scope'         => 'tally_read_write',
         ];
 
