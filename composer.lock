@@ -1912,12 +1912,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "2385d5df9154e1516d6ca991c7bd5795aa2d887f"
+                "reference": "cb4c65185b1b1531fccc48cbe2b41764770f3972"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/2385d5df9154e1516d6ca991c7bd5795aa2d887f",
-                "reference": "2385d5df9154e1516d6ca991c7bd5795aa2d887f",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/cb4c65185b1b1531fccc48cbe2b41764770f3972",
+                "reference": "cb4c65185b1b1531fccc48cbe2b41764770f3972",
                 "shasum": ""
             },
             "require": {
@@ -1958,7 +1958,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/native_auth",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2021-06-21T10:15:51+00:00"
+            "time": "2021-06-21T10:53:25+00:00"
         },
         {
             "name": "razorpay/outbox-php",
@@ -6057,6 +6057,7 @@
             ],
             "description": "Provides a list of PHP built-in functions that operate on resources",
             "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
+            "abandoned": true,
             "time": "2015-07-28T20:34:47+00:00"
         },
         {
