@@ -332,13 +332,7 @@ class OAuthTest extends TestCase
             ]
         );
 
-        $this->devClient = factory(Client\Entity::class)->create(
-            [
-                'id'             => '30000000000000',
-                'application_id' => $this->application->id,
-                'redirect_url'   => ['https://www.example.com'],
-                'environment'    => 'dev',
-            ]);
+        $this->createAndSetClientWithEnvironment();
 
         Request::clearResolvedInstances();
 
