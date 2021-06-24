@@ -171,24 +171,35 @@ class Service
             throw new App\Exception\LogicException("user_id not found");
         }
 
-        if (isset($user['merchants']))
+        if (!isset($user['merchants']))
         {
-            foreach ($user['merchants'] as $merchant)
-            {
-                if (isset($merchant[self::ID]) && $merchant[self::ID] === $merchantId)
-                {
-                    if (isset($merchant[self::ROLE]) && $merchant[self::ROLE] === self::OWNER)
-                    {
-                        return $user[self::ID];
-                    }
-
-                    throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
-                }
-            }
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
         }
 
-        // If provided merchantId does not map to any of the merchants for the user, throw invalid merchant/user exception
-        throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
+        $merchant = $this->filterById($user['merchants'], $merchantId);
+
+        if ($merchant === null)
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
+        }
+
+        if (isset($merchant[self::ROLE]) && $merchant[self::ROLE] === self::OWNER)
+        {
+            return $user[self::ID];
+        }
+
+        throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
+    }
+
+    public function filterById(array $list, string $id)
+    {
+        foreach ($list as $item)
+        {
+            if (isset($item[self::ID]) && $item[self::ID] === $id)
+            {
+                return $item;
+            }
+        }
     }
 
     private function verifyTallyClient(string $clientId){
