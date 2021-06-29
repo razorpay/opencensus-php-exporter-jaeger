@@ -3,6 +3,7 @@
 namespace App\Models\Auth;
 
 use App\Constants\RequestParams;
+use App\Exception\BadRequestValidationFailureException;
 use App\Models\Base\JitValidator;
 
 class Validator extends \Razorpay\Spine\Validation\Validator
@@ -23,6 +24,39 @@ class Validator extends \Razorpay\Spine\Validation\Validator
         'code'          => 'required|string',
         'state'         => 'sometimes'
     ];
+
+    public static $tallyAccessTokenRequestRules = [
+        RequestParams::CLIENT_ID     => 'required|alpha_num|size:14',
+        RequestParams::CLIENT_SECRET => 'required|string',
+        RequestParams::MERCHANT_ID   => 'required|alpha_num|size:14',
+        RequestParams::LOGIN_ID      => 'required|email',
+        RequestParams::GRANT_TYPE    => 'required|string|in:tally_client_credentials',
+        RequestParams::PIN           => 'required'
+    ];
+
+    public static $tallyAuthorizeRequestRules = [
+        RequestParams::CLIENT_ID   => 'required|alpha_num|size:14',
+        RequestParams::MERCHANT_ID => 'required|alpha_num|size:14',
+        RequestParams::LOGIN_ID    => 'required|email',
+    ];
+
+    public function validateRequest(array $input, array $rules)
+    {
+        try
+        {
+            (new JitValidator)->rules($rules)
+                ->input($input)
+                ->strict(false)
+                ->validate();
+
+        }catch (\Throwable $e)
+        {
+            // Throw a validation failure instead of server error
+            throw new BadRequestValidationFailureException($e->getMessage());
+        }
+
+    }
+
 
     public function validateAuthorizeRequest(array $input)
     {

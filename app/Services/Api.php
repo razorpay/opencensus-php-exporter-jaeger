@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Error\ErrorCode;
+use App\Exception\BadRequestException;
 use Trace;
 use Requests;
 
@@ -12,6 +14,15 @@ use App\Exception\LogicException;
 
 class Api
 {
+
+    const CLIENT_ID          = 'client_id';
+    const USER_ID            = 'user_id';
+    const MERCHANT_ID        = 'merchant_id';
+    const OTP                = 'otp';
+    const EMAIL              = 'email';
+    const OAUTH_NOTIFY_ROUTE = '/oauth/notify/';
+    const USERS_ROUTE        = '/users_unified';
+
     protected $apiUrl;
 
     protected $secret;
@@ -30,12 +41,12 @@ class Api
         string $merchantId,
         string $type = 'app_authorized')
     {
-        $url = $this->apiUrl . '/oauth/notify/' . $type;
+        $url = $this->apiUrl . self::OAUTH_NOTIFY_ROUTE . $type;
 
         $postPayload = [
-            'client_id'   => $clientId,
-            'user_id'     => $userId,
-            'merchant_id' => $merchantId
+            self::CLIENT_ID => $clientId,
+            self::USER_ID  => $userId,
+            self::MERCHANT_ID => $merchantId
         ];
 
         try
@@ -52,6 +63,49 @@ class Api
 
             Trace::critical(TraceCode::MERCHANT_NOTIFY_FAILED, $tracePayload);
         }
+    }
+
+    public function sendOTPViaEmail(
+        string $clientId,
+        string $userId,
+        string $merchantId,
+        string $otp,
+        string $email,
+        string $type)
+    {
+        $url = $this->apiUrl . self::OAUTH_NOTIFY_ROUTE . $type;
+
+        $postPayload = [
+            self::CLIENT_ID   => $clientId,
+            self::USER_ID     => $userId,
+            self::MERCHANT_ID => $merchantId,
+            self::OTP         => $otp,
+            self::EMAIL       => $email
+        ];
+
+        try
+        {
+            $response = Requests::post($url, [], $postPayload, $this->options);
+
+            $apiResponse = json_decode($response->body, true);
+
+            if ($response->status_code === 200 && isset($apiResponse['error']) === false)
+            {
+                return $apiResponse;
+            }
+        }
+        catch (\Throwable $e)
+        {
+            $tracePayload = [
+                'class'   => get_class($e),
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::critical(TraceCode::MERCHANT_NOTIFY_FAILED, $tracePayload);
+        }
+
+        throw new LogicException('Error when sending OTP via mail.');
     }
 
     public function getMerchantOrgDetails(string $merchantId): array
@@ -76,6 +130,41 @@ class Api
         }
 
         throw new LogicException('Error when fetching org data');
+    }
+
+    public function getUserByEmail(string $emailId): array
+    {
+        $url = $this->apiUrl . self::USERS_ROUTE;
+
+        $payload = [
+            self::EMAIL => $emailId
+        ];
+
+        try
+        {
+            $response = Requests::request($url, [], $payload, Requests::GET, $this->options);
+
+            $apiResponse = json_decode($response->body, true);
+        }
+        catch (\Throwable $e)
+        {
+            $tracePayload = [
+                'class'   => get_class($e),
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::critical(TraceCode::USER_DETAILS_FETCH_FAILED, $tracePayload);
+
+            throw new LogicException('Error when fetching user data');
+        }
+
+        if ($response->status_code === 200 && isset($apiResponse['error']) === false)
+        {
+            return $apiResponse;
+        }
+
+        throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
     }
 
     public function getOrgHostName(string $merchantId): string

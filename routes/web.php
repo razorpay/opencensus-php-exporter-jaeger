@@ -113,3 +113,13 @@ $app->get('/admin/entities/{entityType}/{entityId}', [
     'as'         => 'get_admin_entities',
     'uses'       => 'AdminController@fetchByIdForAdmin'
 ]);
+
+$app->post('/authorize/tally', [
+    'as'   => 'post_native_auth_code',
+    'uses' => 'AuthController@postTallyAuthorize'
+]);
+
+$app->post('/tokens/tally', [
+    'as'   => 'create_native_token',
+    'uses' => 'AuthController@createTallyToken'
+]);

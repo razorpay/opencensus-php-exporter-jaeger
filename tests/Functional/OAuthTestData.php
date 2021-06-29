@@ -242,6 +242,90 @@ return [
         ],
     ],
 
+    'testValidateTallyAuthUser' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/authorize/tally',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'login_id'            => 'test@razorpay.com',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'success' => true,
+            ],
+            'status_code' => 200
+        ]
+    ],
+
+    'testValidateTallyAuthUserInvalidInput' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/authorize/tally',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'login_id'            => 'test@razorpay.com',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Invalid client'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'App\Exception\BadRequestValidationFailureException',
+            'message' => 'Invalid client',
+        ],
+    ],
+
+    'testTallyToken' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/tokens/tally',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'grant_type'          => 'tally_client_credentials',
+                'pin'                 => '0007',
+                'login_id'            => 'test@razorpay.com',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'token_type' => 'Bearer',
+            ],
+            'status_code' => 200
+        ]
+    ],
+
+    'testTallyTokenInvalidInput' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/tokens/tally',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'grant_type'          => 'tally_client_credentials_invalid',
+                'pin'                 => '0007',
+                'login_id'            => 'test@razorpay.com',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Validation failed. The selected grant type is invalid.'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'App\Exception\BadRequestValidationFailureException',
+            'message' => 'Validation failed. The selected grant type is invalid.',
+        ],
+    ],
+
     'testPostAccessTokenWithInvalidGrant' => [
         'request' => [
             'method'  => 'POST',

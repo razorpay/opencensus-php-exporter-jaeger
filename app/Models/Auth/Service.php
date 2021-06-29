@@ -8,6 +8,7 @@ use App\Services;
 use Razorpay\OAuth;
 use Razorpay\OAuth\Client;
 use Razorpay\OAuth\Token\Entity as Token;
+use Razorpay\OAuth\Application\Type as ApplicationType;
 
 use App\Error\ErrorCode;
 use App\Constants\TraceCode;
@@ -17,11 +18,21 @@ use App\Exception\BadRequestValidationFailureException;
 
 class Service
 {
+    const ID                = 'id';
+    const ROLE              = 'role';
+    const OWNER             = 'owner';
+    const TALLY_AUTH_OTP    = 'tally_auth_otp';
+    const OTP               = 'otp';
+
+    protected $raven;
+
     public function __construct()
     {
         $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'));
 
         $this->app = App::getFacadeRoot();
+
+        $this->raven = $this->app['raven'];
     }
 
     /**
@@ -113,6 +124,109 @@ class Service
         return $authCode->getHeaders()['Location'][0];
     }
 
+    public function validateTallyUserAndSendOtp(array $input)
+    {
+        Trace::info(TraceCode::TALLY_AUTHORIZE_REQUEST, [
+            RequestParams::CLIENT_ID    => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : null,
+            RequestParams::MERCHANT_ID  => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : null
+        ]);
+
+        (new Validator)->validateRequest($input, Validator::$tallyAuthorizeRequestRules);
+
+        $this->verifyTallyClient($input[RequestParams::CLIENT_ID]);
+
+        $userId = $this->validateMerchantUser($input[RequestParams::LOGIN_ID], $input[RequestParams::MERCHANT_ID]);
+
+        $ravenContext = $userId . '_' . $input[RequestParams::CLIENT_ID];
+
+        // Call raven to generate OTP
+        $raven = $this->raven->generateOTP($input[RequestParams::LOGIN_ID], $ravenContext);
+
+        if (!isset($raven[self::OTP]))
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_OTP_GENERATION_FAILED);
+        }
+
+        // call api to send the otp via email
+        $mailResponse = $this->getApiService()->sendOTPViaEmail($input[RequestParams::CLIENT_ID], $userId, $input[RequestParams::MERCHANT_ID], $raven[self::OTP],
+            $input[RequestParams::LOGIN_ID], self::TALLY_AUTH_OTP);
+
+        if (isset($mailResponse['success'])  !== true || $mailResponse['success'] !== true)
+        {
+            Trace::critical(TraceCode::TALLY_AUTHORIZE_REQUEST, $mailResponse);
+
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_OTP_GENERATION_FAILED);
+        }
+
+        return ["success" => true];
+    }
+
+    public function validateMerchantUser(string $loginId, string $merchantId)
+    {
+        // Get user details filter by email_id
+        $user = $this->getApiService()->getUserByEmail($loginId);
+
+        if (!isset($user[self::ID]))
+        {
+            throw new App\Exception\LogicException("user_id not found");
+        }
+
+        if (!isset($user['merchants']))
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
+        }
+
+        $merchant = $this->filterById($user['merchants'], $merchantId);
+
+        if ($merchant === null)
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
+        }
+
+        if (isset($merchant[self::ROLE]) && $merchant[self::ROLE] === self::OWNER)
+        {
+            return $user[self::ID];
+        }
+
+        throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
+    }
+
+    public function filterById(array $list, string $id)
+    {
+        foreach ($list as $item)
+        {
+            if (isset($item[self::ID]) && $item[self::ID] === $id)
+            {
+                return $item;
+            }
+        }
+    }
+
+    private function verifyTallyClient(string $clientId){
+        try
+        {
+            // Get application details using client and check that type is native and not public or partner
+            $client = (new Client\Repository)->findOrFailPublic($clientId);
+
+            if ($client->application->getType() == ApplicationType::TALLY)
+            {
+                return;
+            }
+
+        }catch (\Throwable $e) {
+
+            $tracePayload = [
+                'class' => get_class($e),
+                'code' => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::info(TraceCode::TALLY_AUTHORIZE_REQUEST, $tracePayload);
+        }
+
+        throw new BadRequestValidationFailureException('Invalid client');
+    }
+
     public function postAuthCodeAndGenerateAccessToken(array $input)
     {
         (new Validator)->validateRequestAccessTokenMigration($input);
@@ -132,6 +246,45 @@ class Service
         //
 
         $accessTokenData = $this->getAccessTokenInput($code, $input);
+
+        $tokenResponse = $this->generateAccessToken($accessTokenData);
+
+        return $tokenResponse;
+    }
+
+    public function generateTallyAccessToken(array $input)
+    {
+        Trace::info(TraceCode::TALLY_TOKEN_REQUEST, [
+            RequestParams::CLIENT_ID   => isset($input[RequestParams::CLIENT_ID]) ? $input[RequestParams::CLIENT_ID] : null,
+            RequestParams::MERCHANT_ID => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : null,
+            RequestParams::GRANT_TYPE  => isset($input[RequestParams::GRANT_TYPE]) ? $input[RequestParams::GRANT_TYPE] : null
+        ]);
+
+        (new Validator)->validateRequest($input, Validator::$tallyAccessTokenRequestRules);
+
+        $this->verifyTallyClient($input[RequestParams::CLIENT_ID]);
+
+        (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], $input[RequestParams::GRANT_TYPE], $input[RequestParams::CLIENT_SECRET], true);
+
+        $userId = $this->validateMerchantUser($input[RequestParams::LOGIN_ID], $input[RequestParams::MERCHANT_ID]);
+
+        $ravenContext = $userId . '_' . $input[RequestParams::CLIENT_ID];
+
+        // hit raven to verify OTP with body
+        $otpResponse = $this->raven->verifyOTP($input[RequestParams::LOGIN_ID], $ravenContext, $input[RequestParams::PIN]);
+
+        if (isset($otpResponse['success']) !== true || $otpResponse['success'] !== true)
+        {
+            throw new BadRequestValidationFailureException(ErrorCode::BAD_REQUEST_INVALID_OTP);
+        }
+
+        $accessTokenData = [
+            'client_id'     => $input[RequestParams::CLIENT_ID],
+            'grant_type'    => $input[RequestParams::GRANT_TYPE],
+            'client_secret' => $input[RequestParams::CLIENT_SECRET],
+            'merchant_id'   => $input[RequestParams::MERCHANT_ID],
+            'scope'         => 'tally_read_write',
+        ];
 
         $tokenResponse = $this->generateAccessToken($accessTokenData);
 
