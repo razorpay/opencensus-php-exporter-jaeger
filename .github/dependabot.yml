@@ -6,10 +6,3 @@ updates:
     interval: daily
     time: "04:00"
     timezone: Asia/Calcutta
-  ignore:
-  - dependency-name: mockery/mockery
-    versions:
-    - 1.3.3
-  - dependency-name: phpunit/phpunit
-    versions:
-    - 8.5.14
