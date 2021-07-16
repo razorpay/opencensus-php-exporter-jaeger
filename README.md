@@ -21,7 +21,7 @@ Razorpay's Auth Microservice - Powers OAuth and auth.razorpay.com
      - `DB_HOST=api_api_db_1`
      - change `APP_API_URL` accordingly.
 
-- `docker-composer -f docker-composer.dev.yml up -d --build`
+- `docker-compose -f docker-compose.dev.yml up -d --build`
 
 ## Non docker setup
 - open /etc/hosts file and add `127.0.0.1	auth.razorpay.in` in a new line
