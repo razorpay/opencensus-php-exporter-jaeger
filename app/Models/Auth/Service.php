@@ -28,7 +28,7 @@ class Service
 
     public function __construct()
     {
-        $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'));
+        $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository);
 
         $this->app = App::getFacadeRoot();
 
@@ -366,10 +366,9 @@ class Service
         $data = $this->oauthServer->getAccessToken($input);
 
         $response = json_decode($data->getBody(), true);
-
         //send banking accounts via webhook. TODO: send accounts webhook only once. check for previous access token present or not.
 
-        $token = (new OAuth\OAuthServer)->authenticateWithPublicToken($response[Token::PUBLIC_TOKEN]);
+        $token = $this->oauthServer->authenticateWithPublicToken($response[Token::PUBLIC_TOKEN]);
 
         $this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
 

@@ -43,5 +43,10 @@ class TraceCode extends BaseTraceCode
     const MISC_TRACE_CODE                                           = 'MISC_TRACE_CODE';
     const API_REQUEST                                               = 'API_REQUEST';
     const AUTH_TEST_TRACE                                           = 'AUTH_TEST_TRACE';
+
+    // ----- Edge Service ----
+    const CREATE_OAUTH_IDENTIFIER_IN_EDGE                           = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE';
+    const CREATE_CONSUMER_IN_EDGE                                   = 'CREATE_CONSUMER_IN_EDGE';
+    const CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED                    = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED';
 }
 
