@@ -168,6 +168,9 @@ class Api
     public function getOrgHostName(string $merchantId): string
     {
         $orgDetails = $this->getMerchantOrgDetails($merchantId);
+        if (empty($orgDetails['primary_host_name'])) {
+            throw new LogicException('primary_host_name missing merchant org details', $orgDetails);
+        }
 
         $protocolIdentifier = '';
 
