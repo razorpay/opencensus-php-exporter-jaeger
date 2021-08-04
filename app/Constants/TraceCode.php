@@ -11,6 +11,7 @@ class TraceCode extends BaseTraceCode
     const POST_AUTHORIZE_REQUEST                                    = 'POST_AUTHORIZE_REQUEST';
     const GET_TOKENS_REQUEST                                        = 'GET_TOKENS_REQUEST';
     const GET_TOKEN_REQUEST                                         = 'GET_TOKEN_REQUEST';
+    const VALIDATE_PUBLIC_TOKEN_REQUEST                             = 'VALIDATE_PUBLIC_TOKEN_REQUEST';
     const REVOKE_TOKEN_REQUEST                                      = 'REVOKE_TOKEN_REQUEST';
     const CREATE_APPLICATION_REQUEST                                = 'CREATE_APPLICATION_REQUEST';
     const GET_APPLICATION_REQUEST                                   = 'GET_APPLICATION_REQUEST';

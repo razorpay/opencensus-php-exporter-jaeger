@@ -3,6 +3,7 @@
 namespace App\Models\Auth;
 
 use Razorpay\OAuth\Token;
+use Razorpay\OAuth\Token\Type;
 use Razorpay\Trace\Logger as Trace;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 
@@ -41,5 +42,14 @@ class Repository extends Token\Repository
         }
 
         $this->saveOrFail($accessTokenEntity);
+    }
+
+    public function findByPublicTokenIdAndMode(string $publicToken, string $mode)
+    {
+        return $this->newQuery()
+            ->where(Token\Entity::TYPE, Type::ACCESS_TOKEN)
+            ->where(Token\Entity::PUBLIC_TOKEN, $publicToken)
+            ->where(Token\Entity::MODE, $mode)
+            ->first();
     }
 }

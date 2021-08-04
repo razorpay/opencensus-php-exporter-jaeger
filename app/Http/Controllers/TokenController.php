@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Trace;
 use Request;
+
 use Razorpay\OAuth\Token;
-use App\Constants\TraceCode;
 
 use App\Models\Auth;
+use App\Constants\TraceCode;
+use App\Exception\LogicException;
 
 class TokenController extends Controller
 {
@@ -42,6 +44,25 @@ class TokenController extends Controller
         $token = $this->service->getToken($id, $input);
 
         return response()->json($token);
+    }
+
+    public function validatePublicToken(string $id)
+    {
+        Trace::info(TraceCode::VALIDATE_PUBLIC_TOKEN_REQUEST, ["id" => $id]);
+
+        $found = (preg_match("/^rzp_(test|live)_oauth_([a-zA-Z0-9]{14})$/", $id, $matches) === 1);
+        if ($found === false)
+        {
+            throw new LogicException("public token is invalid");
+        }
+
+        $token = (new Auth\Repository)->findByPublicTokenIdAndMode($matches[2], $matches[1]);
+        if ($token === null)
+        {
+            return response()->json(["exist"=> false]);
+        }
+
+        return response()->json(["exist"=> true]);
     }
 
     public function revoke(string $id)
