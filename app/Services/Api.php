@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Constants\Mode;
 use App\Error\ErrorCode;
 use App\Exception\BadRequestException;
 use Trace;
@@ -25,14 +26,11 @@ class Api
 
     protected $apiUrl;
 
-    protected $secret;
-
     public function __construct()
     {
         $this->apiUrl = env('APP_API_URL');
-        $this->secret  = env('APP_API_SECRET');
 
-        $this->options = ['auth' => ['rzp_live', $this->secret]];
+        $this->options = ['auth' => $this->getAuthenticationOption(Mode::LIVE)];
     }
 
     public function notifyMerchant(
@@ -170,6 +168,9 @@ class Api
     public function getOrgHostName(string $merchantId): string
     {
         $orgDetails = $this->getMerchantOrgDetails($merchantId);
+        if (empty($orgDetails['primary_host_name'])) {
+            throw new LogicException('primary_host_name missing merchant org details', $orgDetails);
+        }
 
         $protocolIdentifier = '';
 
@@ -229,11 +230,7 @@ class Api
 
     public function triggerBankingAccountsWebhook(string $merchantId, string $mode)
     {
-        if($mode === 'test')
-        {
-            $this->options = ['auth' => ['rzp_test', $this->secret]];
-        }
-
+        $options = ['auth' => $this->getAuthenticationOption($mode)];
         $url = $this->apiUrl . '/merchant/' . $merchantId . '/banking_accounts/';
 
         Trace::info(TraceCode::BANKING_ACCOUNTS_WEBHOOK_REQUEST, [
@@ -243,8 +240,7 @@ class Api
 
         try
         {
-            $response = Requests::post($url, [], [], $this->options);
-
+            $response = Requests::post($url, [], [], $options);
             return json_decode($response->body, true);
         }
         catch (\Throwable $e)
@@ -259,5 +255,25 @@ class Api
         }
 
         throw new LogicException('Error when triggering merchant banking webhooks');
+    }
+
+    /**
+     * Return authentication option that can be used with Requests
+     *
+     * @param string $mode
+     *
+     * @return array - ["username", "password"]
+     * @throws \Exception
+     */
+    private function getAuthenticationOption(string $mode)
+    {
+        switch ($mode) {
+            case Mode::LIVE:
+                return [env("APP_API_LIVE_USERNAME"), env("APP_API_LIVE_PASSWORD")];
+            case Mode::TEST:
+                return [env("APP_API_TEST_USERNAME"), env("APP_API_TEST_PASSWORD")];
+            default:
+                throw new \Exception("invalid mode supplied: " . $mode);
+        }
     }
 }
