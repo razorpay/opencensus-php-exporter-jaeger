@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Services\Mock;
+use App\Exception\Handler;
+use App\Services\EdgeService;
+
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -18,6 +22,23 @@ class AppServiceProvider extends ServiceProvider
                 $app['Illuminate\Contracts\View\Factory'],
                 $app['Illuminate\Routing\Redirector']
             );
+        });
+
+        $this->app->bind('exception.handler', function()
+        {
+            return new Handler();
+        });
+
+        $this->app->singleton('edge', function($app)
+        {
+            $edgeMock = env('EDGE_MOCK', false);
+
+            if ($edgeMock === true)
+            {
+                return new Mock\EdgeService($app);
+            }
+
+            return new EdgeService($app);
         });
 
         $this->app->singleton('raven', function ($app) {

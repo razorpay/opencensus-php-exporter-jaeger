@@ -78,6 +78,12 @@ $app->get('/tokens/{id}', [
     'uses'       => 'TokenController@get'
 ]);
 
+$app->get('/public_tokens/{id}/validate', [
+    'middleware' => 'auth.api',
+    'as'         => 'validate_public_token',
+    'uses'       => 'TokenController@validatePublicToken'
+]);
+
 $app->get('/tokens', [
     'middleware' => 'auth.api',
     'as'         => 'get_multiple_tokens',

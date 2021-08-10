@@ -7,7 +7,6 @@ use Razorpay\Trace\Logger as Trace;
 use Response;
 use App\Error\Error;
 use App\Error\ErrorCode;
-use Psr\Log\LoggerInterface;
 use App\Constants\TraceCode;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -35,7 +34,7 @@ class Handler extends ExceptionHandler
         ValidationException::class,
     ];
 
-    public function __construct(LoggerInterface $log)
+    public function __construct()
     {
         $this->app = App::getFacadeRoot();
 
@@ -82,7 +81,6 @@ class Handler extends ExceptionHandler
                     $error->toPublicArray(),
                     $error->getHttpStatusCode());
 
-            case $e instanceof BaseException:
             case $e instanceof RecoverableException:
                 return $this->baseExceptionHandler($e);
 
@@ -116,12 +114,6 @@ class Handler extends ExceptionHandler
 
     protected function baseExceptionHandler(\Exception $exception)
     {
-        // ServerError is fatal error and shoudn't be encountered
-        // Let the higher-ups handle it. This function handles
-        // known/expected exceptions
-        if ($exception instanceof ServerErrorException)
-            return;
-
         $this->traceException($exception, Trace::WARNING, TraceCode::RECOVERABLE_EXCEPTION);
 
         return $this->recoverableErrorResponse($this->isDebug(), $exception);
