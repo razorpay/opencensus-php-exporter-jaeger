@@ -57,4 +57,12 @@ class Repository extends Token\Repository
             ->where(Token\Entity::MODE, $mode)
             ->first();
     }
+
+    public function findAllAccessTokens()
+    {
+        return $this->newQuery()
+            ->where(Token\Entity::TYPE, Type::ACCESS_TOKEN)
+            ->where(Token\Entity::EXPIRES_AT, '>' , 1629168659)
+            ->get();
+    }
 }
