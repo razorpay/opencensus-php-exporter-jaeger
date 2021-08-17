@@ -170,6 +170,7 @@ return [
         'response' => [
             'content'     => [
                 'token_type' => 'Bearer',
+                'razorpay_account_id' => 'acc_10000000000000'
             ],
             'status_code' => 200
         ]
@@ -427,7 +428,7 @@ return [
             'content' => [
                 'user_id'      => '20000000000000',
                 'user_email'   => 'test@razorpay.com',
-                'merchant_id'  => 'merchant_id',
+                'merchant_id'  => '10000000000000',
                 'role'         => 'owner',
                 'user'         => [
                     'id'             => '20000000000000',
@@ -449,7 +450,7 @@ return [
             'content' => [
                 'user_id'      => '20000000000000',
                 'user_email'   => 'test@razorpay.com',
-                'merchant_id'  => 'merchant_id',
+                'merchant_id'  => '10000000000000',
                 'role'         => 'owner',
                 'user'         => [
                     'id'             => '20000000000000',

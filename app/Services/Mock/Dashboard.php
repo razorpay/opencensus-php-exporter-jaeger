@@ -48,7 +48,7 @@ class Dashboard
         $data = [
             'user_id'      => '20000000000000',
             'user_email'   => 'test@razorpay.com',
-            'merchant_id'  => 'merchant_id',
+            'merchant_id'  => '10000000000000',
             'role'         => 'owner',
             'user'         => [
                 'id'             => '20000000000000',
@@ -84,7 +84,7 @@ class Dashboard
         $data = [
             'user_id'      => '20000000000000',
             'user_email'   => 'test@razorpay.com',
-            'merchant_id'  => 'merchant_id',
+            'merchant_id'  => '10000000000000',
             'role'         => 'owner',
             'user'         => [
                 'id'             => '20000000000000',
@@ -110,7 +110,7 @@ class Dashboard
         $data = [
             'user_id'      => '20000000000000',
             'user_email'   => 'test@razorpay.com',
-            'merchant_id'  => 'merchant_id',
+            'merchant_id'  => '10000000000000',
             'role'         => 'support',
             'user'         => [
                 'id'             => '20000000000000',
