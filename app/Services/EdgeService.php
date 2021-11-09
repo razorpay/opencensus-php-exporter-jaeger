@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Constants\RequestParams;
 use Trace;
+use Request;
 use Requests;
 
 use App\Constants\Metric;
@@ -26,7 +28,7 @@ class EdgeService
 
         $secret  = env('EDGE_SECRET');
 
-        $this->headers = ['apikey' => $secret, 'Content-Type' => 'application/json'];
+        $this->headers = ['apikey' => $secret, 'Content-Type' => 'application/json', RequestParams::DEV_SERVE_USER => Request::header(RequestParams::DEV_SERVE_USER)];
 
         $this->defaultOptions = ['timeout' => 2];
     }

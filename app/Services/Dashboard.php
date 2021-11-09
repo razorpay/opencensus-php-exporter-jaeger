@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use Request;
 use Requests;
+use App\Constants\RequestParams;
 
 use App\Models\Auth;
 use App\Error\ErrorCode;
@@ -21,7 +23,9 @@ class Dashboard
 
         $options = ['auth' => ['rzp_auth', $secret]];
 
-        $response = Requests::get($url, [], $options);
+        $headers = [RequestParams::DEV_SERVE_USER => Request::header(RequestParams::DEV_SERVE_USER)];
+
+        $response = Requests::get($url, $headers, $options);
 
         // TODO: Handle failures
 

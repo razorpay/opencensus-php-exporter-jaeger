@@ -17,4 +17,8 @@ class RequestParams
     const PIN                       = 'pin';
     const NATIVE_AUTHORIZATION_CODE = 'native_authorization_code';
     const PARTNER_MERCHANT_ID       = 'partner_merchant_id';
+
+    // The rzpctx-dev-serve-user header is passed to upstream service for routing to
+    // devserve environment if applicable.
+    const DEV_SERVE_USER            = 'rzpctx-dev-serve-user';
 }

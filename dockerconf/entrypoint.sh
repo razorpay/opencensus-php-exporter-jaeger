@@ -20,12 +20,14 @@ $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "dockerconf/a
 echo "Copying nginx conf"
 cp dockerconf/auth.nginx.conf /etc/nginx/conf.d/auth.conf
 
+devserve="${DEV_SERVE:-false}"
+
 # Env files
 if [[ "${APP_MODE}" == "dev" ]]; then
   cp environment/.env.docker environment/.env.testing && \
   cp environment/env.sample.php environment/env.php && \
   sed -i 's/dev/testing/g' ./environment/env.php
-else
+elif [ ! "$devserve" == "true" ]; then
   # casting alohomora to unlock the secrets
   $ALOHOMORA_BIN cast --region ap-south-1 --env $APP_MODE --app auth "environment/env.php.j2" "environment/.env.vault.j2"
 fi

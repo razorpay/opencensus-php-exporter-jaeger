@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Error\ErrorCode;
+use App\Constants\RequestParams;
+
 use Trace;
+use Request;
 use Requests;
 use App\Constants\TraceCode;
 use App\Exception\BadRequestException;
@@ -17,6 +20,7 @@ class Raven
     protected $ravenUrl;
 
     protected $secret;
+    protected $defaultHeaders;
 
     public function __construct()
     {
@@ -25,6 +29,8 @@ class Raven
         $this->secret = env('APP_RAVEN_SECRET');
 
         $this->options = ['auth' => ['rzp', $this->secret]];
+
+        $this->defaultHeaders = [RequestParams::DEV_SERVE_USER => Request::header(RequestParams::DEV_SERVE_USER)];
     }
 
     /**
@@ -47,7 +53,7 @@ class Raven
 
         try {
 
-            $response = Requests::post($url, [], $postPayload, $this->options);
+            $response = Requests::post($url, $this->defaultHeaders, $postPayload, $this->options);
 
             $ravenResponse = json_decode($response->body, true);
 
@@ -89,7 +95,7 @@ class Raven
         ];
 
         try {
-            $response = Requests::post($url, [], $postPayload, $this->options);
+            $response = Requests::post($url, $this->defaultHeaders, $postPayload, $this->options);
 
             $ravenResponse = json_decode($response->body, true);
 

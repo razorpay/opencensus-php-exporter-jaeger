@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use Request;
 use App\Constants\Mode;
 use App\Error\ErrorCode;
+use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
 use Trace;
 use Requests;
@@ -26,10 +28,13 @@ class Api
 
     protected $apiUrl;
 
+    protected $defaultHeaders = [];
+
     public function __construct()
     {
         $this->apiUrl = env('APP_API_URL');
 
+        $this->defaultHeaders = [RequestParams::DEV_SERVE_USER => Request::header(RequestParams::DEV_SERVE_USER)];
         $this->options = ['auth' => $this->getAuthenticationOption(Mode::LIVE)];
     }
 
@@ -49,7 +54,7 @@ class Api
 
         try
         {
-            Requests::post($url, [], $postPayload, $this->options);
+            Requests::post($url, $this->defaultHeaders, $postPayload, $this->options);
         }
         catch (\Throwable $e)
         {
@@ -83,7 +88,7 @@ class Api
 
         try
         {
-            $response = Requests::post($url, [], $postPayload, $this->options);
+            $response = Requests::post($url, $this->defaultHeaders, $postPayload, $this->options);
 
             $apiResponse = json_decode($response->body, true);
 
@@ -112,7 +117,7 @@ class Api
 
         try
         {
-            $response = Requests::get($url, [], $this->options);
+            $response = Requests::get($url, $this->defaultHeaders, $this->options);
 
             return json_decode($response->body, true);
         }
@@ -140,7 +145,7 @@ class Api
 
         try
         {
-            $response = Requests::request($url, [], $payload, Requests::GET, $this->options);
+            $response = Requests::request($url, $this->defaultHeaders, $payload, Requests::GET, $this->options);
 
             $apiResponse = json_decode($response->body, true);
         }
@@ -194,7 +199,7 @@ class Api
 
         try
         {
-            Requests::post($url, [], $postPayload, $this->options);
+            Requests::post($url, $this->defaultHeaders, $postPayload, $this->options);
         }
         catch (\Throwable $e)
         {
@@ -214,7 +219,7 @@ class Api
 
         try
         {
-            Requests::delete($url, [], $this->options);
+            Requests::delete($url, $this->defaultHeaders, $this->options);
         }
         catch (\Throwable $e)
         {
@@ -240,7 +245,8 @@ class Api
 
         try
         {
-            $response = Requests::post($url, [], [], $options);
+            $response = Requests::post($url, $this->defaultHeaders, [], $options);
+
             return json_decode($response->body, true);
         }
         catch (\Throwable $e)
