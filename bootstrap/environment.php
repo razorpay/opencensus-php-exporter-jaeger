@@ -9,7 +9,6 @@
 use Dotenv\Dotenv;
 
 $envDir = __DIR__.'/../environment';
-const ENVFILE = __DIR__ . '/../environment/env.php';
 
 //
 // By default we assume environment is prod.
@@ -23,9 +22,9 @@ if (env('APP_ENV') === 'testing')
 {
     $env = 'testing';
 }
-else if (file_exists(ENVFILE))
+else if (file_exists(__DIR__ . '/../environment/env.php'))
 {
-    $env = require ENVFILE;
+    $env = require __DIR__ . '/../environment/env.php';
 }
 
 putenv("APP_ENV=$env");
