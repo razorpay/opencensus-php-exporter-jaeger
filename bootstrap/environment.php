@@ -8,6 +8,7 @@
  */
 use Dotenv\Dotenv;
 
+$envDir = __DIR__.'/../environment';
 const FILE = __DIR__.'/../environment/env.php';
 
 //
