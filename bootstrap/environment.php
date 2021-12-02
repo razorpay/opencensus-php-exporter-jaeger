@@ -22,9 +22,9 @@ if (env('APP_ENV') === 'testing')
 {
     $env = 'testing';
 }
-else if (file_exists($file = __DIR__ . '/../environment/env.php'))
+else if (file_exists(__DIR__ . '/../environment/env.php'))
 {
-    $env = require $file;
+    $env = require __DIR__ . '/../environment/env.php';
 }
 
 putenv("APP_ENV=$env");
