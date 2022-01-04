@@ -15,7 +15,7 @@
         "razorpay/trace": "^3.0.1",
         "laravel/lumen-framework": "^6.0",
         "razorpay/spine": "^1.0.1",
-        "razorpay/oauth": "^2.1.4",
+        "razorpay/oauth": "dev-sign-upgrade",
         "razorpay/outbox-php": "^0.1.4",
         "laravel/helpers": "^1.4"
     },
