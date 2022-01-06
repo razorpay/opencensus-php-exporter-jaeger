@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f9cdeb4cc7a04cf0a32fa908e255f979",
+    "content-hash": "e50545ba4b04b1cb99f8df85e9fd0351",
     "packages": [
         {
             "name": "datadog/php-datadogstatsd",
@@ -1907,16 +1907,16 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "2.1.4",
+            "version": "dev-sign-upgrade",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "3a8dd2a5a11c3a133745440c6af8a7d4b82439d4"
+                "reference": "7c34966ef6f6ad3a65380f34836744b86dce963e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/3a8dd2a5a11c3a133745440c6af8a7d4b82439d4",
-                "reference": "3a8dd2a5a11c3a133745440c6af8a7d4b82439d4",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/7c34966ef6f6ad3a65380f34836744b86dce963e",
+                "reference": "7c34966ef6f6ad3a65380f34836744b86dce963e",
                 "shasum": ""
             },
             "require": {
@@ -1954,10 +1954,10 @@
                 "service"
             ],
             "support": {
-                "source": "https://github.com/razorpay/oauth/tree/2.1.4",
+                "source": "https://github.com/razorpay/oauth/tree/sign-upgrade",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2021-08-17T09:13:12+00:00"
+            "time": "2022-01-05T13:39:55+00:00"
         },
         {
             "name": "razorpay/outbox-php",
@@ -1999,7 +1999,7 @@
                 "source": "https://github.com/razorpay/outbox-php/tree/0.1.4",
                 "issues": "https://github.com/razorpay/outbox-php/issues"
             },
-            "time": "2021-08-03T23:37:55+00:00"
+            "time": "2021-08-04T00:23:31+00:00"
         },
         {
             "name": "razorpay/spine",
@@ -2254,6 +2254,7 @@
                     "type": "tidelift"
                 }
             ],
+            "abandoned": "symfony/mailer",
             "time": "2021-03-09T12:30:35+00:00"
         },
         {
@@ -6204,12 +6205,14 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "razorpay/oauth": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.6.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "1.1.0"
 }
