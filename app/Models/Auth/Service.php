@@ -370,7 +370,7 @@ class Service
 
         $token = $this->oauthServer->authenticateWithPublicToken($response[Token::PUBLIC_TOKEN]);
 
-        $this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
+        //$this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
 
         return $response;
     }
