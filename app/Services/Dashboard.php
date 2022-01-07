@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use Request;
-use Requests;
+use WpOrg\Requests\Requests;
 use App\Constants\RequestParams;
 
 use App\Models\Auth;

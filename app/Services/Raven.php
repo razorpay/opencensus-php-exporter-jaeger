@@ -7,7 +7,7 @@ use App\Constants\RequestParams;
 
 use Trace;
 use Request;
-use Requests;
+use WpOrg\Requests\Requests;
 use App\Constants\TraceCode;
 use App\Exception\BadRequestException;
 

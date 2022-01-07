@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Constants\RequestParams;
 use Trace;
 use Request;
-use Requests;
+use WpOrg\Requests\Requests;
 
 use App\Constants\Metric;
 use App\Constants\TraceCode;

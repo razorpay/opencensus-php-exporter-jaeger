@@ -8,7 +8,7 @@ use App\Error\ErrorCode;
 use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
 use Trace;
-use Requests;
+use WpOrg\Requests\Requests;
 
 use Illuminate\Support\Str;
 
@@ -117,7 +117,7 @@ class Api
 
         try
         {
-            $response = Requests::get($url, $this->defaultHeaders, $this->options);
+            $response = \WpOrg\Requests\Requests::get($url, $this->defaultHeaders, $this->options);
 
             return json_decode($response->body, true);
         }
