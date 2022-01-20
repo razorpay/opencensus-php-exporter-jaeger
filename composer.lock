@@ -2027,12 +2027,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "8a3c5ddde47b043bd5a9f5e83a95a0a20e772c42"
+                "reference": "583f40384aea9c6c61a7396e5f1b84768c482260"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/8a3c5ddde47b043bd5a9f5e83a95a0a20e772c42",
-                "reference": "8a3c5ddde47b043bd5a9f5e83a95a0a20e772c42",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/583f40384aea9c6c61a7396e5f1b84768c482260",
+                "reference": "583f40384aea9c6c61a7396e5f1b84768c482260",
                 "shasum": ""
             },
             "require": {
@@ -2073,7 +2073,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/sign-upgrade",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2022-01-20T06:01:51+00:00"
+            "time": "2022-01-20T06:31:15+00:00"
         },
         {
             "name": "razorpay/outbox-php",
