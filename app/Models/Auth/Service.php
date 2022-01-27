@@ -28,7 +28,8 @@ class Service
 
     public function __construct()
     {
-        $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository);
+        $algo = OAuth\SignAlgoConstant::ES256;
+        $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository, $algo);
 
         $this->app = App::getFacadeRoot();
 
