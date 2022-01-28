@@ -46,21 +46,21 @@ class Dashboard
     protected function correctResponse()
     {
         $data = [
-            'user_id'      => 'IgRX9uJvN7o5pd',
+            'user_id'      => '20000000000000',
             'user_email'   => 'test@razorpay.com',
-            'merchant_id'  => 'IgRXA46QdbqUGE',
+            'merchant_id'  => '10000000000000',
             'role'         => 'owner',
             'user'         => [
-                'id'             => 'IgRX9uJvN7o5pd',
-                'name'           => 'SDeepak',
-                'email'          => 'testauth@razorpay.com',
-                'contact_mobile' => '8907650210',
+                'id'             => '20000000000000',
+                'name'           => 'fdfd',
+                'email'          => 'fdsfsd@dfsd.dsfd',
+                'contact_mobile' => '9999999999',
                 'created_at'     => '1497678977',
                 'updated_at'     => '1497678977',
-                'merchant_id'    => 'IgRXA46QdbqUGE',
+                'merchant_id'    => '10000000000000',
                 'confirmed'      => true
             ],
-            'query_params' => 'client_id=IgRy0lfqoxevHt&amp;redirect_uri=http%3A%2F%2Flocalhost&amp;response_type=code&amp;scope=read_only'
+            'query_params' => 'client_id=30000000000000&amp;redirect_uri=http%3A%2F%2Flocalhost&amp;response_type=code&amp;scope=read_only'
         ];
 
         return [

@@ -385,14 +385,14 @@ class Service
 
     protected function getDashboardService()
     {
-        //$dashboardMock = env('APP_DASHBOARD_MOCK', false);
-        //
-        //if ($dashboardMock === true)
-        //{
+        $dashboardMock = env('APP_DASHBOARD_MOCK', false);
+
+        if ($dashboardMock === true)
+        {
             return new Services\Mock\Dashboard($this->app);
-        //}
-        //
-        //return new Services\Dashboard($this->app);
+        }
+
+        return new Services\Dashboard($this->app);
     }
 
     public function getApiService()
