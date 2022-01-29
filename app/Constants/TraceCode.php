@@ -50,5 +50,9 @@ class TraceCode extends BaseTraceCode
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE                           = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE';
     const CREATE_CONSUMER_IN_EDGE                                   = 'CREATE_CONSUMER_IN_EDGE';
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED                    = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED';
+
+    // ----- Razorx -----
+    const RAZORX_REQUEST_FAILED                                     = 'RAZORX_REQUEST_FAILED';
+    const RAZORX_SERVICE_RETRY                                      = 'RAZORX_SERVICE_RETRY';
 }
 

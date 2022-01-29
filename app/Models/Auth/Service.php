@@ -6,14 +6,13 @@ use App;
 use Trace;
 use App\Services;
 use Razorpay\OAuth;
-use Razorpay\OAuth\Client;
-use Razorpay\OAuth\Token\Entity as Token;
-use Razorpay\OAuth\Application\Type as ApplicationType;
-
 use App\Error\ErrorCode;
+use Razorpay\OAuth\Client;
 use App\Constants\TraceCode;
 use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
+use Razorpay\OAuth\Token\Entity as Token;
+use Razorpay\OAuth\Application\Type as ApplicationType;
 use App\Exception\BadRequestValidationFailureException;
 
 class Service
@@ -23,12 +22,23 @@ class Service
     const OWNER             = 'owner';
     const TALLY_AUTH_OTP    = 'tally_auth_otp';
     const OTP               = 'otp';
+    const LIVE               = 'live';
+    const TEST               = 'test';
 
     protected $raven;
 
     public function __construct()
     {
-        $algo = OAuth\SignAlgoConstant::ES256;
+        $algo = '';
+        if(self::isRazorxExperimentEnabled())
+        {
+           $algo = OAuth\SignAlgoConstant::ES256;
+           }
+        else
+        {
+            $algo = OAuth\SignAlgoConstant::RS256;
+        }
+
         $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository, $algo);
 
         $this->app = App::getFacadeRoot();
@@ -466,5 +476,23 @@ class Service
         $partnerId = $client->getMerchantId();
 
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId);
+    }
+
+    /**
+     * @param string $mode
+     *
+     * @return bool
+     */
+    private static function isRazorxExperimentEnabled(string $mode=self::LIVE)
+    {
+        $razorxClient = new Services\RazorX\RazorXClient();
+
+        $status = $razorxClient->getTreatment(
+             'unknown',
+             Services\RazorX\RazorXExperiments::JWT_SIGN_ALGO,
+             $mode
+        );
+
+        return (strtolower($status) === 'on');
     }
 }
