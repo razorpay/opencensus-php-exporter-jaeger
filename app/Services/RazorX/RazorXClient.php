@@ -2,10 +2,10 @@
 
 namespace App\Services\RazorX;
 
+use Trace;
 use WpOrg\Requests\Requests;
 use App\Constants\TraceCode;
 use WpOrg\Requests\Exception;
-use Razorpay\Trace\Logger as Trace;
 use function env;
 
 class RazorXClient
@@ -47,9 +47,11 @@ class RazorXClient
         $this->key            = $this->config['username'];
         $this->secret         = $this->config['secret'];
         $this->requestTimeout = $this->config['request_timeout'];
+        Trace::info(TraceCode::API_REQUEST, $this->config);
+        Trace::info(TraceCode::API_REQUEST,[env('APP_ENV')]);
     }
 
-    private function getConfig()
+    private function getConfig(): array
     {
         return [
             'mock'            => env('RAZORX_MOCK', false),
@@ -69,7 +71,6 @@ class RazorXClient
             self::MODE            => $mode,
             self::RETRY_COUNT_KEY => $retryCount,
         ];
-
         return $this->sendRequest(self::EVALUATE_URI, Requests::GET, $data);
     }
 

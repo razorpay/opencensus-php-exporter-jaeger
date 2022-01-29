@@ -484,10 +484,12 @@ class Service
         $razorxClient = $this->app['razorx'];
 
         $status = $razorxClient->getTreatment(
-             'unknown',
+             rand(1,10000),
              Services\RazorX\RazorXExperiments::JWT_SIGN_ALGO,
              $mode
         );
+
+        Trace::info(TraceCode::API_REQUEST, [$status]);
 
         return (strtolower($status) === 'on');
     }
