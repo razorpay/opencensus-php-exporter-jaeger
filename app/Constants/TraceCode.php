@@ -54,5 +54,7 @@ class TraceCode extends BaseTraceCode
     // ----- Razorx -----
     const RAZORX_REQUEST_FAILED                                     = 'RAZORX_REQUEST_FAILED';
     const RAZORX_SERVICE_RETRY                                      = 'RAZORX_SERVICE_RETRY';
+
+    const SIGN_ALGO_USED                                            = 'SIGN_ALGO_USED';
 }
 

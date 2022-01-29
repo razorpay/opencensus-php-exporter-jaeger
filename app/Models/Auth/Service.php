@@ -26,14 +26,16 @@ class Service
     const TEST               = 'test';
 
     protected $raven;
+    private $signAlgo;
 
     public function __construct()
     {
         $this->app = App::getFacadeRoot();
 
-        $algo = $this->isRazorxExperimentEnabled() ? OAuth\SignAlgoConstant::ES256 : OAuth\SignAlgoConstant::RS256;
+        $this->signAlgo =
+            $this->isRazorxExperimentEnabled() ? OAuth\SignAlgoConstant::ES256 : OAuth\SignAlgoConstant::RS256;
 
-        $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository, $algo);
+        $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository, $this->signAlgo);
 
         $this->raven = $this->app['raven'];
     }
@@ -366,6 +368,8 @@ class Service
 
     public function generateAccessToken(array $input)
     {
+        Trace::info(TraceCode::SIGN_ALGO_USED, [$this->signAlgo, $input]);
+
         $data = $this->oauthServer->getAccessToken($input);
 
         $response = json_decode($data->getBody(), true);
@@ -373,7 +377,7 @@ class Service
 
         $token = $this->oauthServer->authenticateWithPublicToken($response[Token::PUBLIC_TOKEN]);
 
-        //$this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
+        $this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
 
         return $response;
     }
