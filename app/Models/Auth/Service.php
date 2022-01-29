@@ -29,11 +29,11 @@ class Service
 
     public function __construct()
     {
+        $this->app = App::getFacadeRoot();
+
         $algo = $this->isRazorxExperimentEnabled() ? OAuth\SignAlgoConstant::ES256 : OAuth\SignAlgoConstant::RS256;
 
         $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository, $algo);
-
-        $this->app = App::getFacadeRoot();
 
         $this->raven = $this->app['raven'];
     }
