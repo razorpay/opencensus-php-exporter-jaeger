@@ -90,10 +90,7 @@ class RazorXClient
         return $this->makeRequestAndGetResponse($request, $retryCount, $retryCount);
     }
 
-    protected function getRequestParams(
-        string $url,
-        string $method,
-        array  $data = []): array
+    protected function getRequestParams(string $url, string $method, array  $data = []): array
     {
         $url = $this->baseUrl . $url;
 
@@ -119,7 +116,7 @@ class RazorXClient
         ];
     }
 
-    protected function makeRequestAndGetResponse(array $request, int $retryOriginalCount, int $retryCount)
+    protected function makeRequestAndGetResponse(array $request, int $retryOriginalCount, int $retryCount): string
     {
         try
         {
@@ -162,7 +159,7 @@ class RazorXClient
         }
     }
 
-    protected function parseAndReturnResponse($res, $req = null)
+    protected function parseAndReturnResponse($res, $req = null) : string
     {
         $code = $res->status_code;
 
@@ -193,7 +190,7 @@ class RazorXClient
      *
      * @return boolean              true/false
      */
-    protected function checkRequestTimeout(Exception\Http $e)
+    protected function checkRequestTimeout(Exception\Http $e): bool
     {
         if ($e->getType() === 'curlerror')
         {

@@ -29,15 +29,7 @@ class Service
 
     public function __construct()
     {
-        $algo = '';
-        if(self::isRazorxExperimentEnabled())
-        {
-           $algo = OAuth\SignAlgoConstant::ES256;
-           }
-        else
-        {
-            $algo = OAuth\SignAlgoConstant::RS256;
-        }
+        $algo = $this->isRazorxExperimentEnabled() ? OAuth\SignAlgoConstant::ES256 : OAuth\SignAlgoConstant::RS256;
 
         $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository, $algo);
 
@@ -483,9 +475,9 @@ class Service
      *
      * @return bool
      */
-    private static function isRazorxExperimentEnabled(string $mode=self::LIVE)
+    private function isRazorxExperimentEnabled(string $mode=self::LIVE)
     {
-        $razorxClient = new Services\RazorX\RazorXClient();
+        $razorxClient = $this->app['razorx'];
 
         $status = $razorxClient->getTreatment(
              'unknown',

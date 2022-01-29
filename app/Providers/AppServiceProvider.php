@@ -6,6 +6,7 @@ use App\Services\Mock;
 use App\Exception\Handler;
 use App\Services\EdgeService;
 
+use App\Services\RazorX\RazorXClient;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -50,6 +51,17 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return new \App\Services\Raven();
+        });
+
+        $this->app->singleton('razorx', function ($app) {
+            $razorxMock = env('RAZORX_MOCK', false);
+
+            if ($razorxMock === true)
+            {
+                return new Mock\RazorXClient();
+            }
+
+            return new RazorXClient();
         });
 
         $this->registerValidatorResolver();
