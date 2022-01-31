@@ -129,3 +129,8 @@ $app->post('/tokens/tally', [
     'as'   => 'create_native_token',
     'uses' => 'AuthController@createTallyToken'
 ]);
+
+$app->get('/authorize-multi-token', [
+    'as'   => 'get_auth_code_multi_token',
+    'uses' => 'AuthController@getAuthorizeMultiToken'
+]);
