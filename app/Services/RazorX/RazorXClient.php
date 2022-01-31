@@ -48,7 +48,6 @@ class RazorXClient
         $this->secret         = $this->config['secret'];
         $this->requestTimeout = $this->config['request_timeout'];
         Trace::info(TraceCode::API_REQUEST, $this->config);
-        Trace::info(TraceCode::API_REQUEST,[env('APP_ENV')]);
     }
 
     private function getConfig(): array
@@ -56,7 +55,7 @@ class RazorXClient
         return [
             'mock'            => env('RAZORX_MOCK', false),
             'url'             => env('RAZORX_URL'),
-            'username'        => 'rzp_auth',
+            'username'        => 'rzp_auth_service',
             'secret'          => env('RAZORX_SECRET'),
             'request_timeout' => env('RAZORX_REQUEST_TIMEOUT', 0.1),
         ];
