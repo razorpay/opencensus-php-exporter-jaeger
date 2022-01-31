@@ -153,6 +153,17 @@ class AuthController extends Controller
         return response()->redirectTo($authCode);
     }
 
+    public function deleteAuthorizeMultiToken()
+    {
+        $input = Request::all();
+
+        $input['permission'] = false;
+
+        $authCode = $this->service()->postAuthCodeMultiToken($input);
+
+        return response()->redirectTo($authCode);
+    }
+
     protected function renderAuthorizeError(\Throwable $e)
     {
         $message = 'A server error occurred while serving this request.';

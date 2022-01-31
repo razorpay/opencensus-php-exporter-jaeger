@@ -139,3 +139,8 @@ $app->post('/authorize-multi-token', [
     'as'   => 'post_auth_code_multi_token',
     'uses' => 'AuthController@postAuthorizeMultiToken'
 ]);
+
+$app->delete('/authorize-multi-token', [
+    'as'   => 'delete_auth_code_multi_token',
+    'uses' => 'AuthController@deleteAuthorizeMultiToken'
+]);

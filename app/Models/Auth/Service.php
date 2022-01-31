@@ -489,17 +489,21 @@ class Service
 
         parse_str($queryParams, $queryParamsArray);
 
-        $liveAuthCode = $this->fetchAuthCode($queryParamsArray, $data);
+        $liveAuthCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
 
-        $testAuthCode = $this->fetchAuthCode($queryParamsArray, $data);
+        $this->validateLocationheader($liveAuthCode);
 
-        $clientId = $queryParamsArray[Token::CLIENT_ID];
+        $testAuthCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
 
-        $merchantId = $data[Token::MERCHANT_ID];
+        $this->validateLocationheader($testAuthCode);
 
         // TODO: Enqueue this request after checking response times
         if ($data['authorize'] === true)
         {
+            $clientId = $queryParamsArray[Token::CLIENT_ID];
+
+            $merchantId = $data[Token::MERCHANT_ID];
+
             $this->notifyMerchantApplicationAuthorized(
                 $clientId,
                 $data[Token::USER_ID],
@@ -508,25 +512,35 @@ class Service
             $this->mapMerchantToApplication($clientId, $merchantId);
         }
 
-        $queryData = [
-            'live_code' => $liveAuthCode,
-            'test_code' => $testAuthCode
-        ];
-
-        return $this->resolveRedirectURL($queryParamsArray[RequestParams::REDIRECT_URI], $queryData);
+        return $this->resolveRedirectURLFromAuthCodes($queryParamsArray[RequestParams::REDIRECT_URI], $liveAuthCode, $testAuthCode);
     }
 
-    private function fetchAuthCode($queryParamsArray, $data)
+    private function resolveRedirectURLFromAuthCodes($redirectURL, $liveAuthCode, $testAuthCode)
     {
-        $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
+        $queryParams = $this->getQueryParams($liveAuthCode);
 
-        $this->validateLocationheader($authCode);
+        if (array_key_exists('code', $queryParams) === false)
+        {
+            return $liveAuthCode->getHeaders()['Location'][0];
+        }
 
-        return $this->extractAuthCode($authCode);
+        return $redirectURL . '?' . http_build_query(
+            [
+                'live_code' => $queryParams['code'],
+                'test_code' => $this->getQueryParams($testAuthCode)['code'],
+                'state' => $queryParams['state']
+            ]
+        );
     }
 
-    private function resolveRedirectURL(string $redirectURI, array $queryParams)
+    private function getQueryParams($authCode)
     {
-        return $redirectURI . '?' . http_build_query($queryParams);
+        $locationHeader = $authCode->getHeaders()['Location'][0];
+
+        $parts = parse_url($locationHeader);
+
+        parse_str($parts['query'], $query);
+
+        return $query;
     }
 }
