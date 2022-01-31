@@ -466,4 +466,67 @@ class Service
 
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId);
     }
+
+    public function postAuthCodeMultiToken(array $input)
+    {
+        Trace::info(TraceCode::POST_AUTHORIZE_MULTI_TOKEN_REQUEST, ['merchant_id' => $input['merchant_id']]);
+
+        if (isset($input['merchant_id']) === false)
+        {
+            throw new BadRequestValidationFailureException('Invalid id passed for merchant');
+        }
+
+        $data = $this->resolveTokenOnDashboard($input['token'], $input['merchant_id']);
+
+        if ($data['role'] !== 'owner')
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
+        }
+
+        $data['authorize'] = $input['permission'];
+
+        $queryParams = htmlspecialchars_decode($data['query_params']);
+
+        parse_str($queryParams, $queryParamsArray);
+
+        $liveAuthCode = $this->fetchAuthCode($queryParamsArray, $data);
+
+        $testAuthCode = $this->fetchAuthCode($queryParamsArray, $data);
+
+        $clientId = $queryParamsArray[Token::CLIENT_ID];
+
+        $merchantId = $data[Token::MERCHANT_ID];
+
+        // TODO: Enqueue this request after checking response times
+        if ($data['authorize'] === true)
+        {
+            $this->notifyMerchantApplicationAuthorized(
+                $clientId,
+                $data[Token::USER_ID],
+                $merchantId);
+
+            $this->mapMerchantToApplication($clientId, $merchantId);
+        }
+
+        $queryData = [
+            'live_code' => $liveAuthCode,
+            'test_code' => $testAuthCode
+        ];
+
+        return $this->resolveRedirectURL($queryParamsArray[RequestParams::REDIRECT_URI], $queryData);
+    }
+
+    private function fetchAuthCode($queryParamsArray, $data)
+    {
+        $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
+
+        $this->validateLocationheader($authCode);
+
+        return $this->extractAuthCode($authCode);
+    }
+
+    private function resolveRedirectURL(string $redirectURI, array $queryParams)
+    {
+        return $redirectURI . '?' . http_build_query($queryParams);
+    }
 }
