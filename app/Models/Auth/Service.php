@@ -524,13 +524,17 @@ class Service
             return $liveAuthCode->getHeaders()['Location'][0];
         }
 
-        return $redirectURL . '?' . http_build_query(
-            [
-                'live_code' => $queryParams['code'],
-                'test_code' => $this->getQueryParams($testAuthCode)['code'],
-                'state' => $queryParams['state']
-            ]
-        );
+        $params = [
+            'live_code' => $queryParams['code'],
+            'test_code' => $this->getQueryParams($testAuthCode)['code']
+        ];
+
+        if (array_key_exists('state', $queryParams) === true)
+        {
+            array_push($params, 'state', $queryParams['state']);
+        }
+
+        return $redirectURL . '?' . http_build_query($params);
     }
 
     private function getQueryParams($authCode)
