@@ -489,9 +489,13 @@ class Service
 
         parse_str($queryParams, $queryParamsArray);
 
+        Trace::info(TraceCode::POST_AUTHORIZE_CREATE_LIVE_TOKEN, ['merchant_id' => $input['merchant_id']]);
+
         $liveAuthCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
 
         $this->validateLocationheader($liveAuthCode);
+
+        Trace::info(TraceCode::POST_AUTHORIZE_CREATE_TEST_TOKEN, ['merchant_id' => $input['merchant_id']]);
 
         $testAuthCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
 
