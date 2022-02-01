@@ -6,10 +6,12 @@
     <meta charset="UTF-8">
     <title>Razorpay - Authorize {{$data['application']['name']}}</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    @include('partials/environment')
 <script>
     !function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t,e){var n=document.createElement("script");n.type="text/javascript";n.async=!0;n.src="https://cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(n,a);analytics._loadOptions=e};analytics.SNIPPET_VERSION="4.1.0";
-        const SEGMENT_API_KEY = "STNWyMUNH6L1Tzn4CBqOAlAuIbHzorJ4";
-        analytics.load(SEGMENT_API_KEY);
+        // const SEGMENT_API_KEY = "STNWyMUNH6L1Tzn4CBqOAlAuIbHzorJ4";
+        console.log(window.SEGMENT_API_KEY, 'win');
+        analytics.load(window.SEGMENT_API_KEY);
         analytics.page();
         }}();
 </script>
@@ -25,7 +27,7 @@
             pageUrl: window.location.href,
             eventTimestamp: new Date().toISOString(),
             deviceType,
-            
+
         });
         if (window.analytics && window.analytics.track) {
             window.analytics.track(eventName, properties, {
