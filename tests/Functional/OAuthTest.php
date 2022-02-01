@@ -537,12 +537,12 @@ class OAuthTest extends TestCase
 
         $content = urldecode($response->getContent());
 
-        $parts = parse_url($content);
+        $parts = parse_url($response->getTargetUrl());
 
         parse_str($parts['query'], $query);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertContains('http://localhost?', $content);
+        $this->assertContains('http://localhost?live_code', $content);
         $this->assertArrayHasKey('live_code', $query);
         $this->assertArrayHasKey('test_code', $query);
     }
