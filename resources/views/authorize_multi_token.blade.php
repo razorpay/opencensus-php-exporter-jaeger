@@ -7,46 +7,36 @@
     <title>Razorpay - Authorize {{$data['application']['name']}}</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     @include('partials/environment')
-<script>
-    !function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t,e){var n=document.createElement("script");n.type="text/javascript";n.async=!0;n.src="https://cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(n,a);analytics._loadOptions=e};analytics.SNIPPET_VERSION="4.1.0";
-        // const SEGMENT_API_KEY = "STNWyMUNH6L1Tzn4CBqOAlAuIbHzorJ4";
-        console.log(window.SEGMENT_API_KEY, 'win');
-        analytics.load(window.SEGMENT_API_KEY);
-        analytics.page();
-        }}();
-</script>
-<script> 
-    function emitSegment({eventName = '', properties = {}, toCleverTap = false}) {
-        // This is segment's analytics window object not our analytics object
-        const deviceType = /iPad/.test(navigator.userAgent)
-            ? 't'
-            : /Mobile|iP(hone|od)| Android|BlackBerry|IEMobile|Silk/.test(navigator.userAgent)
-            ? 'm'
-            : 'd';
-        Object.assign(properties, {
-            pageUrl: window.location.href,
-            eventTimestamp: new Date().toISOString(),
-            deviceType,
-
+    @include('partials/analytics')
+    <script>
+        emitSegment({
+            eventName: 'OAuth Page Viewed',
+            toCleverTap: true,
+            properties: {
+                mid: window.sessionData?.merchant_id,
+            }
         });
-        if (window.analytics && window.analytics.track) {
-            window.analytics.track(eventName, properties, {
-            integrations: {
-                CleverTap: toCleverTap,
-            },
+
+        function authorizeBtnClick() {
+            emitSegment({
+                eventName: 'Authorize button clicked',
+                toCleverTap: true,
+                properties: {
+                    mid: window.sessionData?.merchant_id,
+                }
             });
         }
-    }
-    emitSegment({eventName: 'OAuth Page Viewed', toCleverTap: true});
 
-    function authorizeBtnClick() {
-        emitSegment({eventName: 'Authorize button clicked', toCleverTap: true});
-    }
-
-    function cancelBtnClick() {
-        emitSegment({eventName: 'Cancel Authorize button clicked', toCleverTap: true});
-    }
-</script>
+        function cancelBtnClick() {
+            emitSegment({
+                eventName: 'Cancel Authorize button clicked',
+                toCleverTap: true,
+                properties: {
+                    mid: window.sessionData?.merchant_id,
+                }
+            });
+        }
+    </script>
     <style>
         body {
             margin: 0;
@@ -337,6 +327,7 @@
             function handleUserSuccess(data) {
                 validateResponseData(data);
 
+                window.sessionData = data;
                 verifyToken = data.token;
                 elements.user_email.text(data.email);
                 elements.merchant_logo.attr('src', data.logo);
@@ -346,7 +337,13 @@
 
                 enableButtonsAndShowEmail();
 
-                emitSegment({eventName: 'Login Result', toCleverTap: true});
+                emitSegment({
+                    eventName: 'Login Result',
+                    toCleverTap: true,
+                    properties: {
+                        mid: window.sessionData?.merchant_id,
+                    }
+                });
             }
 
             function getUser() {
@@ -381,7 +378,10 @@
                     })
                     .fail(function(xhr, textStatus, thrownError) {
                         if (xhr.status === 401) {
-                            emitSegment({eventName: 'Login Request', toCleverTap: true});
+                            emitSegment({
+                                eventName: 'Login Request',
+                                toCleverTap: true
+                            });
                             pageUrl = window.location.href;
                             var pageUrl = encodeURIComponent(pageUrl);
                             var signinUrl = dashboardUrl + '?next=' + pageUrl;
