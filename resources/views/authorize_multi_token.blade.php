@@ -16,9 +16,16 @@
 <script> 
     function emitSegment({eventName = '', properties = {}, toCleverTap = false}) {
         // This is segment's analytics window object not our analytics object
+        const deviceType = /iPad/.test(navigator.userAgent)
+            ? 't'
+            : /Mobile|iP(hone|od)| Android|BlackBerry|IEMobile|Silk/.test(navigator.userAgent)
+            ? 'm'
+            : 'd';
         Object.assign(properties, {
             pageUrl: window.location.href,
             eventTimestamp: new Date().toISOString(),
+            deviceType,
+            
         });
         if (window.analytics && window.analytics.track) {
             window.analytics.track(eventName, properties, {
