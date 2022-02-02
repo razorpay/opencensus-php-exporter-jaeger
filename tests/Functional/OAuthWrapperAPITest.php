@@ -35,6 +35,30 @@ class OAuthWrapperAPITest extends TestCase
         $this->assertContains($expectedString, $response->getContent());
     }
 
+    public function testGetAuthorizeMultiTokenUrlWithInvalidTestClientId()
+    {
+        $application = factory(Application\Entity::class)->create();
+
+        $prodClient = factory(Client\Entity::class)->create([
+            'id'             => '40000000000000',
+            'application_id' => $application->getId(),
+            'redirect_url'   => ['https://www.example.com', 'http://localhost'],
+            'environment'    => 'prod'
+        ]);
+
+        $data = [
+            'method' => 'get',
+            'url'    => $this->getAuthorizeMultiTokenUrl($prodClient->getId(), '30000000000000')
+        ];
+
+        $response = $this->sendRequest($data);
+
+        $expectedString = 'No records found with the given Id';
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertContains($expectedString, $response->getContent());
+    }
+
     public function testGetAuthorizeMultiTokenUrl()
     {
         list($application, $devClient, $prodClient) = $this->createAndSetUpTestAndLiveClient();

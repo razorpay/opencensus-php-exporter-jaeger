@@ -11,6 +11,16 @@ return [
         ],
     ],
 
+    'testGetAuthorizeMultiTokenUrlWithInvalidTestClientId' => [
+        'request'  => [
+            'method' => 'GET',
+            'url'    => '/authorize-multi-token?response_type=code&live_client_id=86KC3q506ytUPA&test_client_id=34KC3q534ytADN&redirect_uri=http://localhost&scope=read_only&state=123'
+        ],
+        'response' => [
+            'content' => [],
+        ],
+    ],
+
     'testGetAuthorizeMultiTokenUrl' => [
         'request'  => [
             'method' => 'GET',
