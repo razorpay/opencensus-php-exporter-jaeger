@@ -467,6 +467,21 @@ class Service
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId);
     }
 
+    public function getAuthorizeMultiTokenViewData(array $input)
+    {
+        $params = array_merge(array(), $input);
+
+        unset($params['live_client_id'], $params['test_client_id']);
+
+        $params['client_id'] = $input['live_client_id'];
+
+        $this->getAuthorizeViewData($params);
+
+        $params['client_id'] = $input['test_client_id'];
+
+        return $this->getAuthorizeViewData($params);
+    }
+
     public function postAuthCodeMultiToken(array $input)
     {
         Trace::info(TraceCode::POST_AUTHORIZE_MULTI_TOKEN_REQUEST, ['merchant_id' => $input['merchant_id']]);
@@ -491,15 +506,40 @@ class Service
 
         Trace::info(TraceCode::POST_AUTHORIZE_CREATE_LIVE_TOKEN, ['merchant_id' => $input['merchant_id']]);
 
-        $liveAuthCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
+        $liveQueryParams = $this->getAuthCodeMultiTokenInput($queryParamsArray);
 
-        $this->validateLocationheader($liveAuthCode);
+        $liveAuthCode = $this->getAuthCodeForMode($liveQueryParams, $data);
 
         Trace::info(TraceCode::POST_AUTHORIZE_CREATE_TEST_TOKEN, ['merchant_id' => $input['merchant_id']]);
 
-        $testAuthCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
+        $testQueryParams = $this->getAuthCodeMultiTokenInput($queryParamsArray, 'test');
 
-        $this->validateLocationheader($testAuthCode);
+        $testAuthCode = $this->getAuthCodeForMode($testQueryParams, $data, 'test');
+
+        return $this->resolveRedirectURLFromAuthCodes($queryParamsArray[RequestParams::REDIRECT_URI], $liveAuthCode, $testAuthCode);
+    }
+
+    private function getAuthCodeMultiTokenInput(array $queryParams, string $mode = 'live')
+    {
+        $params = array_merge(array(), $queryParams);
+
+        unset($params['live_client_id'], $params['test_client_id']);
+
+        $clientIdParamName = $mode . '_client_id';
+
+        if (array_key_exists($clientIdParamName, $queryParams) === true)
+        {
+            $params['client_id'] = $queryParams[$clientIdParamName];
+        }
+
+        return $params;
+    }
+
+    private function getAuthCodeForMode(array $queryParamsArray, array $data, string $mode = 'live')
+    {
+        $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
+
+        $this->validateLocationheader($authCode);
 
         // TODO: Enqueue this request after checking response times
         if ($data['authorize'] === true)
@@ -516,26 +556,33 @@ class Service
             $this->mapMerchantToApplication($clientId, $merchantId);
         }
 
-        return $this->resolveRedirectURLFromAuthCodes($queryParamsArray[RequestParams::REDIRECT_URI], $liveAuthCode, $testAuthCode);
+        return $authCode;
     }
 
     private function resolveRedirectURLFromAuthCodes($redirectURL, $liveAuthCode, $testAuthCode)
     {
-        $queryParams = $this->getQueryParams($liveAuthCode);
+        $liveQueryParams = $this->getQueryParams($liveAuthCode);
 
-        if (array_key_exists('code', $queryParams) === false)
+        if (array_key_exists('code', $liveQueryParams) === false)
         {
             return $liveAuthCode->getHeaders()['Location'][0];
         }
 
+        $testQueryParams = $this->getQueryParams($testAuthCode);
+
+        if (array_key_exists('code', $liveQueryParams) === false)
+        {
+            return $testAuthCode->getHeaders()['Location'][0];
+        }
+
         $params = [
-            'live_code' => $queryParams['code'],
-            'test_code' => $this->getQueryParams($testAuthCode)['code']
+            'live_code' => $liveQueryParams['code'],
+            'test_code' => $testQueryParams['code']
         ];
 
-        if (array_key_exists('state', $queryParams) === true)
+        if (array_key_exists('state', $liveQueryParams) === true)
         {
-            array_push($params, 'state', $queryParams['state']);
+            array_push($params, 'state', $liveQueryParams['state']);
         }
 
         return $redirectURL . '?' . http_build_query($params);
