@@ -101,7 +101,14 @@
         properties = {},
         toCleverTap = false
     }) => {
-        emitSegment(eventName, properties, toCleverTap);
-        sendToLumberjack(eventName, properties);
+        emitSegment({
+            eventName,
+            properties,
+            toCleverTap
+        });
+        sendToLumberjack({
+            eventName,
+            properties
+        });
     };
 </script>
