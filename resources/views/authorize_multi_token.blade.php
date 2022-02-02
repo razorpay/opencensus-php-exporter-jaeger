@@ -9,7 +9,7 @@
     @include('partials/environment')
     @include('partials/analytics')
     <script>
-        emitSegment({
+        trackEvents({
             eventName: 'OAuth Page Viewed',
             toCleverTap: true,
             properties: {
@@ -18,7 +18,7 @@
         });
 
         function authorizeBtnClick() {
-            emitSegment({
+            trackEvents({
                 eventName: 'Authorize button clicked',
                 toCleverTap: true,
                 properties: {
@@ -28,7 +28,7 @@
         }
 
         function cancelBtnClick() {
-            emitSegment({
+            trackEvents({
                 eventName: 'Cancel Authorize button clicked',
                 toCleverTap: true,
                 properties: {
@@ -337,7 +337,7 @@
 
                 enableButtonsAndShowEmail();
 
-                emitSegment({
+                trackEvents({
                     eventName: 'Login Result',
                     toCleverTap: true,
                     properties: {
@@ -378,7 +378,7 @@
                     })
                     .fail(function(xhr, textStatus, thrownError) {
                         if (xhr.status === 401) {
-                            emitSegment({
+                            trackEvents({
                                 eventName: 'Login Request',
                                 toCleverTap: true
                             });
