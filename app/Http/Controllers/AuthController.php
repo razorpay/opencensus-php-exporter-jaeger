@@ -128,7 +128,7 @@ class AuthController extends Controller
 
         try
         {
-            $data = $this->service()->getAuthorizeViewData($input);
+            $data = $this->service()->getAuthorizeMultiTokenViewData($input);
 
             $data['query_params'] = request()->getQueryString();
 
