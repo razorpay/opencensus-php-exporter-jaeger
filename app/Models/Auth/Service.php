@@ -593,7 +593,7 @@ class Service
 
         if (array_key_exists('state', $liveQueryParams) === true)
         {
-            array_push($params, 'state', $liveQueryParams['state']);
+            $params['state'] = $liveQueryParams['state'];
         }
 
         return $redirectURL . '?' . http_build_query($params);
