@@ -3,6 +3,7 @@
 namespace App\Models\Auth;
 
 use App;
+use App\Constants\Mode;
 use Trace;
 use App\Services;
 use Razorpay\OAuth;
@@ -469,17 +470,29 @@ class Service
 
     public function getAuthorizeMultiTokenViewData(array $input)
     {
-        $params = array_merge(array(), $input);
+        (new Validator)->validateAuthorizeRequestMultiToken($input);
 
-        unset($params['live_client_id'], $params['test_client_id']);
+        $this->validateLiveAndTestClient($input[RequestParams::LIVE_CLIENT_ID], $input[RequestParams::TEST_CLIENT_ID]);
 
-        $params['client_id'] = $input['live_client_id'];
+        $liveParams = $this->getAuthCodeMultiTokenInput($input, Mode::LIVE);
 
-        $this->getAuthorizeViewData($params);
+        $this->getAuthorizeViewData($liveParams);
 
-        $params['client_id'] = $input['test_client_id'];
+        $testParams = $this->getAuthCodeMultiTokenInput($input, Mode::TEST);
 
-        return $this->getAuthorizeViewData($params);
+        return $this->getAuthorizeViewData($testParams);
+    }
+
+    public function validateLiveAndTestClient(string $liveClientId, string $testClientId)
+    {
+        if (strcmp($liveClientId, env("SHOPIFY_RZP_APP_KEY_LIVE")) != 0) {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_LIVE_CLIENT);
+        }
+
+        if (strcmp($testClientId, env("SHOPIFY_RZP_APP_KEY_TEST")) != 0)
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_TEST_CLIENT);
+        }
     }
 
     public function postAuthCodeMultiToken(array $input)
@@ -506,37 +519,35 @@ class Service
 
         Trace::info(TraceCode::POST_AUTHORIZE_CREATE_LIVE_TOKEN, ['merchant_id' => $input['merchant_id']]);
 
-        $liveQueryParams = $this->getAuthCodeMultiTokenInput($queryParamsArray);
-
-        $liveAuthCode = $this->getAuthCodeForMode($liveQueryParams, $data);
+        $liveAuthCode = $this->getAuthCodeForMode($queryParamsArray, $data, Mode::LIVE);
 
         Trace::info(TraceCode::POST_AUTHORIZE_CREATE_TEST_TOKEN, ['merchant_id' => $input['merchant_id']]);
 
-        $testQueryParams = $this->getAuthCodeMultiTokenInput($queryParamsArray, 'test');
-
-        $testAuthCode = $this->getAuthCodeForMode($testQueryParams, $data, 'test');
+        $testAuthCode = $this->getAuthCodeForMode($queryParamsArray, $data, Mode::TEST);
 
         return $this->resolveRedirectURLFromAuthCodes($queryParamsArray[RequestParams::REDIRECT_URI], $liveAuthCode, $testAuthCode);
     }
 
-    private function getAuthCodeMultiTokenInput(array $queryParams, string $mode = 'live')
+    private function getAuthCodeMultiTokenInput(array $queryParams, $mode)
     {
         $params = array_merge(array(), $queryParams);
 
-        unset($params['live_client_id'], $params['test_client_id']);
+        unset($params[RequestParams::LIVE_CLIENT_ID], $params[RequestParams::TEST_CLIENT_ID]);
 
-        $clientIdParamName = $mode . '_client_id';
+        $clientIdParamName = $mode . '_' . RequestParams::CLIENT_ID;
 
         if (array_key_exists($clientIdParamName, $queryParams) === true)
         {
-            $params['client_id'] = $queryParams[$clientIdParamName];
+            $params[RequestParams::CLIENT_ID] = $queryParams[$clientIdParamName];
         }
 
         return $params;
     }
 
-    private function getAuthCodeForMode(array $queryParamsArray, array $data, string $mode = 'live')
+    private function getAuthCodeForMode(array $params, array $data, $mode)
     {
+        $queryParamsArray = $this->getAuthCodeMultiTokenInput($params, $mode);
+
         $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
 
         $this->validateLocationheader($authCode);
