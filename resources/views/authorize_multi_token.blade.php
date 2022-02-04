@@ -20,7 +20,6 @@
         function authorizeBtnClick() {
             trackEvents({
                 eventName: 'Authorize button clicked',
-                toCleverTap: true,
                 properties: {
                     mid: window.sessionData?.merchant_id,
                 }
@@ -30,7 +29,6 @@
         function cancelBtnClick() {
             trackEvents({
                 eventName: 'Cancel Authorize button clicked',
-                toCleverTap: true,
                 properties: {
                     mid: window.sessionData?.merchant_id,
                 }
