@@ -485,7 +485,7 @@ class Service
 
         $status = $razorxClient->getTreatment(
              rand(1,10000),
-             Services\RazorX\RazorXExperiments::JWT_SIGN_ALGO,
+             Services\RazorX\RazorXConstants::JWT_SIGN_ALGO,
              $mode
         );
 

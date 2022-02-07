@@ -15,17 +15,6 @@ class RazorXClient
      * when the featureFlag is not to be applied to merchant or the
      * response from RazorX server is not return for some reason
      */
-    const DEFAULT_CASE = 'control';
-
-    const RETRY_COUNT_KEY = 'retry_count';
-
-    // Params required for evaluator API
-    const ID           = 'id';
-    const FEATURE_FLAG = 'feature_flag';
-    const ENVIRONMENT  = 'environment';
-    const MODE         = 'mode';
-
-    const EVALUATE_URI = 'evaluate';
 
     protected $baseUrl;
 
@@ -55,7 +44,7 @@ class RazorXClient
         return [
             'mock'            => env('RAZORX_MOCK', false),
             'url'             => env('RAZORX_URL'),
-            'username'        => 'rzp_auth_service',
+            'username'        => RazorXConstants::RAZORX_USERNAME,
             'secret'          => env('RAZORX_SECRET'),
             'request_timeout' => env('RAZORX_REQUEST_TIMEOUT', 0.1),
         ];
@@ -64,13 +53,14 @@ class RazorXClient
     public function getTreatment(string $id, string $featureFlag, string $mode, $retryCount = 0): string
     {
         $data = [
-            self::ID              => $id,
-            self::FEATURE_FLAG    => $featureFlag,
-            self::ENVIRONMENT     => env('APP_ENV'),
-            self::MODE            => $mode,
-            self::RETRY_COUNT_KEY => $retryCount,
+            RazorXConstants::ID              => $id,
+            RazorXConstants::FEATURE_FLAG    => $featureFlag,
+            RazorXConstants::ENVIRONMENT     => env('APP_ENV'),
+            RazorXConstants::MODE            => $mode,
+            RazorXConstants::RETRY_COUNT_KEY => $retryCount,
         ];
-        return $this->sendRequest(self::EVALUATE_URI, Requests::GET, $data);
+
+        return $this->sendRequest(RazorXConstants::EVALUATE_URI, Requests::GET, $data);
     }
 
     protected function sendRequest(
@@ -80,17 +70,17 @@ class RazorXClient
     {
         if ($this->config['mock'] === true)
         {
-            return self::DEFAULT_CASE;
+            return RazorXConstants::DEFAULT_CASE;
         }
 
         $request = $this->getRequestParams($url, $method, $data);
 
-        $retryCount = $data[self::RETRY_COUNT_KEY] ?? 0;
+        $retryCount = $data[RazorXConstants::RETRY_COUNT_KEY] ?? 0;
 
         return $this->makeRequestAndGetResponse($request, $retryCount, $retryCount);
     }
 
-    protected function getRequestParams(string $url, string $method, array  $data = []): array
+    protected function getRequestParams(string $url, string $method, array $data = []): array
     {
         $url = $this->baseUrl . $url;
 
@@ -99,7 +89,9 @@ class RazorXClient
             $data = '';
         }
 
-        $headers = [];
+        $headers = [
+            RazorXConstants::APPLICATION_HEADER_NAME => RazorXConstants::APPLICATION_HEADER_VALUE
+        ];
 
         $options = [
             'connect_timeout' => $this->requestTimeout,
@@ -154,12 +146,12 @@ class RazorXClient
                         'retries' => $retryOriginalCount - $retryCount
                     ]);
 
-                return self::DEFAULT_CASE;
+                return RazorXConstants::DEFAULT_CASE;
             }
         }
     }
 
-    protected function parseAndReturnResponse($res, $req = null) : string
+    protected function parseAndReturnResponse($res, $req = null): string
     {
         $code = $res->status_code;
 
@@ -167,7 +159,7 @@ class RazorXClient
         {
             $response = json_decode($res->body, true);
 
-            return $response['value'] ?? self::DEFAULT_CASE;
+            return $response['value'] ?? RazorXConstants::DEFAULT_CASE;
         }
         else
         {
@@ -179,7 +171,7 @@ class RazorXClient
             ]);
         }
 
-        return self::DEFAULT_CASE;
+        return RazorXConstants::DEFAULT_CASE;
     }
 
     /**
