@@ -377,7 +377,7 @@
                     .fail(function(xhr, textStatus, thrownError) {
                         if (xhr.status === 401) {
                             trackEvents({
-                                eventName: 'Login Request',
+                                eventName: 'Login Initiated',
                                 toCleverTap: true
                             });
                             pageUrl = window.location.href;
