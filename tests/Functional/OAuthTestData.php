@@ -477,5 +477,5 @@ return [
                 'errors' => ['User data not found'],
             ],
         ],
-    ]
+    ],
 ];

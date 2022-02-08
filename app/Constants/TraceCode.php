@@ -25,9 +25,6 @@ class TraceCode extends BaseTraceCode
     const MIGRATE_PUBLIC_TOKEN_REQUEST                              = 'MIGRATE_PUBLIC_TOKEN_REQUEST';
     const TALLY_AUTHORIZE_REQUEST                                   = 'TALLY_AUTHORIZE_REQUEST';
     const TALLY_TOKEN_REQUEST                                       = 'TALLY_TOKEN_REQUEST';
-    const POST_AUTHORIZE_MULTI_TOKEN_REQUEST                        = 'POST_AUTHORIZE_MULTI_TOKEN_REQUEST';
-    const POST_AUTHORIZE_CREATE_LIVE_TOKEN                          = 'POST_AUTHORIZE_CREATE_LIVE_TOKEN';
-    const POST_AUTHORIZE_CREATE_TEST_TOKEN                          = 'POST_AUTHORIZE_CREATE_TEST_TOKEN';
 
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';

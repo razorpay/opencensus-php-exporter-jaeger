@@ -86,19 +86,4 @@ class Validator extends \Razorpay\Spine\Validation\Validator
                           ->strict(true)
                           ->validate();
     }
-
-    public function validateAuthorizeRequestMultiToken(array $input)
-    {
-        $rules = [
-            RequestParams::LIVE_CLIENT_ID => 'required|alpha_num|size:14',
-            RequestParams::TEST_CLIENT_ID => 'required|alpha_num|size:14',
-            RequestParams::STATE          => 'required|string',
-            RequestParams::REDIRECT_URI   => 'required|url'
-        ];
-
-        (new JitValidator)->rules($rules)
-            ->input($input)
-            ->strict(false)
-            ->validate();
-    }
 }
