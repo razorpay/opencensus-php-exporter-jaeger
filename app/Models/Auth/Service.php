@@ -3,6 +3,7 @@
 namespace App\Models\Auth;
 
 use App;
+use App\Constants\Mode;
 use Trace;
 use App\Services;
 use Razorpay\OAuth;
@@ -465,5 +466,150 @@ class Service
         $partnerId = $client->getMerchantId();
 
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId);
+    }
+
+    public function getAuthorizeMultiTokenViewData(array $input)
+    {
+        (new Validator)->validateAuthorizeRequestMultiToken($input);
+
+        $this->validateLiveAndTestClient($input[RequestParams::LIVE_CLIENT_ID], $input[RequestParams::TEST_CLIENT_ID]);
+
+        $liveParams = $this->getAuthCodeMultiTokenInput($input, Mode::LIVE);
+
+        $this->getAuthorizeViewData($liveParams);
+
+        $testParams = $this->getAuthCodeMultiTokenInput($input, Mode::TEST);
+
+        return $this->getAuthorizeViewData($testParams);
+    }
+
+    public function validateLiveAndTestClient(string $liveClientId, string $testClientId)
+    {
+        $valid_clients = $this->getValidMultiTokenClients();
+
+        if (in_array($liveClientId, $valid_clients) === false)
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_LIVE_CLIENT);
+        }
+
+        if (in_array($testClientId, $valid_clients) === false)
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_TEST_CLIENT);
+        }
+    }
+
+    private function getValidMultiTokenClients()
+    {
+        return explode(',', env("MULTI_TOKEN_CLIENTS"));
+    }
+
+    public function postAuthCodeMultiToken(array $input)
+    {
+        Trace::info(TraceCode::POST_AUTHORIZE_MULTI_TOKEN_REQUEST, ['merchant_id' => $input['merchant_id']]);
+
+        if (isset($input['merchant_id']) === false)
+        {
+            throw new BadRequestValidationFailureException('Invalid id passed for merchant');
+        }
+
+        $data = $this->resolveTokenOnDashboard($input['token'], $input['merchant_id']);
+
+        if ($data['role'] !== 'owner')
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
+        }
+
+        $data['authorize'] = $input['permission'];
+
+        $queryParams = htmlspecialchars_decode($data['query_params']);
+
+        parse_str($queryParams, $queryParamsArray);
+
+        Trace::info(TraceCode::POST_AUTHORIZE_CREATE_LIVE_TOKEN, ['merchant_id' => $input['merchant_id']]);
+
+        $liveAuthCode = $this->getAuthCodeForMode($queryParamsArray, $data, Mode::LIVE);
+
+        Trace::info(TraceCode::POST_AUTHORIZE_CREATE_TEST_TOKEN, ['merchant_id' => $input['merchant_id']]);
+
+        $testAuthCode = $this->getAuthCodeForMode($queryParamsArray, $data, Mode::TEST);
+
+        return $this->resolveRedirectURLFromAuthCodes($queryParamsArray[RequestParams::REDIRECT_URI], $liveAuthCode, $testAuthCode);
+    }
+
+    private function getAuthCodeMultiTokenInput(array $queryParams, $mode)
+    {
+        $params = array_merge(array(), $queryParams);
+
+        unset($params[RequestParams::LIVE_CLIENT_ID], $params[RequestParams::TEST_CLIENT_ID]);
+
+        $clientIdParamName = $mode . '_' . RequestParams::CLIENT_ID;
+
+        if (array_key_exists($clientIdParamName, $queryParams) === true)
+        {
+            $params[RequestParams::CLIENT_ID] = $queryParams[$clientIdParamName];
+        }
+
+        return $params;
+    }
+
+    private function getAuthCodeForMode(array $params, array $data, $mode)
+    {
+        $queryParamsArray = $this->getAuthCodeMultiTokenInput($params, $mode);
+
+        $authCode = $this->oauthServer->getAuthCode($queryParamsArray, $data);
+
+        $this->validateLocationheader($authCode);
+
+        // TODO: Enqueue this request after checking response times
+        if ($data['authorize'] === true)
+        {
+            $clientId = $queryParamsArray[Token::CLIENT_ID];
+
+            $merchantId = $data[Token::MERCHANT_ID];
+
+            $this->mapMerchantToApplication($clientId, $merchantId);
+        }
+
+        return $authCode;
+    }
+
+    private function resolveRedirectURLFromAuthCodes($redirectURL, $liveAuthCode, $testAuthCode)
+    {
+        $liveQueryParams = $this->getQueryParams($liveAuthCode);
+
+        if (array_key_exists('code', $liveQueryParams) === false)
+        {
+            return $liveAuthCode->getHeaders()['Location'][0];
+        }
+
+        $testQueryParams = $this->getQueryParams($testAuthCode);
+
+        if (array_key_exists('code', $liveQueryParams) === false)
+        {
+            return $testAuthCode->getHeaders()['Location'][0];
+        }
+
+        $params = [
+            'live_code' => $liveQueryParams['code'],
+            'test_code' => $testQueryParams['code']
+        ];
+
+        if (array_key_exists('state', $liveQueryParams) === true)
+        {
+            $params['state'] = $liveQueryParams['state'];
+        }
+
+        return $redirectURL . '?' . http_build_query($params);
+    }
+
+    private function getQueryParams($authCode)
+    {
+        $locationHeader = $authCode->getHeaders()['Location'][0];
+
+        $parts = parse_url($locationHeader);
+
+        parse_str($parts['query'], $query);
+
+        return $query;
     }
 }
