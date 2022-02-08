@@ -485,14 +485,22 @@ class Service
 
     public function validateLiveAndTestClient(string $liveClientId, string $testClientId)
     {
-        if (strcmp($liveClientId, env("SHOPIFY_RZP_APP_KEY_LIVE")) != 0) {
+        $valid_clients = $this->getValidMultiTokenClients();
+
+        if (in_array($liveClientId, $valid_clients) === false)
+        {
             throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_LIVE_CLIENT);
         }
 
-        if (strcmp($testClientId, env("SHOPIFY_RZP_APP_KEY_TEST")) != 0)
+        if (in_array($testClientId, $valid_clients) === false)
         {
             throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_TEST_CLIENT);
         }
+    }
+
+    private function getValidMultiTokenClients()
+    {
+        return explode(',', env("MULTI_TOKEN_CLIENTS"));
     }
 
     public function postAuthCodeMultiToken(array $input)
@@ -558,11 +566,6 @@ class Service
             $clientId = $queryParamsArray[Token::CLIENT_ID];
 
             $merchantId = $data[Token::MERCHANT_ID];
-
-            $this->notifyMerchantApplicationAuthorized(
-                $clientId,
-                $data[Token::USER_ID],
-                $merchantId);
 
             $this->mapMerchantToApplication($clientId, $merchantId);
         }
