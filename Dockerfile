@@ -26,7 +26,7 @@ WORKDIR /app
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --version="${COMPOSER_VERSION}" && \
     mv composer.phar /usr/local/bin/composer && \
-    rm -f composer-setup.php \
+    rm -f composer-setup.php
 
 WORKDIR /app
 
