@@ -1,9 +1,4 @@
 ARG ONGGI_IMAGE=c.rzp.io/razorpay/onggi:php-7.2-nginx
-ARG GIT_COMMIT_HASH
-ARG GIT_TOKEN
-ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
-
-COPY --chown=nginx:nginx . /app/
 
 FROM $ONGGI_IMAGE as opencensus-ext
 WORKDIR /
@@ -12,7 +7,14 @@ RUN set -eux && \
     wget -O - https://github.com/razorpay/opencensus-php/tarball/"${OPENCENSUS_VERSION_TAG}" | tar xz --strip=1
 RUN cd /ext && phpize && ./configure --enable-opencensus && make install
 
+
 FROM $ONGGI_IMAGE
+
+ARG GIT_COMMIT_HASH
+ARG GIT_TOKEN
+ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
+
+COPY --chown=nginx:nginx . /app/
 
 ## Downgrading composer version from 2.0 to 1.10 due to ps4 autoloading issues
 ## (https://medium.com/legacybeta/using-composer-2-0-with-psr4-388b78b98aaa)
