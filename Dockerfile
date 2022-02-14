@@ -21,18 +21,21 @@ COPY --chown=nginx:nginx . /app/
 
 ENV COMPOSER_VERSION="1.10.16"
 
+WORKDIR /app
+
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --version="${COMPOSER_VERSION}" && \
     mv composer.phar /usr/local/bin/composer && \
     rm -f composer-setup.php \
 
-WORKDIR /app
 
-RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
+RUN  set -eu \
+    && composer --version \
+    && composer config -g github-oauth.github.com ${GIT_TOKEN} \
     && composer global require hirak/prestissimo \
-    && composer install --no-interaction --no-dev \
+    && composer install --no-interaction --no-dev --no-autoloader --no-scripts \
+    && rm -rf /root/.composer \
     && composer clear-cache \
-    # Disable opcache for now
     && rm /etc/php7/conf.d/00_opcache.ini \
     && pear config-set php_ini /etc/php7/php.ini \
     && pecl install opencensus-alpha \
