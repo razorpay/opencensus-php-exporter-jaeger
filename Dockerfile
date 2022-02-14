@@ -33,7 +33,6 @@ RUN pear config-set php_ini /etc/php7/php.ini && \
 
 ENV COMPOSER_VERSION="1.10.16"
 
-WORKDIR /app
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --version="${COMPOSER_VERSION}" && \
@@ -48,7 +47,7 @@ RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
     && rm -rf /root/.composer \
     && composer clear-cache \
     # Disable opcache for now
-    && rm /etc/php7/conf.d/00_opcache.ini \
+    && rm /etc/php7/conf.d/00_opcache.ini
 
 
 RUN  pear config-set php_ini /etc/php7/php.ini \
