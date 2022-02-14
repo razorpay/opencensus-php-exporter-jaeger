@@ -40,16 +40,18 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     mv composer.phar /usr/local/bin/composer && \
     rm -f composer-setup.php \
 
+WORKDIR /app
 
-RUN  set -eu \
-    && composer --version \
-    && composer config -g github-oauth.github.com ${GIT_TOKEN} \
+RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
     && composer global require hirak/prestissimo \
-    && composer install --no-interaction --no-dev --no-autoloader --no-scripts \
+    && composer install --no-interaction --no-dev --no-autoloader --no-scripts\
     && rm -rf /root/.composer \
     && composer clear-cache \
+    # Disable opcache for now
     && rm /etc/php7/conf.d/00_opcache.ini \
-    && pear config-set php_ini /etc/php7/php.ini \
+
+
+RUN  pear config-set php_ini /etc/php7/php.ini \
     && pecl install opencensus-alpha \
     && mkdir -p public && echo "${GIT_COMMIT_HASH}" > public/commit.txt
 
