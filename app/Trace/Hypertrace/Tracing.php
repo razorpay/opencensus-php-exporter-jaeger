@@ -43,9 +43,8 @@ class Tracing
         return $routesToInclude;
     }
 
-    public static function getServiceName($app): string
+    public static function getServiceName(): string
     {
-        //$app = App::getFacadeRoot();
         $app_mode = config('jaeger.app_mode');
 
         if($app_mode){

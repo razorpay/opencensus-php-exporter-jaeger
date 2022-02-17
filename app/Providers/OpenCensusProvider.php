@@ -2,22 +2,19 @@
 
 namespace App\Providers;
 
-//use App\Trace\TraceCode;
-//use App\Constants\Tracing;
-//use OpenCensus\Trace\Tracer;
-//use Illuminate\Support\Facades\URL;
-//use Illuminate\Support\Facades\Route;
-//use OpenCensus\Trace\Integrations\Curl;
-//use OpenCensus\Trace\Integrations\Redis;
-//use OpenCensus\Trace\Exporter\JaegerExporter;
-//use OpenCensus\Trace\Propagator\JaegerPropagator;
-
 use Trace;
 use App\Constants\TraceCode;
-use App\Constants\Tracing as TracingConstant;
+use OpenCensus\Trace\Tracer;
 use App\Trace\Hypertrace\Tracing;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
+use OpenCensus\Trace\Integrations\Curl;
+use App\Constants\Tracing as TracingConstant;
+use OpenCensus\Trace\Exporter\JaegerExporter;
+use OpenCensus\Trace\Propagator\JaegerPropagator;
 
-class OpenCensusProvider
+class OpenCensusProvider extends ServiceProvider
 {
     public function boot()
     {
@@ -26,6 +23,7 @@ class OpenCensusProvider
             Trace::info(TraceCode::JAEGER_INFO, [
                 'jaeger_app_enabled' => false,
             ]);
+
             return;
         }
 
@@ -42,18 +40,12 @@ class OpenCensusProvider
 
                 return;
             }
-
             Trace::info(TraceCode::JAEGER_INFO, [
                 'jaeger_app_route' => true,
                 'route_name'       => $currentRoute->getName(),
             ]);
             // Load all useful extensions
-            // PDO is loaded while connecting in MySqlConnector.php
-            Redis::load();
             Curl::load();
-
-            $attrs                     = Tracing::getBasicSpanAttributes($this->app);
-            $attrs[Tracing::SPAN_KIND] = Tracing::SERVER;
 
             $spanOptions = $this->getSpanOptions($currentRoute);
 
@@ -62,7 +54,7 @@ class OpenCensusProvider
                 'propagator'        => $propagator,
                 'root_span_options' => $spanOptions];
 
-            $serviceName = Tracing::getServiceName($this->app);
+            $serviceName = Tracing::getServiceName();
 
             $jaegerExporterOptions = [
                 'host' => $this->app['config']->get('jaeger.host'),
@@ -78,27 +70,27 @@ class OpenCensusProvider
     {
         $attrs = Tracing::getBasicSpanAttributes($this->app);
 
-        $attrs[Tracing::SPAN_KIND] = Tracing::SERVER;
+        $attrs[TracingConstant::SPAN_KIND] = TracingConstant::SERVER;
 
-        $attrs[Tracing::HTTP . '.' . Tracing::URL] = URL::current();
+        $attrs[TracingConstant::HTTP . '.' . TracingConstant::URL] = URL::current();
 
         $parameterMap = Route::current()->parameters();
 
-        $spanName = $this->getSpanName($attrs[Tracing::HTTP . '.' . Tracing::URL]);
+        $spanName = $this->getSpanName($attrs[TracingConstant::HTTP . '.' . TracingConstant::URL]);
 
-        $spanOptions = [Tracing::NAME => $spanName, Tracing::ATTRIBUTES => $attrs];
+        $spanOptions = [TracingConstant::NAME => $spanName, TracingConstant::ATTRIBUTES => $attrs];
 
-        $routeParamPrefix = Tracing::HTTP . '.' . Tracing::ROUTE_PARAMS;
+        $routeParamPrefix = TracingConstant::HTTP . '.' . TracingConstant::ROUTE_PARAMS;
 
-        if(empty($parameterMap) === false)
+        if (empty($parameterMap) === false)
         {
             foreach ($parameterMap as $key => $value)
             {
-                $spanOptions[Tracing::ATTRIBUTES][$routeParamPrefix . $key] = $value;
+                $spanOptions[TracingConstant::ATTRIBUTES][$routeParamPrefix . $key] = $value;
             }
         }
 
-        $spanOptions[Tracing::ATTRIBUTES]['route_name'] = $route->getName();
+        $spanOptions[TracingConstant::ATTRIBUTES]['route_name'] = $route->getName();
 
         return $spanOptions;
     }
@@ -109,7 +101,7 @@ class OpenCensusProvider
 
         $spanName = $urlInfo['path'];
 
-        $explodedPath = explode("/",$spanName);
+        $explodedPath = explode("/", $spanName);
 
         $strToReplaceInName = [];
 
@@ -117,8 +109,8 @@ class OpenCensusProvider
         {
             $splitArr = explode("_", $value);
 
-            if (strlen($value) === Tracing::ID_LENGTH ||
-                (sizeof($splitArr) === 2) && strlen($splitArr[1]) === Tracing::ID_LENGTH)
+            if (strlen($value) === TracingConstant::ID_LENGTH ||
+                (sizeof($splitArr) === 2) && strlen($splitArr[1]) === TracingConstant::ID_LENGTH)
             {
                 $strToReplaceInName [] = "{id}";
             }
@@ -130,7 +122,7 @@ class OpenCensusProvider
 
         if (empty($strToReplaceInName) === false)
         {
-            $spanName = implode("/",$strToReplaceInName);
+            $spanName = implode("/", $strToReplaceInName);
         }
 
         return $spanName;
