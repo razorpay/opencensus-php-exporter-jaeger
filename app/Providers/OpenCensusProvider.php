@@ -5,8 +5,11 @@ namespace App\Providers;
 use Trace;
 use App\Constants\TraceCode;
 use OpenCensus\Trace\Tracer;
+use Illuminate\Routing\Router;
 use App\Trace\Hypertrace\Tracing;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use OpenCensus\Trace\Integrations\Curl;
@@ -27,7 +30,11 @@ class OpenCensusProvider extends ServiceProvider
             return;
         }
 
-        Route::matched(function($event) {
+        //test to run matched
+        $container = new Container;
+        $router = new Router(new Dispatcher, $container);
+
+        $router->matched(function($event) {
 
             $currentRoute = $event->route;
 
