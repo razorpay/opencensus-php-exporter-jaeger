@@ -50,5 +50,10 @@ class TraceCode extends BaseTraceCode
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE                           = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE';
     const CREATE_CONSUMER_IN_EDGE                                   = 'CREATE_CONSUMER_IN_EDGE';
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED                    = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED';
+
+    // ----- Hypertrace -----
+    const OPENCENSUS_ERROR                                          = 'OPENCENSUS_ERROR';
+    const JAEGER_SPAN_EXCEPTION                                     = 'JAEGER_SPAN_EXCEPTION';
+    const JAEGER_INFO                                               = 'JAEGER_INFO';
 }
 

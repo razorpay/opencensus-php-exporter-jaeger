@@ -12,6 +12,11 @@ namespace App\Providers;
 //use OpenCensus\Trace\Exporter\JaegerExporter;
 //use OpenCensus\Trace\Propagator\JaegerPropagator;
 
+use Trace;
+use App\Constants\TraceCode;
+use App\Constants\Tracing as TracingConstant;
+use App\Trace\Hypertrace\Tracing;
+
 class OpenCensusProvider
 {
     public function boot()
