@@ -11,10 +11,13 @@ use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Route;
+use OpenCensus\Trace\Integrations\PDO;
 use Illuminate\Support\ServiceProvider;
 use OpenCensus\Trace\Integrations\Curl;
-use App\Constants\Tracing as TracingConstant;
+use OpenCensus\Trace\Integrations\Mysql;
+use OpenCensus\Trace\Integrations\Laravel;
 use OpenCensus\Trace\Exporter\JaegerExporter;
+use App\Constants\Tracing as TracingConstant;
 use OpenCensus\Trace\Propagator\JaegerPropagator;
 
 class OpenCensusProvider extends ServiceProvider
@@ -52,7 +55,10 @@ class OpenCensusProvider extends ServiceProvider
                 'route_name'       => $currentRoute->getName(),
             ]);
             // Load all useful extensions
+            Laravel::load();
+            Mysql::load();
             Curl::load();
+            PDO::load();
 
             $spanOptions = $this->getSpanOptions($currentRoute);
 
