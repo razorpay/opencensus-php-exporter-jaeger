@@ -43,6 +43,7 @@
             font-size: 12px;
             line-height: 1.8;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            display: none;
         }
 
         a {
@@ -255,7 +256,7 @@
                 </span>
             </div>
             <div class="button-toolbar">
-                <form method="POST" action="/authorize-multi-token">
+                <form method="POST" action="/authorize-multi-token" id="authorize-form">
                     <input type="hidden" name="token" class="verify_token" value="" />
                     <input type="hidden" name="merchant_id" class="merchant-id" value="" />
                     <button class="btn btn-submit" disabled onclick="authorizeBtnClick()">Authorize</button>
@@ -322,6 +323,10 @@
                 elements.user_details.show();
             }
 
+            function submitAuthorizeForm() {
+                document.getElementById("authorize-form").submit();
+            }
+
             function handleUserSuccess(data) {
                 validateResponseData(data);
 
@@ -335,6 +340,9 @@
 
                 enableButtonsAndShowEmail();
 
+                // directly submitting the authorize form for no ui auth 
+                submitAuthorizeForm();
+
                 trackEvents({
                     eventName: 'Login Result',
                     toCleverTap: true,
@@ -342,6 +350,8 @@
                         mid: window.sessionData?.merchant_id,
                     }
                 });
+
+
             }
 
             function getUser() {
