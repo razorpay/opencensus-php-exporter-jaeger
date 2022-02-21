@@ -84,14 +84,16 @@ class OAuthWrapperAPITest extends TestCase
 
         $data = [
             'method' => 'get',
-            'url'    => $this->getAuthorizeMultiTokenUrl($prodClient->getId(), $devClient->getId())
+            'url'    => '/authorize-multi-token?response_type=code' .
+                '&live_client_id=' . $devClient->getId() .
+                '&test_client_id=' . $prodClient->getId() .
+                '&redirect_uri=https://www.example.com' .
+                '&scope=read_only'
         ];
 
         $response = $this->sendRequest($data);
 
-        $expectedString = 'Allow <span class="emphasis">' .
-            $application->getName() .
-            '</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?';
+        $expectedString = '<p><strong>Validation failed. The state field is required.</strong></p>';
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertContains($expectedString, $response->getContent());

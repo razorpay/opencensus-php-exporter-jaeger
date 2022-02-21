@@ -4,7 +4,7 @@ return [
     'testGetAuthorizeMultiTokenUrlWithInvalidClientId' => [
         'request'  => [
             'method' => 'GET',
-            'url'    => '/authorize-multi-token?response_type=code&live_client_id=86KC3q506ytUPA&test_client_id=34KC3q534ytADN&redirect_uri=http://localhost&scope=read_only&state=123'
+            'url'    => '/authorize-multi-token?response_type=code&live_client_id=40000000000000&test_client_id=30000000000000&redirect_uri=http://localhost&scope=read_only&state=123'
         ],
         'response' => [
             'content' => [],
