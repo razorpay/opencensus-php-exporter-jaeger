@@ -3,7 +3,6 @@
 namespace App\Tests\Concerns;
 
 use Closure;
-use WpOrg\Requests\Requests;
 
 use Razorpay\Spine\Exception\ValidationFailureException as SpineException;
 

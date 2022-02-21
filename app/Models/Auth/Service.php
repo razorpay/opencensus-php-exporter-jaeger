@@ -369,7 +369,7 @@ class Service
 
     public function generateAccessToken(array $input)
     {
-        Trace::info(TraceCode::SIGN_ALGO_USED, [$this->signAlgo, $input]);
+        Trace::info(TraceCode::SIGN_ALGO_USED, [$this->signAlgo]);
 
         $data = $this->oauthServer->getAccessToken($input);
 
@@ -489,8 +489,6 @@ class Service
              Services\RazorX\RazorXConstants::JWT_SIGN_ALGO,
              $mode
         );
-
-        Trace::info(TraceCode::API_REQUEST, [$status]);
 
         return (strtolower($status) === 'on');
     }
