@@ -55,5 +55,6 @@ class TraceCode extends BaseTraceCode
     const OPENCENSUS_ERROR                                          = 'OPENCENSUS_ERROR';
     const JAEGER_SPAN_EXCEPTION                                     = 'JAEGER_SPAN_EXCEPTION';
     const JAEGER_INFO                                               = 'JAEGER_INFO';
+    const JAEGER_API_CALL_FAIL                                      = 'JAEGER_API_CALL_FAIL';
 }
 
