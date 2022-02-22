@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Trace\Hypertrace;
+namespace App\Request;
 
 use Trace;
+use RZP\Constants\Metric;
 use App\Constants\Tracing;
 use WpOrg\Requests\Requests;
 use App\Constants\TraceCode;
+use App\Trace\Hypertrace\SpanTrace;
 use OpenCensus\Trace\Propagator\ArrayHeaders;
 
 class ApiRequestSpan
@@ -53,7 +55,7 @@ class ApiRequestSpan
      * @return mixed
      * @throws \Throwable
      */
-    private static function wrapRequestInSpan($methodName, $methodArgs, $defaultSpanOptions=array())
+    public static function wrapRequestInSpan($methodName, $methodArgs, $defaultSpanOptions=array())
     {
         $response = null;
         $span = SpanTrace::startSpan($defaultSpanOptions);
