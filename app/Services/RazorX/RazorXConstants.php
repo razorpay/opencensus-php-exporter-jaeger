@@ -10,7 +10,6 @@ class RazorXConstants
     // RazorpayX Request Info
     const APPLICATION_HEADER_NAME  = "X-Razorpay-Application";
     const APPLICATION_HEADER_VALUE = "auth_service";
-    const RAZORX_USERNAME          = "rzp_auth_service";
     const RETRY_COUNT_KEY          = 'retry_count';
     const EVALUATE_URI             = 'evaluate';
 

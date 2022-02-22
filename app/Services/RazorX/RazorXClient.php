@@ -44,7 +44,7 @@ class RazorXClient
         return [
             'mock'            => env('RAZORX_MOCK', false),
             'url'             => env('RAZORX_URL'),
-            'username'        => RazorXConstants::RAZORX_USERNAME,
+            'username'        => env('RAZORX_USERNAME'),
             'secret'          => env('RAZORX_SECRET'),
             'request_timeout' => env('RAZORX_REQUEST_TIMEOUT', 0.1),
         ];
