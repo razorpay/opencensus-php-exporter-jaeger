@@ -3,7 +3,6 @@
 namespace App\Request;
 
 use Trace;
-use RZP\Constants\Metric;
 use App\Constants\Tracing;
 use WpOrg\Requests\Requests;
 use App\Constants\TraceCode;
@@ -47,6 +46,7 @@ class ApiRequestSpan
 
 
     // wraps the external API call being done in the trace span
+
     /**
      * @param $methodName
      * @param $methodArgs
@@ -55,22 +55,22 @@ class ApiRequestSpan
      * @return mixed
      * @throws \Throwable
      */
-    public static function wrapRequestInSpan($methodName, $methodArgs, $defaultSpanOptions=array())
+    public static function wrapRequestInSpan($methodName, $methodArgs, $defaultSpanOptions = array())
     {
         $response = null;
-        $span = SpanTrace::startSpan($defaultSpanOptions);
-        $scope = SpanTrace::withSpan($span);
+        $span     = SpanTrace::startSpan($defaultSpanOptions);
+        $scope    = SpanTrace::withSpan($span);
 
         // inject spanContext into trace propagation headers
         $headers = [];
-        if(count($methodArgs) > 1)
+        if (count($methodArgs) > 1)
         {
             $headers = $methodArgs[1];
         }
 
         $arrHeaders = new ArrayHeaders($headers);
         SpanTrace::injectContext($arrHeaders);
-        $headers = $arrHeaders->toArray();
+        $headers       = $arrHeaders->toArray();
         $methodArgs[1] = $headers;
 
         $methodTag = ($methodName == 'request') ? $methodArgs[3] : $methodName;
@@ -80,16 +80,17 @@ class ApiRequestSpan
         {
             $response = Requests::$methodName(...$methodArgs);
         }
-        catch(\Throwable $e)
+        catch (\Throwable $e)
         {
             $span->addAttribute('error', 'true');
             Trace::info(TraceCode::JAEGER_API_CALL_FAIL, [
-                'message'   => $e->getMessage(),
-                'code'      => $e->getCode(),
+                'message' => $e->getMessage(),
+                'code'    => $e->getCode(),
             ]);
             throw $e;
         }
-        finally{
+        finally
+        {
             $scope->close();
         }
 
