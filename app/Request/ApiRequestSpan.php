@@ -25,7 +25,7 @@ class ApiRequestSpan
 
         $spanOptions = [
             Tracing::NAME             => $name,
-            'kind'                    => Tracing::CLIENT,
+            Tracing::KIND             => Tracing::CLIENT,
             'sameProcessAsParentSpan' => false
         ];
 

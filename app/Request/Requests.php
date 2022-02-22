@@ -5,7 +5,7 @@ namespace App\Request;
 use WpOrg\Requests\Requests as Req;
 
 /**
- * Overrides Requests Library methods to wrap
+ * Wraps Requests Library methods to add
  * Tracing Spans and other common functionalities for
  * external API calls.
  */

@@ -13,6 +13,7 @@ class Tracing
     const HTTP                   = "http";
     const URL                    = 'url';
     const NAME                   = 'name';
+    const KIND                   = 'kind';
     const ROUTE_PARAMS           = 'route.params.';
     const STATUS_CODE            = 'status_code';
     const ID_LENGTH              = 14;
