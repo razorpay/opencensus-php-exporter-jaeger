@@ -8,7 +8,7 @@ use App\Error\ErrorCode;
 use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
 use Trace;
-use Requests;
+use App\Request\Requests;
 
 use Illuminate\Support\Str;
 

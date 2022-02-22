@@ -7,7 +7,7 @@ use App\Constants\RequestParams;
 
 use Trace;
 use Request;
-use Requests;
+use App\Request\Requests;
 use App\Constants\TraceCode;
 use App\Exception\BadRequestException;
 
