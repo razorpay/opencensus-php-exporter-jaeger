@@ -166,10 +166,10 @@ class Api
         {
             return $apiResponse;
         }
-        if (isset($apiResponse['error']))
-        {
-            Trace::info(TraceCode::INVALID_USER_RESPONSE, ['error' => $apiResponse['error']]);
-        }
+        //if (isset($apiResponse['error']))
+        //{
+            Trace::info(TraceCode::INVALID_USER_RESPONSE, ['api response' => $apiResponse]);
+        //}
 
         throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
     }
