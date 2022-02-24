@@ -40,6 +40,7 @@ class TraceCode extends BaseTraceCode
     const MERCHANT_BANKING_ACCOUNTS_WEBHOOK_FAILED                  = 'MERCHANT_BANKING_ACCOUNTS_WEBHOOK_FAILED';
     const RAVEN_GENERATE_OTP_FAILED                                 = 'RAVEN_GENERATE_OTP_FAILED';
     const RAVEN_VERIFY_OTP_FAILED                                   = 'RAVEN_VERIFY_OTP_FAILED';
+    const INVALID_USER_RESPONSE                                     = 'INVALID_USER_RESPONSE';
 
     // ----- Generic Codes ----
     const MISC_TOSTRING_ERROR                                       = 'MISC_TOSTRING_ERROR';
