@@ -6,6 +6,7 @@ class RequestParams
 {
     const STATE                     = 'state';
     const REDIRECT_URI              = 'redirect_uri';
+    const CONTENT_TYPE              = 'application/json';
 
     const CLIENT_ID                 = 'client_id';
     const CLIENT_SECRET             = 'client_secret';
