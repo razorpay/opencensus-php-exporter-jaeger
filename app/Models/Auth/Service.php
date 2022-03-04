@@ -17,9 +17,6 @@ use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
 use App\Exception\BadRequestValidationFailureException;
 use App\Services\Segment\EventCode as SegmentEventCode;
-use App\Services\DataLake\EventCode as DataLakeEventCode;
-use App\Services\DataLake\DEEventsKafkaProducer;
-use App\Services\DataLake\Event\OnBoardingEvent;
 
 class Service
 {
@@ -645,14 +642,5 @@ class Service
             $event,
             SegmentEventCode::OAUTH_MULTI_TOKEN_AUTH_CODE_GENERATED
         );
-
-        $this->sendOnboardingEventToDE($event);
-    }
-
-    private function sendOnboardingEventToDE(array $properties)
-    {
-        $event = new OnBoardingEvent(DataLakeEventCode::OAUTH_MULTI_TOKEN_AUTH_CODE_GENERATE, $properties);
-
-        (new DEEventsKafkaProducer($event))->trackEvent();
     }
 }
