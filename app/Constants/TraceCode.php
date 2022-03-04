@@ -58,5 +58,9 @@ class TraceCode extends BaseTraceCode
     const SEGMENT_EVENT_PUSH                                        = 'SEGMENT_EVENT_PUSH';
     const SEGMENT_EVENT_PUSH_SUCCESS                                = 'SEGMENT_EVENT_PUSH_SUCCESS';
     const SEGMENT_EVENT_PUSH_FAILURE                                = 'SEGMENT_EVENT_PUSH_FAILURE';
+
+    // --- Kakfa ---
+    const KAFKA_CERT_ERROR                                          = "KAFKA_CERT_ERROR";
+    const KAFKA_PRODUCER_FLUSH_SUCCESS                              = "KAFKA_PRODUCER_FLUSH_SUCCESS";
 }
 
