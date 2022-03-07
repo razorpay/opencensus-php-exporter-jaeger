@@ -166,10 +166,11 @@ class Api
         {
             return $apiResponse;
         }
-        //if (isset($apiResponse['error']))
-        //{
-            Trace::info(TraceCode::INVALID_USER_RESPONSE, ['api response' => $apiResponse]);
-        //}
+        if ($apiResponse == "Too many requests")
+        {
+            Trace::info(TraceCode::REQUESTS_GOT_THROTTLED, ['api response' => $apiResponse]);
+            return  response()->json(['message' => $apiResponse], 429);
+        }
 
         throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
     }
