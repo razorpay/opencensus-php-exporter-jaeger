@@ -166,7 +166,7 @@ class Api
         {
             return $apiResponse;
         }
-        if ($apiResponse == "Too many requests")
+        if ($response->status_code == 429)
         {
             Trace::info(TraceCode::REQUESTS_GOT_THROTTLED, ['api response' => $apiResponse]);
             return  response()->json(['message' => $apiResponse], 429);
