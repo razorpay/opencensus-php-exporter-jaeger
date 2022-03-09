@@ -90,11 +90,6 @@ class Tracing
 
     public static function isEnabled($app): bool
     {
-        if (config('jaeger.enabled') == true)
-        {
-            return true;
-        }
-
-        return false;
+        return (config('jaeger.enabled') === true);
     }
 }
