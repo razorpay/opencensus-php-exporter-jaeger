@@ -90,6 +90,8 @@ class Tracing
 
     public static function isEnabled($app): bool
     {
+        //TODO: check why tests fails
+        // when (config('jaeger.enabled') === false) is returned
         if (config('jaeger.enabled') === false)
         {
             return false;
