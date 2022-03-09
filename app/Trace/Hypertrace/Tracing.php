@@ -43,7 +43,7 @@ class Tracing
         return $routesToInclude;
     }
 
-    public static function getServiceName(): string
+    public static function getServiceName($app): string
     {
         $app_mode = config('jaeger.app_mode');
 

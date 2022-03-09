@@ -67,7 +67,7 @@ class OpenCensusProvider extends ServiceProvider
                 'propagator'        => $propagator,
                 'root_span_options' => $spanOptions];
 
-            $serviceName = Tracing::getServiceName();
+            $serviceName = Tracing::getServiceName($this->app);
 
             $jaegerExporterOptions = [
                 'host' => $this->app['config']->get('jaeger.host'),
