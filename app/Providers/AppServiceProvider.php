@@ -2,10 +2,11 @@
 
 namespace App\Providers;
 
-use App\Services\Mock;
 use App\Exception\Handler;
+use App\Services\Mock;
 use App\Services\EdgeService;
-
+use App\Http\Middleware\EventTracker;
+use App\Services\Segment\SegmentAnalyticsClient;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -52,7 +53,13 @@ class AppServiceProvider extends ServiceProvider
             return new \App\Services\Raven();
         });
 
+        $this->app->singleton('segment-analytics', function ($app) {
+            return new SegmentAnalyticsClient();
+        });
+
         $this->registerValidatorResolver();
+
+        $this->app->singleton(EventTracker::class);
     }
 
     protected function registerValidatorResolver()

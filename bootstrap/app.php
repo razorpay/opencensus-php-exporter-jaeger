@@ -108,7 +108,8 @@ $app->singleton(
 // ]);
 
  $app->middleware([
-    App\Http\Middleware\Metrics::class
+     App\Http\Middleware\Metrics::class,
+     App\Http\Middleware\EventTracker::class
  ]);
 
 $app->routeMiddleware([
