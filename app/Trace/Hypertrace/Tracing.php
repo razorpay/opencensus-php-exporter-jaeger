@@ -79,8 +79,8 @@ class Tracing
 
     public static function shouldTraceRoute($route): bool
     {
-        if(!(in_array($route->getName(), self::getRoutesToInclude(), true)) or
-           in_array($route->getName(), self::getRoutesToExclude(), true))
+        if(!(in_array($route->getName(), self::getRoutesToInclude())) or
+           in_array($route->getName(), self::getRoutesToExclude()))
         {
             return false;
         }
@@ -90,11 +90,11 @@ class Tracing
 
     public static function isEnabled($app): bool
     {
-        if (config('jaeger.enabled') === true)
+        if (config('jaeger.enabled') === false)
         {
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 }
