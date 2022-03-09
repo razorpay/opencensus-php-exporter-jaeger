@@ -79,8 +79,8 @@ class Tracing
 
     public static function shouldTraceRoute($route): bool
     {
-        if(!(in_array($route->getName(), self::getRoutesToInclude())) or
-           in_array($route->getName(), self::getRoutesToExclude()))
+        if(!(in_array($route->getName(), self::getRoutesToInclude(), true)) or
+           in_array($route->getName(), self::getRoutesToExclude(), true))
         {
             return false;
         }
