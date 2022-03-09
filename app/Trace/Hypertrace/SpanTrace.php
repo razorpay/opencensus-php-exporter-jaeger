@@ -93,10 +93,10 @@ class SpanTrace
                 }
                 self::addAttribute($key, $value, $options);
             }
-            catch (\Error $e)
+            catch (\Throwable $t)
             {
                 app('trace')->warning(TraceCode::OPENCENSUS_ERROR,
-                                      ['addAttributes', $e->getMessage()]);
+                                      ['addAttributes', $t->getMessage()]);
             }
         }
     }
