@@ -15,7 +15,6 @@ use OpenCensus\Trace\Integrations\PDO;
 use Illuminate\Support\ServiceProvider;
 use OpenCensus\Trace\Integrations\Curl;
 use OpenCensus\Trace\Integrations\Mysql;
-use OpenCensus\Trace\Integrations\Laravel;
 use OpenCensus\Trace\Exporter\JaegerExporter;
 use App\Constants\Tracing as TracingConstant;
 use OpenCensus\Trace\Propagator\JaegerPropagator;
@@ -55,10 +54,12 @@ class OpenCensusProvider extends ServiceProvider
                 'route_name'       => $currentRoute->getName(),
             ]);
             // Load all useful extensions
-            Laravel::load();
             Mysql::load();
             Curl::load();
             PDO::load();
+
+            $attrs                             = Tracing::getBasicSpanAttributes($this->app);
+            $attrs[TracingConstant::SPAN_KIND] = TracingConstant::SERVER;
 
             $spanOptions = $this->getSpanOptions($currentRoute);
 
