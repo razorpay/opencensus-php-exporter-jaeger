@@ -92,11 +92,11 @@ class Tracing
     {
         //TODO: check why tests fails
         // when (config('jaeger.enabled') === false) is returned
-        if (config('jaeger.enabled') === false)
+        if (config('jaeger.enabled') === true)
         {
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }
