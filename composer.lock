@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bdce8a599be2862dadc94ab6d03c805a",
+    "content-hash": "3d18301481008bf578072203ff4d7f06",
     "packages": [
         {
             "name": "datadog/php-datadogstatsd",
@@ -1907,16 +1907,16 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "2.1.6",
+            "version": "2.2.1.beta",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "39a440ba4b73747e2ab3aa190f91a82707207f7f"
+                "reference": "b51a2bf997416f2bc8716713b036a48fe8ff8241"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/39a440ba4b73747e2ab3aa190f91a82707207f7f",
-                "reference": "39a440ba4b73747e2ab3aa190f91a82707207f7f",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/b51a2bf997416f2bc8716713b036a48fe8ff8241",
+                "reference": "b51a2bf997416f2bc8716713b036a48fe8ff8241",
                 "shasum": ""
             },
             "require": {
@@ -1924,7 +1924,7 @@
                 "lcobucci/jwt": "~3.3.1",
                 "league/oauth2-server": "^6.0",
                 "php": ">=7.2",
-                "razorpay/outbox-php": "^0.1.4",
+                "razorpay/outbox-php": "0.2.2.beta",
                 "razorpay/spine": "1.0.1",
                 "zendframework/zend-diactoros": "^1.4"
             },
@@ -1954,23 +1954,23 @@
                 "service"
             ],
             "support": {
-                "source": "https://github.com/razorpay/oauth/tree/2.1.6",
+                "source": "https://github.com/razorpay/oauth/tree/2.2.1.beta",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2022-01-18T05:09:39+00:00"
+            "time": "2022-03-09T12:42:23+00:00"
         },
         {
             "name": "razorpay/outbox-php",
-            "version": "0.1.4",
+            "version": "v0.2.2.beta",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/outbox-php.git",
-                "reference": "d81e39ac2dcbaf7698efa64af624bbd5546363af"
+                "reference": "eab91763816d957d62e635d954dedfcbfffde037"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/outbox-php/zipball/d81e39ac2dcbaf7698efa64af624bbd5546363af",
-                "reference": "d81e39ac2dcbaf7698efa64af624bbd5546363af",
+                "url": "https://api.github.com/repos/razorpay/outbox-php/zipball/eab91763816d957d62e635d954dedfcbfffde037",
+                "reference": "eab91763816d957d62e635d954dedfcbfffde037",
                 "shasum": ""
             },
             "require": {
@@ -1996,10 +1996,10 @@
             ],
             "description": "PHP SDK for sending outbox jobs.",
             "support": {
-                "source": "https://github.com/razorpay/outbox-php/tree/0.1.4",
+                "source": "https://github.com/razorpay/outbox-php/tree/v0.2.2.beta",
                 "issues": "https://github.com/razorpay/outbox-php/issues"
             },
-            "time": "2021-08-03T23:37:55+00:00"
+            "time": "2022-03-09T11:45:58+00:00"
         },
         {
             "name": "razorpay/spine",
