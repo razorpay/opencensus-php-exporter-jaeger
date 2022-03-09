@@ -134,9 +134,9 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(\Razorpay\Trace\ServiceProvider::class);
 
 $app->register(\Razorpay\OAuth\OAuthServiceProvider::class);
-$app->register(App\Providers\OpenCensusProvider::class);
 
 $app->configure('trace');
+$app->register(App\Providers\OpenCensusProvider::class);
 
 /*
 |--------------------------------------------------------------------------
