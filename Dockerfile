@@ -19,6 +19,18 @@ COPY --chown=nginx:nginx . /app/
 ## Downgrading composer version from 2.0 to 1.10 due to ps4 autoloading issues
 ## (https://medium.com/legacybeta/using-composer-2-0-with-psr4-388b78b98aaa)
 
+WORKDIR /
+
+ARG LIBRDKAFKA_VERSION_TAG=1.2.2
+
+RUN set -eux && \
+    wget https://github.com/edenhill/librdkafka/archive/v"${LIBRDKAFKA_VERSION_TAG}".tar.gz  -O - | tar -xz && \
+    cd librdkafka-"${LIBRDKAFKA_VERSION_TAG}" && ./configure && \
+    make && \
+    make install
+RUN pear config-set php_ini /etc/php7/php.ini && \
+    pecl install rdkafka
+
 ENV COMPOSER_VERSION="1.10.16"
 
 
