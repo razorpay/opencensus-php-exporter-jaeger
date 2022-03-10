@@ -27,6 +27,9 @@ class ErrorCode
     const BAD_REQUEST_INVALID_OTP                                                   = 'BAD_REQUEST_INVALID_OTP';
     const BAD_REQUEST_OTP_GENERATION_FAILED                                         = 'BAD_REQUEST_OTP_GENERATION_FAILED';
 
+    const BAD_REQUEST_INVALID_LIVE_CLIENT                                           = 'BAD_REQUEST_INVALID_LIVE_CLIENT';
+    const BAD_REQUEST_INVALID_TEST_CLIENT                                           = 'BAD_REQUEST_INVALID_TEST_CLIENT';
+
     const SERVER_ERROR_INVALID_ARGUMENT                                             = 'SERVER_ERROR_INVALID_ARGUMENT';
     const SERVER_ERROR_DB_QUERY_FAILED                                              = 'SERVER_ERROR_DB_QUERY_FAILED';
     const SERVER_ERROR_LOGICAL_ERROR                                                = 'SERVER_ERROR_LOGICAL_ERROR';

@@ -48,4 +48,6 @@ return [
     'trace_code_class' => App\Constants\TraceCode::class,
 
     'metrics' => require __DIR__ . '/metrics.php',
+
+    'services' => require __DIR__ . '/services.php',
 ];
