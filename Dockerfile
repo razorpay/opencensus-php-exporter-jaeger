@@ -43,6 +43,7 @@ WORKDIR /app
 
 RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
     && composer global require hirak/prestissimo \
+    && composer install --no-interaction --no-dev \
     && composer clear-cache \
     # Disable opcache for now
     && rm /etc/php7/conf.d/00_opcache.ini
