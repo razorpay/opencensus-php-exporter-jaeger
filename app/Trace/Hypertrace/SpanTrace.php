@@ -20,7 +20,7 @@ class SpanTrace
         {
             return OpenCensusTracer::startSpan($spanOptions);
         }
-        catch (\Error $e)
+        catch (\Throwable $e)
         {
             app('trace')->warning(TraceCode::OPENCENSUS_ERROR,
                                   ['startSpan', $e->getMessage()]);
@@ -33,7 +33,7 @@ class SpanTrace
         {
             return OpenCensusTracer::withSpan($span);
         }
-        catch (\Error $e)
+        catch (\Throwable $e)
         {
             app('trace')->warning(TraceCode::OPENCENSUS_ERROR,
                                   ['withSpan', $e->getMessage()]);
@@ -46,7 +46,7 @@ class SpanTrace
         {
             return OpenCensusTracer::injectContext($headers);
         }
-        catch (\Error $e)
+        catch (\Throwable $e)
         {
             app('trace')->warning(TraceCode::OPENCENSUS_ERROR,
                                   ['injectContext', $e->getMessage()]);
@@ -59,7 +59,7 @@ class SpanTrace
         {
             return OpenCensusTracer::spanContext();
         }
-        catch (\Error $e)
+        catch (\Throwable $e)
         {
             app('trace')->warning(TraceCode::OPENCENSUS_ERROR,
                                   ['spanContext', $e->getMessage()]);
@@ -74,7 +74,7 @@ class SpanTrace
                 return OpenCensusTracer::addAttribute($attribute, $value, $options);
             }
         }
-        catch (\Error $e)
+        catch (\Throwable $e)
         {
             app('trace')->warning(TraceCode::OPENCENSUS_ERROR,
                                   ['addAttribute', $e->getMessage()]);
@@ -93,10 +93,10 @@ class SpanTrace
                 }
                 self::addAttribute($key, $value, $options);
             }
-            catch (\Error $e)
+            catch (\Throwable $t)
             {
                 app('trace')->warning(TraceCode::OPENCENSUS_ERROR,
-                                      ['addAttributes', $e->getMessage()]);
+                                      ['addAttributes', $t->getMessage()]);
             }
         }
     }

@@ -4,7 +4,7 @@ namespace App\Constants;
 
 class Tracing
 {
-    const SERVICE_NAME_IN_JAEGER = 'dashboard';
+    const SERVICE_NAME_IN_JAEGER = 'auth-service';
     const SPAN_KIND              = 'span.kind';
     const SERVER                 = 'server';
     const CLIENT                 = 'client';

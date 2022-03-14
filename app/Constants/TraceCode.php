@@ -25,6 +25,9 @@ class TraceCode extends BaseTraceCode
     const MIGRATE_PUBLIC_TOKEN_REQUEST                              = 'MIGRATE_PUBLIC_TOKEN_REQUEST';
     const TALLY_AUTHORIZE_REQUEST                                   = 'TALLY_AUTHORIZE_REQUEST';
     const TALLY_TOKEN_REQUEST                                       = 'TALLY_TOKEN_REQUEST';
+    const POST_AUTHORIZE_MULTI_TOKEN_REQUEST                        = 'POST_AUTHORIZE_MULTI_TOKEN_REQUEST';
+    const POST_AUTHORIZE_CREATE_LIVE_TOKEN                          = 'POST_AUTHORIZE_CREATE_LIVE_TOKEN';
+    const POST_AUTHORIZE_CREATE_TEST_TOKEN                          = 'POST_AUTHORIZE_CREATE_TEST_TOKEN';
 
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';
@@ -37,6 +40,7 @@ class TraceCode extends BaseTraceCode
     const MERCHANT_BANKING_ACCOUNTS_WEBHOOK_FAILED                  = 'MERCHANT_BANKING_ACCOUNTS_WEBHOOK_FAILED';
     const RAVEN_GENERATE_OTP_FAILED                                 = 'RAVEN_GENERATE_OTP_FAILED';
     const RAVEN_VERIFY_OTP_FAILED                                   = 'RAVEN_VERIFY_OTP_FAILED';
+    const REQUESTS_GOT_THROTTLED                                    = 'REQUESTS_GOT_THROTTLED';
 
     // ----- Generic Codes ----
     const MISC_TOSTRING_ERROR                                       = 'MISC_TOSTRING_ERROR';
@@ -56,5 +60,14 @@ class TraceCode extends BaseTraceCode
     const JAEGER_SPAN_EXCEPTION                                     = 'JAEGER_SPAN_EXCEPTION';
     const JAEGER_INFO                                               = 'JAEGER_INFO';
     const JAEGER_API_CALL_FAIL                                      = 'JAEGER_API_CALL_FAIL';
+
+    // ---- Segment Analytics ----
+    const SEGMENT_EVENT_PUSH                                        = 'SEGMENT_EVENT_PUSH';
+    const SEGMENT_EVENT_PUSH_SUCCESS                                = 'SEGMENT_EVENT_PUSH_SUCCESS';
+    const SEGMENT_EVENT_PUSH_FAILURE                                = 'SEGMENT_EVENT_PUSH_FAILURE';
+
+    // --- Kakfa ---
+    const KAFKA_CERT_ERROR                                          = "KAFKA_CERT_ERROR";
+    const KAFKA_PRODUCER_FLUSH_SUCCESS                              = "KAFKA_PRODUCER_FLUSH_SUCCESS";
 }
 

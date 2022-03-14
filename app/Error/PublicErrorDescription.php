@@ -14,6 +14,8 @@ class PublicErrorDescription
     const BAD_REQUEST_UNAUTHORIZED             = 'Please provide your api key for authentication purposes.';
     const BAD_REQUEST_INVALID_CLIENT           = 'There was a problem with the application you are trying to connect to, please contact the application provider for support.';
     const BAD_REQUEST_INVALID_CLIENT_OR_USER   = 'There was a problem with the application you are trying to connect to, please contact the application provider for support.';
+    const BAD_REQUEST_INVALID_LIVE_CLIENT      = 'There was a problem with the live application you are trying to connect to, please contact the application provider for support.';
+    const BAD_REQUEST_INVALID_TEST_CLIENT      = 'There was a problem with the test application you are trying to connect to, please contact the application provider for support.';
     const BAD_REQUEST_ROLE_NOT_ALLOWED         = 'The current user profile is restricted from this action';
     const BAD_REQUEST_INVALID_MERCHANT_OR_USER = 'Invalid merchant/user';
     const BAD_REQUEST_INVALID_OTP              = 'Invalid OTP';
