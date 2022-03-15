@@ -37,7 +37,7 @@ class HyperTracer
 
             return $next($request);
         }
-        ////$routeName = $this->fetchRouteName($request);
+        $routeName = $this->fetchRouteName($request);
         ////$route = $request->route();
         //\Trace::info(TraceCode::TALLY_AUTHORIZE_REQUEST, [
         //    'route snammmmeemmbcdhzkjd' => $this->fetchRouteName($request),
