@@ -60,6 +60,12 @@ class AppServiceProvider extends ServiceProvider
         $this->registerValidatorResolver();
 
         $this->app->singleton(EventTracker::class);
+
+        $path = $this->app->getConfigurationPath('jaeger');
+
+        if ($path) {
+            $this->app->make('config')->set('jaeger', require $path);
+        }
     }
 
     protected function registerValidatorResolver()

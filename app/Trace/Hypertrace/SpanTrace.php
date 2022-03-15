@@ -4,6 +4,7 @@ namespace App\Trace\Hypertrace;
 
 use App\Constants\TraceCode;
 use OpenCensus\Trace\Span;
+use Razorpay\Trace\Facades\Trace;
 use OpenCensus\Trace\Propagator\ArrayHeaders;
 use OpenCensus\Trace\Tracer as OpenCensusTracer;
 

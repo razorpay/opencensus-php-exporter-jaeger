@@ -6,7 +6,9 @@ use App;
 use Closure;
 use App\Constants\TraceCode;
 use OpenCensus\Trace\Tracer;
+use Illuminate\Http\Request;
 use App\Trace\Hypertrace\Tracing;
+use Razorpay\Trace\Facades\Trace;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Route;
 use OpenCensus\Trace\Integrations\PDO;
@@ -15,19 +17,19 @@ use OpenCensus\Trace\Integrations\Mysql;
 use App\Constants\Tracing as TracingConstant;
 use OpenCensus\Trace\Exporter\JaegerExporter;
 use OpenCensus\Trace\Propagator\JaegerPropagator;
+use function Webmozart\Assert\Tests\StaticAnalysis\null;
 
 class HyperTracer
 {
-    protected $app;
-
-    public function __construct()
-    {
-        $this->app = App::getFacadeRoot();
-    }
-
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
     public function handle($request, Closure $next)
     {
-        if (Tracing::isEnabled($this->app) === false)
+        $app = App::getFacadeRoot();
+        if (Tracing::isEnabled($app) === false)
         {
             \Trace::info(TraceCode::JAEGER_INFO, [
                 'jaeger_app_enabled' => false,
@@ -35,60 +37,69 @@ class HyperTracer
 
             return $next($request);
         }
+        ////$routeName = $this->fetchRouteName($request);
+        ////$route = $request->route();
+        //\Trace::info(TraceCode::TALLY_AUTHORIZE_REQUEST, [
+        //    'route snammmmeemmbcdhzkjd' => $this->fetchRouteName($request),
+        //]);
 
-        $currentRoute = $request->route();
-
-        if (Tracing::shouldTraceRoute($currentRoute) === false)
+        if (Tracing::shouldTraceRoute($routeName) === false)
         {
-            //TODO check if trace facade is being overwritten
             \Trace::info(TraceCode::JAEGER_INFO, [
                 'jaeger_app_route' => false,
-                'route_name'       => $currentRoute->getName(),
+                'route_name'       => $routeName,
             ]);
 
-            return $next($request);;
+            return $next($request);
         }
         \Trace::info(TraceCode::JAEGER_INFO, [
             'jaeger_app_route' => true,
-            'route_name'       => $currentRoute->getName(),
+            'route_name'       => $routeName,
         ]);
         // Load all useful extensions
         Mysql::load();
         Curl::load();
         PDO::load();
 
-        $attrs                             = Tracing::getBasicSpanAttributes($this->app);
+        $attrs                             = Tracing::getBasicSpanAttributes($app);
         $attrs[TracingConstant::SPAN_KIND] = TracingConstant::SERVER;
 
-        $spanOptions = $this->getSpanOptions($currentRoute);
+        $spanOptions = $this->getSpanOptions($request, $routeName, $app);
 
         $propagator    = new JaegerPropagator();
         $tracerOptions = [
             'propagator'        => $propagator,
             'root_span_options' => $spanOptions];
 
-        $serviceName = Tracing::getServiceName($this->app);
+        $serviceName = Tracing::getServiceName($app);
 
         $jaegerExporterOptions = [
-            'host' => $this->app['config']->get('jaeger.host'),
-            'port' => $this->app['config']->get('jaeger.port')
+            'host' => $app['config']->get('jaeger.host'),
+            'port' => $app['config']->get('jaeger.port')
         ];
 
         $exporter = new JaegerExporter($serviceName, $jaegerExporterOptions);
+        \Trace::info(TraceCode::DELETE_APPLICATION_REQUEST, $tracerOptions);
         Tracer::start($exporter, $tracerOptions);
 
         return $next($request);
     }
 
-    private function getSpanOptions($route)
+    private function getSpanOptions($request, $routeName, $app)
     {
-        $attrs = Tracing::getBasicSpanAttributes($this->app);
+        $attrs = Tracing::getBasicSpanAttributes($app);
 
         $attrs[TracingConstant::SPAN_KIND] = TracingConstant::SERVER;
 
         $attrs[TracingConstant::HTTP . '.' . TracingConstant::URL] = URL::current();
 
-        $parameterMap = Route::current()->parameters();
+        $route = $request->route();
+
+        $parameterMap = null;
+
+        if ( $route and $route->hasParameters() ){
+            $parameterMap = $route->parameters;
+        }
 
         $spanName = $this->getSpanName($attrs[TracingConstant::HTTP . '.' . TracingConstant::URL]);
 
@@ -104,7 +115,7 @@ class HyperTracer
             }
         }
 
-        $spanOptions[TracingConstant::ATTRIBUTES]['route_name'] = $route->getName();
+        $spanOptions[TracingConstant::ATTRIBUTES]['route_name'] = $routeName;
 
         return $spanOptions;
     }
@@ -140,5 +151,22 @@ class HyperTracer
         }
 
         return $spanName;
+    }
+
+    private function fetchRouteName(Request $request)
+    {
+        $route = $request->route();
+        //Trace::info( TraceCode::TALLY_TOKEN_REQUEST, [
+        //    "route here"                => $request->route(),
+        //]);
+        //Trace::info( TraceCode::TALLY_TOKEN_REQUEST, [
+        //    "request here"                => $request,
+        //]);
+
+        if (empty($route[1]['as']) === true) {
+            return 'other';
+        }
+
+        return $route[1]['as'];
     }
 }
