@@ -60,6 +60,7 @@ class TraceCode extends BaseTraceCode
     const JAEGER_SPAN_EXCEPTION                                     = 'JAEGER_SPAN_EXCEPTION';
     const JAEGER_INFO                                               = 'JAEGER_INFO';
     const JAEGER_API_CALL_FAIL                                      = 'JAEGER_API_CALL_FAIL';
+    const JAEGER_API_CALL_BAD_REQUEST                               = 'JAEGER_API_CALL_BAD_REQUEST';
 
     // ---- Segment Analytics ----
     const SEGMENT_EVENT_PUSH                                        = 'SEGMENT_EVENT_PUSH';

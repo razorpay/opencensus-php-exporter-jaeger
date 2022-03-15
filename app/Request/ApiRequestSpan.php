@@ -3,8 +3,8 @@
 namespace App\Request;
 
 use Trace;
+use Requests;
 use App\Constants\Tracing;
-use WpOrg\Requests\Requests;
 use App\Constants\TraceCode;
 use App\Trace\Hypertrace\SpanTrace;
 use OpenCensus\Trace\Propagator\ArrayHeaders;
@@ -79,6 +79,12 @@ class ApiRequestSpan
         try
         {
             $response = Requests::$methodName(...$methodArgs);
+            if ($response->status_code >= 400 and $response->status_code < 500)
+            {
+                Trace::info(TraceCode::JAEGER_API_CALL_BAD_REQUEST, [
+                    'body' => $response->body,
+                ]);
+            }
         }
         catch (\Throwable $e)
         {

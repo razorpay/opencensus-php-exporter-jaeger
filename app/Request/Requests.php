@@ -2,7 +2,7 @@
 
 namespace App\Request;
 
-use WpOrg\Requests\Requests as Req;
+use Requests as Req;
 
 /**
  * Wraps Requests Library methods to add

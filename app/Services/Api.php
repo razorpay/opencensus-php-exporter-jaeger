@@ -114,14 +114,11 @@ class Api
     public function getMerchantOrgDetails(string $merchantId): array
     {
         $url = $this->apiUrl . '/merchants/' . $merchantId . '/org';
-        printf(".........get merchant org details url.".$url);
         try
         {
             $response = Requests::get($url, $this->defaultHeaders, $this->options);
 
-            $body = json_decode($response->body, true);
-            echo $body;
-            return $body;
+            return json_decode($response->body, true);
         }
         catch (\Throwable $e)
         {
@@ -188,9 +185,8 @@ class Api
 
         if (Str::startsWith($orgDetails['primary_host_name'], 'http') === false)
         {
-            $protocolIdentifier = 'https://';
-            //((env('APP_MODE') === 'dev')
-                                   //or (env('APP_MODE') === 'docker')) ? 'http://' : 'https://';
+            $protocolIdentifier = ((env('APP_MODE') === 'dev')
+                                   or (env('APP_MODE') === 'docker')) ? 'http://' : 'https://';
         }
 
         return $protocolIdentifier.$orgDetails['primary_host_name'];
