@@ -29,33 +29,29 @@ class HyperTracer
     {
         if (Tracing::isEnabled($this->app) === false)
         {
-            //\Trace::info(TraceCode::JAEGER_INFO, [
-            //    'jaeger_app_enabled' => false,
-            //]);
+            \Trace::info(TraceCode::JAEGER_INFO, [
+                'jaeger_app_enabled' => false,
+            ]);
 
-            return $next($request);;
+            return $next($request);
         }
-
-        //test to run matched
-        //$container = app()->router;
-        //$router = app()->router;
 
         $currentRoute = $request->route();
 
         if (Tracing::shouldTraceRoute($currentRoute) === false)
         {
             //TODO check if trace facade is being overwritten
-            //\Trace::info(TraceCode::JAEGER_INFO, [
-            //    'jaeger_app_route' => false,
-            //    'route_name'       => $currentRoute->getName(),
-            //]);
+            \Trace::info(TraceCode::JAEGER_INFO, [
+                'jaeger_app_route' => false,
+                'route_name'       => $currentRoute->getName(),
+            ]);
 
             return $next($request);;
         }
-        //\Trace::info(TraceCode::JAEGER_INFO, [
-        //    'jaeger_app_route' => true,
-        //    'route_name'       => $currentRoute->getName(),
-        //]);
+        \Trace::info(TraceCode::JAEGER_INFO, [
+            'jaeger_app_route' => true,
+            'route_name'       => $currentRoute->getName(),
+        ]);
         // Load all useful extensions
         Mysql::load();
         Curl::load();
