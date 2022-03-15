@@ -16,7 +16,7 @@ $envDir = __DIR__.'/../environment';
 // Otherwise, we get the environment from the file
 // environment/env.php
 //
-$env = 'production';
+$env = 'stage';
 
 if (env('APP_ENV') === 'testing')
 {
