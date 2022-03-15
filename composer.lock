@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22c95ca2312e513ef820daa9e9261856",
+    "content-hash": "08d3a27df1253bf583e0f414f5768602",
     "packages": [
         {
             "name": "apache/thrift",
@@ -2156,16 +2156,16 @@
         },
         {
             "name": "opencensus/opencensus-exporter-jaeger",
-            "version": "v0.1.1",
+            "version": "v0.1.2-alpha",
             "source": {
                 "type": "git",
                 "url": "https://github.com/razorpay/opencensus-php-exporter-jaeger.git",
-                "reference": "29480c3e77a4e7a1359cd9e66e32da7446d18bb6"
+                "reference": "1115dff294bf357e620d9e6978a04c087d40ec30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/opencensus-php-exporter-jaeger/zipball/29480c3e77a4e7a1359cd9e66e32da7446d18bb6",
-                "reference": "29480c3e77a4e7a1359cd9e66e32da7446d18bb6",
+                "url": "https://api.github.com/repos/razorpay/opencensus-php-exporter-jaeger/zipball/1115dff294bf357e620d9e6978a04c087d40ec30",
+                "reference": "1115dff294bf357e620d9e6978a04c087d40ec30",
                 "shasum": ""
             },
             "require": {
@@ -2201,9 +2201,9 @@
             ],
             "description": "OpenCensus Jaeger Exporter for PHP",
             "support": {
-                "source": "https://github.com/razorpay/opencensus-php-exporter-jaeger/tree/v0.1.1"
+                "source": "https://github.com/razorpay/opencensus-php-exporter-jaeger/tree/v0.1.2-alpha"
             },
-            "time": "2018-11-26T18:31:31+00:00"
+            "time": "2021-02-11T09:41:39+00:00"
         },
         {
             "name": "opis/closure",
@@ -7232,7 +7232,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.6.4"
+        "php": ">=5.6.4",
+        "ext-json": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.2.0"
