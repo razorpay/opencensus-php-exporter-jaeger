@@ -1,7 +1,7 @@
 <?php
 
 return array(
-    'enabled'             => env('DISTRIBUTED_TRACING_ENABLED', true),
+    'enabled'             => env('DISTRIBUTED_TRACING_ENABLED', false),
     'host'                => env('JAEGER_HOSTNAME', env('NODE_NAME')),
     'port'                => env('JAEGER_PORT', 6831),
     'app_mode'            => env('APP_MODE', ''),
