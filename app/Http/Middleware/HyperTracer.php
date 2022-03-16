@@ -46,14 +46,14 @@ class HyperTracer
 
         if (Tracing::shouldTraceRoute($routeName) === false)
         {
-            \Trace::info(TraceCode::JAEGER_INFO, [
+            Trace::info(TraceCode::JAEGER_INFO, [
                 'jaeger_app_route' => false,
                 'route_name'       => $routeName,
             ]);
 
             return $next($request);
         }
-        \Trace::info(TraceCode::JAEGER_INFO, [
+        Trace::info(TraceCode::JAEGER_INFO, [
             'jaeger_app_route' => true,
             'route_name'       => $routeName,
         ]);
@@ -64,8 +64,6 @@ class HyperTracer
 
         $attrs                             = Tracing::getBasicSpanAttributes($this->app);
         $attrs[TracingConstant::SPAN_KIND] = TracingConstant::SERVER;
-
-
 
         $spanOptions = $this->getSpanOptions($request, $routeName);
 
@@ -97,7 +95,7 @@ class HyperTracer
         $route = $request->route();
 
         if ( !empty($route[2]) ){
-            $requestAttributes = $route->parameters;
+            $requestAttributes = $route[2];
         }
         else{
             $requestAttributes = $this->fetchLoggableBody($request);
