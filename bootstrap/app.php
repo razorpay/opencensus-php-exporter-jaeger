@@ -130,7 +130,6 @@ $app->routeMiddleware([
 $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
-//$app->register(App\Providers\OpenCensusProvider::class);
 $app->register(\Razorpay\Trace\ServiceProvider::class);
 
 $app->register(\Razorpay\OAuth\OAuthServiceProvider::class);
