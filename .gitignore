@@ -33,3 +33,4 @@ registry.yaml
 
 # devspace files
 .devspace/
+devspace.yaml
