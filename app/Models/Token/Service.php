@@ -51,4 +51,12 @@ class Service
 
         return $response;
     }
+
+    public function revokeRefreshToken($token){
+
+        $id = (new OAuth\RefreshToken\Repository)->fetchIdForToken($token['id']);
+
+        (new OAuth\RefreshToken\Repository)->revokeRefreshToken($id);
+
+    }
 }

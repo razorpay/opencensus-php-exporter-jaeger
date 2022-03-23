@@ -87,6 +87,7 @@ class TokenController extends Controller
     public function revokeByPartner()
     {
         $input = Request::all();
+
         // validate input
         $response = $this->authTokenService->validateRevokeTokenRequest($input);
 
@@ -95,6 +96,9 @@ class TokenController extends Controller
         ];
 
         $token = (new Token\Repository)->findOrFailPublic($response['id']);
+
+        //revoking refresh token
+        $this->authTokenService->revokeRefreshToken($token);
 
         $this->service->revoketoken($response['id'], $revokeInput);
 
