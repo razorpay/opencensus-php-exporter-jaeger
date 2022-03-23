@@ -319,8 +319,8 @@
                 "branch-alias": {
                     "dev-master": "2.3-dev"
                 }
-            },
-            "autoload": {
+		    },
+		    "autoload": {
                 "psr-4": {
                     "Cron\\": "src/Cron/"
                 }
