@@ -87,7 +87,6 @@ class TokenController extends Controller
     public function revokeByPartner()
     {
         $input = Request::all();
-
         // validate input
         $response = $this->authTokenService->validateRevokeTokenRequest($input);
 
