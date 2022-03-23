@@ -22,5 +22,33 @@ class Service
         $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Auth\Repository);
     }
 
+    public function validateRevokeTokenRequest($input)
+    {
+        $this->validator->validateInput('revoke_by_partner', $input);
 
+        //validate client credentials
+        (new Client\Repository)->getClientEntity(
+            $input['client_id'],
+            "",
+            $input['client_secret'],
+            true
+        );
+
+        // validate if the access token is a valid one
+        $response = $this->oauthServer->authenticateWithBearerToken($input['token']);
+
+        // validate whether token passed is issued to the client
+        if ($response['client_id'] != $input['client_id'])
+        {
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_CLIENT);
+        }
+        // get refresh tokens for the given access token
+        // if not empty, revoke the refresh tokens
+
+        $id = (new OAuth\RefreshToken\Repository)->fetchIdForToken($response['id']);
+
+        (new OAuth\RefreshToken\Repository)->revokeRefreshToken($id);
+
+        return $response;
+    }
 }
