@@ -8,12 +8,15 @@ use Request;
 use Razorpay\OAuth\Token;
 
 use App\Models\Auth;
+use App\Models\Token as AuthToken;
 use App\Constants\TraceCode;
 use App\Exception\LogicException;
 
 class TokenController extends Controller
 {
     protected $service;
+
+    protected $authTokenService;
 
     const APPLICATION_ID      = 'application_id';
     const PARTNER_MERCHANT_ID = 'partner_merchant_id';
@@ -22,6 +25,7 @@ class TokenController extends Controller
     public function __construct()
     {
         $this->service = new Token\Service;
+        $this->authTokenService = new AuthToken\Service;
     }
 
     public function getAll()
@@ -76,6 +80,26 @@ class TokenController extends Controller
         $this->service->revoketoken($id, $input);
 
         $this->revokeMerchantApplicationMapping($token, $input);
+
+        return response()->json([]);
+    }
+
+    public function revokeByPartner()
+    {
+        $input = Request::all();
+
+        // validate input
+        $response = $this->authTokenService->validateRevokeTokenRequest($input);
+
+        $revokeInput = [
+            'merchant_id' => $response['merchant_id'],
+        ];
+
+        $token = (new Token\Repository)->findOrFailPublic($response['id']);
+
+        $this->service->revoketoken($response['id'], $revokeInput);
+
+        $this->revokeMerchantApplicationMapping($token, $revokeInput);
 
         return response()->json([]);
     }
