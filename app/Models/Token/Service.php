@@ -42,21 +42,22 @@ class Service
         {
             throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_CLIENT);
         }
-        // get refresh tokens for the given access token
-        // if not empty, revoke the refresh tokens
-
-        $id = (new OAuth\RefreshToken\Repository)->fetchIdForToken($response['id']);
-
-        (new OAuth\RefreshToken\Repository)->revokeRefreshToken($id);
 
         return $response;
     }
 
+    // get refresh tokens for the given access token
+    // if not empty, revoke the refresh tokens
     public function revokeRefreshToken($token){
 
-        $id = (new OAuth\RefreshToken\Repository)->fetchIdForToken($token['id']);
+        $ids = (new OAuth\RefreshToken\Repository)->fetchIdForToken($token['id']);
 
-        (new OAuth\RefreshToken\Repository)->revokeRefreshToken($id);
-
+        if(!empty($ids))
+        {
+            foreach ($ids as $id)
+            {
+                (new OAuth\RefreshToken\Repository)->revokeRefreshToken($id);
+            }
+        }
     }
 }
