@@ -104,7 +104,7 @@ class TokenController extends Controller
 
         $this->revokeMerchantApplicationMapping($token, $revokeInput);
 
-        return response()->json([]);
+        return response()->json();
     }
 
     public function createForPartner()
