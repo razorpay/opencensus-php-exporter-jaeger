@@ -98,7 +98,7 @@ class TokenController extends Controller
         $token = (new Token\Repository)->findOrFailPublic($response['id']);
 
         //revoking refresh token
-        $this->authTokenService->revokeRefreshToken($token);
+        $this->service->revokeRefreshToken($token);
 
         $this->service->revoketoken($response['id'], $revokeInput);
 

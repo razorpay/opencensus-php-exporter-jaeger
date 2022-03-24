@@ -45,19 +45,4 @@ class Service
 
         return $response;
     }
-
-    // get refresh tokens for the given access token
-    // if not empty, revoke the refresh tokens
-    public function revokeRefreshToken($token){
-
-        $ids = (new OAuth\RefreshToken\Repository)->fetchIdForToken($token['id']);
-
-        if(!empty($ids))
-        {
-            foreach ($ids as $id)
-            {
-                (new OAuth\RefreshToken\Repository)->revokeRefreshToken($id);
-            }
-        }
-    }
 }
