@@ -77,7 +77,7 @@ class TokenController extends Controller
 
         $token = (new Token\Repository)->findOrFailPublic($id);
 
-        $this->service->revoketoken($id, $input);
+        $this->service->revokeToken($id, $input);
 
         $this->revokeMerchantApplicationMapping($token, $input);
 
@@ -97,14 +97,11 @@ class TokenController extends Controller
 
         $token = (new Token\Repository)->findOrFailPublic($response['id']);
 
-        //revoking refresh token
-        $this->service->revokeRefreshToken($token);
-
-        $this->service->revoketoken($response['id'], $revokeInput);
+        $this->service->revokeToken($response['id'], $revokeInput);
 
         $this->revokeMerchantApplicationMapping($token, $revokeInput);
 
-        return response()->json();
+        return response()->json([]);
     }
 
     public function createForPartner()
