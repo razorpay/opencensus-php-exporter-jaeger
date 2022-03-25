@@ -85,7 +85,7 @@ return [
         'request'  => [
             'method'  => 'DELETE',
             'content' => [
-                'merchant_id' => '10000000000000',
+                'client_id'    => '30000000000000',
             ]
         ],
         'response' => [
