@@ -73,7 +73,7 @@ class TokenTest extends TestCase
 
     public function testRevokebyPartener()
     {
- //       $authCode = (new OAuthTest())->generateAuthCodeAndClearResolvedInstances();
+ //     $authCode = (new OAuthTest())->generateAuthCodeAndClearResolvedInstances();
 
         $authCode = $this->generateAuthCode();
 
@@ -104,6 +104,8 @@ class TokenTest extends TestCase
         $content = $this->runRequestResponseFlow($data1);
 
         //$this->createTestToken();
+
+
 
         $data3 = & $this->testData[__FUNCTION__];
 
