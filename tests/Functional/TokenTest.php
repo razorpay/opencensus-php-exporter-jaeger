@@ -79,7 +79,7 @@ class TokenTest extends TestCase
 
         Request::clearResolvedInstances();
 
-        $data1['request']['url'] = '/tokens';
+        $data1['request']['url'] = '/token';
 
         $data1['request']['method'] = 'POST';
 
@@ -92,6 +92,8 @@ class TokenTest extends TestCase
         ];
 
         $data1['request']['content'] = $params1;
+
+        echo($data1);
 
         $content = $this->runRequestResponseFlow($data1);
 
