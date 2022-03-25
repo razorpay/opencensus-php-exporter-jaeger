@@ -24,7 +24,7 @@ class Service
 
     public function validateRevokeTokenRequest($input)
     {
-        $this->validator->validateInput('revoke_by_partner', $input);
+       // $this->validator->validateInput('revoke_by_partner', $input);
 
         //validate client credentials
         (new Client\Repository)->getClientEntity(
