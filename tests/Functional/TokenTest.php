@@ -100,24 +100,25 @@ class TokenTest extends TestCase
           ];
 
         $data1['response'] = $params2;
+
         $content = $this->runRequestResponseFlow($data1);
 
         //$this->createTestToken();
 
-        $data = & $this->testData[__FUNCTION__];
+        $data3 = & $this->testData[__FUNCTION__];
 
-        $data['request']['url'] = '/tokens/revoke';
+        $data3['request']['url'] = '/tokens/revoke';
 
         $params = [
             'client_secret' => $this->devClient->getSecret(),
             'token'         => $content['access_token'],
         ];
 
-        $this->addRequestParameters($data['request']['content'], $params);
+        $this->addRequestParameters($data3['request']['content'], $params);
 
-        print_r($data);
+        print_r($data3);
 
-        $response = $this->sendRequest($data['request']);
+        $response = $this->sendRequest($data3['request']);
 
         print_r($response);
 
