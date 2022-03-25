@@ -92,4 +92,16 @@ return [
             'content' => []
         ]
     ],
+
+    'testPostAuthCode' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/authorize',
+            'content' => [
+                'client_id'   => '30000000000000',
+                'token'       => 'success',
+                'merchant_id' => '10000000000000',
+            ]
+        ],
+    ]
 ];

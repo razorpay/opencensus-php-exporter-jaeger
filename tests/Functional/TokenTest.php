@@ -2,6 +2,8 @@
 
 namespace App\Tests\Functional;
 
+use Request;
+use Razorpay\OAuth\Application;
 use Razorpay\OAuth\Client;
 use Razorpay\OAuth\Token;
 use App\Tests\TestCase as TestCase;
@@ -71,7 +73,11 @@ class TokenTest extends TestCase
 
     public function testRevokebyPartener()
     {
-        $authCode = (new OAuthTest())->generateAuthCodeAndClearResolvedInstances();
+ //       $authCode = (new OAuthTest())->generateAuthCodeAndClearResolvedInstances();
+
+        $authCode = $this->generateAuthCode();
+
+        Request::clearResolvedInstances();
 
         $data1['request']['url'] = '/tokens';
 
@@ -122,5 +128,33 @@ class TokenTest extends TestCase
         $data['request']['url'] = '/tokens/'.$this->token->getId();
 
         return $data;
+    }
+
+    protected function generateAuthCode()
+    {
+        $this->application = factory(Application\Entity::class)->create();
+
+        factory(Client\Entity::class)->create(['application_id' => $this->application->id, 'environment' => 'prod']);
+
+        $this->devClient = factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $this->application->id,
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $data = $this->testData['testPostAuthCode'];
+
+        $data['request']['content']['client_id'] = $this->devClient->id;
+
+        $response = ($this->sendRequest($data['request']))->getContent();
+
+        $content = urldecode($response);
+
+        $pos = strpos($content, 'code=');
+        $end = strpos($content, '\'" />', $pos);
+
+        return substr($content, $pos + 5, $end - $pos - 5);
     }
 }
