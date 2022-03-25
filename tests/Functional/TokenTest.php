@@ -93,6 +93,8 @@ class TokenTest extends TestCase
 
         $data1['request']['content'] = $params1;
 
+        $data1['response']=[];
+
         $content = $this->runRequestResponseFlow($data1);
 
         //$this->createTestToken();
