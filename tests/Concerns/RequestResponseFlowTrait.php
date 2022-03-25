@@ -134,7 +134,6 @@ trait RequestResponseFlowTrait
             'cookies' => array(),
             'files' => array());
 
-        print_r($request);
         $request = array_merge($defaults, $request);
 
         $creds = $this->getCreds() ?? [];
@@ -142,7 +141,6 @@ trait RequestResponseFlowTrait
         $request['server'] = array_merge($request['server'], $creds);
 
         $this->convertContentToString($request['content']);
-        print_r($request);
 
         $response = $this->call(
             $request['method'],
