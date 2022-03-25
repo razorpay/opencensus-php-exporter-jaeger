@@ -103,5 +103,8 @@ return [
                 'merchant_id' => '10000000000000',
             ]
         ],
+        'response' => [
+            'content' => []
+        ]
     ]
 ];
