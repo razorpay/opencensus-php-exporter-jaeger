@@ -80,4 +80,16 @@ return [
             'content' => []
         ]
     ],
+
+    'testRevokebyPartener' => [
+        'request'  => [
+            'method'  => 'DELETE',
+            'content' => [
+                'merchant_id' => '10000000000000',
+            ]
+        ],
+        'response' => [
+            'content' => []
+        ]
+    ],
 ];

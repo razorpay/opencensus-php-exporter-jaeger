@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional;
 
+use Razorpay\OAuth\Client;
 use Razorpay\OAuth\Token;
 use App\Tests\TestCase as TestCase;
 use App\Tests\Concerns\RequestResponseFlowTrait;
@@ -11,6 +12,11 @@ class TokenTest extends TestCase
     use RequestResponseFlowTrait;
 
     protected $token;
+
+    /**
+     * @var Client\Entity
+     */
+    protected $devClient;
 
     public function setup(): void
     {
@@ -61,6 +67,47 @@ class TokenTest extends TestCase
         $data = $this->prepareTestData();
 
         $this->startTest($data);
+    }
+
+    public function testRevokebyPartener()
+    {
+        $authCode = (new OAuthTest())->generateAuthCodeAndClearResolvedInstances();
+
+        $data1['request']['url'] = '/tokens';
+
+        $data1['request']['method'] = 'POST';
+
+        $params1 = [
+            'client_id'    => '30000000000000',
+            'grant_type'   => 'authorization_code',
+            'client_secret' => $this->devClient->getSecret(),
+            'code'          => $authCode,
+            'redirect_uri'  => 'http://localhost',
+        ];
+
+        $this->addRequestParameters($data1['request']['content'], $params1);
+
+        $content = $this->runRequestResponseFlow($data1);
+
+        //$this->createTestToken();
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $data['request']['url'] = '/tokens/revoke';
+
+        $params = [
+            'client_secret' => $this->devClient->getSecret(),
+            'token'         => $content['access_token'],
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->startTest($data);
+    }
+
+    protected function addRequestParameters(array & $content, array $parameters)
+    {
+        $content = array_merge($content, $parameters);
     }
 
     public function createTestToken(string $type = 'access_token')
