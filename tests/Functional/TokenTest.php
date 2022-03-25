@@ -91,7 +91,7 @@ class TokenTest extends TestCase
             'redirect_uri'  => 'http://localhost',
         ];
 
-        $this->addRequestParameters($data1['request']['content'], $params1);
+        $data1['request']['content'] = $params1;
 
         $content = $this->runRequestResponseFlow($data1);
 
