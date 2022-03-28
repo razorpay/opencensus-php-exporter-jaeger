@@ -79,6 +79,7 @@ class TokenTest extends TestCase
 
         Request::clearResolvedInstances();
 
+        //getting access token by calling /token
         $data1['request']['url'] = '/token';
 
         $data1['request']['method'] = 'POST';
@@ -107,6 +108,7 @@ class TokenTest extends TestCase
 
 
 
+        //calling revoke by partner api
         $data3 = & $this->testData[__FUNCTION__];
 
         $data3['request']['url'] = '/tokens/revoke';
