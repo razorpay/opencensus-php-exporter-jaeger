@@ -127,30 +127,36 @@ class HyperTracer
     {
         $urlInfo = parse_url($url);
 
-        $spanName = $urlInfo['path'];
+        $spanName = 'root';
 
-        $explodedPath = explode("/", $spanName);
-
-        $strToReplaceInName = [];
-
-        foreach ($explodedPath as $key => $value)
+        if (key_exists('path', $urlInfo))
         {
-            $splitArr = explode("_", $value);
+            $spanName = $urlInfo['path'];
 
-            if (strlen($value) === TracingConstant::ID_LENGTH ||
-                (sizeof($splitArr) === 2) && strlen($splitArr[1]) === TracingConstant::ID_LENGTH)
-            {
-                $strToReplaceInName [] = "{id}";
-            }
-            else
-            {
-                $strToReplaceInName [] = $value;
-            }
-        }
+            $explodedPath = explode("/", $spanName);
 
-        if (empty($strToReplaceInName) === false)
-        {
-            $spanName = implode("/", $strToReplaceInName);
+            $strToReplaceInName = [];
+
+            foreach ($explodedPath as $key => $value)
+            {
+                $splitArr = explode("_", $value);
+
+                if (strlen($value) === TracingConstant::ID_LENGTH ||
+                    (sizeof($splitArr) === 2) && strlen($splitArr[1]) === TracingConstant::ID_LENGTH)
+                {
+                    $strToReplaceInName [] = "{id}";
+                }
+                else
+                {
+                    $strToReplaceInName [] = $value;
+                }
+            }
+
+            if (empty($strToReplaceInName) === false)
+            {
+                $spanName = implode("/", $strToReplaceInName);
+            }
+
         }
 
         return $spanName;
