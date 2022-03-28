@@ -88,10 +88,9 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
-        // validate input
-        print_r(Request::toArray());
+        $this->authTokenService->validateRevokeTokenRequest($input);
 
-        $response = $this->authTokenService->validateRevokeTokenRequest($input);
+        $response = $this->service->validateClientAndToken($input);
 
         $revokeInput = [
             'merchant_id' => $response['merchant_id'],
@@ -100,8 +99,6 @@ class TokenController extends Controller
         $token = (new Token\Repository)->findOrFailPublic($response['id']);
 
         $this->service->revokeToken($response['id'], $revokeInput);
-
-        $this->revokeMerchantApplicationMapping($token, $revokeInput);
 
         return response()->json([]);
     }
