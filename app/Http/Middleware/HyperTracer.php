@@ -27,8 +27,9 @@ class HyperTracer
     }
 
     /**
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -42,7 +43,6 @@ class HyperTracer
             return $next($request);
         }
         $routeName = $this->fetchRouteName($request);
-
 
         if (Tracing::shouldTraceRoute($routeName) === false)
         {
@@ -81,6 +81,7 @@ class HyperTracer
 
         $exporter = new JaegerExporter($serviceName, $jaegerExporterOptions);
         Tracer::start($exporter, $tracerOptions);
+
         return $next($request);
     }
 
@@ -94,10 +95,12 @@ class HyperTracer
 
         $route = $request->route();
 
-        if ( !empty($route[2]) ){
+        if (!empty($route[2]))
+        {
             $requestAttributes = $route[2];
         }
-        else{
+        else
+        {
             $requestAttributes = $this->fetchLoggableBody($request);
         }
 
@@ -157,7 +160,8 @@ class HyperTracer
     {
         $route = $request->route();
 
-        if (empty($route[1]['as']) === true) {
+        if (empty($route[1]['as']) === true)
+        {
             return 'other';
         }
 
@@ -166,12 +170,17 @@ class HyperTracer
 
     private function fetchLoggableBody(Request $request): array
     {
-        $loggableBody = [];
+        $loggableBody     = [];
         $loggableBodyKeys = ['client_id', 'grant_type', 'merchant_id', 'mode', 'application_id'];
-        $content = json_decode($request->getContent(), true);
-        foreach($content as $key=>$value){
-            if(in_array($key, $loggableBodyKeys, true)){
-                $loggableBody[$key] = $value;
+        $content          = json_decode($request->getContent(), true);
+        if (!empty($content))
+        {
+            foreach ($content as $key => $value)
+            {
+                if (in_array($key, $loggableBodyKeys, true))
+                {
+                    $loggableBody[$key] = $value;
+                }
             }
         }
 
