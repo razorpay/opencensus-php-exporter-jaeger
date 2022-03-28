@@ -90,15 +90,7 @@ class TokenController extends Controller
 
         $this->authTokenService->validateRevokeTokenRequest($input);
 
-        $response = $this->service->validateClientAndToken($input);
-
-        $revokeInput = [
-            'merchant_id' => $response['merchant_id'],
-        ];
-
-        $token = (new Token\Repository)->findOrFailPublic($response['id']);
-
-        $this->service->revokeToken($response['id'], $revokeInput);
+        $response = $this->service->validateClientAndRevokeToken($input);
 
         return response()->json([]);
     }
