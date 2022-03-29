@@ -88,8 +88,6 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
-        print_r($input);
-
         $this->authTokenService->validateRevokeTokenRequest($input);
 
         $response = $this->service->validateClientAndRevokeToken($input);
