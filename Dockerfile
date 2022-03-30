@@ -2,7 +2,7 @@ ARG ONGGI_IMAGE=c.rzp.io/razorpay/onggi:php-7.2-nginx
 
 FROM $ONGGI_IMAGE as opencensus-ext
 WORKDIR /
-ARG OPENCENSUS_VERSION_TAG=v0.7.6.4
+ARG OPENCENSUS_VERSION_TAG=v0.7.7.0
 RUN set -eux && \
     wget -O - https://github.com/razorpay/opencensus-php/tarball/"${OPENCENSUS_VERSION_TAG}" | tar xz --strip=1
 RUN cd /ext && phpize && ./configure --enable-opencensus && make install
