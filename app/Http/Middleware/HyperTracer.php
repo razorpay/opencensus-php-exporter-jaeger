@@ -80,7 +80,20 @@ class HyperTracer
         ];
 
         $exporter = new JaegerExporter($serviceName, $jaegerExporterOptions);
-        Tracer::start($exporter, $tracerOptions);
+        Trace::info(TraceCode::TALLY_TOKEN_REQUEST, [
+            'strting tracer........................' => $jaegerExporterOptions,
+            'service name .....................'     => $serviceName,
+        ]);
+        $abcd = Tracer::start($exporter, $tracerOptions);
+
+        Trace::info(TraceCode::TALLY_TOKEN_REQUEST, [
+            'strted tracerrequest handler...............................' => $abcd->tracer()->enabled(),
+        ]);
+        Trace::info(TraceCode::TALLY_TOKEN_REQUEST, [
+            'strted tracer...............................' => $tracerOptions,
+        ]);
+
+        //Tracer::start($exporter, $tracerOptions);
 
         return $next($request);
     }
