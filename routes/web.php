@@ -2,6 +2,7 @@
 
 $app->get('/', [
     'as'   => 'get_root',
+    'middleware' =>'auth.hypertrace',
     'uses' => 'AuthController@getRoot'
 ]);
 
