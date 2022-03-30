@@ -70,5 +70,8 @@ class TraceCode extends BaseTraceCode
     // --- Kakfa ---
     const KAFKA_CERT_ERROR                                          = "KAFKA_CERT_ERROR";
     const KAFKA_PRODUCER_FLUSH_SUCCESS                              = "KAFKA_PRODUCER_FLUSH_SUCCESS";
+
+    // Adding this for outbox log (outbox-php pkg)
+    const OUTBOX_JOB_CREATED                                        = 'OUTBOX_JOB_CREATED';
 }
 
