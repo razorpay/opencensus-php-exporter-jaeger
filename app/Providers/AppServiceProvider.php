@@ -64,7 +64,7 @@ class AppServiceProvider extends ServiceProvider
         $path = $this->app->getConfigurationPath('jaeger');
 
         if ($path) {
-            $this->app->make('config')->set('jaeger', require $path);
+            $this->app->make('config')->set('jaeger', require "$path");
         }
     }
 
