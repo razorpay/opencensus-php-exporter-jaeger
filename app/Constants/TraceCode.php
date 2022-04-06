@@ -55,6 +55,13 @@ class TraceCode extends BaseTraceCode
     const CREATE_CONSUMER_IN_EDGE                                   = 'CREATE_CONSUMER_IN_EDGE';
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED                    = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED';
 
+    // ----- Hypertrace -----
+    const OPENCENSUS_ERROR                                          = 'OPENCENSUS_ERROR';
+    const JAEGER_SPAN_EXCEPTION                                     = 'JAEGER_SPAN_EXCEPTION';
+    const JAEGER_INFO                                               = 'JAEGER_INFO';
+    const JAEGER_API_CALL_FAIL                                      = 'JAEGER_API_CALL_FAIL';
+    const JAEGER_API_CALL_BAD_REQUEST                               = 'JAEGER_API_CALL_BAD_REQUEST';
+
     // ---- Segment Analytics ----
     const SEGMENT_EVENT_PUSH                                        = 'SEGMENT_EVENT_PUSH';
     const SEGMENT_EVENT_PUSH_SUCCESS                                = 'SEGMENT_EVENT_PUSH_SUCCESS';
@@ -63,5 +70,8 @@ class TraceCode extends BaseTraceCode
     // --- Kakfa ---
     const KAFKA_CERT_ERROR                                          = "KAFKA_CERT_ERROR";
     const KAFKA_PRODUCER_FLUSH_SUCCESS                              = "KAFKA_PRODUCER_FLUSH_SUCCESS";
+
+    // Adding this for outbox log (outbox-php pkg)
+    const OUTBOX_JOB_CREATED                                        = 'OUTBOX_JOB_CREATED';
 }
 
