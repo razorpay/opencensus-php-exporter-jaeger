@@ -61,10 +61,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(EventTracker::class);
 
-        $path = $this->app->getConfigurationPath('jaeger');
+        //$path = $this->app->getConfigurationPath('jaeger');
 
-        if ($path) {
-            $this->app->make('config')->set('jaeger', require "$path");
+        if (__DIR__ . '/../../config/jaeger.php') {
+            $this->app->make('config')->set('jaeger', require __DIR__ . '/../../config/jaeger.php');
         }
     }
 
