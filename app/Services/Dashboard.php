@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use Request;
-use Requests;
+use App\Request\Requests;
 use App\Constants\RequestParams;
 
 use App\Models\Auth;

@@ -6,9 +6,10 @@ use App;
 use Closure;
 use App\Constants\TraceCode;
 use OpenCensus\Trace\Tracer;
+use Illuminate\Http\Request;
 use App\Trace\Hypertrace\Tracing;
+use Razorpay\Trace\Facades\Trace;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Route;
 use OpenCensus\Trace\Integrations\PDO;
 use OpenCensus\Trace\Integrations\Curl;
 use OpenCensus\Trace\Integrations\Mysql;
@@ -25,37 +26,37 @@ class HyperTracer
         $this->app = App::getFacadeRoot();
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
+     * @return mixed
+     */
     public function handle($request, Closure $next)
     {
         if (Tracing::isEnabled($this->app) === false)
         {
-            //\Trace::info(TraceCode::JAEGER_INFO, [
-            //    'jaeger_app_enabled' => false,
-            //]);
+            Trace::info(TraceCode::JAEGER_INFO, [
+                'jaeger_app_enabled' => false,
+            ]);
 
-            return $next($request);;
+            return $next($request);
         }
+        $routeName = $this->fetchRouteName($request);
 
-        //test to run matched
-        //$container = app()->router;
-        //$router = app()->router;
-
-        $currentRoute = $request->route();
-
-        if (Tracing::shouldTraceRoute($currentRoute) === false)
+        if (Tracing::shouldTraceRoute($routeName) === false)
         {
-            //TODO check if trace facade is being overwritten
-            //\Trace::info(TraceCode::JAEGER_INFO, [
-            //    'jaeger_app_route' => false,
-            //    'route_name'       => $currentRoute->getName(),
-            //]);
+            Trace::info(TraceCode::JAEGER_INFO, [
+                'jaeger_app_route' => false,
+                'route_name'       => $routeName,
+            ]);
 
-            return $next($request);;
+            return $next($request);
         }
-        //\Trace::info(TraceCode::JAEGER_INFO, [
-        //    'jaeger_app_route' => true,
-        //    'route_name'       => $currentRoute->getName(),
-        //]);
+        Trace::info(TraceCode::JAEGER_INFO, [
+            'jaeger_app_route' => true,
+            'route_name'       => $routeName,
+        ]);
         // Load all useful extensions
         Mysql::load();
         Curl::load();
@@ -64,7 +65,7 @@ class HyperTracer
         $attrs                             = Tracing::getBasicSpanAttributes($this->app);
         $attrs[TracingConstant::SPAN_KIND] = TracingConstant::SERVER;
 
-        $spanOptions = $this->getSpanOptions($currentRoute);
+        $spanOptions = $this->getSpanOptions($request, $routeName);
 
         $propagator    = new JaegerPropagator();
         $tracerOptions = [
@@ -84,7 +85,7 @@ class HyperTracer
         return $next($request);
     }
 
-    private function getSpanOptions($route)
+    private function getSpanOptions($request, $routeName)
     {
         $attrs = Tracing::getBasicSpanAttributes($this->app);
 
@@ -92,7 +93,16 @@ class HyperTracer
 
         $attrs[TracingConstant::HTTP . '.' . TracingConstant::URL] = URL::current();
 
-        $parameterMap = Route::current()->parameters();
+        $route = $request->route();
+
+        if (!empty($route[2]))
+        {
+            $requestAttributes = $route[2];
+        }
+        else
+        {
+            $requestAttributes = $this->fetchLoggableBody($request);
+        }
 
         $spanName = $this->getSpanName($attrs[TracingConstant::HTTP . '.' . TracingConstant::URL]);
 
@@ -100,15 +110,15 @@ class HyperTracer
 
         $routeParamPrefix = TracingConstant::HTTP . '.' . TracingConstant::ROUTE_PARAMS;
 
-        if (empty($parameterMap) === false)
+        if (empty($requestAttributes) === false)
         {
-            foreach ($parameterMap as $key => $value)
+            foreach ($requestAttributes as $key => $value)
             {
                 $spanOptions[TracingConstant::ATTRIBUTES][$routeParamPrefix . $key] = $value;
             }
         }
 
-        $spanOptions[TracingConstant::ATTRIBUTES]['route_name'] = $route->getName();
+        $spanOptions[TracingConstant::ATTRIBUTES]['route_name'] = $routeName;
 
         return $spanOptions;
     }
@@ -117,32 +127,69 @@ class HyperTracer
     {
         $urlInfo = parse_url($url);
 
-        $spanName = $urlInfo['path'];
+        $spanName = 'root';
 
-        $explodedPath = explode("/", $spanName);
-
-        $strToReplaceInName = [];
-
-        foreach ($explodedPath as $key => $value)
+        if (key_exists('path', $urlInfo))
         {
-            $splitArr = explode("_", $value);
+            $spanName = $urlInfo['path'];
 
-            if (strlen($value) === TracingConstant::ID_LENGTH ||
-                (sizeof($splitArr) === 2) && strlen($splitArr[1]) === TracingConstant::ID_LENGTH)
-            {
-                $strToReplaceInName [] = "{id}";
-            }
-            else
-            {
-                $strToReplaceInName [] = $value;
-            }
-        }
+            $explodedPath = explode("/", $spanName);
 
-        if (empty($strToReplaceInName) === false)
-        {
-            $spanName = implode("/", $strToReplaceInName);
+            $strToReplaceInName = [];
+
+            foreach ($explodedPath as $key => $value)
+            {
+                $splitArr = explode("_", $value);
+
+                if (strlen($value) === TracingConstant::ID_LENGTH ||
+                    (sizeof($splitArr) === 2) && strlen($splitArr[1]) === TracingConstant::ID_LENGTH)
+                {
+                    $strToReplaceInName [] = "{id}";
+                }
+                else
+                {
+                    $strToReplaceInName [] = $value;
+                }
+            }
+
+            if (empty($strToReplaceInName) === false)
+            {
+                $spanName = implode("/", $strToReplaceInName);
+            }
+
         }
 
         return $spanName;
+    }
+
+    private function fetchRouteName(Request $request)
+    {
+        $route = $request->route();
+
+        if (empty($route[1]['as']) === true)
+        {
+            return 'other';
+        }
+
+        return $route[1]['as'];
+    }
+
+    private function fetchLoggableBody(Request $request): array
+    {
+        $loggableBody     = [];
+        $loggableBodyKeys = ['client_id', 'grant_type', 'merchant_id', 'mode', 'application_id'];
+        $content          = json_decode($request->getContent(), true);
+        if (!empty($content))
+        {
+            foreach ($content as $key => $value)
+            {
+                if (in_array($key, $loggableBodyKeys, true))
+                {
+                    $loggableBody[$key] = $value;
+                }
+            }
+        }
+
+        return $loggableBody;
     }
 }
