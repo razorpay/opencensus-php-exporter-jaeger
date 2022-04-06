@@ -83,7 +83,7 @@ return [
 
     'testRevokebyPartener' => [
         'request'  => [
-            'method'  => 'DELETE',
+            'method'  => 'POST',
             'content' => [
                 'client_id'    => '30000000000000',
             ]

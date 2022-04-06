@@ -6,6 +6,7 @@ use Trace;
 use Request;
 
 use Razorpay\OAuth\Token;
+use Razorpay\OAuth\RefreshToken;
 
 use App\Models\Auth;
 use App\Models\Token as AuthToken;
@@ -18,14 +19,21 @@ class TokenController extends Controller
 
     protected $authTokenService;
 
+    protected $refreshTokenService;
+
+
     const APPLICATION_ID      = 'application_id';
     const PARTNER_MERCHANT_ID = 'partner_merchant_id';
     const SUB_MERCHANT_ID     = 'sub_merchant_id';
+    /**
+     * @var RefreshToken\Service
+     */
 
     public function __construct()
     {
         $this->service = new Token\Service;
         $this->authTokenService = new AuthToken\Service;
+        $this->refreshTokenService = new RefreshToken\Service;
     }
 
     public function getAll()
@@ -77,7 +85,7 @@ class TokenController extends Controller
 
         $token = (new Token\Repository)->findOrFailPublic($id);
 
-        $this->service->revokeToken($id, $input);
+        $this->service->revoketken($id, $input);
 
         $this->revokeMerchantApplicationMapping($token, $input);
 
@@ -90,7 +98,15 @@ class TokenController extends Controller
 
         $this->authTokenService->validateRevokeTokenRequest($input);
 
-        $response = $this->service->validateClientAndRevokeToken($input);
+        if($input['token_type_hint'] === 'access_token')
+        {
+            $response = $this->service->validateClientAndRevokeToken($input);
+        }
+
+        if($input['token_type_hint'] === 'refresh_token')
+        {
+            $response = $this->refreshTokenService->validateOldRefreshTokenAndRevoke($input);
+        }
 
         return response()->json([]);
     }
