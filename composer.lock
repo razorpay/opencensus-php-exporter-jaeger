@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08d3a27df1253bf583e0f414f5768602",
+    "content-hash": "ed9a022cd525b114b6bcf3120d207d2b",
     "packages": [
         {
             "name": "apache/thrift",
@@ -104,16 +104,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.212.4",
+            "version": "3.218.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "4961e8b34fab8b92a459067f264b4dc66f969a57"
+                "reference": "db59241a678720d50deb166d7bfe332100898964"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4961e8b34fab8b92a459067f264b4dc66f969a57",
-                "reference": "4961e8b34fab8b92a459067f264b4dc66f969a57",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/db59241a678720d50deb166d7bfe332100898964",
+                "reference": "db59241a678720d50deb166d7bfe332100898964",
                 "shasum": ""
             },
             "require": {
@@ -189,9 +189,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.212.4"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.218.4"
             },
-            "time": "2022-03-08T19:19:48+00:00"
+            "time": "2022-04-06T18:16:53+00:00"
         },
         {
             "name": "cache/adapter-common",
@@ -730,16 +730,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.4.1",
+            "version": "7.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "ee0a041b1760e6a53d2a39c8c34115adc2af2c79"
+                "reference": "ac1ec1cd9b5624694c3a40be801d94137afb12b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/ee0a041b1760e6a53d2a39c8c34115adc2af2c79",
-                "reference": "ee0a041b1760e6a53d2a39c8c34115adc2af2c79",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/ac1ec1cd9b5624694c3a40be801d94137afb12b4",
+                "reference": "ac1ec1cd9b5624694c3a40be801d94137afb12b4",
                 "shasum": ""
             },
             "require": {
@@ -834,7 +834,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.4.1"
+                "source": "https://github.com/guzzle/guzzle/tree/7.4.2"
             },
             "funding": [
                 {
@@ -850,7 +850,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-12-06T18:43:05+00:00"
+            "time": "2022-03-20T14:16:28+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -938,16 +938,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.1.0",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "089edd38f5b8abba6cb01567c2a8aaa47cec4c72"
+                "reference": "c94a94f120803a18554c1805ef2e539f8285f9a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/089edd38f5b8abba6cb01567c2a8aaa47cec4c72",
-                "reference": "089edd38f5b8abba6cb01567c2a8aaa47cec4c72",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/c94a94f120803a18554c1805ef2e539f8285f9a2",
+                "reference": "c94a94f120803a18554c1805ef2e539f8285f9a2",
                 "shasum": ""
             },
             "require": {
@@ -971,7 +971,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "2.2-dev"
                 }
             },
             "autoload": {
@@ -1033,7 +1033,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.1.0"
+                "source": "https://github.com/guzzle/psr7/tree/2.2.1"
             },
             "funding": [
                 {
@@ -1049,7 +1049,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-10-06T17:43:30+00:00"
+            "time": "2022-03-20T21:55:58+00:00"
         },
         {
             "name": "laravel/framework",
@@ -2077,16 +2077,16 @@
         },
         {
             "name": "opencensus/opencensus",
-            "version": "v0.7.7.0",
+            "version": "v0.7.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/razorpay/opencensus-php.git",
-                "reference": "8464774cd7cc249f39af605ce408ad5cdd353f4a"
+                "reference": "117d2f184c936b6365592806d5f873984730feed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/opencensus-php/zipball/8464774cd7cc249f39af605ce408ad5cdd353f4a",
-                "reference": "8464774cd7cc249f39af605ce408ad5cdd353f4a",
+                "url": "https://api.github.com/repos/razorpay/opencensus-php/zipball/117d2f184c936b6365592806d5f873984730feed",
+                "reference": "117d2f184c936b6365592806d5f873984730feed",
                 "shasum": ""
             },
             "require": {
@@ -2149,10 +2149,10 @@
             ],
             "description": "OpenCensus Trace Client for PHP",
             "support": {
-                "source": "https://github.com/razorpay/opencensus-php/tree/v0.7.7.0",
+                "source": "https://github.com/razorpay/opencensus-php/tree/v0.7.7.1",
                 "issues": "https://github.com/razorpay/opencensus-php/issues"
             },
-            "time": "2022-02-01T09:07:21+00:00"
+            "time": "2022-03-22T13:02:44+00:00"
         },
         {
             "name": "opencensus/opencensus-exporter-jaeger",
@@ -2931,24 +2931,25 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "2.1.6",
+            "version": "2.1.6.30",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "39a440ba4b73747e2ab3aa190f91a82707207f7f"
+                "reference": "265de81ff8baa6639bd20f95f9d30f1317c026d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/39a440ba4b73747e2ab3aa190f91a82707207f7f",
-                "reference": "39a440ba4b73747e2ab3aa190f91a82707207f7f",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/265de81ff8baa6639bd20f95f9d30f1317c026d5",
+                "reference": "265de81ff8baa6639bd20f95f9d30f1317c026d5",
                 "shasum": ""
             },
             "require": {
                 "laravel/framework": "^6.0",
                 "lcobucci/jwt": "~3.3.1",
                 "league/oauth2-server": "^6.0",
+                "monolog/monolog": "^1.12",
                 "php": ">=7.2",
-                "razorpay/outbox-php": "^0.1.4",
+                "razorpay/outbox-php": "v0.2.3",
                 "razorpay/spine": "1.0.1",
                 "zendframework/zend-diactoros": "^1.4"
             },
@@ -2978,28 +2979,29 @@
                 "service"
             ],
             "support": {
-                "source": "https://github.com/razorpay/oauth/tree/2.1.6",
+                "source": "https://github.com/razorpay/oauth/tree/2.1.7",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2022-01-18T05:09:39+00:00"
+            "time": "2022-03-22T13:31:05+00:00"
         },
         {
             "name": "razorpay/outbox-php",
-            "version": "0.1.4",
+            "version": "v0.2.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/outbox-php.git",
-                "reference": "d81e39ac2dcbaf7698efa64af624bbd5546363af"
+                "reference": "299dcbb9b59b24d04e51400d3426119e084f04c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/outbox-php/zipball/d81e39ac2dcbaf7698efa64af624bbd5546363af",
-                "reference": "d81e39ac2dcbaf7698efa64af624bbd5546363af",
+                "url": "https://api.github.com/repos/razorpay/outbox-php/zipball/299dcbb9b59b24d04e51400d3426119e084f04c0",
+                "reference": "299dcbb9b59b24d04e51400d3426119e084f04c0",
                 "shasum": ""
             },
             "require": {
                 "illuminate/database": "^6.0",
-                "php": ">=7.2"
+                "php": ">=7.2",
+                "razorpay/trace": "3.2.1"
             },
             "require-dev": {
                 "mockery/mockery": "^0.9.9",
@@ -3020,10 +3022,10 @@
             ],
             "description": "PHP SDK for sending outbox jobs.",
             "support": {
-                "source": "https://github.com/razorpay/outbox-php/tree/0.1.4",
+                "source": "https://github.com/razorpay/outbox-php/tree/v0.2.3",
                 "issues": "https://github.com/razorpay/outbox-php/issues"
             },
-            "time": "2021-08-03T23:37:55+00:00"
+            "time": "2022-03-22T10:21:21+00:00"
         },
         {
             "name": "razorpay/spine",
@@ -3078,16 +3080,16 @@
         },
         {
             "name": "razorpay/trace",
-            "version": "3.0.1",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/trace.git",
-                "reference": "b133ebdb41b71ca3fea6b71acb03a952bcfc22c9"
+                "reference": "2ddde0adc69075120ef77cb469df1e6aa6e64985"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/trace/zipball/b133ebdb41b71ca3fea6b71acb03a952bcfc22c9",
-                "reference": "b133ebdb41b71ca3fea6b71acb03a952bcfc22c9",
+                "url": "https://api.github.com/repos/razorpay/trace/zipball/2ddde0adc69075120ef77cb469df1e6aa6e64985",
+                "reference": "2ddde0adc69075120ef77cb469df1e6aa6e64985",
                 "shasum": ""
             },
             "require": {
@@ -3148,10 +3150,10 @@
                 "trace"
             ],
             "support": {
-                "source": "https://github.com/razorpay/trace/tree/3.0.1",
+                "source": "https://github.com/razorpay/trace/tree/3.2.1",
                 "issues": "https://github.com/razorpay/trace/issues"
             },
-            "time": "2021-04-05T12:14:01+00:00"
+            "time": "2022-03-04T07:39:17+00:00"
         },
         {
             "name": "rmccue/requests",
@@ -7236,5 +7238,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
