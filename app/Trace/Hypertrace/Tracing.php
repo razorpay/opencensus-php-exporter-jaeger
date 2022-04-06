@@ -2,6 +2,7 @@
 
 namespace App\Trace\Hypertrace;
 
+use App\Constants\TraceCode;
 use App\Constants\Tracing as Constant;
 
 class Tracing
@@ -77,10 +78,11 @@ class Tracing
         return $attrs;
     }
 
-    public static function shouldTraceRoute($route): bool
+    public static function shouldTraceRoute($routeName): bool
     {
-        if(!(in_array($route->getName(), self::getRoutesToInclude(), true)) or
-           in_array($route->getName(), self::getRoutesToExclude(), true))
+
+        if(!(in_array($routeName, self::getRoutesToInclude(), true)) or
+           in_array($routeName, self::getRoutesToExclude(), true))
         {
             return false;
         }

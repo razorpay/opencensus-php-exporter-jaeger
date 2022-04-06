@@ -1,10 +1,22 @@
-FROM c.rzp.io/razorpay/containers:base-nginx-php7
+FROM c.rzp.io/razorpay/onggi:php-7.2-nginx as opencensus-ext
+WORKDIR /
+ARG OPENCENSUS_VERSION_TAG=v0.7.6.4
+RUN set -eux && \
+    wget -O - https://github.com/razorpay/opencensus-php/tarball/"${OPENCENSUS_VERSION_TAG}" | tar xz --strip=1
+RUN cd /ext && phpize && ./configure --enable-opencensus && make install
+
+FROM c.rzp.io/razorpay/onggi:php-7.2-nginx
 
 ARG GIT_TOKEN
 ARG GIT_COMMIT_HASH
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 VOLUME ['/app']
+
+RUN pear config-set php_ini /etc/php7/php.ini
+RUN pecl install opencensus-alpha
+
+COPY --from=opencensus-ext /usr/lib/php7/modules/opencensus.so /usr/lib/php7/modules
 
 COPY ./dockerconf/entrypoint.sh /entrypoint.sh
 

@@ -7,12 +7,8 @@ services:
       COLLECTOR_ZIPKIN_HTTP_PORT: 9411
     ports:
       - 16686:16686
-      - 6831:6831
-      - 6832:6832
-      - 5778:5778
+      - 6831:6831/udp
       - 14268:14268
-      - 14250:14250
-      - 9411:9411
   auth:
     build:
       context: .
@@ -21,8 +17,6 @@ services:
         - GIT_TOKEN
     image: razorpay:auth
     container_name: razorpay-auth
-    networks:
-      - api_default
     volumes:
       - .:/app
     links:
@@ -40,10 +34,11 @@ services:
       APP_CONTEXT: dev
       APP_MODE: dev
       GIT_COMMIT_HASH: dev-commit
+      NODE_NAME: jaeger
+      JAEGER_HOSTNAME: jaeger
+      JAEGER_PORT: 6831
   db-auth:
     image: mysql:5.7
-    networks:
-      - api_default
     ports:
       - 23309:3306
     environment:
@@ -51,6 +46,3 @@ services:
       MYSQL_DATABASE: auth
       MYSQL_USER: auth
       MYSQL_PASSWORD: 123
-networks:
-  api_default:
-    external: true

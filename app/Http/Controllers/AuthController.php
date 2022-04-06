@@ -9,9 +9,6 @@ use App\Models\Auth;
 use App\Exception\BadRequestException;
 use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
 
-use Trace;
-use App\Constants\TraceCode;
-
 class AuthController extends Controller
 {
     protected $authService;
