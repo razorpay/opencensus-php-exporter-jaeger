@@ -1,4 +1,14 @@
-FROM c.rzp.io/razorpay/onggi:php-7.2-nginx
+ARG ONGGI_IMAGE=c.rzp.io/razorpay/onggi:php-7.2-nginx
+
+FROM $ONGGI_IMAGE as opencensus-ext
+WORKDIR /
+ARG OPENCENSUS_VERSION_TAG=v0.7.7.0
+RUN set -eux && \
+    wget -O - https://github.com/razorpay/opencensus-php/tarball/"${OPENCENSUS_VERSION_TAG}" | tar xz --strip=1
+RUN cd /ext && phpize && ./configure --enable-opencensus && make install
+
+
+FROM $ONGGI_IMAGE
 
 ARG GIT_COMMIT_HASH
 ARG GIT_TOKEN
@@ -23,6 +33,7 @@ RUN pear config-set php_ini /etc/php7/php.ini && \
 
 ENV COMPOSER_VERSION="1.10.16"
 
+
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --version="${COMPOSER_VERSION}" && \
     mv composer.phar /usr/local/bin/composer && \
@@ -36,6 +47,12 @@ RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
     && composer clear-cache \
     # Disable opcache for now
     && rm /etc/php7/conf.d/00_opcache.ini
+
+
+RUN  pear config-set php_ini /etc/php7/php.ini \
+    && pecl install opencensus-alpha
+
+COPY --from=opencensus-ext /usr/lib/php7/modules/opencensus.so /usr/lib/php7/modules
 
 EXPOSE 80
 

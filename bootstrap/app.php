@@ -109,12 +109,13 @@ $app->singleton(
 
  $app->middleware([
      App\Http\Middleware\Metrics::class,
-     App\Http\Middleware\EventTracker::class
+     App\Http\Middleware\EventTracker::class,
  ]);
 
 $app->routeMiddleware([
-    'auth.api' => App\Http\Middleware\ApiAuth::class,
-]);
+                          'auth.api'        => App\Http\Middleware\ApiAuth::class,
+                          'auth.hypertrace' => App\Http\Middleware\HyperTracer::class,
+                      ]);
 
 /*
 |--------------------------------------------------------------------------
@@ -130,7 +131,6 @@ $app->routeMiddleware([
 $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
-
 $app->register(\Razorpay\Trace\ServiceProvider::class);
 
 $app->register(\Razorpay\OAuth\OAuthServiceProvider::class);
