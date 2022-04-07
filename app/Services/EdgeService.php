@@ -74,7 +74,7 @@ class EdgeService
                 'request_body'  => $payload,
             ]);
 
-        $response = Requests::post($url, $this->headers, $payload, $this->defaultOptions);
+        $response = Requests::post($url, $this->headers, json_encode($payload), $this->defaultOptions);
 
         if($response->status_code === 404)
         {
@@ -121,7 +121,7 @@ class EdgeService
                 'request_body'  => $postPayload,
             ]);
 
-        $response = Requests::post($url, $this->headers, $postPayload, $this->defaultOptions);
+        $response = Requests::post($url, $this->headers, json_encode($postPayload), $this->defaultOptions);
 
         if ($response->success === false and $response->status_code !== 409)
         {

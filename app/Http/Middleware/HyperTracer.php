@@ -179,7 +179,7 @@ class HyperTracer
             return 'other';
         }
 
-        if ($route[1] != null)
+        if ($route[1] != null and array_key_exists('as', $route[1]))
         {
             $routeName = $route[1]['as'];
         }
