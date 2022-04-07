@@ -10,7 +10,7 @@ class Tracing
     const CLIENT                 = 'client';
     const QUERY                  = 'query';
     const ATTRIBUTES             = 'attributes';
-    const HTTP                   = "http";
+    const HTTP                   = 'http';
     const URL                    = 'url';
     const NAME                   = 'name';
     const KIND                   = 'kind';

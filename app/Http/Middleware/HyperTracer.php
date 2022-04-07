@@ -44,6 +44,12 @@ class HyperTracer
         }
         $routeName = $this->fetchRouteName($request);
 
+        if (empty($routeName))
+        {
+            Trace::info(TraceCode::JAEGER_ERROR, [App\Error\ErrorCode::ROUTE_NOT_FOUND]);
+            return $next($request);
+        }
+
         if (Tracing::shouldTraceRoute($routeName) === false)
         {
             Trace::info(TraceCode::JAEGER_INFO, [
@@ -53,6 +59,7 @@ class HyperTracer
 
             return $next($request);
         }
+
         Trace::info(TraceCode::JAEGER_INFO, [
             'jaeger_app_route' => true,
             'route_name'       => $routeName,
@@ -164,14 +171,20 @@ class HyperTracer
 
     private function fetchRouteName(Request $request)
     {
-        $route = $request->route();
+        $routeName = "";
+        $route     = $request->route();
 
         if (empty($route[1]['as']) === true)
         {
             return 'other';
         }
 
-        return $route[1]['as'];
+        if ($route[1] != null)
+        {
+            $routeName = $route[1]['as'];
+        }
+
+        return $routeName;
     }
 
     private function fetchLoggableBody(Request $request): array
