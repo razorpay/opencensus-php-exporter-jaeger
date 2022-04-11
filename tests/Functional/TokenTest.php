@@ -111,11 +111,12 @@ class TokenTest extends TestCase
         //calling revoke by partner api
         $data3 = & $this->testData[__FUNCTION__];
 
-        $data3['request']['url'] = '/tokens/revoke';
+        $data3['request']['url'] = '/revoke';
 
         $params = [
-            'client_secret' => $this->devClient->getSecret(),
-            'token'         => $content['access_token'],
+            'client_secret'   => $this->devClient->getSecret(),
+            'token'           => $content['access_token'],
+            'token_type_hint' => 'access_token'
         ];
 
         $this->addRequestParameters($data3['request']['content'], $params);

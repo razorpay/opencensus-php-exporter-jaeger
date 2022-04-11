@@ -100,12 +100,12 @@ class TokenController extends Controller
 
         if($input['token_type_hint'] === 'access_token')
         {
-            $response = $this->service->validateClientAndRevokeToken($input);
+            $response = $this->service->revokeAccessToken($input);
         }
 
         if($input['token_type_hint'] === 'refresh_token')
         {
-            $response = $this->refreshTokenService->validateOldRefreshTokenAndRevoke($input);
+            $response = $this->refreshTokenService->revokeRefreshToken($input);
         }
 
         return response()->json([]);
