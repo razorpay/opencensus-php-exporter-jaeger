@@ -3,6 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Razorpay\OAuth\Client;
+use Razorpay\OAuth\Token\Entity;
+
 
 class ApiAuth {
     /**
@@ -14,6 +17,25 @@ class ApiAuth {
      */
     public function handle($request, Closure $next)
     {
+        if($request->input(Entity::CLIENT_ID)!=null)
+        {
+            try
+            {
+                $client = (new Client\Repository)->getClientEntity(
+                    $request->input(Entity::CLIENT_ID),
+                    "",
+                    $request->input('client_secret'),
+                    true
+                );
+            }
+            catch (\Exception $ex)
+            {
+                throw $ex;
+            }
+            return $next($request);
+
+        }
+
         $username = $request->header('PHP_AUTH_USER', false);
         $password = $request->header('PHP_AUTH_PW');
 
