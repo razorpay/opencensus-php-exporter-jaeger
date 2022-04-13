@@ -127,7 +127,6 @@ trait RequestResponseFlowTrait
 
     protected function sendRequest($request)
     {
-        print_r($request);
         $defaults = array(
             'method' => 'POST',
             'content' => array(),

@@ -73,8 +73,6 @@ class TokenTest extends TestCase
 
     public function testRevokeByPartner()
     {
- //     $authCode = (new OAuthTest())->generateAuthCodeAndClearResolvedInstances();
-
         $authCode = $this->generateAuthCode();
 
         Request::clearResolvedInstances();
@@ -94,21 +92,7 @@ class TokenTest extends TestCase
 
         $data1['request']['content'] = $params1;
 
-        //$data1['response']['content'] => [];
-
-        $params2 = [
-              'content' => [],
-          ];
-
-       // $data1['response'] = $params2;
-
-        print_r($data1);
-
         $content = $this->sendRequest($data1['request']);
-
-        //$this->createTestToken();
-
-
 
         //calling revoke by partner api
         $data3 = & $this->testData[__FUNCTION__];
