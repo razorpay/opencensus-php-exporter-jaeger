@@ -8,7 +8,6 @@ dev:
       namespace: ${NAMESPACE}
       disableDownload: true
       initialSync: preferLocal
-
   logs:
     showLast: 200
     sync: true
@@ -17,7 +16,7 @@ dev:
           name: ${APP_NAME}-${DEVSTACK_LABEL}
 vars:
   - name: DEVSTACK_LABEL
-    value: "arpit"
+    value: "hemanth"
   - name: NAMESPACE
     value: "auth"
   - name: APP_NAME
