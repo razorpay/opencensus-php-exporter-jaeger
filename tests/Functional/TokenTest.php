@@ -71,7 +71,7 @@ class TokenTest extends TestCase
         $this->startTest($data);
     }
 
-    public function testRevokeByPartner()
+    public function testRevokeAccessTokenByPartner()
     {
         $authCode = $this->generateAuthCode();
 
@@ -112,13 +112,60 @@ class TokenTest extends TestCase
         //combining the request content
         $this->addRequestParameters($data3['request']['content'], $params);
 
-        print_r($data3);
+        Request::clearResolvedInstances();
+
+        $response = $this->sendRequest($data3['request']);
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+    }
+
+    public function testRevokeRefreshTokenByPartner()
+    {
+        $authCode = $this->generateAuthCode();
+
+        Request::clearResolvedInstances();
+
+        //getting refresh token by calling /token
+
+        $params1 = [
+            'client_id'    => '30000000000000',
+            'grant_type'   => 'authorization_code',
+            'client_secret' => $this->devClient->getSecret(),
+            'code'          => $authCode,
+            'redirect_uri'  => 'http://localhost',
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        $response = $this->sendRequest($data1['request']);
+
+        //decoding the request
+        $data = json_decode($response->getContent());
+
+        //calling revoke by partner api
+        $data3 = & $this->testData[__FUNCTION__];
+
+        $data3['request']['url'] = '/revoke';
+        //adding access token to our params
+        $params = [
+            'client_secret'   => $this->devClient->getSecret(),
+            'token'           => $data->refresh_token,
+            'token_type_hint' => 'refresh_token'
+        ];
+
+        //combining the request content
+        $this->addRequestParameters($data3['request']['content'], $params);
 
         Request::clearResolvedInstances();
 
         $response = $this->sendRequest($data3['request']);
 
-        print_r($response);
+        $this->assertEquals(200, $response->getStatusCode());
 
     }
 

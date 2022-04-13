@@ -81,7 +81,19 @@ return [
         ]
     ],
 
-    'testRevokeByPartner' => [
+    'testRevokeAccessTokenByPartner' => [
+        'request'  => [
+            'method'  => 'POST',
+            'content' => [
+                'client_id'    => '30000000000000',
+            ]
+        ],
+        'response' => [
+            'content' => []
+        ]
+    ],
+
+    'testRevokeRefreshTokenByPartner' => [
         'request'  => [
             'method'  => 'POST',
             'content' => [
