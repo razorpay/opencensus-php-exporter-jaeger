@@ -94,6 +94,8 @@ class TokenTest extends TestCase
 
         $content = $this->sendRequest($data1['request']);
 
+        print_r($content);
+
         //calling revoke by partner api
         $data3 = & $this->testData[__FUNCTION__];
 
@@ -112,7 +114,7 @@ class TokenTest extends TestCase
         $response = $this->sendRequest($data3['request']);
 
         print_r($response);
-        
+
 
     }
 
