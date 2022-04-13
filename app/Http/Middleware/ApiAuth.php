@@ -18,7 +18,7 @@ class ApiAuth {
      */
     public function handle($request, Closure $next)
     {
-        if($request->input(Entity::CLIENT_ID)!=null &&$request->input(Entity::CLIENT_ID)!=null)
+        if(($request->input(Entity::CLIENT_ID) != null) && ($request->input('client_secret') != null))
         {
             try
             {
