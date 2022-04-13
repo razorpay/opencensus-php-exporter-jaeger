@@ -96,8 +96,8 @@ class TokenTest extends TestCase
 
         $data = json_decode($response->getContent());
 
-        print_r($data);
-        print_r($data['acces_token']);
+        print_r($data->access_token);
+       // print_r($data['acces_token']);
 
         //calling revoke by partner api
         $data3 = & $this->testData[__FUNCTION__];
