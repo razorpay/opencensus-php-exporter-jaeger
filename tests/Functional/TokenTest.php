@@ -92,11 +92,11 @@ class TokenTest extends TestCase
 
         $data1['request']['content'] = $params1;
 
-        $content = $this->sendRequest($data1['request']);
-        print_r(json_decode($content));
-        array_filter($content);
+        $response = $this->sendRequest($data1['request']);
+       // print_r(json_decode($content));
+       // array_filter($content);
 
-        print_r($content['data']['access_token']);
+        print_r($response->getContent());
 
         //calling revoke by partner api
         $data3 = & $this->testData[__FUNCTION__];
@@ -105,7 +105,7 @@ class TokenTest extends TestCase
 
         $params = [
             'client_secret'   => $this->devClient->getSecret(),
-            'token'           => $content['access_token'],
+            'token'           => $response->getContent()['access_token'],
             'token_type_hint' => 'access_token'
         ];
 
