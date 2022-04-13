@@ -85,7 +85,7 @@ class TokenController extends Controller
 
         $token = (new Token\Repository)->findOrFailPublic($id);
 
-        $this->service->revokeToken($id, $input);
+        $this->service->revoketoken($id, $input);
 
         $this->revokeMerchantApplicationMapping($token, $input);
 
