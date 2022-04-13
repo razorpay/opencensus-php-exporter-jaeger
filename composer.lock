@@ -1911,12 +1911,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "2dffee97a4782439d0f2c1d53180b77136e825fc"
+                "reference": "ff62333f35cfe2495c5c83e9c8814e6743fffecb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/2dffee97a4782439d0f2c1d53180b77136e825fc",
-                "reference": "2dffee97a4782439d0f2c1d53180b77136e825fc",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/ff62333f35cfe2495c5c83e9c8814e6743fffecb",
+                "reference": "ff62333f35cfe2495c5c83e9c8814e6743fffecb",
                 "shasum": ""
             },
             "require": {
@@ -1958,7 +1958,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/revoke_token",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2022-04-13T04:32:09+00:00"
+            "time": "2022-04-13T07:30:32+00:00"
         },
         {
             "name": "razorpay/outbox-php",
