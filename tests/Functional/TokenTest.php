@@ -100,11 +100,11 @@ class TokenTest extends TestCase
               'content' => [],
           ];
 
-        $data1['response'] = $params2;
+       // $data1['response'] = $params2;
 
         print_r($data1);
 
-        $content = $this->sendRequest($data1);
+        $content = $this->sendRequest($data1['request']);
 
         //$this->createTestToken();
 
