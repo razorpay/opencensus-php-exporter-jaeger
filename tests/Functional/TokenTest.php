@@ -97,7 +97,6 @@ class TokenTest extends TestCase
         $data = json_decode($response->getContent());
 
         print_r($data->access_token);
-       // print_r($data['acces_token']);
 
         //calling revoke by partner api
         $data3 = & $this->testData[__FUNCTION__];
@@ -106,19 +105,17 @@ class TokenTest extends TestCase
 
         $params = [
             'client_secret'   => $this->devClient->getSecret(),
-            'token'           => $response->getContent()['access_token'],
+            'token'           => $data->access_token,
             'token_type_hint' => 'access_token'
         ];
 
         $this->addRequestParameters($data3['request']['content'], $params);
 
-        array_filter($content);
         print_r($data3);
 
         $response = $this->sendRequest($data3['request']);
 
         print_r($response);
-
 
     }
 
