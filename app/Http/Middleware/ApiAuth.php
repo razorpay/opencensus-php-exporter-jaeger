@@ -2,10 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Constants\TraceCode;
 use Closure;
+use Trace;
 use Razorpay\OAuth\Client;
 use Razorpay\OAuth\Token\Entity;
-
 
 class ApiAuth {
     /**
@@ -17,10 +18,7 @@ class ApiAuth {
      */
     public function handle($request, Closure $next)
     {
-        print_r("bro");
-
-        print_r($request->input(Entity::CLIENT_ID));
-        if($request->input(Entity::CLIENT_ID)!=nullOrEmptyString() &&$request->input(Entity::CLIENT_ID)!=nullOrEmptyString())
+        if($request->input(Entity::CLIENT_ID)!=null &&$request->input(Entity::CLIENT_ID)!=null)
         {
             try
             {
@@ -30,13 +28,19 @@ class ApiAuth {
                     $request->input('client_secret'),
                     true
                 );
+                return $next($request);
             }
             catch (\Exception $ex)
             {
+                $tracePayload = [
+                    'code' => $ex->getCode(),
+                    'message' => $ex->getMessage(),
+                ];
+
+                Trace::info(TraceCode::INVALID_CLIENT_CREDENTIALS, $tracePayload);
+
                 throw $ex;
             }
-            return $next($request);
-
         }
 
         $username = $request->header('PHP_AUTH_USER', false);
