@@ -81,7 +81,7 @@ return [
         ]
     ],
 
-    'testRevokebyPartener' => [
+    'testRevokeByPartner' => [
         'request'  => [
             'method'  => 'POST',
             'content' => [
