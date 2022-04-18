@@ -15,11 +15,11 @@ use App\Exception\LogicException;
 
 class TokenController extends Controller
 {
-    protected $service;
+    protected $rzpAuthTokenService;
 
-    protected $authTokenService;
+    protected $authServerTokenService;
 
-    protected $refreshTokenService;
+    protected $rzpAuthRefreshTokenService;
 
 
     const APPLICATION_ID      = 'application_id';
@@ -31,9 +31,9 @@ class TokenController extends Controller
 
     public function __construct()
     {
-        $this->service = new Token\Service;
-        $this->authTokenService = new AuthToken\Service;
-        $this->refreshTokenService = new RefreshToken\Service;
+        $this->rzpAuthTokenService       = new Token\Service;
+        $this->authServerTokenService    = new AuthToken\Service;
+        $this->rzpAuthRefreshTokenService= new RefreshToken\Service;
     }
 
     public function getAll()
@@ -42,7 +42,7 @@ class TokenController extends Controller
 
         Trace::info(TraceCode::GET_TOKENS_REQUEST, $input);
 
-        $tokens = $this->service->getAllTokens($input);
+        $tokens = $this->rzpAuthTokenService->getAllTokens($input);
 
         return response()->json($tokens);
     }
@@ -53,7 +53,7 @@ class TokenController extends Controller
 
         Trace::info(TraceCode::GET_TOKEN_REQUEST, compact('input', 'id'));
 
-        $token = $this->service->getToken($id, $input);
+        $token = $this->rzpAuthTokenService->getToken($id, $input);
 
         return response()->json($token);
     }
@@ -85,7 +85,7 @@ class TokenController extends Controller
 
         $token = (new Token\Repository)->findOrFailPublic($id);
 
-        $this->service->revoketoken($id, $input);
+        $this->rzpAuthTokenService->revoketoken($id, $input);
 
         $this->revokeMerchantApplicationMapping($token, $input);
 
@@ -96,16 +96,16 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
-        $this->authTokenService->validateRevokeTokenRequest($input);
+        $this->authServerTokenService->validateRevokeTokenRequest($input);
 
         if($input['token_type_hint'] === 'access_token')
         {
-            $response = $this->service->revokeAccessToken($input);
+            $response = $this->rzpAuthTokenService->revokeAccessToken($input);
         }
 
         if($input['token_type_hint'] === 'refresh_token')
         {
-            $response = $this->refreshTokenService->revokeRefreshToken($input);
+            $response = $this->rzpAuthRefreshTokenService->revokeRefreshToken($input);
         }
 
         return response()->json([]);
@@ -115,7 +115,7 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
-        $token = $this->service->createPartnerToken(
+        $token = $this->rzpAuthTokenService->createPartnerToken(
             $input[self::APPLICATION_ID],
             $input[self::PARTNER_MERCHANT_ID],
             $input[self::SUB_MERCHANT_ID]);
