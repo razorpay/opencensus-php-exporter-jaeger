@@ -147,6 +147,6 @@ $app->delete('/authorize-multi-token', [
 
 $app->post('/revoke', [
     'middleware' => 'auth.basic',
-    'as'   => 'remove_access_token',
-    'uses' => 'TokenController@revokeByPartner'
+    'as'         => 'remove_access_token',
+    'uses'       => 'TokenController@revokeByPartner'
 ]);

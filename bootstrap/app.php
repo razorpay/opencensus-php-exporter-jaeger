@@ -114,9 +114,11 @@ $app->singleton(
 
 $app->routeMiddleware([
     'auth.api'   => App\Http\Middleware\BasicAuth::class,
-    'auth.basic' => App\Http\Middleware\BasicAuth::class,
 ]);
 
+$app->routeMiddleware([
+    'auth.basic' => App\Http\Middleware\BasicAuth::class,
+]);
 /*
 |--------------------------------------------------------------------------
 | Register Service Providers
