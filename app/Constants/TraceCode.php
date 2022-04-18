@@ -66,5 +66,6 @@ class TraceCode extends BaseTraceCode
 
     const OUTBOX_JOB_CREATED                                        = "OUTBOX_JOB_CREATED";
     const INVALID_CLIENT_CREDENTIALS                                = "INVALID_CLIENT_CREDENTIALS";
+    const MISSING_CLIENT_CREDENTIALS                                = "MISSING_CLIENT_CREDENTIALS";
 }
 

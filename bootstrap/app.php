@@ -113,7 +113,8 @@ $app->singleton(
  ]);
 
 $app->routeMiddleware([
-    'auth.api' => App\Http\Middleware\ApiAuth::class,
+    'auth.api'   => App\Http\Middleware\BasicAuth::class,
+    'auth.basic' => App\Http\Middleware\BasicAuth::class,
 ]);
 
 /*
