@@ -176,10 +176,17 @@ class TokenTest extends TestCase
                     'content' => [
                     ]
             ],
-             'response' => [
-                    'content' => [
-                            ],
-                    'status_code' => 400,
+            'response' => [
+                'content' => [
+                    'error' => [
+                        'description' => 'Token has been revoked',
+                    ],
+                ],
+                'status_code' => 400,
+            ],
+            'exception' => [
+                'class'   => \Razorpay\OAuth\Exception\BadRequestException::class,
+                'message' => 'Token has been revoked',
             ],
         ];
 
@@ -192,15 +199,7 @@ class TokenTest extends TestCase
 
         $this->addRequestParameters($data4['request']['content'], $params);
 
-        $content = $this->sendRequest($data4['request']);
-
-        $this->assertEquals(400, $response->getStatusCode());
-
-        print_r($content);
-
-        print_r(json_decode($content->getContent()));
-
-
+        $this->runRequestResponseFlow($data4);
     }
 
     protected function addRequestParameters(array & $content, array $parameters)
