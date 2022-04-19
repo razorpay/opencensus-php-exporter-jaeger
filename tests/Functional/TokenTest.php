@@ -142,10 +142,10 @@ class TokenTest extends TestCase
         ];
 
         $params = [
-            'client_id'    => '30000000000000',
-            'grant_type'   => 'refresh_token',
+            'client_id'     => '30000000000000',
+            'grant_type'    => 'access_token',
             'client_secret' => $this->devClient->getSecret(),
-            'refresh_token' => $data->access_token,
+            'access_token'  => $data->access_token,
         ];
 
         $this->addRequestParameters($data4['request']['content'], $params);
