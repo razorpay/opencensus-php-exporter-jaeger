@@ -130,14 +130,14 @@ class TokenTest extends TestCase
             'response' => [
                 'content' => [
                     'error' => [
-                        'description' => 'Token has been revoked',
+                        'description' => 'Authorization code has been revoked',
                     ],
                 ],
                 'status_code' => 400,
             ],
             'exception' => [
                 'class'   => \Razorpay\OAuth\Exception\BadRequestException::class,
-                'message' => 'Token has been revoked',
+                'message' => 'Authorization code has been revoked',
             ],
         ];
 
