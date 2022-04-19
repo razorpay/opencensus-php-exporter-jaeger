@@ -92,6 +92,11 @@ class TokenController extends Controller
         return response()->json([]);
     }
 
+    /**
+     * Revoke a token by partner apps takes client and client secret as a parameter for validation
+     * and takes token_type_hint (access_token or refresh_token) as a parameter to identify the token to be revoked
+     *
+     */
     public function revokeByPartner()
     {
         $input = Request::all();
