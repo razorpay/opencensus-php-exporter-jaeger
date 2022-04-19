@@ -167,6 +167,30 @@ class TokenTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
+        Request::clearResolvedInstances();
+
+        $data4 = [
+            'request'  => [
+                    'method'  => 'POST',
+                    'url'     => '/token',
+                    'content' => [
+                    ]
+            ]];
+
+        $params = [
+            'client_id'    => '30000000000000',
+            'grant_type'   => 'authorization_code',
+            'client_secret' => $this->devClient->getSecret(),
+            'code'          => $authCode,
+            'redirect_uri'  => 'http://localhost',
+        ];
+
+        $this->addRequestParameters($data4['request']['content'], $params);
+
+        $content = $this->runRequestResponseFlow($data);
+
+        print_r(json_decode($response->getContent()));
+
     }
 
     protected function addRequestParameters(array & $content, array $parameters)
