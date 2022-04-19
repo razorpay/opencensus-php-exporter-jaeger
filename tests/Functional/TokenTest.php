@@ -118,6 +118,39 @@ class TokenTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
+        Request::clearResolvedInstances();
+
+        $data4 = [
+            'request'  => [
+                'method'  => 'POST',
+                'url'     => '/token',
+                'content' => [
+                ]
+            ],
+            'response' => [
+                'content' => [
+                    'error' => [
+                        'description' => 'Token has been revoked',
+                    ],
+                ],
+                'status_code' => 400,
+            ],
+            'exception' => [
+                'class'   => \Razorpay\OAuth\Exception\BadRequestException::class,
+                'message' => 'Token has been revoked',
+            ],
+        ];
+
+        $params = [
+            'client_id'    => '30000000000000',
+            'grant_type'   => 'refresh_token',
+            'client_secret' => $this->devClient->getSecret(),
+            'refresh_token' => $data->access_token,
+        ];
+
+        $this->addRequestParameters($data4['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data4);
     }
 
     public function testRevokeRefreshTokenByPartner()
