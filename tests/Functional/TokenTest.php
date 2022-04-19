@@ -175,7 +175,13 @@ class TokenTest extends TestCase
                     'url'     => '/token',
                     'content' => [
                     ]
-            ]];
+            ],
+             'response' => [
+                    'content' => [
+                            ],
+                    'status_code' => 400,
+            ],
+        ];
 
         $params = [
             'client_id'    => '30000000000000',
@@ -188,11 +194,11 @@ class TokenTest extends TestCase
 
         $content = $this->makeRequestAndGetContent($data4['request']);
 
+        $this->assertEquals(400, $response->getStatusCode());
+
         print_r($content);
 
         print_r(json_decode($content->getContent()));
-
-        //$this->assertEquals('apptest1', $content['items'][0]['name']);
 
 
     }
