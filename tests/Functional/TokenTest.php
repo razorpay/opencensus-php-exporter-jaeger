@@ -187,7 +187,7 @@ class TokenTest extends TestCase
 
         $this->addRequestParameters($data4['request']['content'], $params);
 
-        $content = $this->makeRequestAndGetContent($data4);
+        $content = $this->makeRequestAndGetContent($data4['request']);
 
         print_r($content);
 
