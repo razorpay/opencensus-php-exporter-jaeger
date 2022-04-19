@@ -34,8 +34,7 @@ class Repository extends Token\Repository
             // If it is not present in auth service but present in edge, then it will delete from edge.
             DB::transaction(function () use ($accessTokenEntity) {
                 app("outbox")->sendWithDelay("check_token_consistency",
-                                             ["public_id" => $accessTokenEntity->getPublicTokenWithPrefix(),
-                                              "jti" => $accessTokenEntity->getIdentifier()],
+                                             ["public_id" => $accessTokenEntity->getPublicTokenWithPrefix()],
                                              600);
             });
 
