@@ -187,10 +187,14 @@ class TokenTest extends TestCase
 
         $this->addRequestParameters($data4['request']['content'], $params);
 
-        $content = $this->runRequestResponseFlow($data4);
+        $content = $this->makeRequestAndGetContent($data4);
+
         print_r($content);
 
         print_r(json_decode($content->getContent()));
+
+        //$this->assertEquals('apptest1', $content['items'][0]['name']);
+
 
     }
 
