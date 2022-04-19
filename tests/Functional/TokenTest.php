@@ -192,7 +192,7 @@ class TokenTest extends TestCase
 
         $this->addRequestParameters($data4['request']['content'], $params);
 
-        $content = $this->makeRequestAndGetContent($data4['request']);
+        $content = $this->sendRequest($data4['request']);
 
         $this->assertEquals(400, $response->getStatusCode());
 
