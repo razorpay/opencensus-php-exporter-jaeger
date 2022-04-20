@@ -2,6 +2,7 @@
 
 namespace App\Models\Token;
 
+use App\Constants\RequestParams;
 use Razorpay\OAuth\Token;
 use Razorpay\OAuth\RefreshToken;
 
@@ -32,12 +33,12 @@ class Service
     {
         $this->validator->validateInput('revoke_by_partner', $input);
 
-        if($input['token_type_hint'] === 'access_token')
+        if($input[RequestParams::TOKEN_TYPE_HINT] === 'access_token')
         {
             $this->OAuthTokenService->revokeAccessToken($input);
         }
 
-        if($input['token_type_hint'] === 'refresh_token')
+        if($input[RequestParams::TOKEN_TYPE_HINT] === 'refresh_token')
         {
             $this->OAuthRefreshTokenService->revokeRefreshToken($input);
         }
