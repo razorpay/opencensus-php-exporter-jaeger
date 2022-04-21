@@ -10,15 +10,15 @@ class Service
 {
     protected $service;
 
-    protected $OAuthTokenService;
+    protected $oauthTokenService;
 
-    protected $OAuthRefreshTokenService;
+    protected $oauthRefreshTokenService;
 
     public function __construct()
     {
         $this->validator = new Validator;
-        $this->OAuthTokenService         = new Token\Service;
-        $this->OAuthRefreshTokenService  = new RefreshToken\Service;
+        $this->oauthTokenService         = new Token\Service;
+        $this->oauthRefreshTokenService  = new RefreshToken\Service;
     }
 
     /**
@@ -29,18 +29,18 @@ class Service
      *
      *
      */
-    public function validateRevokeTokenRequest($input)
+    public function handleRevokeTokenRequest($input)
     {
         $this->validator->validateInput('revoke_by_partner', $input);
 
         if($input[RequestParams::TOKEN_TYPE_HINT] === 'access_token')
         {
-            $this->OAuthTokenService->revokeAccessToken($input);
+            $this->oauthTokenService->revokeAccessToken($input);
         }
 
         if($input[RequestParams::TOKEN_TYPE_HINT] === 'refresh_token')
         {
-            $this->OAuthRefreshTokenService->revokeRefreshToken($input);
+            $this->oauthRefreshTokenService->revokeRefreshToken($input);
         }
     }
 }

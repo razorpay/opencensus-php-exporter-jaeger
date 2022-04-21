@@ -15,11 +15,11 @@ use App\Exception\LogicException;
 
 class TokenController extends Controller
 {
-    protected $OAuthTokenService;
+    protected $oauthTokenService;
 
     protected $authServerTokenService;
 
-    protected $OAuthRefreshTokenService;
+    protected $oauthRefreshTokenService;
 
 
     const APPLICATION_ID      = 'application_id';
@@ -31,8 +31,8 @@ class TokenController extends Controller
 
     public function __construct()
     {
-        $this->OAuthTokenService         = new Token\Service;
-        $this->OAuthRefreshTokenService  = new RefreshToken\Service;
+        $this->oauthTokenService         = new Token\Service;
+        $this->oauthRefreshTokenService  = new RefreshToken\Service;
         $this->authServerTokenService    = new AuthToken\Service;
     }
 
@@ -42,7 +42,7 @@ class TokenController extends Controller
 
         Trace::info(TraceCode::GET_TOKENS_REQUEST, $input);
 
-        $tokens = $this->OAuthTokenService->getAllTokens($input);
+        $tokens = $this->oauthTokenService->getAllTokens($input);
 
         return response()->json($tokens);
     }
@@ -53,7 +53,7 @@ class TokenController extends Controller
 
         Trace::info(TraceCode::GET_TOKEN_REQUEST, compact('input', 'id'));
 
-        $token = $this->OAuthTokenService->getToken($id, $input);
+        $token = $this->oauthTokenService->getToken($id, $input);
 
         return response()->json($token);
     }
@@ -85,7 +85,7 @@ class TokenController extends Controller
 
         $token = (new Token\Repository)->findOrFailPublic($id);
 
-        $this->OAuthTokenService->revoketoken($id, $input);
+        $this->oauthTokenService->revoketoken($id, $input);
 
         $this->revokeMerchantApplicationMapping($token, $input);
 
@@ -101,7 +101,7 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
-        $this->authServerTokenService->validateRevokeTokenRequest($input);
+        $this->authServerTokenService->handleRevokeTokenRequest($input);
 
         return response()->json(['message' => 'Token Revoked']);
     }
@@ -110,7 +110,7 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
-        $token = $this->OAuthTokenService->createPartnerToken(
+        $token = $this->oauthTokenService->createPartnerToken(
             $input[self::APPLICATION_ID],
             $input[self::PARTNER_MERCHANT_ID],
             $input[self::SUB_MERCHANT_ID]);
