@@ -37,4 +37,5 @@ class ErrorCode
     const SERVER_ERROR_NOT_FOUND                                                    = 'SERVER_ERROR_NOT_FOUND';
     const SERVER_ERROR_RUNTIME_ERROR                                                = 'SERVER_ERROR_RUNTIME_ERROR';
     const SERVER_ERROR_TO_STRING_EXCEPTION                                          = 'SERVER_ERROR_TO_STRING_EXCEPTION';
+    const ROUTE_NOT_FOUND                                                           = 'ROUTE_NOT_FOUND';
 }

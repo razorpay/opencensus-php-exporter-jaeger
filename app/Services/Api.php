@@ -8,7 +8,7 @@ use App\Error\ErrorCode;
 use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
 use Trace;
-use Requests;
+use App\Request\Requests;
 
 use Illuminate\Support\Str;
 
@@ -114,7 +114,6 @@ class Api
     public function getMerchantOrgDetails(string $merchantId): array
     {
         $url = $this->apiUrl . '/merchants/' . $merchantId . '/org';
-
         try
         {
             $response = Requests::get($url, $this->defaultHeaders, $this->options);

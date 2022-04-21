@@ -12,13 +12,15 @@
         "php": ">=5.6.4",
         "rmccue/requests": ">=1.0",
         "vlucas/phpdotenv": "^3.3",
-        "razorpay/trace": "^3.0.1",
+        "razorpay/trace": "3.2.1",
         "laravel/lumen-framework": "^6.0",
         "razorpay/spine": "^1.0.1",
-        "razorpay/oauth": "2.1.6.70",
-        "razorpay/outbox-php": "^0.2.2",
+        "razorpay/oauth": "2.1.6.90",
+        "razorpay/outbox-php": "v0.2.3",
         "laravel/helpers": "^1.4",
-        "ext-json": "*"
+        "ext-json": "*",
+        "opencensus/opencensus": "~0.7",
+        "opencensus/opencensus-exporter-jaeger": "^v0.1.2-alpha"
     },
     "repositories": [
         {
@@ -40,6 +42,14 @@
         {
             "type": "vcs",
             "url": "git@github.com:razorpay/outbox-php.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:razorpay/opencensus-php.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:razorpay/opencensus-php-exporter-jaeger.git"
         }
     ],
     "require-dev": {
