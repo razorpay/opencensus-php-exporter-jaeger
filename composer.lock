@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ed9a022cd525b114b6bcf3120d207d2b",
+    "content-hash": "76818c3e0feccb82d2f6df30a4d48bfe",
     "packages": [
         {
             "name": "apache/thrift",
@@ -2931,16 +2931,16 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "2.1.6.30",
+            "version": "2.1.6.90",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "265de81ff8baa6639bd20f95f9d30f1317c026d5"
+                "reference": "0362f1cca495bef7b9d36c863a9762d1bd92714a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/265de81ff8baa6639bd20f95f9d30f1317c026d5",
-                "reference": "265de81ff8baa6639bd20f95f9d30f1317c026d5",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/0362f1cca495bef7b9d36c863a9762d1bd92714a",
+                "reference": "0362f1cca495bef7b9d36c863a9762d1bd92714a",
                 "shasum": ""
             },
             "require": {
@@ -2949,7 +2949,7 @@
                 "league/oauth2-server": "^6.0",
                 "monolog/monolog": "^1.12",
                 "php": ">=7.2",
-                "razorpay/outbox-php": "v0.2.3",
+                "razorpay/outbox-php": "0.2.3",
                 "razorpay/spine": "1.0.1",
                 "zendframework/zend-diactoros": "^1.4"
             },
@@ -2979,10 +2979,10 @@
                 "service"
             ],
             "support": {
-                "source": "https://github.com/razorpay/oauth/tree/2.1.7",
+                "source": "https://github.com/razorpay/oauth/tree/2.1.6.90",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2022-03-22T13:31:05+00:00"
+            "time": "2022-04-21T14:16:18+00:00"
         },
         {
             "name": "razorpay/outbox-php",
@@ -7238,5 +7238,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.1.0"
 }
