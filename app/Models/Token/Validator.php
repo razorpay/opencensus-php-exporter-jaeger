@@ -10,6 +10,6 @@ class Validator extends \Razorpay\Spine\Validation\Validator
         RequestParams::CLIENT_ID           => 'required|string',
         RequestParams::CLIENT_SECRET       => 'required|string',
         RequestParams::TOKEN               => 'required|string',
-        RequestParams::TOKEN_TYPE_HINT     => 'required|string',
+        RequestParams::TOKEN_TYPE_HINT     => 'required|string|in:access_token,refresh_token',
     ];
 }
