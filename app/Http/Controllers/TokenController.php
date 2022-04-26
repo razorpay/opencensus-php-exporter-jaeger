@@ -101,6 +101,8 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
+        Trace::info(TraceCode::REVOKE_TOKEN_BY_PARTNER);
+
         $this->authServerTokenService->handleRevokeTokenRequest($input);
 
         return response()->json(['message' => 'Token Revoked']);
