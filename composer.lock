@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "76818c3e0feccb82d2f6df30a4d48bfe",
+    "content-hash": "149562dea40e4203926dc4c5af71f30d",
     "packages": [
         {
             "name": "apache/thrift",
@@ -2931,16 +2931,16 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "2.1.6.90",
+            "version": "dev-revokeTokenProdFix",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "0362f1cca495bef7b9d36c863a9762d1bd92714a"
+                "reference": "ff6c88cbfb020e286794ba68f653520ed61eca14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/0362f1cca495bef7b9d36c863a9762d1bd92714a",
-                "reference": "0362f1cca495bef7b9d36c863a9762d1bd92714a",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/ff6c88cbfb020e286794ba68f653520ed61eca14",
+                "reference": "ff6c88cbfb020e286794ba68f653520ed61eca14",
                 "shasum": ""
             },
             "require": {
@@ -2979,10 +2979,10 @@
                 "service"
             ],
             "support": {
-                "source": "https://github.com/razorpay/oauth/tree/2.1.6.90",
+                "source": "https://github.com/razorpay/oauth/tree/revokeTokenProdFix",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2022-04-21T14:16:18+00:00"
+            "time": "2022-04-26T07:36:52+00:00"
         },
         {
             "name": "razorpay/outbox-php",
@@ -7230,7 +7230,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "razorpay/oauth": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
