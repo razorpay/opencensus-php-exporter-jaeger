@@ -113,9 +113,10 @@ $app->singleton(
  ]);
 
 $app->routeMiddleware([
-                          'auth.api'        => App\Http\Middleware\ApiAuth::class,
-                          'auth.hypertrace' => App\Http\Middleware\HyperTracer::class,
-                      ]);
+
+    'auth.api'        => App\Http\Middleware\ApiAuth::class,
+    'auth.hypertrace' => App\Http\Middleware\HyperTracer::class,
+]);
 
 /*
 |--------------------------------------------------------------------------

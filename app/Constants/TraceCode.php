@@ -13,6 +13,7 @@ class TraceCode extends BaseTraceCode
     const GET_TOKEN_REQUEST                                         = 'GET_TOKEN_REQUEST';
     const VALIDATE_PUBLIC_TOKEN_REQUEST                             = 'VALIDATE_PUBLIC_TOKEN_REQUEST';
     const REVOKE_TOKEN_REQUEST                                      = 'REVOKE_TOKEN_REQUEST';
+    const REVOKE_TOKEN_BY_PARTNER                                    = 'REVOKE_TOKEN_BY_PARTNER';
     const CREATE_APPLICATION_REQUEST                                = 'CREATE_APPLICATION_REQUEST';
     const GET_APPLICATION_REQUEST                                   = 'GET_APPLICATION_REQUEST';
     const UPDATE_APPLICATION_REQUEST                                = 'UPDATE_APPLICATION_REQUEST';
@@ -72,6 +73,9 @@ class TraceCode extends BaseTraceCode
     const KAFKA_CERT_ERROR                                          = "KAFKA_CERT_ERROR";
     const KAFKA_PRODUCER_FLUSH_SUCCESS                              = "KAFKA_PRODUCER_FLUSH_SUCCESS";
 
+
+    const INVALID_CLIENT_CREDENTIALS                                = "INVALID_CLIENT_CREDENTIALS";
+    const MISSING_CLIENT_CREDENTIALS                                = "MISSING_CLIENT_CREDENTIALS";
     // Adding this for outbox log (outbox-php pkg)
     const OUTBOX_JOB_CREATED                                        = 'OUTBOX_JOB_CREATED';
 }
