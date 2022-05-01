@@ -33,7 +33,8 @@ class EdgeService
         $this->defaultOptions = ['timeout' => 2];
     }
 
-    public function postPublicIdToEdge(string $publicId, string $merchantId, int $accessTokenTTLInSeconds, string $mode, string $jti)
+    public function postPublicIdToEdge(string $publicId, string $merchantId, int $accessTokenTTLInSeconds, string $mode,
+                                       string $jti, string $userId)
     {
         $start = millitime();
         $success = false;
@@ -43,6 +44,7 @@ class EdgeService
             $postPayload = [
                 'kid'        => $publicId,
                 'jti'        => $jti,
+                'user_id'    => $userId,
                 'tags'       => $this->getTags($mode),
                 'ttl'        => $accessTokenTTLInSeconds,
             ];
