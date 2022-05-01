@@ -6,22 +6,34 @@ use Trace;
 use Request;
 
 use Razorpay\OAuth\Token;
+use Razorpay\OAuth\RefreshToken;
 
 use App\Models\Auth;
+use App\Models\Token as AuthToken;
 use App\Constants\TraceCode;
 use App\Exception\LogicException;
 
 class TokenController extends Controller
 {
-    protected $service;
+    protected $oauthTokenService;
+
+    protected $authServerTokenService;
+
+    protected $oauthRefreshTokenService;
+
 
     const APPLICATION_ID      = 'application_id';
     const PARTNER_MERCHANT_ID = 'partner_merchant_id';
     const SUB_MERCHANT_ID     = 'sub_merchant_id';
+    /**
+     * @var RefreshToken\Service
+     */
 
     public function __construct()
     {
-        $this->service = new Token\Service;
+        $this->oauthTokenService         = new Token\Service;
+        $this->oauthRefreshTokenService  = new RefreshToken\Service;
+        $this->authServerTokenService    = new AuthToken\Service;
     }
 
     public function getAll()
@@ -30,7 +42,7 @@ class TokenController extends Controller
 
         Trace::info(TraceCode::GET_TOKENS_REQUEST, $input);
 
-        $tokens = $this->service->getAllTokens($input);
+        $tokens = $this->oauthTokenService->getAllTokens($input);
 
         return response()->json($tokens);
     }
@@ -41,7 +53,7 @@ class TokenController extends Controller
 
         Trace::info(TraceCode::GET_TOKEN_REQUEST, compact('input', 'id'));
 
-        $token = $this->service->getToken($id, $input);
+        $token = $this->oauthTokenService->getToken($id, $input);
 
         return response()->json($token);
     }
@@ -73,18 +85,34 @@ class TokenController extends Controller
 
         $token = (new Token\Repository)->findOrFailPublic($id);
 
-        $this->service->revoketoken($id, $input);
+        $this->oauthTokenService->revoketoken($id, $input);
 
         $this->revokeMerchantApplicationMapping($token, $input);
 
         return response()->json([]);
     }
 
+    /**
+     * Revoke a token by partner apps takes client and client secret as a parameter for validation
+     * and takes token_type_hint (access_token or refresh_token) as a parameter to identify the token to be revoked
+     *
+     */
+    public function revokeByPartner()
+    {
+        $input = Request::all();
+
+        Trace::info(TraceCode::REVOKE_TOKEN_BY_PARTNER);
+
+        $this->authServerTokenService->handleRevokeTokenRequest($input);
+
+        return response()->json(['message' => 'Token Revoked']);
+    }
+
     public function createForPartner()
     {
         $input = Request::all();
 
-        $token = $this->service->createPartnerToken(
+        $token = $this->oauthTokenService->createPartnerToken(
             $input[self::APPLICATION_ID],
             $input[self::PARTNER_MERCHANT_ID],
             $input[self::SUB_MERCHANT_ID]);
