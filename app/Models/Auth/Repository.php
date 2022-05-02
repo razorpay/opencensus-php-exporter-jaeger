@@ -39,8 +39,14 @@ class Repository extends Token\Repository
             });
 
             // We need to create oauth public_token in edge inside `identifier` table so that it can be validated at edge.
-            app("edge")->postPublicIdToEdge($accessTokenEntity->getPublicTokenWithPrefix(), $accessTokenEntity->getMerchantId(),
-                                            $accessTokenTTLInSeconds, $accessTokenEntity->getMode(), $accessTokenEntity->getIdentifier());
+            $payload = [Constant::PUBLIC_TOKEN => $accessTokenEntity->getPublicTokenWithPrefix(),
+                        Constant::IDENTIFIER   => $accessTokenEntity->getIdentifier(),
+                        Constant::MID          => $accessTokenEntity->getMerchantId(),
+                        Constant::MODE         => $accessTokenEntity->getMode(),
+                        Constant::TTL          => $accessTokenTTLInSeconds,
+                        Constant::USER_ID      => $accessTokenEntity->getUserId()
+            ];
+            app("edge")->postPublicIdToEdge($payload);
         }
         catch (\Throwable $ex)
         {
