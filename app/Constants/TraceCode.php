@@ -73,6 +73,8 @@ class TraceCode extends BaseTraceCode
     const KAFKA_CERT_ERROR                                          = "KAFKA_CERT_ERROR";
     const KAFKA_PRODUCER_FLUSH_SUCCESS                              = "KAFKA_PRODUCER_FLUSH_SUCCESS";
 
+    // --- Data lake ---
+    const DE_EVENT_PUSH_FAILURE                                     = 'DE_EVENT_PUSH_FAILURE';
 
     const INVALID_CLIENT_CREDENTIALS                                = "INVALID_CLIENT_CREDENTIALS";
     const MISSING_CLIENT_CREDENTIALS                                = "MISSING_CLIENT_CREDENTIALS";
