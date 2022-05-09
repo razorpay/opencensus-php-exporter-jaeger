@@ -5,6 +5,8 @@ namespace App\Services\DataLake;
 
 
 use App;
+use Trace;
+use App\Constants\TraceCode;
 use App\Services\DataLake\Event\Event;
 use App\Services\Kafka\Producer\KafkaProducer;
 
@@ -32,10 +34,16 @@ class DEEventsKafkaProducer
 
         $group = $this->event->getEventGroup();
 
-        (new KafkaProducer(
-            $this->getKafkaTopicName($group, $payload),
-            json_encode($payload))
-        )->Produce();
+        try
+        {
+            (new KafkaProducer(
+                $this->getKafkaTopicName($group, $payload),
+                json_encode($payload))
+            )->Produce();
+        } catch (\Throwable $e)
+        {
+            Trace::info(TraceCode::DE_EVENT_PUSH_FAILURE, ['message' => 'failed to send data to data lake']);
+        }
     }
 
     private function getKafkaTopicName(string $eventGroup, array $eventPayload)
