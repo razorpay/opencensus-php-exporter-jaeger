@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Auth\Constant;
 use App\Constants\RequestParams;
 use Trace;
 use Request;
@@ -33,18 +34,20 @@ class EdgeService
         $this->defaultOptions = ['timeout' => 2];
     }
 
-    public function postPublicIdToEdge(string $publicId, string $merchantId, int $accessTokenTTLInSeconds, string $mode, string $jti)
+    public function postPublicIdToEdge(array $payload)
     {
         $start = millitime();
         $success = false;
+        $merchantId = $payload[Constant::MID];
 
         try
         {
             $postPayload = [
-                'kid'        => $publicId,
-                'jti'        => $jti,
-                'tags'       => $this->getTags($mode),
-                'ttl'        => $accessTokenTTLInSeconds,
+                'kid'        => $payload[Constant::PUBLIC_TOKEN],
+                'jti'        => $payload[Constant::IDENTIFIER],
+                'user_id'    => $payload[Constant::USER_ID],
+                'tags'       => $this->getTags($payload[Constant::MODE]),
+                'ttl'        => $payload[Constant::TTL],
             ];
             $this->createIdentifier($merchantId, $postPayload);
             $success = true;
