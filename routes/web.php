@@ -71,6 +71,12 @@ $app->post('/clients', [
     'uses'       => 'ClientController@createClients'
 ]);
 
+$app->put('/clients', [
+    'middleware' => ['auth.api','auth.hypertrace'],
+    'as'         => 'refresh_application_clients',
+    'uses'       => 'ClientController@refreshClients'
+]);
+
 $app->delete('/clients/{id}', [
     'middleware' => ['auth.api','auth.hypertrace'],
     'as'         => 'delete_application_client',

@@ -22,6 +22,8 @@ class TraceCode extends BaseTraceCode
     const BANKING_ACCOUNTS_WEBHOOK_REQUEST                          = 'BANKING_ACCOUNTS_WEBHOOK_REQUEST';
     const CREATE_CLIENTS_REQUEST                                    = 'CREATE_CLIENTS_REQUEST';
     const DELETE_CLIENT_REQUEST                                     = 'DELETE_CLIENT_REQUEST';
+    const REFRESH_CLIENTS_REQUEST                                   = 'REFRESH_CLIENTS_REQUEST';
+    const REFRESH_CLIENTS_REQUEST_FAILURE                           = 'REFRESH_CLIENTS_REQUEST_FAILURE';
     const MIGRATE_CLIENT_REQUEST                                    = 'MIGRATE_CLIENT_REQUEST';
     const MIGRATE_PUBLIC_TOKEN_REQUEST                              = 'MIGRATE_PUBLIC_TOKEN_REQUEST';
     const TALLY_AUTHORIZE_REQUEST                                   = 'TALLY_AUTHORIZE_REQUEST';
