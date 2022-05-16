@@ -83,8 +83,8 @@ jobs:
                 -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
                 -Dsonar.projectBaseDir=./
                 -Dsonar.sourceEncoding=UTF-8
-#                -Dsonar.go.coverage.reportPaths=/github/home/bvs-unit.cov
-#                -Dsonar.exclusions=scripts/**,rpc/**,proto/**,docs/**,deployments/**,configs/**,cmd/**,build/**,bin/**,internal/database/migrations/*,**/*_test.go,**/*mock.go,**/mock/**,**/testdata/**,internal/providers/mockserver/**,**/*coverage*,**/constants/**/*,**/*constants.go,coverage/*,tools.go,internal/boot/boot.go,internal/config/*,internal/errorCodes/*,internal/server/server.go,internal/hooks/*,e2e/**,pkg/prometheus/*,
+                -Dsonar.php.coverage.reportPath=ci/codeCoverage/codeCoverage.xml
+                -Dsonar.exclusions=tests/**,vendor,storage/**
           - name: Find PR Number
             if: github.ref != 'refs/heads/master'
             uses: razorpay/gh-find-current-pr@v1
