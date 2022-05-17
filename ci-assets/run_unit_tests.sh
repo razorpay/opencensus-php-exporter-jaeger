@@ -47,6 +47,9 @@ function run_tests
     # Run tests
     echo "running tests"
     APP_MODE=testing php -d memory_limit=1024M vendor/phpunit/phpunit/phpunit --debug --verbose
+
+    pwd
+    ls
 }
 
 init_setup
