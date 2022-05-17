@@ -59,7 +59,6 @@ jobs:
           DB_DATABASE: auth
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
           BRANCH: ${{ github.ref }}
-
       - name: Set Sonarqube Project
         id: set_sonar_project
         run: |
@@ -68,24 +67,24 @@ jobs:
           SONAR_PROJECT="AuthService";
           fi
           echo ::set-output name=sonar_project::$SONAR_PROJECT
-          - name: Integration Coverage Push to sonar
-            uses: sonarsource/sonarcloud-github-action@v1.4
-            env:
-              SONAR_HOST: ${{ secrets.SONARQUBE_HOST }}
-              SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-              SONARCLOUD_URL: https://sonar.razorpay.com
-              SONAR_INTEGRATION_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-            with:
-              args: >
-                -Dsonar.host.url=https://sonar.razorpay.com
-                -Dsonar.projectKey=${{ steps.set_sonar_project.outputs.sonar_project }}
-                -Dsonar.projectName=${{ steps.set_sonar_project.outputs.sonar_project }}
-                -Dsonar.projectVersion=${{ github.sha }}
-                -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-                -Dsonar.projectBaseDir=./
-                -Dsonar.sourceEncoding=UTF-8
-                -Dsonar.php.coverage.reportPath=/github/workspace/codeCoverage.xml
-                -Dsonar.exclusions=tests/**,vendor,storage/**
+        - name: Integration Coverage Push to sonar
+          uses: sonarsource/sonarcloud-github-action@v1.4
+          env:
+            SONAR_HOST: ${{ secrets.SONARQUBE_HOST }}
+            SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+            SONARCLOUD_URL: https://sonar.razorpay.com
+            SONAR_INTEGRATION_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          with:
+            args: >
+              -Dsonar.host.url=https://sonar.razorpay.com
+              -Dsonar.projectKey=${{ steps.set_sonar_project.outputs.sonar_project }}
+              -Dsonar.projectName=${{ steps.set_sonar_project.outputs.sonar_project }}
+              -Dsonar.projectVersion=${{ github.sha }}
+              -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+              -Dsonar.projectBaseDir=./
+              -Dsonar.sourceEncoding=UTF-8
+              -Dsonar.php.coverage.reportPath=/github/workspace/codeCoverage.xml
+              -Dsonar.exclusions=tests/**,vendor,storage/**
           - name: Find PR Number
             if: github.ref != 'refs/heads/master'
             uses: razorpay/gh-find-current-pr@v1
