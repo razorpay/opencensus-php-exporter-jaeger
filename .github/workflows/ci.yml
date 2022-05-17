@@ -58,10 +58,11 @@ jobs:
           DB_PASSWORD: root
           DB_DATABASE: auth
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          BRANCH: ${{ github.ref }}
+
       - name: Set Sonarqube Project
         id: set_sonar_project
         run: |
-          BRANCH="$(echo ${GITHUB_REF##*/})";
           SONAR_PROJECT="AuthServiceDevCoverageCheck"
           if [ "$BRANCH" == "master" ]; then
           SONAR_PROJECT="AuthService";
@@ -83,7 +84,7 @@ jobs:
                 -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
                 -Dsonar.projectBaseDir=./
                 -Dsonar.sourceEncoding=UTF-8
-                -Dsonar.php.coverage.reportPath=ci/codeCoverage/codeCoverage.xml
+                -Dsonar.php.coverage.reportPath=/github/workspace/codeCoverage.xml
                 -Dsonar.exclusions=tests/**,vendor,storage/**
           - name: Find PR Number
             if: github.ref != 'refs/heads/master'
