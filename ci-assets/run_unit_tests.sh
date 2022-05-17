@@ -2,7 +2,7 @@
 set -euo pipefail
 
 auth_TMP_DIR=/tmp/auth-service ## defined in the environment file
-SONAR=$1
+SONAR="sonar"
 
 SRC_DIR=/github/workspace/
 
