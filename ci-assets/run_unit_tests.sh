@@ -2,6 +2,7 @@
 set -euo pipefail
 
 auth_TMP_DIR=/tmp/auth-service ## defined in the environment file
+SONAR=$1
 
 SRC_DIR=/github/workspace/
 
@@ -12,6 +13,18 @@ function init_setup
 
     echo "copying env file for testing"
     cp ./environment/.env.sample ./environment/.env.testing
+
+    echo "sonar branch : ${GITHUB_BRANCH}, Argument : ${SONAR}"
+
+    if [[ "${GITHUB_BRANCH}" != "master" || "${SONAR}" == "sonar" ]]; then
+            echo "adding xdebug"
+            apk --no-cache add pcre-dev
+            pecl install xdebug
+            echo 'zend_extension=xdebug.so' >> /etc/php7/php.ini
+            echo 'xdebug.mode=coverage' >> /etc/php7/php.ini
+            sed -i 's/max_execution_time.*/max_execution_time=120/' /etc/php7/php.ini
+            sed -i 's/memory_limit.*/memory_limit=-1/' /etc/php7/php.ini
+    fi
 
     touch /etc/php7/conf.d/assertion.ini
     echo "zend.assertions=1" >> /etc/php7/conf.d/assertion.ini
