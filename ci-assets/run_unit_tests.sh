@@ -24,12 +24,7 @@ function init_setup
     echo 'xdebug.mode=coverage' >> /etc/php7/php.ini
     sed -i 's/max_execution_time.*/max_execution_time=120/' /etc/php7/php.ini
     sed -i 's/memory_limit.*/memory_limit=-1/' /etc/php7/php.ini
-    composer require --dev phpunit/phpunit:"$phpunit" phpunit/php-code-coverage:"$phpcodecoverage" codedungeon/phpunit-result-printer:^0.15.5 symfony/phpunit-bridge  --update-with-dependencies
-    composer require --dev pcov/clobber
 
-    touch /etc/php7/conf.d/assertion.ini
-    echo "zend.assertions=1" >> /etc/php7/conf.d/assertion.ini
-    echo "assert.exception=1" >> /etc/php7/conf.d/assertion.ini
     touch /etc/php7/conf.d/assertion.ini
     echo "zend.assertions=1" >> /etc/php7/conf.d/assertion.ini
     echo "assert.exception=1" >> /etc/php7/conf.d/assertion.ini
@@ -63,7 +58,7 @@ function run_tests
 
     # Run tests
     echo "running tests"
-    APP_MODE=testing php -d memory_limit=1024M vendor/phpunit/phpunit/phpunit --printer="Codedungeon\PHPUnitPrettyResultPrinter\Printer" --debug --verbose --coverage-clover clover.xml
+    APP_MODE=testing php -d memory_limit=1024M vendor/phpunit/phpunit/phpunit --debug --verbose --coverage-clover clover.xml
 
     pwd
     echo "display xml"
