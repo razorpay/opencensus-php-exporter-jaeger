@@ -81,7 +81,7 @@ jobs:
             -Dsonar.projectName=${{ steps.set_sonar_project.outputs.sonar_project }}
             -Dsonar.projectVersion=${{ github.sha }}
             -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-            -Dsonar.projectBaseDir=./
+            -Dsonar.projectBaseDir=/github/workspace/app/
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.php.coverage.reportPath=/github/workspace/clover.xml
             -Dsonar.exclusions=tests/**,vendor,storage/**
