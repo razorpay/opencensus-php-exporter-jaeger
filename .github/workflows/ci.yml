@@ -83,7 +83,7 @@ jobs:
             -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
             -Dsonar.projectBaseDir=/github/workspace/app/
             -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.php.coverage.reportPath=/github/workspace/clover.xml
+            -Dsonar.php.coverage.reportPaths=/github/workspace/clover.xml
             -Dsonar.exclusions=tests/**,vendor,storage/**
       - name: Find PR Number
         if: github.ref != 'refs/heads/master'
