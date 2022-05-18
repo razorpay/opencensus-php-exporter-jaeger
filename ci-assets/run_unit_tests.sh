@@ -61,8 +61,6 @@ function run_tests
     APP_MODE=testing php -d memory_limit=1024M vendor/phpunit/phpunit/phpunit --debug --verbose --coverage-clover clover.xml
 
     pwd
-    echo "display xml"
-    cat --format /github/workspace/clover.xml
 }
 
 init_setup
