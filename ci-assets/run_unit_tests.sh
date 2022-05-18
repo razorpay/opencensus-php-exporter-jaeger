@@ -3,6 +3,7 @@ set -euo pipefail
 
 auth_TMP_DIR=/tmp/auth-service ## defined in the environment file
 SONAR="sonar"
+GITHUB_BRANCH="$(echo ${GITHUB_REF##*/})";
 
 SRC_DIR=/github/workspace/
 
