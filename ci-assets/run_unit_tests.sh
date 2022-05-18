@@ -62,7 +62,7 @@ function run_tests
 
     pwd
     echo "display xml"
-    xmllint --format /github/workspace/clover.xml
+    cat --format /github/workspace/clover.xml
 }
 
 init_setup
