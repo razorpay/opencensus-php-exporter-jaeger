@@ -50,7 +50,7 @@ jobs:
         uses: docker://razorpay/onggi:php-7.2-nginx
         with:
           entrypoint: /bin/sh
-          args: ci-assets/run_unit_tests.sh sonar
+          args: ci-assets/run_unit_tests.sh
         env:
           DB_HOST: db-auth
           DB_PORT: 3306
@@ -62,7 +62,7 @@ jobs:
       - name: Set Sonarqube Project
         id: set_sonar_project
         run: |
-          SONAR_PROJECT="AuthServiceDevCoverageCheck"
+          SONAR_PROJECT="AuthService"
           if [ "$BRANCH" == "master" ]; then
           SONAR_PROJECT="AuthService";
           fi
