@@ -24,7 +24,8 @@ function init_setup
     echo 'xdebug.mode=coverage' >> /etc/php7/php.ini
     sed -i 's/max_execution_time.*/max_execution_time=120/' /etc/php7/php.ini
     sed -i 's/memory_limit.*/memory_limit=-1/' /etc/php7/php.ini
-
+    composer require --dev phpunit/phpunit:"$phpunit" phpunit/php-code-coverage:"$phpcodecoverage" codedungeon/phpunit-result-printer:^0.15.5 symfony/phpunit-bridge  --update-with-dependencies
+    composer require --dev pcov/clobber
 
     touch /etc/php7/conf.d/assertion.ini
     echo "zend.assertions=1" >> /etc/php7/conf.d/assertion.ini
