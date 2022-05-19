@@ -128,12 +128,6 @@ jobs:
         run: |
           echo "Test Coverage failed. Try adding test cases"
           exit 1
-      - name: SonarQube Quality Gate check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        # Force to fail step after specific time
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
     services:
       db-auth:
         image: mysql:5.7
