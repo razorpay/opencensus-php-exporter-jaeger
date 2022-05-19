@@ -62,7 +62,7 @@ jobs:
       - name: Set Sonarqube Project
         id: set_sonar_project
         run: |
-          SONAR_PROJECT="AuthService"
+          SONAR_PROJECT="AuthServiceDevCoverageCheck"
           if [ "$BRANCH" == "master" ]; then
           SONAR_PROJECT="AuthService";
           fi
@@ -84,7 +84,7 @@ jobs:
             -Dsonar.projectBaseDir=/github/workspace/app/
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.php.coverage.reportPaths=/github/workspace/clover.xml
-            -Dsonar.exclusions=tests/**,vendor,storage/**
+            -Dsonar.exclusions=tests/**,vendor,storage/**,ci-assets/**,routes/**
       - name: Find PR Number
         if: github.ref != 'refs/heads/master'
         uses: razorpay/gh-find-current-pr@v1
