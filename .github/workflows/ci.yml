@@ -82,6 +82,7 @@ jobs:
             -Dsonar.projectVersion=${{ github.sha }}
             -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
             -Dsonar.projectBaseDir=/github/workspace/app/
+            -Dsonar.tests=/github/workspace/tests/
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.php.coverage.reportPaths=/github/workspace/clover.xml
             -Dsonar.exclusions=tests/**,vendor,storage/**,ci-assets/**,routes/**
@@ -132,7 +133,7 @@ jobs:
         # Force to fail step after specific time
         timeout-minutes: 5
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
     services:
       db-auth:
         image: mysql:5.7
