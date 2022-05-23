@@ -56,6 +56,8 @@ class PublicTokenMigrate extends Command
                         "public_id" => $token->getPublicTokenWithPrefix(),
                         "ttl" => $token->getExpiryDateTime()->getTimestamp() - (new \DateTime('now'))->getTimestamp(),
                         "mode" => $token->getMode(),
+                        "jti" => $token->getIdentifier();
+                        "user_id" => $token->getUserId();
                     ], null, false);
             });
         }
