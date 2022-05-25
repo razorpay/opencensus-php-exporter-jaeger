@@ -98,6 +98,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           entrypoint: /bin/bash
           args: ci-assets/quality_analysis.sh
+
         env:
           SONAR_HOST: ${{ secrets.SONARQUBE_HOST }}
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
