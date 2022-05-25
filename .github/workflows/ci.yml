@@ -90,6 +90,7 @@ jobs:
         uses: razorpay/gh-find-current-pr@v1
         id: findPr
       - name: Code Quality Analysis
+        run: echo ::github.ref::steps.findPr.outputs.number
         if: github.ref != 'refs/heads/master' && success() && steps.findPr.outputs.number
         id: code_quality_analysis
         uses: docker://razorpay/onggi:nginx
@@ -130,7 +131,7 @@ jobs:
           exit 1
     services:
       db-auth:
-        image: mysql:latest
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
