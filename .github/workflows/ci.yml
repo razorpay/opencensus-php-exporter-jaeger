@@ -130,7 +130,7 @@ jobs:
           exit 1
     services:
       db-auth:
-        image: mysql:5.7
+        image: mysql:latest
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
