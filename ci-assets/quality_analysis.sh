@@ -7,7 +7,7 @@ DEV_PROJECT="AuthServiceDevCoverageCheck"
 IS_TEST_COVERAGE_OK="true"
 
 # defining the thresholds
-CODE_COVERAGE_THRESHOLD="49.0"
+CODE_COVERAGE_THRESHOLD="89.0"
 echo ::set-output name=code_coverage_threshold::"$CODE_COVERAGE_THRESHOLD"
 
 # adding sleep to avoid pulling sonar coverage of older commits.
