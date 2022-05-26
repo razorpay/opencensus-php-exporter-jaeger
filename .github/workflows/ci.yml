@@ -100,13 +100,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           entrypoint: /bin/bash
           args: ci-assets/quality_analysis.sh
-
         env:
           SONAR_HOST: ${{ secrets.SONARQUBE_HOST }}
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           GIT_SHA: ${{ github.sha }}
       - name: Add Quality Report Comment
-        if: github.ref != always() && 'refs/heads/master' && steps.findPr.outputs.number
+        if: github.ref != 'refs/heads/master' && success() && steps.findPr.outputs.number
         uses: razorpay/create-comment@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
