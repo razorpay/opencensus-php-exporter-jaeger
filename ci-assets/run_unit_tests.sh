@@ -59,9 +59,6 @@ function run_tests
     # Run tests
     echo "running tests"
     APP_MODE=testing php -d memory_limit=1024M vendor/phpunit/phpunit/phpunit --debug --verbose --coverage-clover clover.xml
-
-    cat clover.xml
-    pwd
 }
 
 init_setup

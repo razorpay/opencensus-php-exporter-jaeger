@@ -82,14 +82,15 @@ jobs:
             -Dsonar.projectVersion=${{ github.sha }}
             -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
             -Dsonar.projectBaseDir=/github/workspace/app/
-            -Dsonar.tests=/github/workspace/tests/
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.php.coverage.reportPaths=/github/workspace/clover.xml
-            -Dsonar.exclusions=tests/**,vendor,storage/**,ci-assets/**,routes/**
+            -Dsonar.exclusions=tests/**,vendor,storage/**
       - name: Find PR Number
         if: github.ref != 'refs/heads/master'
         uses: razorpay/gh-find-current-pr@v1
         id: findPr
+      - name: check values
+        run: echo ${{ github.ref }}::${{ steps.findPr.outputs.number }}
       - name: Code Quality Analysis
         if: github.ref != 'refs/heads/master' && success() && steps.findPr.outputs.number
         id: code_quality_analysis
