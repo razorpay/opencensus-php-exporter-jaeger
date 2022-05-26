@@ -89,6 +89,8 @@ jobs:
         if: github.ref != 'refs/heads/master'
         uses: razorpay/gh-find-current-pr@v1
         id: findPr
+      - name: check values
+        run: echo ${{ github.ref }}::${{ steps.findPr.outputs.number }}
       - name: Code Quality Analysis
         run: echo ${{ github.ref }}::${{ steps.findPr.outputs.number }}
         if: github.ref != 'refs/heads/master' && success() && steps.findPr.outputs.number
