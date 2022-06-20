@@ -188,3 +188,20 @@ jobs:
           -d '{ "state" : "success" , "context" : "github/combined-status-check" , "description" : "github/combined-status-check", "target_url" : "https://github.com/${{ github.repository }}" }' \
           https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}
           exit 0
+  e2e_test_webhook:
+    name: E2E test webhook
+    runs-on: [ self-hosted ]
+    needs: [ build_e2e ]
+    if: ${{ github.ref != 'refs/heads/master' }}
+    steps:
+      - name: "Git Clone"
+        uses: razorpay/checkout-action@30aedaf6f35b3b7756b8095789c1e18674bcf2f6
+        with:
+          submodules: true
+      - name: Triggers rundeck's webhook to execute e2e tests
+        run: |
+          authz_commit_id=`curl https://authz-admin-concierge.razorpay.com/commit.txt 2>/dev/null`
+          credcase_commit_id=`curl https://credcase.razorpay.com/commit.txt  2>/dev/null`
+          edge_commit_id=`curl https://edge.razorpay.com/commit.txt 2>/dev/null`
+          auth_outbox_commit_id=`curl https://auth-outbox-relay.concierge.razorpay.com/commit.txt 2>/dev/null`
+          ./.github/scripts/rundeck.sh ${{ github.sha }} $authz_commit_id $credcase_commit_id $edge_commit_id $auth_outbox_commit_id
