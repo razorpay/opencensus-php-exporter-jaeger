@@ -192,7 +192,6 @@ jobs:
     name: E2E test webhook
     runs-on: [ self-hosted ]
     needs: [ build ]
-    if: ${{ github.ref != 'refs/heads/master' }}
     steps:
       - name: "Git Clone"
         uses: razorpay/checkout-action@30aedaf6f35b3b7756b8095789c1e18674bcf2f6
