@@ -15,8 +15,8 @@ IMAGES=$EDGE_COMMIT
 RUNDECK_WEBHOOK_URL="https://rundeck.dev.razorpay.in/api/40/webhook/89Gs7PNHMppaTplotgy5FtZERC7TlGFI"
 
 DATA='{
-    "triggered_by": "edge",
-    "kube_manifest_ref": "master",
+    "triggered_by": "auth-service",
+    "kube_manifests_ref": "master",
     "self": {
         "name": "edge",
         "commit_id": '"$EDGE_COMMIT"',
