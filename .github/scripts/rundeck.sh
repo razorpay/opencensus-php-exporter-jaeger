@@ -1,12 +1,16 @@
 #!/bin/sh
 # Triggers rundeck's webhook to execute e2e tests.
 
+AUTHZ_COMMIT=`curl https://authz-admin-concierge.razorpay.com/commit.txt 2>/dev/null`
+CREDCASE_COMMIT=`curl https://credcase.razorpay.com/commit.txt  2>/dev/null`
+AUTH_OUTBOX_RELAY_COMMIT=`curl https://auth-outbox-relay.concierge.razorpay.com/commit.txt 2>/dev/null`
+curl -c /tmp/cookies -o -s -w "%{http_code}" --location --request GET 'https://deploy-api.razorpay.com/login' --header "Authorization: Bearer ${GIT_TOKEN}"
+cookies="$(cat /tmp/cookies | awk '/SESSION/ { print $NF }')"
+headerCookie="Cookie: SESSION=$cookies"
+EDGE_COMMIT=`curl --location --request GET "https://deploy-api.razorpay.com/executions?pipelineConfigIds=${EDGE_PIPELINE_ID}&statuses=SUCCEEDED&limit=1" -H "${headerCookie}" 2>/dev/null | jq '.[0].trigger.parameters.commit_id'`
+
 # Arguments
 AUTHSERVICE_COMMIT=$1
-AUTHZ_COMMIT=$2
-CREDCASE_COMMIT=$3
-EDGE_COMMIT=$4
-OUTBOX_COMMIT=$5
 
 # Variables
 # These services with their corresponding images will be braught up on devstack for testing.
@@ -54,7 +58,7 @@ DATA='{
                     "devstack_label": "{{ .Values.devstack_label }}",
                     "secret": "{{ .Values.secret }}",
                     "ephemeral_db": true,
-                    "image": "'"$OUTBOX_COMMIT"'"
+                    "image": "'"$AUTH_OUTBOX_RELAY_COMMIT"'"
                 }
             }
         }
