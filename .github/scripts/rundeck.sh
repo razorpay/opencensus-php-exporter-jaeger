@@ -19,7 +19,7 @@ DATA='{
     "kube_manifest_ref": "master",
     "self": {
         "name": "edge",
-        "commit_id": "'"$EDGE_COMMIT"'",
+        "commit_id": '"$EDGE_COMMIT"',
         "repository_name": "razorpay/edge",
         "e2e_pkgs": "./e2e/...",
         "e2e_flag_run": "",
