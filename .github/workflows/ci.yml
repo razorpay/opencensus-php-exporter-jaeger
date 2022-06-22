@@ -209,4 +209,4 @@ jobs:
           cookies="$(cat /tmp/cookies | awk '/SESSION/ { print $NF }')"
           headerCookie="Cookie: SESSION=$cookies"
           edge_commit_id=`curl --location --request GET "https://deploy-api.razorpay.com/executions?pipelineConfigIds=${EDGE_PIPELINE_ID}&statuses=SUCCEEDED&limit=1" -H "${headerCookie}" 2>/dev/null | jq '.[0].trigger.parameters.commit_id'`
-          ./.github/scripts/rundeck.sh ${{ github.sha }} $authz_commit_id $credcase_commit_id $edge_commit_id $auth_outbox_commit_id
+          sh ./.github/scripts/rundeck.sh ${{ github.sha }} $authz_commit_id $credcase_commit_id $edge_commit_id $auth_outbox_commit_id
