@@ -15,6 +15,10 @@ use App\Exception\BadRequestException;
 use Razorpay\OAuth\Token\Entity as Token;
 use Razorpay\OAuth\Application\Type as ApplicationType;
 use App\Exception\BadRequestValidationFailureException;
+use App\Services\Segment\EventCode as SegmentEventCode;
+use App\Services\DataLake\EventCode as DataLakeEventCode;
+use App\Services\DataLake\DEEventsKafkaProducer;
+use App\Services\DataLake\Event\OnBoardingEvent;
 
 class Service
 {
@@ -530,35 +534,50 @@ class Service
 
     public function postAuthCodeMultiToken(array $input)
     {
-        Trace::info(TraceCode::POST_AUTHORIZE_MULTI_TOKEN_REQUEST, ['merchant_id' => $input['merchant_id']]);
+        $eventProperties = ['merchant_id' => $input['merchant_id'], 'result' => 'failure'];
 
-        if (isset($input['merchant_id']) === false)
-        {
-            throw new BadRequestValidationFailureException('Invalid id passed for merchant');
+        try {
+            Trace::info(TraceCode::POST_AUTHORIZE_MULTI_TOKEN_REQUEST, ['merchant_id' => $input['merchant_id']]);
+
+            if (isset($input['merchant_id']) === false)
+            {
+                throw new BadRequestValidationFailureException('Invalid id passed for merchant');
+            }
+
+            $data = $this->resolveTokenOnDashboard($input['token'], $input['merchant_id']);
+
+            if ($data['role'] !== 'owner') {
+                throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
+            }
+
+            $data['authorize'] = $input['permission'];
+
+            $queryParams = htmlspecialchars_decode($data['query_params']);
+
+            parse_str($queryParams, $queryParamsArray);
+
+            Trace::info(TraceCode::POST_AUTHORIZE_CREATE_LIVE_TOKEN, ['merchant_id' => $input['merchant_id']]);
+
+            $liveAuthCode = $this->getAuthCodeForMode($queryParamsArray, $data, Mode::LIVE);
+
+            Trace::info(TraceCode::POST_AUTHORIZE_CREATE_TEST_TOKEN, ['merchant_id' => $input['merchant_id']]);
+
+            $testAuthCode = $this->getAuthCodeForMode($queryParamsArray, $data, Mode::TEST);
+
+            $redirectURL = $this->resolveRedirectUrlFromAuthCodes($queryParamsArray[RequestParams::REDIRECT_URI], $liveAuthCode, $testAuthCode, $eventProperties);
+
+            $this->sendEvents($eventProperties, $data['user_id']);
+
+            return $redirectURL;
         }
-
-        $data = $this->resolveTokenOnDashboard($input['token'], $input['merchant_id']);
-
-        if ($data['role'] !== 'owner')
+        catch (\Exception $e)
         {
-            throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
+            $eventProperties['failure_message'] = $e->getMessage();
+
+            $this->sendEvents($eventProperties, '');
+
+            throw $e;
         }
-
-        $data['authorize'] = $input['permission'];
-
-        $queryParams = htmlspecialchars_decode($data['query_params']);
-
-        parse_str($queryParams, $queryParamsArray);
-
-        Trace::info(TraceCode::POST_AUTHORIZE_CREATE_LIVE_TOKEN, ['merchant_id' => $input['merchant_id']]);
-
-        $liveAuthCode = $this->getAuthCodeForMode($queryParamsArray, $data, Mode::LIVE);
-
-        Trace::info(TraceCode::POST_AUTHORIZE_CREATE_TEST_TOKEN, ['merchant_id' => $input['merchant_id']]);
-
-        $testAuthCode = $this->getAuthCodeForMode($queryParamsArray, $data, Mode::TEST);
-
-        return $this->resolveRedirectURLFromAuthCodes($queryParamsArray[RequestParams::REDIRECT_URI], $liveAuthCode, $testAuthCode);
     }
 
     private function getAuthCodeMultiTokenInput(array $queryParams, $mode)
@@ -598,19 +617,23 @@ class Service
         return $authCode;
     }
 
-    private function resolveRedirectURLFromAuthCodes($redirectURL, $liveAuthCode, $testAuthCode)
+    private function resolveRedirectUrlFromAuthCodes($redirectURL, $liveAuthCode, $testAuthCode, &$eventProperties)
     {
         $liveQueryParams = $this->getQueryParams($liveAuthCode);
 
         if (array_key_exists('code', $liveQueryParams) === false)
         {
+            $eventProperties['failure_message'] = $liveQueryParams['message'];
+
             return $liveAuthCode->getHeaders()['Location'][0];
         }
 
         $testQueryParams = $this->getQueryParams($testAuthCode);
 
-        if (array_key_exists('code', $liveQueryParams) === false)
+        if (array_key_exists('code', $testQueryParams) === false)
         {
+            $eventProperties['failure_message'] = $testQueryParams['message'];
+
             return $testAuthCode->getHeaders()['Location'][0];
         }
 
@@ -624,6 +647,8 @@ class Service
             $params['state'] = $liveQueryParams['state'];
         }
 
+        $eventProperties['result'] = 'success';
+
         return $redirectURL . '?' . http_build_query($params);
     }
 
@@ -636,5 +661,23 @@ class Service
         parse_str($parts['query'], $query);
 
         return $query;
+    }
+
+    private function sendEvents(array $event, string $userId)
+    {
+        $this->app['segment-analytics']->pushTrackEvent(
+            $userId,
+            $event,
+            SegmentEventCode::OAUTH_MULTI_TOKEN_AUTH_CODE_GENERATED
+        );
+
+        $this->sendOnboardingEventToDE($event);
+    }
+
+    private function sendOnboardingEventToDE(array $properties)
+    {
+        $event = new OnBoardingEvent(DataLakeEventCode::OAUTH_MULTI_TOKEN_AUTH_CODE_GENERATE, $properties);
+
+        (new DEEventsKafkaProducer($event))->trackEvent();
     }
 }

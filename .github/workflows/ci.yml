@@ -58,6 +58,77 @@ jobs:
           DB_PASSWORD: root
           DB_DATABASE: auth
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          BRANCH: ${{ github.ref }}
+      - name: Set Sonarqube Project
+        id: set_sonar_project
+        run: |
+          SONAR_PROJECT="AuthServiceDevCoverageCheck"
+          if [ "$BRANCH" == "master" ]; then
+          SONAR_PROJECT="AuthService";
+          fi
+          echo ::set-output name=sonar_project::$SONAR_PROJECT
+      - name: Integration Coverage Push to sonar
+        uses: sonarsource/sonarcloud-github-action@v1.4
+        env:
+          SONAR_HOST: ${{ secrets.SONARQUBE_HOST }}
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONARCLOUD_URL: https://sonar.razorpay.com
+          SONAR_INTEGRATION_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+        with:
+          args: >
+            -Dsonar.host.url=https://sonar.razorpay.com
+            -Dsonar.projectKey=${{ steps.set_sonar_project.outputs.sonar_project }}
+            -Dsonar.projectName=${{ steps.set_sonar_project.outputs.sonar_project }}
+            -Dsonar.projectVersion=${{ github.sha }}
+            -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+            -Dsonar.projectBaseDir=/github/workspace/app/
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.php.coverage.reportPaths=/github/workspace/clover.xml
+            -Dsonar.exclusions=tests/**,vendor,storage/**
+      - name: Find PR Number
+        if: github.ref != 'refs/heads/master'
+        uses: razorpay/gh-find-current-pr@v1
+        id: findPr
+      - name: check values
+        run: echo ${{ github.ref }}::${{ steps.findPr.outputs.number }}
+      - name: Code Quality Analysis
+        if: github.ref != 'refs/heads/master' && success() && steps.findPr.outputs.number
+        id: code_quality_analysis
+        uses: docker://razorpay/onggi:nginx
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          entrypoint: /bin/bash
+          args: ci-assets/quality_analysis.sh
+        env:
+          SONAR_HOST: ${{ secrets.SONARQUBE_HOST }}
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          GIT_SHA: ${{ github.sha }}
+      - name: Add Quality Report Comment
+        if: github.ref != 'refs/heads/master' && success() && steps.findPr.outputs.number
+        uses: razorpay/create-comment@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+        with:
+          check-only-first-line: true
+          unique: true
+          number: ${{ steps.findPr.outputs.pr }}
+          comment: |
+            ${{ steps.code_quality_analysis.outputs.quality_report }}
+      - name: Check If PR is hotfix or revert
+        if: contains(github.ref, 'hotfix') || contains(github.ref, 'revert')
+        id: is_pr_hotfix_or_revert
+        run: echo "::set-output name=flag::true"
+      - name: TestCoverage OK
+        if: steps.is_pr_hotfix_or_revert.outputs.flag != 'true' && steps.code_quality_analysis.outputs.is_test_coverage_ok == 'true'
+        run: |
+          echo "Test Coverage is OK"
+          exit 0
+      - name: TestCoverage Less
+        if: steps.is_pr_hotfix_or_revert.outputs.flag != 'true' && steps.code_quality_analysis.outputs.is_test_coverage_ok == 'false'
+        run: |
+          echo "Test Coverage failed. Try adding test cases"
+          exit 1
     services:
       db-auth:
         image: mysql:5.7

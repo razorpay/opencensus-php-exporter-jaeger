@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
-use App\Services\Mock;
 use App\Exception\Handler;
+use App\Services\Mock;
 use App\Services\EdgeService;
 
 use App\Services\RazorX\RazorXClient;
+use App\Http\Middleware\EventTracker;
 use Illuminate\Support\ServiceProvider;
+use App\Services\Segment\SegmentAnalyticsClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -64,7 +66,19 @@ class AppServiceProvider extends ServiceProvider
             return new RazorXClient();
         });
 
+        $this->app->singleton('segment-analytics', function ($app) {
+            return new SegmentAnalyticsClient();
+        });
+
         $this->registerValidatorResolver();
+
+        $this->app->singleton(EventTracker::class);
+
+        //$path = $this->app->getConfigurationPath('jaeger');
+
+        if (__DIR__ . '/../../config/jaeger.php') {
+            $this->app->make('config')->set('jaeger', require __DIR__ . '/../../config/jaeger.php');
+        }
     }
 
     protected function registerValidatorResolver()

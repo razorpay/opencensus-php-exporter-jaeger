@@ -8,7 +8,7 @@ use App\Error\ErrorCode;
 use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
 use Trace;
-use Requests;
+use App\Request\Requests;
 
 use Illuminate\Support\Str;
 
@@ -114,7 +114,6 @@ class Api
     public function getMerchantOrgDetails(string $merchantId): array
     {
         $url = $this->apiUrl . '/merchants/' . $merchantId . '/org';
-
         try
         {
             $response = Requests::get($url, $this->defaultHeaders, $this->options);
@@ -165,6 +164,11 @@ class Api
         if ($response->status_code === 200 && isset($apiResponse['error']) === false)
         {
             return $apiResponse;
+        }
+        if ($response->status_code == 429)
+        {
+            Trace::info(TraceCode::REQUESTS_GOT_THROTTLED, ['api response' => $apiResponse]);
+            return  response()->json(['message' => $apiResponse], 429);
         }
 
         throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);

@@ -525,7 +525,7 @@ class OAuthTest extends TestCase
         $this->assertArrayHasKey('public_token', $content);
     }
 
-    protected function generateAuthCodeAndClearResolvedInstances()
+    public function generateAuthCodeAndClearResolvedInstances()
     {
         $authCode = $this->generateAuthCode();
 

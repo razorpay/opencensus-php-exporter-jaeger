@@ -11,4 +11,8 @@ class Metric
     const LABEL_ROUTE                        = 'route';
     const LABEL_STATUS                       = 'status';
     const LABEL_DEFAULT_VALUE                = 'other';
+
+    const REFRESH_CLIENTS_SUCCESS_COUNT      = 'refresh_clients_success_count';
+
+    const REFRESH_CLIENTS_FAILURE_COUNT      = 'refresh_clients_failure_count';
 }

@@ -30,3 +30,7 @@ environment/env.php
 # k8s files
 secrets.yaml
 registry.yaml
+
+# devspace files
+.devspace/
+devspace.yaml
