@@ -3,9 +3,9 @@
 namespace App\Services\RazorX;
 
 use Trace;
-use WpOrg\Requests\Requests;
+use Requests_Exception;
+use App\Request\Requests;
 use App\Constants\TraceCode;
-use WpOrg\Requests\Exception;
 use function env;
 
 class RazorXClient
@@ -123,7 +123,7 @@ class RazorXClient
         }
         catch (\Throwable $e)
         {
-            if (($e instanceof Exception\Http) and
+            if (($e instanceof Requests_Exception) and
                 ($this->checkRequestTimeout($e) === true) and
                 ($retryCount > 0))
             {
@@ -178,11 +178,11 @@ class RazorXClient
      * Checks whether the requests exception that we caught
      * is actually because of timeout in the network call.
      *
-     * @param Exception\Http $e The caught requests exception
+     * @param Requests_Exception $e The caught requests exception
      *
      * @return boolean              true/false
      */
-    protected function checkRequestTimeout(Exception\Http $e): bool
+    protected function checkRequestTimeout(Requests_Exception $e): bool
     {
         if ($e->getType() === 'curlerror')
         {
