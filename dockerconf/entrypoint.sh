@@ -1,4 +1,4 @@
-#!/usr/bin/dumb-init /bin/sh
+#!/bin/sh
 set -euo pipefail
 
 echo "Creating Log Files"
@@ -53,7 +53,7 @@ tail -f $LARAVEL_LOG_PATH >> /dev/stdout 2>&1 &
 
 # Run Migrations
 echo  "Running DB migrate"
-php artisan migrate --force
+#php artisan migrate --force
 
 # If ARTISAN_COMMAND env is set, run the command and exit
 if [ -n "${ARTISAN_COMMAND+x}" ]; then
