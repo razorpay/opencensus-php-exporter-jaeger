@@ -42,7 +42,7 @@ class RazorXClient
     private function getConfig(): array
     {
         return [
-            'mock'            => env('RAZORX_MOCK', false),
+            'mock_api_call'   => env('MOCK_RAZORX_API_CALL', false),
             'url'             => env('RAZORX_URL'),
             'username'        => env('RAZORX_USERNAME'),
             'secret'          => env('RAZORX_SECRET'),
@@ -68,7 +68,7 @@ class RazorXClient
         string $method,
         array  $data = [])
     {
-        if ($this->config['mock'] === true)
+        if ($this->config['mock_api_call'] === true)
         {
             return RazorXConstants::DEFAULT_CASE;
         }
