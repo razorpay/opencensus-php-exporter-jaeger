@@ -68,11 +68,6 @@ class RazorXClient
         string $method,
         array  $data = [])
     {
-        if ($this->config['mock_api_call'] === true)
-        {
-            return RazorXConstants::DEFAULT_CASE;
-        }
-
         $request = $this->getRequestParams($url, $method, $data);
 
         $retryCount = $data[RazorXConstants::RETRY_COUNT_KEY] ?? 0;
@@ -110,6 +105,11 @@ class RazorXClient
 
     protected function makeRequestAndGetResponse(array $request, int $retryOriginalCount, int $retryCount): string
     {
+        if ($this->config['mock_api_call'] === true)
+        {
+            return RazorXConstants::DEFAULT_CASE;
+        }
+
         try
         {
             $response = Requests::request(

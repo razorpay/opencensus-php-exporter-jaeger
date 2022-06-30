@@ -56,13 +56,13 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton('razorx', function ($app) {
-            $razorxMock = env('RAZORX_MOCK', false);
-
-            if ($razorxMock === true)
-            {
-                return new Mock\RazorXClient();
-            }
-
+            //======== not required as of now. uncomment if RazorxMock client is required==============
+            //$razorxMock = env('RAZORX_MOCK', false);
+            //if ($razorxMock === true)
+            //{
+            //    return new Mock\RazorXClient();
+            //}
+            //======== not required as of now. uncomment if RazorxMock client is required==============
             return new RazorXClient();
         });
 
