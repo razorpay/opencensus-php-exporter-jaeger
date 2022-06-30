@@ -3,6 +3,7 @@
 namespace App\Services\RazorX;
 
 use Trace;
+use Requests_Response;
 use Requests_Exception;
 use App\Request\Requests;
 use App\Constants\TraceCode;
@@ -50,7 +51,17 @@ class RazorXClient
         ];
     }
 
-    public function getTreatment(string $id, string $featureFlag, string $mode, $retryCount = 0): string
+    /**
+     * Fetches if the RazorX experiment is enabled or not by calling RazorX service.
+     *
+     * @param string $id
+     * @param string $featureFlag
+     * @param string $mode
+     * @param int    $retryCount
+     *
+     * @return string true/false
+     */
+    public function getTreatment(string $id, string $featureFlag, string $mode, int $retryCount = 0): string
     {
         $data = [
             RazorXConstants::ID              => $id,
@@ -137,21 +148,27 @@ class RazorXClient
 
                 return $this->makeRequestAndGetResponse($request, $retryOriginalCount, $retryCount);
             }
-            {
-                unset($request['options']['auth']);
-                Trace::error(
-                    TraceCode::RAZORX_REQUEST_FAILED,
-                    [
-                        'request' => $request,
-                        'retries' => $retryOriginalCount - $retryCount
-                    ]);
+            unset($request['options']['auth']);
+            Trace::error(
+                TraceCode::RAZORX_REQUEST_FAILED,
+                [
+                    'request' => $request,
+                    'retries' => $retryOriginalCount - $retryCount
+                ]);
 
-                return RazorXConstants::DEFAULT_CASE;
-            }
+            return RazorXConstants::DEFAULT_CASE;
         }
     }
 
-    protected function parseAndReturnResponse($res, $req = null): string
+    /**
+     * Parse json encoded responses from RazorX based on status code
+     *
+     * @param Requests_Response $res
+     * @param array|null         $req
+     *
+     * @return string true/false
+     */
+    protected function parseAndReturnResponse(Requests_Response $res, array $req = null): string
     {
         $code = $res->status_code;
 
@@ -188,6 +205,8 @@ class RazorXClient
         {
             $curlErrNo = curl_errno($e->getData());
 
+            //curl err no 28 represents CURLE_OPERATION_TIMEDOUT
+            // please check ref: https://www.php.net/manual/en/function.curl-errno.php
             if ($curlErrNo === 28)
             {
                 return true;
