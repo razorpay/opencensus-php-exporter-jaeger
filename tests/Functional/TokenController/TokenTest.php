@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional;
+namespace App\Tests\Functional\TokenController;
 
 use Request;
 use Razorpay\OAuth\Application;
