@@ -84,7 +84,7 @@ jobs:
             -Dsonar.projectBaseDir=/github/workspace/app/
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.php.coverage.reportPaths=/github/workspace/clover.xml
-            -Dsonar.exclusions=tests/**,vendor,storage/**,/app/Exception/**,/app/Services/Mock/**
+            -Dsonar.exclusions=tests/**,vendor,storage/**,app/Exception/**,app/Services/Mock/**
       - name: Find PR Number
         if: github.ref != 'refs/heads/master'
         uses: razorpay/gh-find-current-pr@v1
