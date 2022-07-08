@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional;
+namespace App\Tests\Functional\ClientController;
 
 use Razorpay\OAuth\Application;
 use Razorpay\OAuth\Client;
