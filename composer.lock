@@ -2895,12 +2895,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "df4af277938a2e26239a12f92e42f66f3835c9e9"
+                "reference": "76ec8cd75e4241088865697a09e5fa99f4093e4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/df4af277938a2e26239a12f92e42f66f3835c9e9",
-                "reference": "df4af277938a2e26239a12f92e42f66f3835c9e9",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/76ec8cd75e4241088865697a09e5fa99f4093e4f",
+                "reference": "76ec8cd75e4241088865697a09e5fa99f4093e4f",
                 "shasum": ""
             },
             "require": {
@@ -2942,7 +2942,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/e256Support",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2022-07-11T12:38:19+00:00"
+            "time": "2022-07-11T13:54:11+00:00"
         },
         {
             "name": "razorpay/outbox-php",
