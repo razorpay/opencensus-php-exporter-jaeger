@@ -14,6 +14,7 @@ class RazorXConstants
     const EVALUATE_URI             = 'evaluate';
 
     const DEFAULT_CASE = 'control';
+    const RAZORX_ON    = 'on';
 
     // Params required for evaluator API
     const ID           = 'id';

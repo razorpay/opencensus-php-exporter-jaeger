@@ -116,6 +116,11 @@ class RazorXClient
 
     protected function makeRequestAndGetResponse(array $request, int $retryOriginalCount, int $retryCount): string
     {
+        if(env('MOCK_ENABLE_RAZORX') === true)
+        {
+            return RazorXConstants::RAZORX_ON;
+        }
+
         if ($this->config['mock_api_call'] === true)
         {
             return RazorXConstants::DEFAULT_CASE;

@@ -484,14 +484,14 @@ class Service
      *
      * @return bool
      */
-    private function isRazorxExperimentEnabled(string $mode=self::LIVE)
+    private function isRazorxExperimentEnabled(string $mode = self::LIVE)
     {
         $razorxClient = $this->app['razorx'];
 
         $status = $razorxClient->getTreatment(
-             rand(1,100),
-             Services\RazorX\RazorXConstants::JWT_SIGN_ALGO,
-             $mode
+            rand(1, 100),
+            Services\RazorX\RazorXConstants::JWT_SIGN_ALGO,
+            $mode
         );
 
         return (strtolower($status) === 'on');
