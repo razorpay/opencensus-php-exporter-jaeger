@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6ad2fce5bfadc2f42daa5e39e927a207",
+    "content-hash": "e6ad439ee1d968ac562cfb5ac15f0e3d",
     "packages": [
         {
             "name": "apache/thrift",
@@ -2891,16 +2891,16 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "dev-e256Support",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "4201c88f539decb1639ebaa13018baf72472afd1"
+                "reference": "09124627739e02db4506f13f46aa84b2c71e3c9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/4201c88f539decb1639ebaa13018baf72472afd1",
-                "reference": "4201c88f539decb1639ebaa13018baf72472afd1",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/09124627739e02db4506f13f46aa84b2c71e3c9c",
+                "reference": "09124627739e02db4506f13f46aa84b2c71e3c9c",
                 "shasum": ""
             },
             "require": {
@@ -2939,10 +2939,10 @@
                 "service"
             ],
             "support": {
-                "source": "https://github.com/razorpay/oauth/tree/e256Support",
+                "source": "https://github.com/razorpay/oauth/tree/2.3.1",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2022-07-12T14:34:29+00:00"
+            "time": "2022-07-13T12:55:31+00:00"
         },
         {
             "name": "razorpay/outbox-php",
@@ -7192,9 +7192,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "razorpay/oauth": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
