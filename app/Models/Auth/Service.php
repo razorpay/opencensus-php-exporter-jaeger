@@ -3,22 +3,23 @@
 namespace App\Models\Auth;
 
 use App;
-use App\Constants\Mode;
+use Request;
 use Trace;
 use App\Services;
 use Razorpay\OAuth;
+use App\Constants\Mode;
 use App\Error\ErrorCode;
 use Razorpay\OAuth\Client;
 use App\Constants\TraceCode;
 use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
 use Razorpay\OAuth\Token\Entity as Token;
+use App\Services\DataLake\DEEventsKafkaProducer;
+use App\Services\DataLake\Event\OnBoardingEvent;
 use Razorpay\OAuth\Application\Type as ApplicationType;
 use App\Exception\BadRequestValidationFailureException;
 use App\Services\Segment\EventCode as SegmentEventCode;
 use App\Services\DataLake\EventCode as DataLakeEventCode;
-use App\Services\DataLake\DEEventsKafkaProducer;
-use App\Services\DataLake\Event\OnBoardingEvent;
 
 class Service
 {
@@ -37,8 +38,15 @@ class Service
     {
         $this->app = App::getFacadeRoot();
 
-        $this->signAlgo =
-            $this->isRazorxExperimentEnabled() ? OAuth\SignAlgoConstant::ES256 : OAuth\SignAlgoConstant::RS256;
+        $header = Request::header('enable-test-es');
+
+        if(!empty($header) === true){
+            $this->signAlgo = OAuth\SignAlgoConstant::ES256;
+        }
+        else{
+            $this->signAlgo =
+                $this->isRazorxExperimentEnabled() ? OAuth\SignAlgoConstant::ES256 : OAuth\SignAlgoConstant::RS256;
+        }
 
         $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository, $this->signAlgo);
 
