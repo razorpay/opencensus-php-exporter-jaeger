@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Exception\Handler;
 use App\Services\Mock;
 use App\Services\EdgeService;
+
+use App\Services\RazorX\RazorXClient;
 use App\Http\Middleware\EventTracker;
-use App\Services\Segment\SegmentAnalyticsClient;
 use Illuminate\Support\ServiceProvider;
+use App\Services\Segment\SegmentAnalyticsClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -51,6 +53,17 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return new \App\Services\Raven();
+        });
+
+        $this->app->singleton('razorx', function ($app) {
+            //======== not required as of now. uncomment if RazorxMock client is required==============
+            //$razorxMock = env('RAZORX_MOCK', false);
+            //if ($razorxMock === true)
+            //{
+            //    return new Mock\RazorXClient();
+            //}
+            //======== not required as of now. uncomment if RazorxMock client is required==============
+            return new RazorXClient();
         });
 
         $this->app->singleton('segment-analytics', function ($app) {

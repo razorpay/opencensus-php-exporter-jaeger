@@ -62,6 +62,21 @@ return [
         ]
     ],
 
+    'testPostAuthCodeES256' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/authorize',
+            'content' => [
+                'client_id'   => '30000000000000',
+                'token'       => 'success',
+                'merchant_id' => '10000000000000',
+            ]
+        ],
+        'response' => [
+            'content' => [],
+        ]
+    ],
+
     'testPostAuthCodeWithWrongResponseType' => [
         'request' => [
             'method'  => 'POST',
@@ -158,6 +173,25 @@ return [
     ],
 
     'testPostAccessToken' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/token',
+            'content' => [
+                'client_id'    => '30000000000000',
+                'grant_type'   => 'authorization_code',
+                'redirect_uri' => 'https://www.example.com',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'token_type' => 'Bearer',
+                'razorpay_account_id' => 'acc_10000000000000'
+            ],
+            'status_code' => 200
+        ]
+    ],
+
+    'testPostAccessTokenForES256' => [
         'request'  => [
             'method'  => 'POST',
             'url'     => '/token',

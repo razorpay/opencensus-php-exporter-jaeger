@@ -3,23 +3,23 @@
 namespace App\Models\Auth;
 
 use App;
-use App\Constants\Mode;
+use Request;
 use Trace;
 use App\Services;
 use Razorpay\OAuth;
-use Razorpay\OAuth\Client;
-use Razorpay\OAuth\Token\Entity as Token;
-use Razorpay\OAuth\Application\Type as ApplicationType;
-
+use App\Constants\Mode;
 use App\Error\ErrorCode;
+use Razorpay\OAuth\Client;
 use App\Constants\TraceCode;
 use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
+use Razorpay\OAuth\Token\Entity as Token;
+use App\Services\DataLake\DEEventsKafkaProducer;
+use App\Services\DataLake\Event\OnBoardingEvent;
+use Razorpay\OAuth\Application\Type as ApplicationType;
 use App\Exception\BadRequestValidationFailureException;
 use App\Services\Segment\EventCode as SegmentEventCode;
 use App\Services\DataLake\EventCode as DataLakeEventCode;
-use App\Services\DataLake\DEEventsKafkaProducer;
-use App\Services\DataLake\Event\OnBoardingEvent;
 
 class Service
 {
@@ -28,14 +28,27 @@ class Service
     const OWNER             = 'owner';
     const TALLY_AUTH_OTP    = 'tally_auth_otp';
     const OTP               = 'otp';
+    const LIVE               = 'live';
+    const TEST               = 'test';
 
     protected $raven;
+    private $signAlgo;
 
     public function __construct()
     {
-        $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository);
-
         $this->app = App::getFacadeRoot();
+
+        $header = Request::header('enable-test-es');
+
+        if(!empty($header) === true){
+            $this->signAlgo = OAuth\SignAlgoConstant::ES256;
+        }
+        else{
+            $this->signAlgo =
+                $this->isRazorxExperimentEnabled() ? OAuth\SignAlgoConstant::ES256 : OAuth\SignAlgoConstant::RS256;
+        }
+
+        $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository, $this->signAlgo);
 
         $this->raven = $this->app['raven'];
     }
@@ -368,6 +381,8 @@ class Service
 
     public function generateAccessToken(array $input)
     {
+        Trace::info(TraceCode::SIGN_ALGO_USED, [$this->signAlgo]);
+
         $data = $this->oauthServer->getAccessToken($input);
 
         $response = json_decode($data->getBody(), true);
@@ -472,7 +487,25 @@ class Service
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId);
     }
 
-    public function getAuthorizeMultiTokenViewData(array $input)
+    /**
+     * @param string $mode
+     *
+     * @return bool
+     */
+    private function isRazorxExperimentEnabled(string $mode = self::LIVE)
+    {
+        $razorxClient = $this->app['razorx'];
+
+        $status = $razorxClient->getTreatment(
+            rand(1, 100),
+            Services\RazorX\RazorXConstants::JWT_SIGN_ALGO,
+            $mode
+        );
+
+        return (strtolower($status) === 'on');
+    }
+
+  public function getAuthorizeMultiTokenViewData(array $input)
     {
         (new Validator)->validateAuthorizeRequestMultiToken($input);
 

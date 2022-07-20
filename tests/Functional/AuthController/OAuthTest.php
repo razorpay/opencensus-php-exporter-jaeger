@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional;
+namespace App\Tests\Functional\AuthController;
 
 use DB;
 use Request;
@@ -141,6 +141,30 @@ class OAuthTest extends TestCase
         $this->startTest();
     }
 
+    public function testPostAuthCodeES256()
+    {
+        $data = & $this->testData[__FUNCTION__];
+
+        $application = factory(Application\Entity::class)->create();
+
+        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+
+        factory(Client\Entity::class)->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $application->getId(),
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $response = $this->sendRequest($data['request']);
+
+        $content = urldecode($response->getContent());
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertContains('http://localhost?code=', $content);
+    }
+
     public function testPostAuthCodeInvalidRole()
     {
         $application = factory(Application\Entity::class)->create();
@@ -181,6 +205,25 @@ class OAuthTest extends TestCase
     }
 
     public function testPostAccessToken()
+    {
+        $authCode = $this->generateAuthCodeAndClearResolvedInstances();
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $params = [
+            'client_secret' => $this->devClient->getSecret(),
+            'code'          => $authCode,
+            'redirect_uri'  => 'http://localhost',
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $content = $this->runRequestResponseFlow($data);
+
+        $this->assertValidAccessToken($content);
+    }
+
+    public function testPostAccessTokenForES256()
     {
         $authCode = $this->generateAuthCodeAndClearResolvedInstances();
 
