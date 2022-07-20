@@ -179,7 +179,25 @@ return [
             'content' => [
                 'client_id'    => '30000000000000',
                 'grant_type'   => 'authorization_code',
-                'redirect_uri' => 'https://www.example.com',
+                'redirect_uri' => 'http://localhost',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'token_type' => 'Bearer',
+                'razorpay_account_id' => 'acc_10000000000000'
+            ],
+            'status_code' => 200
+        ]
+    ],
+
+    'testPostRefreshToken' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/token',
+            'content' => [
+                'client_id'    => '30000000000000',
+                'grant_type'   => 'refresh_token',
             ]
         ],
         'response' => [
@@ -208,6 +226,75 @@ return [
             ],
             'status_code' => 200
         ]
+    ],
+
+    'testPostRefreshTokenWithInvalidClientSecret' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/token',
+            'content' => [
+                'client_id'    => '30000000000000',
+                'grant_type'   => 'refresh_token',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Access denied',
+                ],
+            ],
+            'status_code' => 401
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
+            'message' => 'Access denied',
+        ],
+    ],
+
+    'testPostRefreshTokenWithMissingRefreshToken' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/token',
+            'content' => [
+                'client_id'    => '30000000000000',
+                'grant_type'   => 'refresh_token',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Access denied',
+                ],
+            ],
+            'status_code' => 401
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
+            'message' => 'Access denied',
+        ],
+    ],
+
+    'testPostRefreshTokenWithMissingClientId' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/token',
+            'content' => [
+                'grant_type'   => 'authorization_code',
+                'redirect_uri' => 'https://www.example.com',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Check the `client_id` parameter',
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
+            'message' => 'Check the `client_id` parameter',
+        ],
     ],
 
     'testPostAccessTokenValidWrongRedirectUri' => [

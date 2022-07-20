@@ -242,6 +242,71 @@ class OAuthTest extends TestCase
         $this->assertValidAccessToken($content);
     }
 
+    public function testPostRefreshToken()
+    {
+        $accessTokenEntity = json_decode($this->generateAccessTokenAndClearResolvedInstances());
+
+        $data = &$this->testData[__FUNCTION__];
+
+        $params = [
+            'client_secret'   => $this->devClient->getSecret(),
+            'refresh_token'   => $accessTokenEntity ->refresh_token ,
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $content = $this->runRequestResponseFlow($data);
+
+        $this->assertValidAccessToken($content);
+    }
+
+    public function testPostRefreshTokenWithInvalidClientSecret()
+    {
+        $accessTokenEntity = json_decode($this->generateAccessTokenAndClearResolvedInstances());
+
+        $data = &$this->testData[__FUNCTION__];
+
+        $params = [
+            'client_secret'   => "x18rVuqh7AvWT5wnNZxTik09",
+            'refresh_token'   => $accessTokenEntity ->refresh_token ,
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data);
+    }
+
+    public function testPostRefreshTokenWithMissingRefreshToken()
+    {
+        $this->generateAccessTokenAndClearResolvedInstances();
+
+        $data = &$this->testData[__FUNCTION__];
+
+        $params = [
+            'client_secret' => "x18rVuqh7AvWT5wnNZxTik09",
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data);
+    }
+
+    public function testPostRefreshTokenWithMissingClientId()
+    {
+        $accessTokenEntity = json_decode($this->generateAccessTokenAndClearResolvedInstances());
+
+        $data = &$this->testData[__FUNCTION__];
+
+        $params = [
+            'client_secret'   => $this->devClient->getSecret(),
+            'refresh_token'   => $accessTokenEntity ->refresh_token ,
+        ];
+
+        $this->addRequestParameters($data['request']['content'], $params);
+
+        $this->runRequestResponseFlow($data);
+    }
+
     /**
      * We send a redirect uri from the valid list of client uris but not
      * the one used for auth code generation.
@@ -540,7 +605,23 @@ class OAuthTest extends TestCase
         return substr($content, $pos + 5, $end - $pos - 5);
     }
 
-    protected function addRequestParameters(array & $content, array $parameters)
+    protected function generateAccessToken()
+    {
+        $code = $this->generateAuthCodeAndClearResolvedInstances();
+        $data = $this->testData['testPostAccessToken'];
+        $params = [
+            'client_id' => $this->devClient->id,
+            'client_secret' => $this->devClient->getSecret(),
+            'grant_type' => 'authorization_code',
+            'redirect_uri' => 'http://localhost',
+            'code' => $code,
+            'test' => 'test',
+        ];
+        $this->addRequestParameters($data['request']['content'], $params);
+        return ($this->sendRequest($data['request']))->getContent();
+    }
+
+    protected function addRequestParameters(array &$content, array $parameters)
     {
         $content = array_merge($content, $parameters);
     }
@@ -571,6 +652,15 @@ class OAuthTest extends TestCase
     public function generateAuthCodeAndClearResolvedInstances()
     {
         $authCode = $this->generateAuthCode();
+
+        Request::clearResolvedInstances();
+
+        return $authCode;
+    }
+
+    public function generateAccessTokenAndClearResolvedInstances()
+    {
+        $authCode = $this->generateAccessToken();
 
         Request::clearResolvedInstances();
 
