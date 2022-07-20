@@ -7,8 +7,6 @@ use Laravel\Lumen\Testing\TestCase as LumenTestCase;
 
 class UnitTestCase extends LumenTestCase
 {
-    protected $baseUrl = 'http://localhost:8000';
-
     /**
      * Setup the test environment.
      * @return void
