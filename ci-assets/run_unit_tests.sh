@@ -25,6 +25,14 @@ function init_setup
     sed -i 's/max_execution_time.*/max_execution_time=120/' /etc/php7/php.ini
     sed -i 's/memory_limit.*/memory_limit=-1/' /etc/php7/php.ini
 
+    echo "adding rdkafka"
+    apk -U upgrade && apk add git alpine-sdk bash zlib-dev libressl-dev cyrus-sasl-dev zstd-dev
+    git clone https://github.com/edenhill/librdkafka.git
+    cd librdkafka ; ./configure --prefix /usr --install-deps ; make ; make install ; cd ..
+
+    pecl install rdkafka
+    echo 'extension=rdkafka.so' >> /etc/php7/php.ini
+
     touch /etc/php7/conf.d/assertion.ini
     echo "zend.assertions=1" >> /etc/php7/conf.d/assertion.ini
     echo "assert.exception=1" >> /etc/php7/conf.d/assertion.ini
