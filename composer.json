@@ -22,6 +22,7 @@
         "opencensus/opencensus": "~0.7",
         "opencensus/opencensus-exporter-jaeger": "^v0.1.2-alpha"
     },
+
     "repositories": [
         {
             "type": "vcs",
