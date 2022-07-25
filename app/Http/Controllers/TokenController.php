@@ -108,6 +108,17 @@ class TokenController extends Controller
         return response()->json(['message' => 'Token Revoked']);
     }
 
+    public function revokeTokensForMobileApp()
+    {
+        $input = Request::all();
+
+        Trace::info(TraceCode::REVOKE_TOKEN_BY_PARTNER);
+
+        $this->oauthTokenService->revoketoken($id, $input);
+
+        return response()->json(['message' => 'Token Revoked']);
+    }
+
     public function createForPartner()
     {
         $input = Request::all();
