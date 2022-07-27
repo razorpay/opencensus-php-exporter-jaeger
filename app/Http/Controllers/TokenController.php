@@ -112,9 +112,29 @@ class TokenController extends Controller
     {
         $input = Request::all();
 
-        Trace::info(TraceCode::REVOKE_TOKEN_BY_PARTNER);
+        Trace::info(TraceCode::REVOKE_TOKEN_FOR_MOBILE_APP, $input);
 
-        $this->oauthTokenService->revoketoken($id, $input);
+        $tokens = $this->oauthTokenService->getAllTokensForMobileApp($input);
+
+        Trace::info(TraceCode::REVOKE_TOKEN_FOR_MOBILE_APP, $tokens);
+
+        foreach ($tokens as $key => $value)
+        {
+            if ($key === 'access_token')
+            {
+                $revokeTokenRequest = [];
+
+                $revokeTokenRequest['client_id'] = $input['client_id'];
+
+                $revokeTokenRequest['client_secret'] = $input['client_secret'];
+
+                $revokeTokenRequest['token_type_hint'] = $input['access_token'];
+
+                $revokeTokenRequest['token'] = $value;
+
+                $this->authServerTokenService->handleRevokeTokenRequest($revokeTokenRequest);
+            }
+        }
 
         return response()->json(['message' => 'Token Revoked']);
     }

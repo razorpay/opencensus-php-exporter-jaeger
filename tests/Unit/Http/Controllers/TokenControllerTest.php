@@ -414,4 +414,26 @@ class TokenControllerTest extends UnitTestCase
         $this->assertJsonStringEqualsJsonString(json_encode(['message' => 'Token Revoked']), $response);
     }
 
+    /**
+     * @Test '/revokeTokensForMobileApp'
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * revokeTokensForMobileApp should revoke token for mobile App.
+     * @return void
+     */
+    public function testRevokeForMobileApp()
+    {
+        $this->getTokenServiceMock()
+            ->shouldReceive('handleRevokeTokenRequest');
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::REVOKE_TOKEN_BY_PARTNER])
+            ->once();
+        RequestFacade::shouldReceive('all')->andReturn([]);
+
+        $controller = new TokenController();
+        $response = $controller->revokeByPartner()->getContent();
+
+        $this->assertJsonStringEqualsJsonString(json_encode(['message' => 'Token Revoked']), $response);
+    }
+
 }
