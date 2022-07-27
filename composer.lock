@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2a4455d3e22863b9120923379a607a3f",
+    "content-hash": "e6ad439ee1d968ac562cfb5ac15f0e3d",
     "packages": [
         {
             "name": "apache/thrift",
@@ -2052,6 +2052,12 @@
                 "reference": "117d2f184c936b6365592806d5f873984730feed",
                 "shasum": ""
             },
+            "archive": {
+                "exclude": [
+                    "ext/",
+                    "scripts/"
+                ]
+            },
             "require": {
                 "aws/aws-sdk-php": "^3.209",
                 "cache/adapter-common": "^1.0",
@@ -2085,12 +2091,6 @@
                 "psr-4": {
                     "OpenCensus\\": "src/"
                 }
-            },
-            "archive": {
-                "exclude": [
-                    "ext/",
-                    "scripts/"
-                ]
             },
             "scripts": {
                 "tests": [
@@ -2891,16 +2891,16 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "dev-master",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "be10c9e61ce69266b9dd5e0235c3c91414a1152c"
+                "reference": "09124627739e02db4506f13f46aa84b2c71e3c9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/be10c9e61ce69266b9dd5e0235c3c91414a1152c",
-                "reference": "be10c9e61ce69266b9dd5e0235c3c91414a1152c",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/09124627739e02db4506f13f46aa84b2c71e3c9c",
+                "reference": "09124627739e02db4506f13f46aa84b2c71e3c9c",
                 "shasum": ""
             },
             "require": {
@@ -2917,7 +2917,6 @@
                 "mockery/mockery": "^0.9.9",
                 "phpunit/phpunit": "^8.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -7193,9 +7192,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "razorpay/oauth": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -7203,5 +7200,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "1.1.0"
 }
