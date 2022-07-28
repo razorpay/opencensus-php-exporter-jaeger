@@ -114,25 +114,21 @@ class TokenController extends Controller
 
         Trace::info(TraceCode::REVOKE_TOKEN_FOR_MOBILE_APP, $input);
 
-        $tokens = $this->oauthTokenService->getAllTokensForMobileApp($input);
+        $temp = [
+            'client_id' => $input['client_id'],
+            'merchant_id' => $input['merchant_id'],
+            'user_id' => $input['user_id'],
+        ];
+
+        $tokens = $this->oauthTokenService->getAllTokensForMobileApp($temp);
 
         Trace::info(TraceCode::REVOKE_TOKEN_FOR_MOBILE_APP, $tokens);
 
-        foreach ($tokens as $key => $value)
+        foreach ($tokens["items"] as $token)
         {
-            if ($key === 'access_token')
+            if ($token['type'] === 'access_token' && count($token['scopes']) === 1 && $token['scopes'][0] === 'x_mobile_app')
             {
-                $revokeTokenRequest = [];
-
-                $revokeTokenRequest['client_id'] = $input['client_id'];
-
-                $revokeTokenRequest['client_secret'] = $input['client_secret'];
-
-                $revokeTokenRequest['token_type_hint'] = $input['access_token'];
-
-                $revokeTokenRequest['token'] = $value;
-
-                $this->authServerTokenService->handleRevokeTokenRequest($revokeTokenRequest);
+                $this->authServerTokenService->handleRevokeTokenRequestForMobileApp($token['id'], ['merchant_id' => $token['merchant_id']]);
             }
         }
 

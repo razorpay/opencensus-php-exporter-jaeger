@@ -43,4 +43,11 @@ class Service
             $this->oauthRefreshTokenService->revokeRefreshToken($input);
         }
     }
+
+    public function handleRevokeTokenRequestForMobileApp($id, $input)
+    {
+//        $this->validator->validateInput('revoke_by_partner', $input);
+
+        $this->oauthTokenService->revokeToken($id, $input);
+    }
 }
