@@ -63,7 +63,7 @@ jobs:
         id: set_sonar_project
         run: |
           SONAR_PROJECT="AuthServiceDevCoverageCheck"
-          if [ "$BRANCH" == "master" ]; then
+          if [ "$BRANCH" == "refs/heads/master" ]; then
           SONAR_PROJECT="AuthService";
           fi
           echo ::set-output name=sonar_project::$SONAR_PROJECT
