@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4307fbb7dc681d72e3ef64639020787",
+    "content-hash": "dc3c7d45889bbf9c866ff8c747fa47f5",
     "packages": [
         {
             "name": "apache/thrift",
@@ -2895,12 +2895,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "be10c9e61ce69266b9dd5e0235c3c91414a1152c"
+                "reference": "43335fc734c382b8929f2f4e5e24d6647a8f3103"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/be10c9e61ce69266b9dd5e0235c3c91414a1152c",
-                "reference": "be10c9e61ce69266b9dd5e0235c3c91414a1152c",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/43335fc734c382b8929f2f4e5e24d6647a8f3103",
+                "reference": "43335fc734c382b8929f2f4e5e24d6647a8f3103",
                 "shasum": ""
             },
             "require": {
