@@ -50,9 +50,10 @@ class Repository extends Token\Repository
         }
         catch (\Throwable $ex)
         {
-            // TODO: This is added temporarily.
-            // Will remove it after testing for a while in prod.
+            // This is a temporary fix to always return error if postPublicIdToEdge fails
+            // Long term fix would be to fail request if post to Edge fails for certain grant types only where strong consistency is required. For other grant types, don't return an error and use eventual consistency.
             app("trace")->traceException($ex, Trace::CRITICAL, TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED);
+            throw $ex;
         }
 
         $this->saveOrFail($accessTokenEntity);

@@ -119,5 +119,31 @@ return [
         'response' => [
             'content' => []
         ]
+    ],
+
+    'testValidatePublicTokenWithValidToken' => [
+        'request'  => [
+            'method'  => 'GET',
+            'url'     => 'public_tokens/%s/validate',
+            'content' => []
+        ],
+        'response' => [
+            'content' => [
+                'exist' => true
+            ]
+        ]
+    ],
+
+    'testValidatePublicTokenWithInvalidToken' => [
+        'request'  => [
+            'method'  => 'GET',
+            'url'     => 'public_tokens/rzp_live_oauth_Jmx3lfYzyhtJap/validate',
+            'content' => []
+        ],
+        'response' => [
+            'content' => [
+                'exist' => false
+            ]
+        ]
     ]
 ];

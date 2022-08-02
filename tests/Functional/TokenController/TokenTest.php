@@ -205,10 +205,10 @@ class TokenTest extends TestCase
 
         $data4 = [
             'request'  => [
-                    'method'  => 'POST',
-                    'url'     => '/token',
-                    'content' => [
-                    ]
+                'method'  => 'POST',
+                'url'     => '/token',
+                'content' => [
+                ]
             ],
             'response' => [
                 'content' => [
@@ -235,6 +235,34 @@ class TokenTest extends TestCase
 
         $this->runRequestResponseFlow($data4);
     }
+
+    // testValidatePublicTokenWithValidToken verifies if /public_tokens/{id}/validate returns true when a valid public token is provided
+    public function testValidatePublicTokenWithValidToken()
+    {
+        $this->createTestToken();
+
+        $publicToken = $this->token['public_token'];
+        $mode = $this->token['mode'];
+
+        $data = $this->testData[__FUNCTION__];
+
+        $url = $data['request']['url'];
+        $url = sprintf($url, sprintf('rzp_%s_oauth_%s', $mode, $publicToken));
+        $data['request']['url'] = $url;
+
+        $content = $this->makeRequestAndGetContent($data['request']);
+
+        $this->assertArraySelectiveEquals($data['response']['content'], $content);
+    }
+
+    // testValidatePublicTokenWithInvalidToken verifies if /public_tokens/{id}/validate returns false when an invalid public token is provided
+    public function testValidatePublicTokenWithInvalidToken()
+    {
+        $data = $this->testData[__FUNCTION__];
+        $content = $this->makeRequestAndGetContent($data['request']);
+        $this->assertArraySelectiveEquals($data['response']['content'], $content);
+    }
+
 
     protected function addRequestParameters(array & $content, array $parameters)
     {

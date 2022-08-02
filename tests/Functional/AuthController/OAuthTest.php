@@ -15,6 +15,7 @@ class OAuthTest extends TestCase
 {
     use RequestResponseFlowTrait;
     use CryptTrait;
+    use UtilityTrait;
 
     /**
      * @var Client\Entity
@@ -72,17 +73,17 @@ class OAuthTest extends TestCase
         $data = [
             'method' => 'get',
             'url'    => '/authorize?response_type=code' .
-                        '&client_id=' . $devClient->getId() .
-                        '&redirect_uri=https://www.example.com' .
-                        '&scope=read_only' .
-                        '&state=123',
+                '&client_id=' . $devClient->getId() .
+                '&redirect_uri=https://www.example.com' .
+                '&scope=read_only' .
+                '&state=123',
         ];
 
         $response = $this->sendRequest($data);
 
         $expectedString = 'Allow <span class="emphasis">' .
-                          $application->getName() .
-                          '</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?';
+            $application->getName() .
+            '</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?';
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertContains($expectedString, $response->getContent());
@@ -580,7 +581,6 @@ class OAuthTest extends TestCase
     protected function generateAuthCode()
     {
         $this->application = factory(Application\Entity::class)->create();
-
         factory(Client\Entity::class)->create(['application_id' => $this->application->id, 'environment' => 'prod']);
 
         $this->devClient = factory(Client\Entity::class)->create(
@@ -619,34 +619,6 @@ class OAuthTest extends TestCase
         ];
         $this->addRequestParameters($data['request']['content'], $params);
         return ($this->sendRequest($data['request']))->getContent();
-    }
-
-    protected function addRequestParameters(array &$content, array $parameters)
-    {
-        $content = array_merge($content, $parameters);
-    }
-
-    protected function createAndSetClientWithEnvironment(string $env = 'dev')
-    {
-        $this->application = factory(Application\Entity::class)->create();
-
-        $clientName = $env . 'Client';
-
-        $this->{$clientName} = factory(Client\Entity::class)->create(
-            [
-                'id'             => '30000000000000',
-                'application_id' => $this->application->id,
-                'redirect_url'   => ['https://www.example.com'],
-                'environment'    => $env,
-            ]);
-    }
-
-    protected function assertValidAccessToken(array $content)
-    {
-        $this->assertArrayHasKey('access_token', $content);
-        $this->assertArrayHasKey('refresh_token', $content);
-        $this->assertArrayHasKey('expires_in', $content);
-        $this->assertArrayHasKey('public_token', $content);
     }
 
     public function generateAuthCodeAndClearResolvedInstances()
