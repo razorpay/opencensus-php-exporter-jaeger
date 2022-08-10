@@ -59,7 +59,7 @@ $app->put('/applications/{id}', [
     'uses'       => 'ApplicationController@delete'
 ]);
 
-$app->put('/applications/{id}/restore', [
+$app->put('/applications/restore', [
     'middleware' => ['auth.api','auth.hypertrace'],
     'as'         => 'restore_application',
     'uses'       => 'ApplicationController@restore'

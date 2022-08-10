@@ -69,12 +69,12 @@ class ApplicationController extends Controller
         return response()->json($app);
     }
 
-    public function restore(string $id) {
+    public function restore() {
         $input = Request::all();
 
-        Trace::info(TraceCode::RESTORE_APPLICATION_REQUEST, compact('id', 'input'));
+        Trace::info(TraceCode::RESTORE_APPLICATION_REQUEST, $input);
 
-        $app = $this->service->restore($id, $input);
+        $app = $this->service->restore($input);
 
         return response()->json($app);
     }
