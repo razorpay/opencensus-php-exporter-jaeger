@@ -74,8 +74,8 @@ class ApplicationController extends Controller
 
         Trace::info(TraceCode::RESTORE_APPLICATION_REQUEST, $input);
 
-        $app = $this->service->restore($input);
+        $this->service->restore($input);
 
-        return response()->json($app);
+        return response()->json([]);
     }
 }
