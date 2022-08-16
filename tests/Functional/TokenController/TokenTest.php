@@ -2,6 +2,8 @@
 
 namespace App\Tests\Functional\TokenController;
 
+use Trace;
+use App\Constants\TraceCode;
 use Request;
 use Razorpay\OAuth\Application;
 use Razorpay\OAuth\Client;
@@ -152,6 +154,55 @@ class TokenTest extends TestCase
         $this->addRequestParameters($data4['request']['content'], $params);
 
         $this->runRequestResponseFlow($data4);
+    }
+
+    public function testRevokeAccessTokenForMobileApp()
+    {
+        $this->generateAuthCode();
+
+        Request::clearResolvedInstances();
+
+        //getting access token by calling /token
+
+        $params1 = [
+            'client_id'    => '30000000000000',
+            'grant_type'   => 'mobile_app_client_credentials',
+            'client_secret' => $this->devClient->getSecret(),
+            'user_id' => '20000000000000',
+            'scope' => 'x_mobile_app'
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        $this->sendRequest($data1['request']);
+
+        //calling revoke by partner api
+        $data3 = & $this->testData[__FUNCTION__];
+
+        $data3['request']['url'] = '/revokeTokensForMobileApp';
+        //adding access token to our params
+        $params = [
+            'client_id' => $this->devClient->getId(),
+            'merchant_id' => '30000000000000',
+            'user_id' => '20000000000000',
+        ];
+
+        //combining the request content
+        $this->addRequestParameters($data3['request']['content'], $params);
+
+        Request::clearResolvedInstances();
+
+        $response = $this->sendRequest($data3['request']);
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->assertEquals("{\"message\":\"Token Revoked\"}", $response->getContent());
+
+        Request::clearResolvedInstances();
     }
 
     public function testRevokeRefreshTokenByPartner()
