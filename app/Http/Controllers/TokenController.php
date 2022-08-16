@@ -108,21 +108,23 @@ class TokenController extends Controller
         return response()->json(['message' => 'Token Revoked']);
     }
 
+    /**
+     * This is to revoke token for a merchant user pair in mobile app
+     * Used for forgot password and removal of user from the team
+     */
     public function revokeTokensForMobileApp()
     {
         $input = Request::all();
 
         Trace::info(TraceCode::REVOKE_TOKEN_FOR_MOBILE_APP, $input);
 
-        $temp = [
+        $params = [
             'client_id' => $input['client_id'],
             'merchant_id' => $input['merchant_id'],
             'user_id' => $input['user_id'],
         ];
 
-        $tokens = $this->oauthTokenService->getAllTokensForMobileApp($temp);
-
-        Trace::info(TraceCode::REVOKE_TOKEN_FOR_MOBILE_APP, $tokens);
+        $tokens = $this->oauthTokenService->getAllTokensForMobileApp($params);
 
         foreach ($tokens["items"] as $token)
         {

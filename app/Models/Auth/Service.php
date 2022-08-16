@@ -496,7 +496,6 @@ class Service
     {
         $razorxClient = $this->app['razorx'];
 
-
         $status = $razorxClient->getTreatment(
             rand(1, 100),
             Services\RazorX\RazorXConstants::JWT_SIGN_ALGO,

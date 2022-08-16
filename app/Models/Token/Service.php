@@ -46,7 +46,7 @@ class Service
 
     public function handleRevokeTokenRequestForMobileApp($id, $input)
     {
-//        $this->validator->validateInput('revoke_by_partner', $input);
+        $this->validator->validateInput('revoke_for_mobile_app', $input);
 
         $this->oauthTokenService->revokeToken($id, $input);
     }

@@ -16,7 +16,7 @@ dev:
           name: ${APP_NAME}-${DEVSTACK_LABEL}
 vars:
   - name: DEVSTACK_LABEL
-    value: "oauth-achal"
+    value: "shreshthad"
   - name: NAMESPACE
     value: "auth"
   - name: APP_NAME
