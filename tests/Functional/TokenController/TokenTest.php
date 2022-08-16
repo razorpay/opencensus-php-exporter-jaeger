@@ -181,9 +181,9 @@ class TokenTest extends TestCase
         $this->sendRequest($data1['request']);
 
         //calling revoke by partner api
-        $data3 = & $this->testData[__FUNCTION__];
+        $data2 = & $this->testData[__FUNCTION__];
 
-        $data3['request']['url'] = '/revokeTokensForMobileApp';
+        $data2['request']['url'] = '/revokeTokensForMobileApp';
         //adding access token to our params
         $params = [
             'client_id' => $this->devClient->getId(),
@@ -192,11 +192,11 @@ class TokenTest extends TestCase
         ];
 
         //combining the request content
-        $this->addRequestParameters($data3['request']['content'], $params);
+        $this->addRequestParameters($data2['request']['content'], $params);
 
         Request::clearResolvedInstances();
 
-        $response = $this->sendRequest($data3['request']);
+        $response = $this->sendRequest($data2['request']);
 
         $this->assertEquals(200, $response->getStatusCode());
 
