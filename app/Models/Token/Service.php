@@ -45,7 +45,7 @@ class Service
     }
 
     /**
-     * Validate input request. Post that
+     * Validate input request. Post that revoke token for mobile app for merchant user pair
      * @param $id
      * @param $input
      * @return void
