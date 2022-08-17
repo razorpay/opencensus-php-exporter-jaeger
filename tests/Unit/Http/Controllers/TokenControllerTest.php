@@ -36,13 +36,13 @@ class TokenControllerTest extends UnitTestCase
     public function setUp(): Void
     {
         parent::setUp();
-//        $this->setAuthServiceMock(Mockery::mock('overload:App\Models\Auth\Service'));
-//        $this->setRazorpayOauthTokenServiceMock(Mockery::mock('overload:Razorpay\OAuth\Token\Service'));
-//        $this->setRazorpayOauthRefreshTokenServiceMock(Mockery::mock('overload:Razorpay\OAuth\RefreshToken\Service'));
-//        $this->setTokenServiceMock(Mockery::mock('overload:App\Models\Token\Service'));
-//        $this->setAuthRepositoryMock(Mockery::mock('overload:App\Models\Auth\Repository'));
-//        $this->setRazorpayOauthTokenRepositoryMock(Mockery::mock('overload:Razorpay\OAuth\Token\Repository'));
-//        $this->setApiServiceMock(Mockery::mock('overload:App\Services\Api'));
+        $this->setAuthServiceMock(Mockery::mock('overload:App\Models\Auth\Service'));
+        $this->setRazorpayOauthTokenServiceMock(Mockery::mock('overload:Razorpay\OAuth\Token\Service'));
+        $this->setRazorpayOauthRefreshTokenServiceMock(Mockery::mock('overload:Razorpay\OAuth\RefreshToken\Service'));
+        $this->setTokenServiceMock(Mockery::mock('overload:App\Models\Token\Service'));
+        $this->setAuthRepositoryMock(Mockery::mock('overload:App\Models\Auth\Repository'));
+        $this->setRazorpayOauthTokenRepositoryMock(Mockery::mock('overload:Razorpay\OAuth\Token\Repository'));
+        $this->setApiServiceMock(Mockery::mock('overload:App\Services\Api'));
     }
 
     public function tearDown(): Void
