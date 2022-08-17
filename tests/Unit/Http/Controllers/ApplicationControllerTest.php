@@ -145,6 +145,31 @@ class ApplicationControllerTest extends UnitTestCase
     }
 
     /**
+     * @Test '/applications/restore'
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * restore should return empty array response
+     * @return void
+     */
+    public function testRestoreApplications()
+    {
+        $partialResponse = [];
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::RESTORE_APPLICATION_REQUEST, Mockery::any()])
+            ->once();
+        RequestFacade::shouldReceive('all')->andReturn([]);
+        $this->getApplicationServiceMock()
+            ->shouldReceive('restore')
+            ->withArgs([Mockery::any()])
+            ->andReturn($partialResponse);
+
+        $controller = new ApplicationController();
+        $response = $controller->restore()->getContent();
+
+        $this->assertJsonStringEqualsJsonString(json_encode($partialResponse), $response);
+    }
+
+    /**
      * @Test '/applications/{id}'
      * @runInSeparateProcess
      * @preserveGlobalState disabled

@@ -53,16 +53,16 @@ $app->get('/applications', [
     'uses'       => 'ApplicationController@getMultiple'
 ]);
 
-$app->put('/applications/{id}', [
-    'middleware' => ['auth.api','auth.hypertrace'],
-    'as'         => 'delete_application',
-    'uses'       => 'ApplicationController@delete'
-]);
-
 $app->put('/applications/restore', [
     'middleware' => ['auth.api','auth.hypertrace'],
     'as'         => 'restore_application',
     'uses'       => 'ApplicationController@restore'
+]);
+
+$app->put('/applications/{id}', [
+    'middleware' => ['auth.api','auth.hypertrace'],
+    'as'         => 'delete_application',
+    'uses'       => 'ApplicationController@delete'
 ]);
 
 $app->patch('/applications/{id}', [
