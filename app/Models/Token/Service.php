@@ -44,9 +44,15 @@ class Service
         }
     }
 
+    /**
+     * Validate input request. Post that
+     * @param $id
+     * @param $input
+     * @return void
+     */
     public function handleRevokeTokenRequestForMobileApp($id, $input)
     {
-        $this->validator->validateInput('revoke_for_mobile_app', $input);
+        $this->validator->validateInput(Constant::REVOKE_FOR_MOBILE_APP, $input);
 
         $this->oauthTokenService->revokeToken($id, $input);
     }
