@@ -480,24 +480,6 @@ class Service
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId);
     }
 
-    ///**
-    // * @param string $mode
-    // *
-    // * @return bool
-    // */
-    //private function isRazorxExperimentEnabled(string $mode = self::LIVE)
-    //{
-    //    $razorxClient = $this->app['razorx'];
-    //
-    //    $status = $razorxClient->getTreatment(
-    //        rand(1, 100),
-    //        Services\RazorX\RazorXConstants::JWT_SIGN_ALGO,
-    //        $mode
-    //    );
-    //
-    //    return (strtolower($status) === 'on');
-    //}
-
   public function getAuthorizeMultiTokenViewData(array $input)
     {
         (new Validator)->validateAuthorizeRequestMultiToken($input);
