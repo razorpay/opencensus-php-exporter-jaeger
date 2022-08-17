@@ -414,6 +414,13 @@ class TokenControllerTest extends UnitTestCase
         $this->assertJsonStringEqualsJsonString(json_encode(['message' => 'Token Revoked']), $response);
     }
 
+    /**
+     * @Test '/revokeTokensForMobileApp'
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * revokeTokensForMobileApp should revoke token for mobile app
+     * @return void
+     */
     public function testRevokeAccessTokenForMobileApp()
     {
         $tokenController = new TokenController();
