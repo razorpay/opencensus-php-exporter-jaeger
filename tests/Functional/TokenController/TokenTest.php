@@ -165,7 +165,7 @@ class TokenTest extends TestCase
         //getting access token by calling /token
 
         $params1 = [
-            'client_id'    => '30000000000000',
+            'client_id'    => $this->devClient->getId(),
             'grant_type'   => 'mobile_app_client_credentials',
             'client_secret' => $this->devClient->getSecret(),
             'user_id' => '20000000000000',
@@ -187,7 +187,7 @@ class TokenTest extends TestCase
         //adding access token to our params
         $params = [
             'client_id' => $this->devClient->getId(),
-            'merchant_id' => '30000000000000',
+            'merchant_id' => $this->devClient->getId(),
             'user_id' => '20000000000000',
         ];
 
@@ -201,6 +201,116 @@ class TokenTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
 
         $this->assertEquals("{\"message\":\"Token Revoked\"}", $response->getContent());
+
+        Request::clearResolvedInstances();
+    }
+
+    public function testTokenGenerationForMobileAppInvalidGrantType()
+    {
+        $this->generateAuthCode();
+
+        $this->expectException(\Razorpay\OAuth\Exception\BadRequestException::class);
+
+        Request::clearResolvedInstances();
+
+        // Invalid Grant Type
+        $params1 = [
+            'client_id'    => '30000000000000',
+            'grant_type'   => 'mobile_app_client_credentials_2',
+            'client_secret' => $this->devClient->getSecret(),
+            'user_id' => '20000000000000',
+            'scope' => 'x_mobile_app'
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        $response = $this->sendRequest($data1['request']);
+
+        Request::clearResolvedInstances();
+    }
+
+    public function testTokenGenerationForMobileAppInvalidScope()
+    {
+        $this->generateAuthCode();
+
+        $this->expectException(\Razorpay\OAuth\Exception\ServerException::class);
+
+        Request::clearResolvedInstances();
+
+        // Invalid scope
+        $params1 = [
+            'client_id'    => '30000000000000',
+            'grant_type'   => 'mobile_app_client_credentials',
+            'client_secret' => $this->devClient->getSecret(),
+            'user_id' => '20000000000000',
+            'scope' => 'x_mobile_app_2'
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        $response = $this->sendRequest($data1['request']);
+
+        Request::clearResolvedInstances();
+    }
+
+    public function testTokenGenerationForMobileAppMissingRefreshToken()
+    {
+        $this->generateAuthCode();
+
+        $this->expectException(\Razorpay\OAuth\Exception\BadRequestException::class);
+
+        Request::clearResolvedInstances();
+
+        // RefreshTokenMissing
+        $params1 = [
+            'client_id'    => '30000000000000',
+            'grant_type'   => 'mobile_app_refresh_token',
+            'client_secret' => $this->devClient->getSecret(),
+            'user_id' => '20000000000000'
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        $response = $this->sendRequest($data1['request']);
+
+        Request::clearResolvedInstances();
+    }
+
+    public function testTokenGenerationForMobileAppInvalidRefreshToken()
+    {
+        $this->generateAuthCode();
+
+        $this->expectException(\Razorpay\OAuth\Exception\BadRequestException::class);
+
+        Request::clearResolvedInstances();
+
+        // Invalid refresh Token
+        $params1 = [
+            'client_id'    => '30000000000000',
+            'grant_type'   => 'mobile_app_refresh_token',
+            'client_secret' => $this->devClient->getSecret(),
+            'refresh_token' => 'refresh_token',
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        $response = $this->sendRequest($data1['request']);
 
         Request::clearResolvedInstances();
     }

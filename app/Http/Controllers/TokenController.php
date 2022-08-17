@@ -127,6 +127,18 @@ class TokenController extends Controller
 
         $tokens = $this->oauthTokenService->getAllTokensForMobileApp($params);
 
+        $this->revokeAccessTokensForMobile($tokens);
+
+        return response()->json([Constant::MESSAGE => Constant::TOKEN_REVOKED]);
+    }
+
+    /**
+     * Revoke access token for mobile
+     * @param $tokens
+     * @return void
+     */
+    public function revokeAccessTokensForMobile($tokens)
+    {
         foreach ($tokens[Constant::ITEMS] as $token)
         {
             if ($token[Constant::TYPE] === Constant::ACCESS_TOKEN && count($token[Constant::SCOPES]) === 1 && $token[Constant::SCOPES][0] === Constant::X_MOBILE_APP)
@@ -134,8 +146,6 @@ class TokenController extends Controller
                 $this->authServerTokenService->handleRevokeTokenRequestForMobileApp($token[Constant::ID], [Constant::MERCHANT_ID => $token[Constant::MERCHANT_ID]]);
             }
         }
-
-        return response()->json([Constant::MESSAGE => Constant::TOKEN_REVOKED]);
     }
 
     public function createForPartner()
