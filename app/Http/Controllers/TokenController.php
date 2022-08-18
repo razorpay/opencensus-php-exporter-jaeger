@@ -141,9 +141,11 @@ class TokenController extends Controller
     {
         foreach ($tokens[Constant::ITEMS] as $token)
         {
-            if ($token[Constant::TYPE] === Constant::ACCESS_TOKEN && count($token[Constant::SCOPES]) === 1 && $token[Constant::SCOPES][0] === Constant::X_MOBILE_APP)
+            if ($token[Constant::TYPE] === Constant::ACCESS_TOKEN && count($token[Constant::SCOPES]) === 1 &&
+                $token[Constant::SCOPES][0] === Constant::X_MOBILE_APP)
             {
-                $this->authServerTokenService->handleRevokeTokenRequestForMobileApp($token[Constant::ID], [Constant::MERCHANT_ID => $token[Constant::MERCHANT_ID]]);
+                $this->authServerTokenService->handleRevokeTokenRequestForMobileApp(
+                    $token[Constant::ID], [Constant::MERCHANT_ID => $token[Constant::MERCHANT_ID]]);
             }
         }
     }
