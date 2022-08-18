@@ -141,7 +141,8 @@ class TokenController extends Controller
     {
         foreach ($tokens[Constant::ITEMS] as $token)
         {
-            // Revoke access tokens for mobile app
+            // Revoke access tokens
+            // with scope x_mobile_app
             if ($token[Constant::TYPE] === Constant::ACCESS_TOKEN
                 && count($token[Constant::SCOPES]) === 1
                 && $token[Constant::SCOPES][0] === Constant::X_MOBILE_APP)

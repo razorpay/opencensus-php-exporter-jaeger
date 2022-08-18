@@ -161,6 +161,8 @@ class TokenControllerTest extends UnitTestCase
     public function setTokenServiceMock($tokenServiceMock)
     {
         $this->tokenServiceMock = $tokenServiceMock;
+
+        $this->tokenServiceMock->shouldReceive('handleRevokeTokenRequestForMobileApp')->andReturn(null);
     }
 
     /**
@@ -423,15 +425,26 @@ class TokenControllerTest extends UnitTestCase
      */
     public function testRevokeAccessTokenForMobileApp()
     {
-        $tokenController = new TokenController();
-
         $tokens = [
             'items' => [
-                ['type' => 'refresh_token']
+                [
+                    'type' => 'access_token',
+                    'scopes' => [
+                        'x_mobile_app',
+                    ],
+                    'id' => 'tokenId123',
+                    'merchant_id' => '30000000000000',
+                ]
             ]
         ];
 
-        $this->assertNull($tokenController->revokeAccessTokensForMobile($tokens));
+        $method = new \ReflectionMethod("\App\Http\Controllers\TokenController", "revokeAccessTokensForMobile");
+
+        $method->setAccessible(true);
+
+        $obj = new TokenController();
+
+        $this->assertNull($method->invoke($obj, $tokens));
     }
 
 }
