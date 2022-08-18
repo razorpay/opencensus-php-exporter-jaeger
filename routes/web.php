@@ -165,3 +165,8 @@ $app->post('/revoke', [
     'as'         => 'remove_access_token',
     'uses'       => 'TokenController@revokeByPartner'
 ]);
+
+$app->post('/revokeTokensForMobileApp', [
+    'as'         => 'revoke_tokens_for_mobile_app',
+    'uses'       => 'TokenController@revokeTokensForMobileApp'
+]);

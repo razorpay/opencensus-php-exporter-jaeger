@@ -108,6 +108,46 @@ class TokenController extends Controller
         return response()->json(['message' => 'Token Revoked']);
     }
 
+    /**
+     * This is to revoke token for a merchant user pair in mobile app
+     * Used for forgot password and removal of user from the team
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function revokeTokensForMobileApp()
+    {
+        $input = Request::all();
+
+        Trace::info(TraceCode::REVOKE_TOKEN_FOR_MOBILE_APP, $input);
+
+        $params = [
+            Constant::CLIENT_ID   => $input[Constant::CLIENT_ID],
+            Constant::MERCHANT_ID => $input[Constant::MERCHANT_ID],
+            Constant::USER_ID     => $input[Constant::USER_ID],
+        ];
+
+        $tokens = $this->oauthTokenService->getAllTokensForMobileApp($params);
+
+        $this->revokeAccessTokensForMobile($tokens);
+
+        return response()->json([Constant::MESSAGE => Constant::TOKEN_REVOKED]);
+    }
+
+    /**
+     * Revoke access token for mobile
+     * @param $tokens
+     * @return void
+     */
+    public function revokeAccessTokensForMobile($tokens)
+    {
+        foreach ($tokens[Constant::ITEMS] as $token)
+        {
+            if ($token[Constant::TYPE] === Constant::ACCESS_TOKEN && count($token[Constant::SCOPES]) === 1 && $token[Constant::SCOPES][0] === Constant::X_MOBILE_APP)
+            {
+                $this->authServerTokenService->handleRevokeTokenRequestForMobileApp($token[Constant::ID], [Constant::MERCHANT_ID => $token[Constant::MERCHANT_ID]]);
+            }
+        }
+    }
+
     public function createForPartner()
     {
         $input = Request::all();
