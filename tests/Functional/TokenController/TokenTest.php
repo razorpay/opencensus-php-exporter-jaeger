@@ -228,7 +228,62 @@ class TokenTest extends TestCase
 
         $data1['request']['method'] = 'POST';
 
-        $response = $this->sendRequest($data1['request']);
+        $this->sendRequest($data1['request']);
+
+        Request::clearResolvedInstances();
+    }
+
+    public function testTokenGenerationForMobileAppInvalidClientId()
+    {
+        $this->generateAuthCode();
+
+        $this->expectException(\Razorpay\OAuth\Exception\DBQueryException::class);
+
+        Request::clearResolvedInstances();
+
+        // Invalid Client Id
+        $params1 = [
+            'client_id'    => '300000000000',
+            'grant_type'   => 'mobile_app_client_credentials',
+            'client_secret' => $this->devClient->getSecret(),
+            'user_id' => '20000000000000',
+            'scope' => 'x_mobile_app'
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        $this->sendRequest($data1['request']);
+
+        Request::clearResolvedInstances();
+    }
+
+    public function testTokenGenerationForMobileAppInvalidUserId()
+    {
+        $this->generateAuthCode();
+
+        $this->expectException(\Razorpay\OAuth\Exception\BadRequestException::class);
+
+        Request::clearResolvedInstances();
+
+        // Missing User Id
+        $params1 = [
+            'client_id'    => '30000000000000',
+            'grant_type'   => 'mobile_app_client_credentials',
+            'client_secret' => $this->devClient->getSecret(),
+            'scope' => 'x_mobile_app'
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        $this->sendRequest($data1['request']);
 
         Request::clearResolvedInstances();
     }
@@ -256,7 +311,7 @@ class TokenTest extends TestCase
 
         $data1['request']['method'] = 'POST';
 
-        $response = $this->sendRequest($data1['request']);
+        $this->sendRequest($data1['request']);
 
         Request::clearResolvedInstances();
     }
@@ -283,7 +338,7 @@ class TokenTest extends TestCase
 
         $data1['request']['method'] = 'POST';
 
-        $response = $this->sendRequest($data1['request']);
+        $this->sendRequest($data1['request']);
 
         Request::clearResolvedInstances();
     }
@@ -310,7 +365,7 @@ class TokenTest extends TestCase
 
         $data1['request']['method'] = 'POST';
 
-        $response = $this->sendRequest($data1['request']);
+        $this->sendRequest($data1['request']);
 
         Request::clearResolvedInstances();
     }

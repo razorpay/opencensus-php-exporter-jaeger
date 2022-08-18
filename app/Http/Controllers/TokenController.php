@@ -113,7 +113,7 @@ class TokenController extends Controller
      * Used for forgot password and removal of user from the team
      * @return \Illuminate\Http\JsonResponse
      */
-    public function revokeTokensForMobileApp()
+    public function revokeTokensForMobileApp() :\Illuminate\Http\JsonResponse
     {
         $input = Request::all();
 
@@ -137,11 +137,14 @@ class TokenController extends Controller
      * @param $tokens
      * @return void
      */
-    public function revokeAccessTokensForMobile($tokens)
+    protected function revokeAccessTokensForMobile($tokens) :void
     {
         foreach ($tokens[Constant::ITEMS] as $token)
         {
-            if ($token[Constant::TYPE] === Constant::ACCESS_TOKEN && count($token[Constant::SCOPES]) === 1 && $token[Constant::SCOPES][0] === Constant::X_MOBILE_APP)
+            // Revoke access tokens for mobile app
+            if ($token[Constant::TYPE] === Constant::ACCESS_TOKEN
+                && count($token[Constant::SCOPES]) === 1
+                && $token[Constant::SCOPES][0] === Constant::X_MOBILE_APP)
             {
                 $this->authServerTokenService->handleRevokeTokenRequestForMobileApp($token[Constant::ID], [Constant::MERCHANT_ID => $token[Constant::MERCHANT_ID]]);
             }
