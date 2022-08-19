@@ -9,9 +9,10 @@ use Razorpay\OAuth\Token;
 use Razorpay\OAuth\RefreshToken;
 
 use App\Models\Auth;
-use App\Models\Token as AuthToken;
+use App\Constants\Metric;
 use App\Constants\TraceCode;
 use App\Exception\LogicException;
+use App\Models\Token as AuthToken;
 
 class TokenController extends Controller
 {
@@ -147,6 +148,8 @@ class TokenController extends Controller
                 && count($token[Constant::SCOPES]) === 1
                 && $token[Constant::SCOPES][0] === Constant::X_MOBILE_APP)
             {
+                app('trace')->count(Metric::REVOKE_TOKEN_MOBILE_APP_MERCHANT_USER_COUNT);
+
                 $this->authServerTokenService->handleRevokeTokenRequestForMobileApp(
                     $token[Constant::ID], [Constant::MERCHANT_ID => $token[Constant::MERCHANT_ID]]);
             }
