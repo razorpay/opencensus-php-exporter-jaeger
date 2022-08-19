@@ -526,4 +526,22 @@ class TokenTest extends TestCase
 
         return substr($content, $pos + 5, $end - $pos - 5);
     }
+
+    public function testHandleRevokeTokenRequestForMobileApp()
+    {
+        $input = [
+            'client_id' => '30000000000000',
+            'merchant_id' => '30000000000000'
+        ];
+
+        $this->expectException(\Razorpay\Spine\Exception\ValidationFailureException::class);
+
+        $method = new \ReflectionMethod("\App\Models\Token\Service", "handleRevokeTokenRequestForMobileApp");
+
+        $method->setAccessible(true);
+
+        $obj = new \App\Models\Token\Service();
+
+        $this->assertNull($method->invoke($obj, 'id123', $input));
+    }
 }
