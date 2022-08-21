@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Trace;
-use Request;
-
-use Razorpay\OAuth\Token;
-use Razorpay\OAuth\RefreshToken;
-
-use App\Models\Auth;
+use App\Constants\Application;
 use App\Constants\Metric;
 use App\Constants\TraceCode;
 use App\Exception\LogicException;
+use App\Models\Auth;
 use App\Models\Token as AuthToken;
+use Razorpay\OAuth\RefreshToken;
+use Razorpay\OAuth\Token;
+use Request;
+use Trace;
 
 class TokenController extends Controller
 {
@@ -121,16 +120,16 @@ class TokenController extends Controller
         Trace::info(TraceCode::REVOKE_TOKEN_FOR_MOBILE_APP, $input);
 
         $params = [
-            Constant::CLIENT_ID   => $input[Constant::CLIENT_ID],
-            Constant::MERCHANT_ID => $input[Constant::MERCHANT_ID],
-            Constant::USER_ID     => $input[Constant::USER_ID],
+            Application::CLIENT_ID   => $input[Application::CLIENT_ID],
+            Application::MERCHANT_ID => $input[Application::MERCHANT_ID],
+            Application::USER_ID     => $input[Application::USER_ID],
         ];
 
         $tokens = $this->oauthTokenService->getAllTokensForMobileApp($params);
 
         $this->revokeAccessTokensForMobile($tokens);
 
-        return response()->json([Constant::MESSAGE => Constant::TOKEN_REVOKED]);
+        return response()->json([Application::MESSAGE => Application::TOKEN_REVOKED]);
     }
 
     /**
@@ -138,20 +137,20 @@ class TokenController extends Controller
      * @param $tokens
      * @return void
      */
-    protected function revokeAccessTokensForMobile($tokens) :void
+    private function revokeAccessTokensForMobile($tokens) :void
     {
-        foreach ($tokens[Constant::ITEMS] as $token)
+        foreach ($tokens[Application::ITEMS] as $token)
         {
             // Revoke access tokens
             // with scope x_mobile_app
-            if ($token[Constant::TYPE] === Constant::ACCESS_TOKEN
-                && count($token[Constant::SCOPES]) === 1
-                && $token[Constant::SCOPES][0] === Constant::X_MOBILE_APP)
+            if ($token[Application::TYPE] === Application::ACCESS_TOKEN
+                && count($token[Application::SCOPES]) === 1
+                && $token[Application::SCOPES][0] === Application::X_MOBILE_APP)
             {
                 app('trace')->count(Metric::REVOKE_TOKEN_MOBILE_APP_MERCHANT_USER_COUNT);
 
                 $this->authServerTokenService->handleRevokeTokenRequestForMobileApp(
-                    $token[Constant::ID], [Constant::MERCHANT_ID => $token[Constant::MERCHANT_ID]]);
+                    $token[Application::ID], [Application::MERCHANT_ID => $token[Application::MERCHANT_ID]]);
             }
         }
     }

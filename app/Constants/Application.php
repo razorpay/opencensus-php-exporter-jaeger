@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Constants;
 
-class Constant
+class Application
 {
     const CLIENT_ID     = 'client_id';
     const MERCHANT_ID   = 'merchant_id';
