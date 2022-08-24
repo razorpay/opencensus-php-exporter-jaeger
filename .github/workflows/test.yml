@@ -22,7 +22,8 @@ jobs:
 
       - name: Run Jaeger all in one Docker
         uses: addnab/docker-run-action@v3
-        run: docker run -d -p6831:6831/udp -p16686:16686 --name=jaeger-server jaegertracing/all-in-one:latest
+        with:
+          run: docker run -d -p6831:6831/udp -p16686:16686 --name=jaeger-server jaegertracing/all-in-one:latest
 
       - name: Run unit Test
         continue-on-error: true
