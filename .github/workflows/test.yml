@@ -25,8 +25,6 @@ jobs:
         with:
           image: jaegertracing/all-in-one:latest
           options: -d -p6831:6831/udp -p16686:16686 --name=jaeger-server
-
-      - name: Run unit Test
         continue-on-error: true
         run: vendor/bin/phpunit tests/
 
