@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56b907242258e271e77fc8dc0312aadc",
+    "content-hash": "a67b415bb92b6ef0d84c34691cbe3fcb",
     "packages": [
         {
             "name": "apache/thrift",
@@ -2891,16 +2891,16 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "dev-master",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "63b58b44da9255a9ebfb5505c81bf83b0291044d"
+                "reference": "732160a3fddd4f15eb468f77ff730f21dec9785d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/63b58b44da9255a9ebfb5505c81bf83b0291044d",
-                "reference": "63b58b44da9255a9ebfb5505c81bf83b0291044d",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/732160a3fddd4f15eb468f77ff730f21dec9785d",
+                "reference": "732160a3fddd4f15eb468f77ff730f21dec9785d",
                 "shasum": ""
             },
             "require": {
@@ -2917,7 +2917,6 @@
                 "mockery/mockery": "^0.9.9",
                 "phpunit/phpunit": "^8.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2940,10 +2939,10 @@
                 "service"
             ],
             "support": {
-                "source": "https://github.com/razorpay/oauth/tree/2.3.1",
+                "source": "https://github.com/razorpay/oauth/tree/2.4.0",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2022-07-13T12:55:31+00:00"
+            "time": "2022-08-24T07:46:30+00:00"
         },
         {
             "name": "razorpay/outbox-php",
@@ -7193,9 +7192,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "razorpay/oauth": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
