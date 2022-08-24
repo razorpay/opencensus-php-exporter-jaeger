@@ -24,18 +24,8 @@ jobs:
         continue-on-error: true
         run: vendor/bin/phpunit tests/
 
-      - name: PHPUnit Tests
-        uses: php-actions/phpunit@v3
-        env:
-            XDEBUG_MODE: coverage
-        with:
-            bootstrap: vendor/autoload.php
-            configuration: phpunit.xml
-            php_extensions: xdebug
-            args: tests --coverage-clover ./coverage.xml
-
       - name: Upload to Codecov
         uses: codecov/codecov-action@v2
         with:
-            files: ./coverage.xml
+            files: build/clover.xml
             verbose: true
