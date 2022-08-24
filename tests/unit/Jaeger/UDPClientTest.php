@@ -55,7 +55,7 @@ class UDPClientTest extends TestCase
 {
     public static $sockets;
 
-    public function setUp()
+    public function setUp() : void
     {
         if (!extension_loaded('sockets')) {
             $this->markTestSkipped('UDPClient requires sockets extension');
@@ -93,7 +93,7 @@ class UDPClientTest extends TestCase
             $resource,
             Argument::type('string'),
             Argument::type('int'),
-            512,
+            256,
             '1.1.1.1',
             1234
         )->willReturn(123)->shouldBeCalledTimes(1);

@@ -1,0 +1,33 @@
+name: Test Suite
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout to code repo
+        uses: actions/checkout@v2
+
+      - name: Setup PHP with Xdebug
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          coverage: xdebug
+
+      - name: Update dependencies in lock file
+        run: composer update
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Run tests
+        run: composer test
+
+      - name: Upload Code Coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          file: /build/coverage.xml
+          flags: unit_tests
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true

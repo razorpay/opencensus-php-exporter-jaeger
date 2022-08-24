@@ -26,7 +26,7 @@ use OpenCensus\Trace\Exporter\Jaeger\SpanConverter;
 
 class SpanConverterBcMathTest extends SpanConverterTest
 {
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->converter = new SpanConverter([
