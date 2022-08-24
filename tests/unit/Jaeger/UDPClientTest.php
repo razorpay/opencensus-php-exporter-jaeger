@@ -55,7 +55,7 @@ class UDPClientTest extends TestCase
 {
     public static $sockets;
 
-    public function setUp() : void
+    public function setUp()
     {
         if (!extension_loaded('sockets')) {
             $this->markTestSkipped('UDPClient requires sockets extension');

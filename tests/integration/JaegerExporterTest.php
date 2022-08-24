@@ -24,7 +24,7 @@ class JaegerExporterTest extends TestCase
 {
     private static $jaegerClient;
 
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
 

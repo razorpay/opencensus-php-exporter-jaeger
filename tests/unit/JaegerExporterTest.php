@@ -35,7 +35,7 @@ class JaegerExporterTest extends TestCase
 {
     private $client;
 
-    public function setUp() : void
+    public function setUp()
     {
         parent::setUp();
         $this->client = $this->prophesize(AgentIf::class);
