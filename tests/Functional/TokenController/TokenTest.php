@@ -529,10 +529,7 @@ class TokenTest extends TestCase
 
     public function testHandleRevokeTokenRequestForMobileApp()
     {
-        $input = [
-            'client_id' => '30000000000000',
-            'merchant_id' => '30000000000000'
-        ];
+        $input = [];
 
         $this->expectException(\Razorpay\Spine\Exception\ValidationFailureException::class);
 

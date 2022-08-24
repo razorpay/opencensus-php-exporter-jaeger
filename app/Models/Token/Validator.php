@@ -14,8 +14,6 @@ class Validator extends \Razorpay\Spine\Validation\Validator
     ];
 
     protected static $revokeForMobileAppRules = [
-        RequestParams::CLIENT_ID    => 'required|string',
         RequestParams::MERCHANT_ID  => 'required|string',
-        RequestParams::USER_ID      => 'required|string',
     ];
 }
