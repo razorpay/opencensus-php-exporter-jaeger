@@ -24,7 +24,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
             image: jaegertracing/all-in-one:latest
-            run: docker run -d -p6831:6831/udp -p16686:16686 --name=jaeger-server  jaegertracing/all-in-one:latest
+            options: -d -p6831:6831/udp -p16686:16686 --name=jaeger-server
 
       - name: Run tests
         continue-on-error: true
