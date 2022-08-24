@@ -39,7 +39,7 @@ class JaegerExporterBcMathTest extends JaegerExporterTest
 {
     private $client;
 
-    public function setUp() : void
+    public function setUp()
     {
         parent::setUp();
         $this->client = $this->prophesize(AgentIf::class);
