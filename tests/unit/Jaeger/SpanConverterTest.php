@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
 
 class SpanConverterTest extends TestCase
 {
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->converter = new SpanConverter();
@@ -45,12 +45,12 @@ class SpanConverterTest extends TestCase
         ]);
         $span = $this->converter->convertSpan($span->spanData());
         $this->assertInstanceOf(Span::class, $span);
-        $this->assertInternalType('string', $span->operationName);
-        $this->assertInternalType('int', $span->traceIdHigh);
-        $this->assertInternalType('int', $span->traceIdLow);
-        $this->assertInternalType('int', $span->spanId);
-        $this->assertInternalType('int', $span->startTime);
-        $this->assertInternalType('int', $span->duration);
+        $this->assertIsString( $span->operationName);
+        $this->assertIsInt( $span->traceIdHigh);
+        $this->assertIsInt( $span->traceIdLow);
+        $this->assertIsInt( $span->spanId);
+        $this->assertIsInt($span->startTime);
+        $this->assertIsInt($span->duration);
 
         $this->assertEquals('span-name', $span->operationName);
         $this->assertEquals(3003, $span->spanId);
@@ -75,15 +75,15 @@ class SpanConverterTest extends TestCase
         $span = $this->converter->convertSpan($span->spanData());
         $this->assertCount(2, $span->logs);
         $log1 = $span->logs[0];
-        $this->assertInternalType('int', $log1->timestamp);
-        $this->assertInternalType('int', $span->traceIdHigh);
-        $this->assertInternalType('int', $span->traceIdLow);
+        $this->assertIsInt( $log1->timestamp);
+        $this->assertIsInt( $span->traceIdHigh);
+        $this->assertIsInt( $span->traceIdLow);
         $this->assertCount(1, $log1->fields);
         $this->assertEquals('description', $log1->fields[0]->key);
         $this->assertEquals('some-description', $log1->fields[0]->vStr);
 
         $log2 = $span->logs[1];
-        $this->assertInternalType('int', $log2->timestamp);
+        $this->assertIsInt( $log2->timestamp);
         $this->assertCount(4, $log2->fields);
         $this->assertEquals('type', $log2->fields[0]->key);
         $this->assertEquals('SENT', $log2->fields[0]->vStr);
