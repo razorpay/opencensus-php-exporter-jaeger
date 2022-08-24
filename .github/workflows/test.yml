@@ -27,7 +27,7 @@ jobs:
       - name: Upload Code Coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
-          file: /build/coverage.xml
+          file: build/coverage.xml
           flags: unit_tests
           name: codecov-umbrella
           fail_ci_if_error: true
