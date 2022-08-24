@@ -20,13 +20,11 @@ jobs:
       - name: Install dependencies
         run: composer install
 
-      - name: Run Jaeger all in one Docker
+      - name: Run Jaeger all in one Docker and Run tests
         uses: addnab/docker-run-action@v3
-        with:
-            image: jaegertracing/all-in-one:latest
-            options: -d -p6831:6831/udp -p16686:16686 --name=jaeger-server
+        run: docker run -d -p6831:6831/udp -p16686:16686 --name=jaeger-server jaegertracing/all-in-one:latest
 
-      - name: Run tests
+      - name: Run unit Test
         continue-on-error: true
         run: vendor/bin/phpunit tests/
 
