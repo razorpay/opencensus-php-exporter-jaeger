@@ -24,11 +24,18 @@ jobs:
         continue-on-error: true
         run: vendor/bin/phpunit tests/
 
-      - name: Upload Code Coverage to Codecov
+      - name: PHPUnit Tests
+        uses: php-actions/phpunit@v3
+        env:
+            XDEBUG_MODE: coverage
+        with:
+            bootstrap: vendor/autoload.php
+            configuration: phpunit.xml
+            php_extensions: xdebug
+            args: tests --coverage-clover ./coverage.xml
+
+      - name: Upload to Codecov
         uses: codecov/codecov-action@v2
         with:
-          file: build/coverage.xml
-          flags: unit_tests
-          name: codecov-umbrella
-          fail_ci_if_error: true
-          verbose: true
+            files: ./coverage.xml
+            verbose: true
