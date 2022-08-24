@@ -21,7 +21,7 @@ jobs:
         run: composer install
 
       - name: Run tests
-        run: composer test
+        run: vendor/bin/phpunit tests/
 
       - name: Upload Code Coverage to Codecov
         uses: codecov/codecov-action@v2
