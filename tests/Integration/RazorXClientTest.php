@@ -3,7 +3,6 @@
 namespace Integration;
 
 use App\Tests\TestCase as TestCase;
-use App\Services\RazorX\RazorXClient;
 use App\Services\RazorX\RazorXConstants;
 
 class RazorXClientTest extends TestCase
@@ -27,7 +26,7 @@ class RazorXClientTest extends TestCase
      */
     public function testGetTreatment()
     {
-        $razorXClient = new RazorXClient();
+        $razorXClient = $this->app['razorx'];
         $enabled    = $razorXClient->getTreatment(
             rand(1, 100),
             RazorXConstants::JWT_SIGN_ALGO,
