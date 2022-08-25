@@ -3,10 +3,7 @@
 namespace Unit\Service;
 
 use Mockery;
-use Exception;
-use App\Constants\TraceCode;
 use App\Tests\Unit\UnitTestCase;
-use Razorpay\Trace\Facades\Trace;
 use App\Services\RazorX\RazorXClient;
 use App\Services\RazorX\RazorXConstants;
 
@@ -46,6 +43,8 @@ class RazorXClientTest extends UnitTestCase
     /**
      * @Test
      * testGetTreatment gets if the razorx treatment is activated or not.
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
      * @return void
      */
     public function testGetTreatment()
