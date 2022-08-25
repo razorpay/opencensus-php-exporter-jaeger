@@ -12,6 +12,7 @@ class RazorXClientTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        putenv('MOCK_RAZORX_API_CALL=true');
     }
 
     public function tearDown(): void
