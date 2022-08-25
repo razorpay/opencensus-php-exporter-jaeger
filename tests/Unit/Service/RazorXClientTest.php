@@ -50,7 +50,7 @@ class RazorXClientTest extends UnitTestCase
     public function testGetTreatment()
     {
         $this->getRequestMock()
-             ->shouldReceive('post')
+             ->shouldReceive('get')
              ->once();
         $razorXClient = new RazorXClient();
         $isEnabled    = $razorXClient->getTreatment(
