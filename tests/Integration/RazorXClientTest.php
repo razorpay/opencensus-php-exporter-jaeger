@@ -1,38 +1,18 @@
 <?php
 
-namespace Unit\Service;
+namespace Integration;
 
-use Mockery;
-use App\Tests\Unit\UnitTestCase;
+use App\Tests\TestCase as TestCase;
 use App\Services\RazorX\RazorXClient;
 use App\Services\RazorX\RazorXConstants;
 
-class RazorXClientTest extends UnitTestCase
+class RazorXClientTest extends TestCase
 {
-    private $requestMock;
-
-    /**
-     * @return Mockery\MockInterface
-     */
-    public function getRequestMock()
-    {
-        return $this->requestMock;
-    }
-
-    /**
-     * @param mixed $requestMock
-     */
-    public function setRequestMock($requestMock)
-    {
-        $this->requestMock = $requestMock;
-    }
 
     public function setUp(): void
     {
         parent::setUp();
         putenv('MOCK_ENABLE_RAZORX=true');
-        $this->setRequestMock(Mockery::mock('overload:App\Request\Requests'));
-
     }
 
     public function tearDown(): void
@@ -49,9 +29,6 @@ class RazorXClientTest extends UnitTestCase
      */
     public function testGetTreatment()
     {
-        $this->getRequestMock()
-             ->shouldReceive('get')
-             ->once();
         $razorXClient = new RazorXClient();
         $isEnabled    = $razorXClient->getTreatment(
             rand(1, 100),
