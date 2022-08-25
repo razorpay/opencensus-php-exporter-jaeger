@@ -12,4 +12,8 @@ class Validator extends \Razorpay\Spine\Validation\Validator
         RequestParams::TOKEN               => 'required|string',
         RequestParams::TOKEN_TYPE_HINT     => 'required|string|in:access_token,refresh_token',
     ];
+
+    protected static $revokeForMobileAppRules = [
+        RequestParams::MERCHANT_ID  => 'required|string',
+    ];
 }

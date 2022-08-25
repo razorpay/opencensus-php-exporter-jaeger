@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Trace;
-use Request;
-
-use Razorpay\OAuth\Token;
-use Razorpay\OAuth\RefreshToken;
-
-use App\Models\Auth;
-use App\Models\Token as AuthToken;
+use App\Constants\Application;
+use App\Constants\Metric;
 use App\Constants\TraceCode;
 use App\Exception\LogicException;
+use App\Models\Auth;
+use App\Models\Token as AuthToken;
+use Razorpay\OAuth\RefreshToken;
+use Razorpay\OAuth\Token;
+use Request;
+use Trace;
 
 class TokenController extends Controller
 {
@@ -106,6 +106,53 @@ class TokenController extends Controller
         $this->authServerTokenService->handleRevokeTokenRequest($input);
 
         return response()->json(['message' => 'Token Revoked']);
+    }
+
+    /**
+     * This is to revoke token for a merchant user pair in mobile app
+     * Used for forgot password and removal of user from the team
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function revokeTokensForMobileApp() :\Illuminate\Http\JsonResponse
+    {
+        $input = Request::all();
+
+        Trace::info(TraceCode::REVOKE_TOKEN_FOR_MOBILE_APP, $input);
+
+        $params = [
+            Application::CLIENT_ID   => $input[Application::CLIENT_ID],
+            Application::MERCHANT_ID => $input[Application::MERCHANT_ID],
+            Application::USER_ID     => $input[Application::USER_ID],
+        ];
+
+        $tokens = $this->oauthTokenService->getAllTokensForMobileApp($params);
+
+        $this->revokeAccessTokensForMobile($tokens);
+
+        return response()->json([Application::MESSAGE => Application::TOKEN_REVOKED]);
+    }
+
+    /**
+     * Revoke access token for mobile
+     * @param $tokens
+     * @return void
+     */
+    private function revokeAccessTokensForMobile($tokens) :void
+    {
+        foreach ($tokens[Application::ITEMS] as $token)
+        {
+            // Revoke access tokens
+            // with scope x_mobile_app
+            if ($token[Application::TYPE] === Application::ACCESS_TOKEN
+                && count($token[Application::SCOPES]) === 1
+                && $token[Application::SCOPES][0] === Application::X_MOBILE_APP)
+            {
+                app('trace')->count(Metric::REVOKE_TOKEN_MOBILE_APP_MERCHANT_USER_COUNT);
+
+                $this->authServerTokenService->handleRevokeTokenRequestForMobileApp(
+                    $token[Application::ID], [Application::MERCHANT_ID => $token[Application::MERCHANT_ID]]);
+            }
+        }
     }
 
     public function createForPartner()

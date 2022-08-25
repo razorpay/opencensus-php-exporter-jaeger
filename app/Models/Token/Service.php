@@ -43,4 +43,17 @@ class Service
             $this->oauthRefreshTokenService->revokeRefreshToken($input);
         }
     }
+
+    /**
+     * Validate input request. Post that revoke token for mobile app for merchant user pair
+     * @param $id
+     * @param $input
+     * @return void
+     */
+    public function handleRevokeTokenRequestForMobileApp($id, $input)
+    {
+        $this->validator->validateInput(Constant::REVOKE_FOR_MOBILE_APP, $input);
+
+        $this->oauthTokenService->revokeToken($id, $input);
+    }
 }
