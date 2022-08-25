@@ -23,19 +23,17 @@ class RazorXClientTest extends TestCase
     /**
      * @Test
      * testGetTreatment gets if the razorx treatment is activated or not.
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      * @return void
      */
     public function testGetTreatment()
     {
         $razorXClient = new RazorXClient();
-        $isEnabled    = $razorXClient->getTreatment(
+        $enabled    = $razorXClient->getTreatment(
             rand(1, 100),
             RazorXConstants::JWT_SIGN_ALGO,
             'live'
         );
-        $this->assertEquals('on', $isEnabled);
+        $this->assertEquals('control', $enabled);
     }
 
 }
