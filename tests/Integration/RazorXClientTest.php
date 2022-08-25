@@ -12,7 +12,6 @@ class RazorXClientTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        putenv('MOCK_ENABLE_RAZORX=true');
     }
 
     public function tearDown(): void
