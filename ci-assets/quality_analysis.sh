@@ -3,7 +3,7 @@ apk update && apk add jq && rm -rf /var/cache/apk/*
 
 # defining globals
 MASTER_PROJECT="AuthService"
-DEV_PROJECT="AuthServiceDevCoverageCheck"
+DEV_PROJECT="AuthService"
 IS_TEST_COVERAGE_OK="true"
 
 # defining the thresholds
