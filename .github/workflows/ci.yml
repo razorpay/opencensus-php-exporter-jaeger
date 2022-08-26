@@ -62,7 +62,7 @@ jobs:
       - name: Set Sonarqube Project
         id: set_sonar_project
         run: |
-          SONAR_PROJECT="AuthService"
+          SONAR_PROJECT="AuthServiceDevCoverageCheck"
           BRANCH=${{ github.ref }}
           if [[ "$BRANCH" == "refs/heads/master" ]]; then
           SONAR_PROJECT="AuthService";
