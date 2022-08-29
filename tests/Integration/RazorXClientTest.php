@@ -1,0 +1,38 @@
+<?php
+
+namespace Integration;
+
+use App\Tests\TestCase as TestCase;
+use App\Services\RazorX\RazorXConstants;
+
+class RazorXClientTest extends TestCase
+{
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        putenv('MOCK_RAZORX_API_CALL=true');
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+    }
+
+    /**
+     * @Test
+     * testGetTreatment gets if the razorx treatment is activated or not.
+     * @return void
+     */
+    public function testGetTreatment()
+    {
+        $razorXClient = $this->app['razorx'];
+        $enabled    = $razorXClient->getTreatment(
+            rand(1, 100),
+            RazorXConstants::JWT_SIGN_ALGO,
+            'live'
+        );
+        $this->assertEquals('control', $enabled);
+    }
+
+}

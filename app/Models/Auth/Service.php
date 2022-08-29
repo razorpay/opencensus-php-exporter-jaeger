@@ -38,15 +38,8 @@ class Service
     {
         $this->app = App::getFacadeRoot();
 
-        $header = Request::header('enable-test-es');
 
-        if(!empty($header) === true){
-            $this->signAlgo = OAuth\SignAlgoConstant::ES256;
-        }
-        else{
-            $this->signAlgo =
-                $this->isRazorxExperimentEnabled() ? OAuth\SignAlgoConstant::ES256 : OAuth\SignAlgoConstant::RS256;
-        }
+        $this->signAlgo = OAuth\SignAlgoConstant::ES256;
 
         $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository, $this->signAlgo);
 
@@ -485,24 +478,6 @@ class Service
         $partnerId = $client->getMerchantId();
 
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId);
-    }
-
-    /**
-     * @param string $mode
-     *
-     * @return bool
-     */
-    private function isRazorxExperimentEnabled(string $mode = self::LIVE)
-    {
-        $razorxClient = $this->app['razorx'];
-
-        $status = $razorxClient->getTreatment(
-            rand(1, 100),
-            Services\RazorX\RazorXConstants::JWT_SIGN_ALGO,
-            $mode
-        );
-
-        return (strtolower($status) === 'on');
     }
 
   public function getAuthorizeMultiTokenViewData(array $input)
