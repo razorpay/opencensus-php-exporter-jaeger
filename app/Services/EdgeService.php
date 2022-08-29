@@ -125,7 +125,13 @@ class EdgeService
                 'request_body'  => $postPayload,
             ]);
 
+        $timeStart = microtime(true);
+
         $response = Requests::post($url, $this->headers, json_encode($postPayload), $this->defaultOptions);
+
+        $timeTaken = microtime(true) - $timeStart;
+
+        $this->traceDuration($timeTaken, TraceCode::EDGE_TIME_TAKEN);
 
         if ($response->success === false and $response->status_code !== 409)
         {

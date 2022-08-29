@@ -390,7 +390,12 @@ class Service
 
         $token = $this->oauthServer->authenticateWithPublicToken($response[Token::PUBLIC_TOKEN]);
 
-        $this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
+        $grantType = $input[RequestParams::GRANT_TYPE];
+
+        if (in_array($grantType, Constant::WHITELISTED_GRANT_TYPE_FOR_WEBHOOK) === false)
+        {
+            $this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
+        }
 
         return $response;
     }
