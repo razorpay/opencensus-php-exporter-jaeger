@@ -207,6 +207,7 @@ return [
         ]
     ],
 
+    //    TODO: Revert this after aggregator to reseller migration is complete
     'testRestoreApplication' => [
         'request'  => [
             'url'     => '/applications/restore',

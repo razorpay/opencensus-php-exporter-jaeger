@@ -53,6 +53,7 @@ $app->get('/applications', [
     'uses'       => 'ApplicationController@getMultiple'
 ]);
 
+//    TODO: Revert this after aggregator to reseller migration is complete
 $app->put('/applications/restore', [
     'middleware' => ['auth.api','auth.hypertrace'],
     'as'         => 'restore_application',

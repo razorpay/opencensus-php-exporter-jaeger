@@ -69,6 +69,7 @@ class ApplicationController extends Controller
         return response()->json($app);
     }
 
+//    TODO: Revert this after aggregator to reseller migration is complete
     public function restore() {
         $input = Request::all();
 

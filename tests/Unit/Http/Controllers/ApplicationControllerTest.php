@@ -144,6 +144,7 @@ class ApplicationControllerTest extends UnitTestCase
         $this->assertJsonStringEqualsJsonString(json_encode($partialResponse), $response);
     }
 
+    //    TODO: Revert this after aggregator to reseller migration is complete
     /**
      * @Test '/applications/restore'
      * @runInSeparateProcess
