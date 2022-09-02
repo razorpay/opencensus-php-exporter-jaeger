@@ -213,29 +213,26 @@ class ApplicationTest extends TestCase
         factory(Client\Entity::class)->create(['application_id' => $appToDelete->getId(), 'environment' => 'prod']);
         factory(Client\Entity::class)->create(['application_id' => $appToDelete->getId(), 'environment' => 'dev']);
 
-        $appToRestore1 = $this->createAuthApplication([
-            'id' => 'apptorestore01', 'name' => 'apptest',
-            'website' => 'https://www.example.com', 'deleted_at' => time()
-        ]);
-        factory(Client\Entity::class)->create([
-            'application_id' => $appToRestore1->getId(), 'environment' => 'prod', 'revoked_at' => time()
-        ]);
-        factory(Client\Entity::class)->create([
-            'application_id' => $appToRestore1->getId(), 'environment' => 'dev', 'revoked_at' => time()
-        ]);
-
-        $appToRestore2 = $this->createAuthApplication([
-            'id' => 'apptorestore02', 'name' => 'apptest',
-            'website' => 'https://www.example.com', 'deleted_at' => time()
-        ]);
-        factory(Client\Entity::class)->create([
-            'application_id' => $appToRestore2->getId(), 'environment' => 'prod', 'revoked_at' => time()
-        ]);
-        factory(Client\Entity::class)->create([
-            'application_id' => $appToRestore2->getId(), 'environment' => 'dev', 'revoked_at' => time()
-        ]);
+        $appToRestore1 = $this->createTestApplication('apptorestore01');
+        $appToRestore2 = $this->createTestApplication('apptorestore02');
 
         return [$appToDelete, $appToRestore1, $appToRestore2];
+    }
+
+    private function createTestApplication($id)
+    {
+        $app = $this->createAuthApplication([
+            'id' => $id, 'name' => 'apptest',
+            'website' => 'https://www.example.com', 'deleted_at' => time()
+        ]);
+        factory(Client\Entity::class)->create([
+            'application_id' => $app->getId(), 'environment' => 'prod', 'revoked_at' => time()
+        ]);
+        factory(Client\Entity::class)->create([
+            'application_id' => $app->getId(), 'environment' => 'dev', 'revoked_at' => time()
+        ]);
+
+        return $app;
     }
 
     protected function prepareTestData()
