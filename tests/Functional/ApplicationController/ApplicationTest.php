@@ -146,7 +146,7 @@ class ApplicationTest extends TestCase
         $this->startTest($data);
     }
 
-    //    TODO: Revert this after aggregator to reseller migration is complete
+    //    TODO: Revert this after aggregator to reseller migration is complete (PLAT-33)
     public function testRestoreApplication()
     {
         list($appToDelete, $appToRestore1, $appToRestore2) = $this->setUpTestRestoreApplication();

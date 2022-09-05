@@ -207,7 +207,7 @@ return [
         ]
     ],
 
-    //    TODO: Revert this after aggregator to reseller migration is complete
+    //    TODO: Revert this after aggregator to reseller migration is complete (PLAT-33)
     'testRestoreApplication' => [
         'request'  => [
             'url'     => '/applications/restore',
