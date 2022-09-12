@@ -53,6 +53,13 @@ $app->get('/applications', [
     'uses'       => 'ApplicationController@getMultiple'
 ]);
 
+//    TODO: Revert this after aggregator to reseller migration is complete (PLAT-33)
+$app->put('/applications/restore', [
+    'middleware' => ['auth.api','auth.hypertrace'],
+    'as'         => 'restore_application',
+    'uses'       => 'ApplicationController@restore'
+]);
+
 $app->put('/applications/{id}', [
     'middleware' => ['auth.api','auth.hypertrace'],
     'as'         => 'delete_application',

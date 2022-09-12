@@ -206,4 +206,20 @@ return [
             'content' => []
         ]
     ],
+
+    //    TODO: Revert this after aggregator to reseller migration is complete (PLAT-33)
+    'testRestoreApplication' => [
+        'request'  => [
+            'url'     => '/applications/restore',
+            'method'  => 'PUT',
+            'content' => [
+                'merchant_id' => '10000000000000',
+                'app_ids_to_restore' => ['apptorestore01', 'apptorestore02'],
+                'app_ids_to_delete'  => ['apptodelete000']
+            ]
+        ],
+        'response' => [
+            'content' => []
+        ]
+    ],
 ];
