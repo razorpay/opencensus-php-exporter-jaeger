@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e76bad9090cf32abf5c5d02563238cd",
+    "content-hash": "fe3e852aed7272638e7deba99cc944cd",
     "packages": [
         {
             "name": "apache/thrift",
@@ -2052,12 +2052,6 @@
                 "reference": "117d2f184c936b6365592806d5f873984730feed",
                 "shasum": ""
             },
-            "archive": {
-                "exclude": [
-                    "ext/",
-                    "scripts/"
-                ]
-            },
             "require": {
                 "aws/aws-sdk-php": "^3.209",
                 "cache/adapter-common": "^1.0",
@@ -2091,6 +2085,12 @@
                 "psr-4": {
                     "OpenCensus\\": "src/"
                 }
+            },
+            "archive": {
+                "exclude": [
+                    "ext/",
+                    "scripts/"
+                ]
             },
             "scripts": {
                 "tests": [
@@ -2891,7 +2891,7 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "2.4.1",
+            "version": "2.3.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
