@@ -30,7 +30,6 @@ class ValidatorTest extends UnitTestCase
      * @Test
      * ValidateRevokeByPartner should throw exception on failing validation rule.
      * @return void
-     * @doesNotPerformAssertions
      */
     public function testValidateRevokeByPartnerThrowException()
     {

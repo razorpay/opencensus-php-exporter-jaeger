@@ -10,7 +10,7 @@ use App\Tests\Unit\UnitTestCase;
 use Exception;
 use Mockery;
 use Razorpay\Trace\Facades\Trace;
-use Requests_Response;
+use WpOrg\Requests\Response as RequestsResponse;
 
 
 class ApiTest extends UnitTestCase
@@ -110,7 +110,7 @@ class ApiTest extends UnitTestCase
      */
     public function testSendOTPViaEmail()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
         $expectedResponse->status_code = 200;
         $apiResponse = [
             'success' => true,
@@ -144,7 +144,7 @@ class ApiTest extends UnitTestCase
      */
     public function testSendOTPViaEmailWithNon200HttpCode()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
         $expectedResponse->status_code = 400;
         $apiResponse = [
             'message' => ErrorCode::BAD_REQUEST_INVALID_OTP,
@@ -225,7 +225,7 @@ class ApiTest extends UnitTestCase
             'auth_type' => 'google_auth',
             'default_pricing_plan_id' => 'FL6zMNWhnSUooe'
         ];
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
         $expectedResponse->body = json_encode($expectedOrg);
 
         $this->getRequestMock()
@@ -289,7 +289,7 @@ class ApiTest extends UnitTestCase
     public function testGetOrgHostName()
     {
         $mockedBody = ['primary_host_name' => 'some_host_name'];
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
         $expectedResponse->body = json_encode($mockedBody);
 
         $this->getRequestMock()
@@ -315,7 +315,7 @@ class ApiTest extends UnitTestCase
     public function testGetOrgHostNameWithNoMerchantDetails()
     {
         $mockedBody = ['primary_host_name' => 'some_host_name'];
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
         $expectedResponse->body = json_encode($mockedBody);
 
         $this->getRequestMock()
@@ -342,7 +342,7 @@ class ApiTest extends UnitTestCase
      */
     public function testMapMerchantToApplication()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
 
         $this->getRequestMock()
             ->shouldReceive('post')
@@ -405,7 +405,7 @@ class ApiTest extends UnitTestCase
      */
     public function testRevokeMerchantApplicationMapping()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
 
         $this->getRequestMock()
             ->shouldReceive('delete')
@@ -459,7 +459,7 @@ class ApiTest extends UnitTestCase
      */
     public function testTriggerBankingAccountsWebhook()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
 
         $this->getRequestMock()
             ->shouldReceive('post')

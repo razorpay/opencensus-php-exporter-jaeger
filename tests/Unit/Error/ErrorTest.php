@@ -58,4 +58,28 @@ class ErrorTest extends UnitTestCase
             }
         }
     }
+
+    /**
+     * @Test
+     * testToDebugArray validates that debug array returns a map that has all attributes
+     * @return void
+     */
+    public function testToDebugArray()
+    {
+        $error = new Error(ErrorCode::BAD_REQUEST_UNAUTHORIZED, "error description", "some field", "some data");
+        self::assertEquals(['error' => [
+            'data' => 'some data',
+            'field' => 'some field',
+            'internal_error_code' => 'BAD_REQUEST_UNAUTHORIZED',
+            'class' => 'BAD_REQUEST',
+            'code' => 'BAD_REQUEST_ERROR',
+            'http_status_code' => '401',
+            'description' => 'error description',
+            'internal_error_desc' => '']
+        ],
+            $error->toDebugArray());
+    }
+
+
+
 }

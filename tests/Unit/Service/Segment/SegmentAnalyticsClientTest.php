@@ -9,7 +9,7 @@ use Exception;
 use Illuminate\Support\Facades\App;
 use Mockery;
 use Razorpay\Trace\Facades\Trace;
-use Requests_Response;
+use WpOrg\Requests\Response;
 
 class SegmentAnalyticsClientTest extends UnitTestCase
 {
@@ -108,7 +108,7 @@ class SegmentAnalyticsClientTest extends UnitTestCase
      */
     public function testBuildRequestAndSend()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new Response();
         $expectedResponse->status_code = 200;
 
         App::shouldReceive('runningUnitTests')
@@ -144,7 +144,7 @@ class SegmentAnalyticsClientTest extends UnitTestCase
      */
     public function testBuildRequestAndSendOnException()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new Response();
         $expectedResponse->status_code = 200;
 
         App::shouldReceive('runningUnitTests')

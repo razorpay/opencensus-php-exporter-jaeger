@@ -3,8 +3,8 @@
 namespace App\Services\RazorX;
 
 use Trace;
-use Requests_Response;
-use Requests_Exception;
+use WpOrg\Requests\Response as RequestsResponse;
+use WpOrg\Requests\Exception as RequestsException;
 use App\Request\Requests;
 use App\Constants\TraceCode;
 use function env;
@@ -139,7 +139,7 @@ class RazorXClient
         }
         catch (\Throwable $e)
         {
-            if (($e instanceof Requests_Exception) and
+            if (($e instanceof RequestsException) and
                 ($this->checkRequestTimeout($e) === true) and
                 ($retryCount > 0))
             {
@@ -168,12 +168,12 @@ class RazorXClient
     /**
      * Parse json encoded responses from RazorX based on status code
      *
-     * @param Requests_Response $res
+     * @param RequestsResponse $res
      * @param array|null         $req
      *
      * @return string true/false
      */
-    protected function parseAndReturnResponse(Requests_Response $res, array $req = null): string
+    protected function parseAndReturnResponse(RequestsResponse $res, array $req = null): string
     {
         $code = $res->status_code;
 
@@ -200,11 +200,11 @@ class RazorXClient
      * Checks whether the requests exception that we caught
      * is actually because of timeout in the network call.
      *
-     * @param Requests_Exception $e The caught requests exception
+     * @param RequestsException $e The caught requests exception
      *
      * @return boolean              true/false
      */
-    protected function checkRequestTimeout(Requests_Exception $e): bool
+    protected function checkRequestTimeout(RequestsException $e): bool
     {
         if ($e->getType() === 'curlerror')
         {
