@@ -93,6 +93,18 @@ return [
         ]
     ],
 
+    'testRevokeAccessTokenForMobileApp' => [
+        'request'  => [
+            'method'  => 'POST',
+            'content' => [
+                'client_id'    => '30000000000000',
+            ]
+        ],
+        'response' => [
+            'content' => []
+        ]
+    ],
+
     'testRevokeRefreshTokenByPartner' => [
         'request'  => [
             'method'  => 'POST',
@@ -118,6 +130,32 @@ return [
         ],
         'response' => [
             'content' => []
+        ]
+    ],
+
+    'testValidatePublicTokenWithValidToken' => [
+        'request'  => [
+            'method'  => 'GET',
+            'url'     => 'public_tokens/%s/validate',
+            'content' => []
+        ],
+        'response' => [
+            'content' => [
+                'exist' => true
+            ]
+        ]
+    ],
+
+    'testValidatePublicTokenWithInvalidToken' => [
+        'request'  => [
+            'method'  => 'GET',
+            'url'     => 'public_tokens/rzp_live_oauth_Jmx3lfYzyhtJap/validate',
+            'content' => []
+        ],
+        'response' => [
+            'content' => [
+                'exist' => false
+            ]
         ]
     ]
 ];

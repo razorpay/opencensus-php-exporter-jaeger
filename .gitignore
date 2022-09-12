@@ -23,6 +23,7 @@ dockerconf/auth.nginx.conf
 !environment/.env.docker
 !environment/.env.stage
 !environment/.env.omega
+!environment/.env.perf
 environment/.env.dev
 environment/env.php
 !environment/*.j2
@@ -34,3 +35,4 @@ registry.yaml
 # devspace files
 .devspace/
 devspace.yaml
+clover.xml

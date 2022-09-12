@@ -63,10 +63,12 @@ jobs:
         id: set_sonar_project
         run: |
           SONAR_PROJECT="AuthServiceDevCoverageCheck"
-          if [ "$BRANCH" == "master" ]; then
+          BRANCH=${{ github.ref }}
+          if [[ "$BRANCH" == "refs/heads/master" ]]; then
           SONAR_PROJECT="AuthService";
           fi
           echo ::set-output name=sonar_project::$SONAR_PROJECT
+          echo "Sonar Project : $SONAR_PROJECT for branch : $BRANCH"
       - name: Integration Coverage Push to sonar
         uses: sonarsource/sonarcloud-github-action@v1.4
         env:
@@ -186,3 +188,18 @@ jobs:
           -d '{ "state" : "success" , "context" : "github/combined-status-check" , "description" : "github/combined-status-check", "target_url" : "https://github.com/${{ github.repository }}" }' \
           https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}
           exit 0
+  e2e_tests_webhook:
+    name: Run E2E tests
+    runs-on: [ self-hosted ]
+    needs: [ build ]
+    steps:
+      - name: "Git Clone"
+        uses: razorpay/checkout-action@30aedaf6f35b3b7756b8095789c1e18674bcf2f6
+        with:
+          submodules: true
+      - name: Triggers rundeck's webhook to execute e2e tests
+        env:
+          GIT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+          EDGE_PIPELINE_ID: "207b79ee-3ec7-4a69-8b66-f3715f729dc0"
+        run: |
+          sh ./.github/scripts/rundeck.sh ${{ github.sha }}
