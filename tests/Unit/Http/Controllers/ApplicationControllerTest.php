@@ -160,7 +160,7 @@ class ApplicationControllerTest extends UnitTestCase
             ->once();
         RequestFacade::shouldReceive('all')->andReturn([]);
         $this->getApplicationServiceMock()
-            ->shouldReceive('restore')
+            ->shouldReceive('restoreAndDeleteMultiple')
             ->withArgs([Mockery::any()])
             ->andReturn($partialResponse);
 
