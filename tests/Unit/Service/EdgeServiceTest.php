@@ -12,7 +12,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Razorpay\OAuth\Token\Mode;
 use Razorpay\Trace\Facades\Trace;
-use Requests_Response;
+use WpOrg\Requests\Response as RequestsResponse;
 
 class EdgeServiceTest extends UnitTestCase
 {
@@ -57,14 +57,14 @@ class EdgeServiceTest extends UnitTestCase
      */
     public function testPostPublicIdToEdgeWithNoConsumer()
     {
-        $createIdentifier = new Requests_Response();
+        $createIdentifier = new RequestsResponse();
         $createIdentifier->status_code = 404;
 
-        $createConsumer2 = new Requests_Response();
+        $createConsumer2 = new RequestsResponse();
         $createConsumer2->status_code = 200;
         $createConsumer2->success = true;
 
-        $createIdentifier1 = new Requests_Response();
+        $createIdentifier1 = new RequestsResponse();
         $createIdentifier1->status_code = 200;
         $createIdentifier1->success = true;
 
@@ -115,7 +115,7 @@ class EdgeServiceTest extends UnitTestCase
      */
     public function testPostPublicIdToEdgeWithConsumer()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
         $expectedResponse->status_code = 200;
         $expectedResponse->success = true;
 
@@ -156,7 +156,7 @@ class EdgeServiceTest extends UnitTestCase
      */
     public function testPostPublicIdToEdgeWithCreateIdentifierFailing()
     {
-        $createIdentifier = new Requests_Response();
+        $createIdentifier = new RequestsResponse();
         $createIdentifier->status_code = 400;
         $createIdentifier->success = false;
 
@@ -200,10 +200,10 @@ class EdgeServiceTest extends UnitTestCase
      */
     public function testPostPublicIdToEdgeWithCreateConsumerFailing()
     {
-        $createIdentifier = new Requests_Response();
+        $createIdentifier = new RequestsResponse();
         $createIdentifier->status_code = 404;
 
-        $createConsumer1 = new Requests_Response();
+        $createConsumer1 = new RequestsResponse();
         $createConsumer1->status_code = 400;
         $createConsumer1->success = false;
 

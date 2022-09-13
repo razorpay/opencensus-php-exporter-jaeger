@@ -32,7 +32,7 @@ class OAuthWrapperAPITest extends TestCase
         $expectedString = 'No records found with the given Id';
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains($expectedString, $response->getContent());
+        $this->assertStringContainsString($expectedString, $response->getContent());
     }
 
     public function testGetAuthorizeMultiTokenUrlWithInvalidTestClientId()
@@ -56,7 +56,7 @@ class OAuthWrapperAPITest extends TestCase
         $expectedString = 'No records found with the given Id';
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains($expectedString, $response->getContent());
+        $this->assertStringContainsString($expectedString, $response->getContent());
     }
 
     public function testGetAuthorizeMultiTokenUrl()
@@ -75,7 +75,7 @@ class OAuthWrapperAPITest extends TestCase
             '</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?';
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains($expectedString, $response->getContent());
+        $this->assertStringContainsString($expectedString, $response->getContent());
     }
 
     public function testGetAuthorizeMultiTokenUrlWithNoStateParam()
@@ -96,7 +96,7 @@ class OAuthWrapperAPITest extends TestCase
         $expectedString = '<p><strong>Validation failed. The state field is required.</strong></p>';
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains($expectedString, $response->getContent());
+        $this->assertStringContainsString($expectedString, $response->getContent());
     }
 
     public function testPostAuthCodeMultiToken()
@@ -114,7 +114,7 @@ class OAuthWrapperAPITest extends TestCase
         parse_str($parts['query'], $query);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertContains('http://localhost?live_code', $content);
+        $this->assertStringContainsString('http://localhost?live_code', $content);
         $this->assertArrayHasKey('live_code', $query);
         $this->assertArrayHasKey('test_code', $query);
     }
@@ -142,7 +142,7 @@ class OAuthWrapperAPITest extends TestCase
         $content = urldecode($response->getContent());
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertContains('error=access_denied', $content);
+        $this->assertStringContainsString('error=access_denied', $content);
     }
 
     public function testPostAuthCodeMultiTokenWithWrongResponseType()

@@ -59,7 +59,6 @@ class TokenServiceTest extends UnitTestCase
      * @preserveGlobalState disabled
      * handleRevokeTokenRequestForAccessToken should call revokeAccessToken from oauthTokenService.
      * @return void
-     * @doesNotPerformAssertions
      */
     public function testHandleRevokeTokenRequestForAccessToken()
     {
@@ -85,7 +84,6 @@ class TokenServiceTest extends UnitTestCase
      * @preserveGlobalState disabled
      * handleRevokeTokenRequestForRefreshToken should call revokeRefreshToken from oauthRefreshTokenService.
      * @return void
-     * @doesNotPerformAssertions
      */
     public function testHandleRevokeTokenRequestForRefreshToken()
     {

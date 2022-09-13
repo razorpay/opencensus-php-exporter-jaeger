@@ -22,7 +22,6 @@ class RepositoryTest extends UnitTestCase
      * @Test
      * getEntityClass should return Token Entity Class.
      * @return void
-     * @doesNotPerformAssertions
      */
     public function testGetEntityClass()
     {

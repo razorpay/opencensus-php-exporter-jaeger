@@ -23,9 +23,11 @@ dockerconf/auth.nginx.conf
 !environment/.env.docker
 !environment/.env.stage
 !environment/.env.omega
+!environment/.env.perf
 environment/.env.dev
 environment/env.php
 !environment/*.j2
+!environment/.env.perf1
 
 # k8s files
 secrets.yaml

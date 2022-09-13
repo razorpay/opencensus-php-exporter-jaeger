@@ -144,6 +144,32 @@ class ApplicationControllerTest extends UnitTestCase
         $this->assertJsonStringEqualsJsonString(json_encode($partialResponse), $response);
     }
 
+    //    TODO: Revert this after aggregator to reseller migration is complete (PLAT-33)
+    /**
+     * @Test '/applications/restore'
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * restore should return empty array response
+     * @return void
+     */
+    public function testRestoreApplications()
+    {
+        $partialResponse = [];
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::RESTORE_APPLICATION_REQUEST, Mockery::any()])
+            ->once();
+        RequestFacade::shouldReceive('all')->andReturn([]);
+        $this->getApplicationServiceMock()
+            ->shouldReceive('restoreAndDeleteMultiple')
+            ->withArgs([Mockery::any()])
+            ->andReturn($partialResponse);
+
+        $controller = new ApplicationController();
+        $response = $controller->restore()->getContent();
+
+        $this->assertJsonStringEqualsJsonString(json_encode($partialResponse), $response);
+    }
+
     /**
      * @Test '/applications/{id}'
      * @runInSeparateProcess

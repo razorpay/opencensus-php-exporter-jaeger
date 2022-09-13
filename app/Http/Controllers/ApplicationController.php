@@ -68,4 +68,15 @@ class ApplicationController extends Controller
 
         return response()->json($app);
     }
+
+//    TODO: Revert this after aggregator to reseller migration is complete (PLAT-33)
+    public function restore() {
+        $input = Request::all();
+
+        Trace::info(TraceCode::RESTORE_APPLICATION_REQUEST, $input);
+
+        $this->service->restoreAndDeleteMultiple($input);
+
+        return response()->json([]);
+    }
 }

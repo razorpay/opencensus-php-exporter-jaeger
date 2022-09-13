@@ -53,7 +53,7 @@ class OAuthTest extends TestCase
         $expectedString = 'No records found with the given Id';
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains($expectedString, $response->getContent());
+        $this->assertStringContainsString($expectedString, $response->getContent());
     }
 
     public function testGetAuthorizeUrlWithClient()
@@ -86,7 +86,7 @@ class OAuthTest extends TestCase
             '</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?';
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains($expectedString, $response->getContent());
+        $this->assertStringContainsString($expectedString, $response->getContent());
     }
 
     public function testGetAuthorizeUrlNoStateParam()
@@ -98,7 +98,7 @@ class OAuthTest extends TestCase
         $expectedString = 'Validation failed. The state field is required.';
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains($expectedString, $response->getContent());
+        $this->assertStringContainsString($expectedString, $response->getContent());
     }
 
     public function testPostAuthCode()
@@ -122,7 +122,7 @@ class OAuthTest extends TestCase
         $content = urldecode($response->getContent());
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertContains('http://localhost?code=', $content);
+        $this->assertStringContainsString('http://localhost?code=', $content);
     }
 
     public function testPostAuthCodeInvalidToken()
@@ -163,7 +163,7 @@ class OAuthTest extends TestCase
         $content = urldecode($response->getContent());
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertContains('http://localhost?code=', $content);
+        $this->assertStringContainsString('http://localhost?code=', $content);
     }
 
     public function testPostAuthCodeInvalidRole()
@@ -202,7 +202,7 @@ class OAuthTest extends TestCase
         $content = urldecode($response->getContent());
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertContains('error=access_denied', $content);
+        $this->assertStringContainsString('error=access_denied', $content);
     }
 
     public function testPostAccessToken()

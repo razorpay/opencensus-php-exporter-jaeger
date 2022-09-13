@@ -7,7 +7,7 @@ use App\Tests\Unit\UnitTestCase;
 use Exception;
 use Mockery\MockInterface;
 use Razorpay\Trace\Facades\Trace;
-use Requests_Response;
+use WpOrg\Requests\Response as RequestsResponse;
 
 class ApiRequestSpanTest extends UnitTestCase
 {
@@ -74,7 +74,7 @@ class ApiRequestSpanTest extends UnitTestCase
         $headers = self::HEADER;
         $options = [];
         $spanOptions = [];
-        $response = new \Requests_Response();
+        $response = new RequestsResponse();
 
         $this->getRequestMock()
             ->shouldReceive('get')
@@ -102,7 +102,7 @@ class ApiRequestSpanTest extends UnitTestCase
         $options = [];
         $spanOptions = [];
 
-        $response = new Requests_Response();
+        $response = new RequestsResponse();
         $response->status_code = 400;
 
         Trace::shouldReceive('info')
@@ -136,7 +136,7 @@ class ApiRequestSpanTest extends UnitTestCase
         $options = [];
         $spanOptions = [];
 
-        $response = new Requests_Response();
+        $response = new RequestsResponse();
         $response->status_code = 400;
 
         $exception = new Exception('some_exception', 401);

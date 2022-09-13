@@ -11,7 +11,7 @@ use Exception;
 use Mockery;
 use Mockery\MockInterface;
 use Razorpay\Trace\Facades\Trace;
-use Requests_Response;
+use WpOrg\Requests\Response as RequestsResponse;
 
 class RavenTest extends UnitTestCase
 {
@@ -58,7 +58,7 @@ class RavenTest extends UnitTestCase
      */
     public function testGenerateOtp()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
         $expectedResponse->status_code = 200;
         $generateOTP = ['otp' => '0007'];
         $expectedResponse->body = json_encode($generateOTP);
@@ -122,7 +122,7 @@ class RavenTest extends UnitTestCase
      */
     public function testGenerateOtpWithNon200Http()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
         $expectedResponse->status_code = 400;
 
         $generateOTP = ['message' => ErrorCode::BAD_REQUEST_INVALID_OTP];
@@ -158,7 +158,7 @@ class RavenTest extends UnitTestCase
      */
     public function testVerifyOTP()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
         $expectedResponse->status_code = 200;
 
         $generateOTP = ['otp' => '0007'];
@@ -225,7 +225,7 @@ class RavenTest extends UnitTestCase
      */
     public function testVerifyOTPWithNon200Http()
     {
-        $expectedResponse = new Requests_Response();
+        $expectedResponse = new RequestsResponse();
         $expectedResponse->status_code = 400;
 
         $generateOTP = ['message' => ErrorCode::BAD_REQUEST_INVALID_OTP];

@@ -70,7 +70,6 @@ class ClientMigrateTest extends UnitTestCase
      * @preserveGlobalState disabled
      * validateRequest should validate request inputs based on tallyAuthorizeRequestRules defined.
      * @return void
-     * @doesNotPerformAssertions
      */
     public function testPublicTokenDescription()
     {
@@ -84,7 +83,6 @@ class ClientMigrateTest extends UnitTestCase
      * @preserveGlobalState disabled
      * validateRequest should validate request inputs based on tallyAuthorizeRequestRules defined.
      * @return void
-     * @doesNotPerformAssertions
      */
     public function testPublicTokenHandler()
     {
@@ -116,7 +114,6 @@ class ClientMigrateTest extends UnitTestCase
      * @preserveGlobalState disabled
      * testPublicTokenHandlerWithException should throw Exception.
      * @return void
-     * @doesNotPerformAssertions
      */
     public function testPublicTokenHandlerWithException()
     {
