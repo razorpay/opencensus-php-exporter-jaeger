@@ -19,7 +19,6 @@ class TraceCode extends BaseTraceCode
     const GET_APPLICATION_REQUEST                                   = 'GET_APPLICATION_REQUEST';
     const UPDATE_APPLICATION_REQUEST                                = 'UPDATE_APPLICATION_REQUEST';
     const DELETE_APPLICATION_REQUEST                                = 'DELETE_APPLICATION_REQUEST';
-    const RESTORE_APPLICATION_REQUEST                               = 'RESTORE_APPLICATION_REQUEST';
     const GET_APPLICATIONS_REQUEST                                  = 'GET_APPLICATIONS_REQUEST';
     const BANKING_ACCOUNTS_WEBHOOK_REQUEST                          = 'BANKING_ACCOUNTS_WEBHOOK_REQUEST';
     const CREATE_CLIENTS_REQUEST                                    = 'CREATE_CLIENTS_REQUEST';
@@ -59,7 +58,6 @@ class TraceCode extends BaseTraceCode
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE                           = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE';
     const CREATE_CONSUMER_IN_EDGE                                   = 'CREATE_CONSUMER_IN_EDGE';
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED                    = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED';
-    const EDGE_TIME_TAKEN                                           = 'EDGE_TIME_TAKEN';
 
     // ----- Razorx -----
     const RAZORX_REQUEST_FAILED                                     = 'RAZORX_REQUEST_FAILED';
