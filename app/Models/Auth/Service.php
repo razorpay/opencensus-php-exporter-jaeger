@@ -385,6 +385,8 @@ class Service
 
         $grantType = $input[RequestParams::GRANT_TYPE];
 
+        // Adding this check since we don't want to make webhook call
+        // for mobile app grant type
         if (empty($grantType) === true ||
             in_array($grantType, Constant::WHITELISTED_GRANT_TYPE_FOR_WEBHOOK) === false)
         {
