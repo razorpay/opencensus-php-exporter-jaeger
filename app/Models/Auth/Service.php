@@ -385,7 +385,8 @@ class Service
 
         $grantType = $input[RequestParams::GRANT_TYPE];
 
-        if (in_array($grantType, Constant::WHITELISTED_GRANT_TYPE_FOR_WEBHOOK) === false)
+        if (empty($grantType) === true ||
+            in_array($grantType, Constant::WHITELISTED_GRANT_TYPE_FOR_WEBHOOK) === false)
         {
             $this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
         }
