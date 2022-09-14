@@ -86,7 +86,9 @@ class TraceCode extends BaseTraceCode
     // --- Data lake ---
     const DE_EVENT_PUSH_FAILURE                                     = 'DE_EVENT_PUSH_FAILURE';
 
+    // Used in oauth logs (oauth library)
     const INVALID_CLIENT_CREDENTIALS                                = "INVALID_CLIENT_CREDENTIALS";
+
     const MISSING_CLIENT_CREDENTIALS                                = "MISSING_CLIENT_CREDENTIALS";
     // Adding this for outbox log (outbox-php pkg)
     const OUTBOX_JOB_CREATED                                        = 'OUTBOX_JOB_CREATED';

@@ -37,3 +37,6 @@ registry.yaml
 .devspace/
 devspace.yaml
 clover.xml
+
+#phpunit cache file
+.phpunit.result.cache
