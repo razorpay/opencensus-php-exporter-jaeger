@@ -1,12 +1,12 @@
-ARG ONGGI_IMAGE=c.rzp.io/razorpay/onggi:php-7.2-nginx
+ARG ONGGI_IMAGE=c.rzp.io/razorpay/onggi:php-8.1-nginx
 
 FROM $ONGGI_IMAGE as opencensus-ext
+
 WORKDIR /
-ARG OPENCENSUS_VERSION_TAG=v0.7.7.0
+ARG OPENCENSUS_VERSION_TAG=v0.8.0-beta
 RUN set -eux && \
     wget -O - https://github.com/razorpay/opencensus-php/tarball/"${OPENCENSUS_VERSION_TAG}" | tar xz --strip=1
-RUN cd /ext && phpize && ./configure --enable-opencensus && make install
-
+RUN cd /ext && phpize81 && ./configure --enable-opencensus --with-php-config=/usr/bin/php-config81 && make install
 
 FROM $ONGGI_IMAGE
 
@@ -15,9 +15,6 @@ ARG GIT_TOKEN
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 COPY --chown=nginx:nginx . /app/
-
-## Downgrading composer version from 2.0 to 1.10 due to ps4 autoloading issues
-## (https://medium.com/legacybeta/using-composer-2-0-with-psr4-388b78b98aaa)
 
 WORKDIR /
 
@@ -28,31 +25,25 @@ RUN set -eux && \
     cd librdkafka-"${LIBRDKAFKA_VERSION_TAG}" && ./configure && \
     make && \
     make install
-RUN pear config-set php_ini /etc/php7/php.ini && \
-    pecl install rdkafka
 
-ENV COMPOSER_VERSION="1.10.16"
+RUN pear81 config-set php_ini /etc/php81/php.ini && \
+    pecl81 install rdkafka
 
-
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php composer-setup.php --version="${COMPOSER_VERSION}" && \
-    mv composer.phar /usr/local/bin/composer && \
-    rm -f composer-setup.php
+RUN pip install --no-cache-dir "razorpay.alohomora==0.5.0"
 
 WORKDIR /app
 
-RUN composer config -g github-oauth.github.com ${GIT_TOKEN} \
-    && composer global require hirak/prestissimo \
+RUN composer config -g -a github-oauth.github.com ${GIT_TOKEN} \
     && composer install --no-interaction --no-dev \
     && composer clear-cache \
     # Disable opcache for now
-    && rm /etc/php7/conf.d/00_opcache.ini
+    && rm /etc/php81/conf.d/00_opcache.ini
 
 
-RUN  pear config-set php_ini /etc/php7/php.ini \
-    && pecl install opencensus-alpha
+RUN  pear81 config-set php_ini /etc/php81/php.ini \
+    && pecl81 install opencensus-alpha
 
-COPY --from=opencensus-ext /usr/lib/php7/modules/opencensus.so /usr/lib/php7/modules
+COPY --from=opencensus-ext /usr/lib/php81/modules/opencensus.so /usr/lib/php81/modules
 
 EXPOSE 80
 

@@ -237,7 +237,7 @@ class TokenTest extends TestCase
     {
         $this->generateAuthCode();
 
-        $this->expectException(\Razorpay\OAuth\Exception\DBQueryException::class);
+        $this->expectException(\Razorpay\OAuth\Exception\BadRequestException::class);
 
         Request::clearResolvedInstances();
 
@@ -487,7 +487,7 @@ class TokenTest extends TestCase
 
     public function createTestToken(string $type = 'access_token')
     {
-        $this->token = factory(Token\Entity::class)->create(['type' => $type]);
+        $this->token = Token\Entity::factory()->create(['type' => $type]);
     }
 
     protected function prepareTestData()
@@ -501,11 +501,11 @@ class TokenTest extends TestCase
 
     protected function generateAuthCode()
     {
-        $this->application = factory(Application\Entity::class)->create();
+        $this->application = Application\Entity::factory()->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $this->application->id, 'environment' => 'prod']);
+        Client\Entity::factory()->create(['application_id' => $this->application->id, 'environment' => 'prod']);
 
-        $this->devClient = factory(Client\Entity::class)->create(
+        $this->devClient = Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $this->application->id,

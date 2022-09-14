@@ -4,10 +4,12 @@ namespace App\Tests\Unit\Service;
 
 use App\Constants\TraceCode;
 use App\Error\ErrorCode;
+use App\Exception\BadRequestException;
 use App\Exception\LogicException;
 use App\Services\Api;
 use App\Tests\Unit\UnitTestCase;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Mockery;
 use Razorpay\Trace\Facades\Trace;
 use WpOrg\Requests\Response as RequestsResponse;
@@ -539,5 +541,87 @@ class ApiTest extends UnitTestCase
         } catch (\Throwable $ex) {
             $this->assertEquals('invalid mode supplied: abc', $ex->getMessage());
         }
+    }
+
+    /**
+     * @Test
+     * testGetUserByEmail validates that getUserByEmail() returns user details response in expected format when email is valid
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
+    public function testGetUserByEmail()
+    {
+        $expectedResponse = new RequestsResponse();
+        $expectedResponse->status_code = 200;
+        $expectedResponse->body = '{"key": "value"}';
+
+        $this->getRequestMock()
+            ->shouldReceive('request')
+            ->once()
+            ->andReturn($expectedResponse);
+
+        $api = new Api();
+        $apiResponse = $api->getUserByEmail("abc@example.com");
+        $this->assertEquals(["key" => "value"], $apiResponse);
+    }
+
+    /**
+     * @Test
+     * testGetUserByEmailWithException validates that an exception is thrown when a non-existent email ID is provided
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
+    public function testGetUserByEmailWithException()
+    {
+        $exception = new Exception('user not found');
+        $this->getRequestMock()
+            ->shouldReceive('request')
+            ->once()
+            ->andThrow($exception);
+
+        Trace::shouldReceive('critical')
+            ->withArgs([TraceCode::USER_DETAILS_FETCH_FAILED, [
+                'class' => get_class($exception),
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
+            ]])
+            ->once();
+
+        $api = new Api();
+        try
+        {
+            $api->getUserByEmail("abc@example.com");
+        }
+        catch (\Throwable $ex)
+        {
+            $this->assertEquals("Error when fetching user data", $ex->getMessage());
+        }
+    }
+
+    /**
+     * @Test
+     * testGetUserByEmailWithThrottling validates that an error response is returned when Api rate limit is throttled
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
+    public function testGetUserByEmailWithThrottling()
+    {
+        $expectedResponse = new RequestsResponse();
+        $expectedResponse->status_code = 429;
+        $expectedResponse->body = '{"message": "some message"}';
+
+        $this->getRequestMock()
+            ->shouldReceive('request')
+            ->once()
+            ->andReturn($expectedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::REQUESTS_GOT_THROTTLED, [
+                'api response' => ["message" => "some message"]]])
+            ->once();
+
+        $api = new Api();
+        $response = $api->getUserByEmail("abc@example.com");
+        $this->assertEquals('{"message":{"message":"some message"}}', $response->getContent());
     }
 }

@@ -117,7 +117,7 @@ class AdminTest extends TestCase
 
     private function createTestData(array $tokenData = [])
     {
-        $this->refreshToken = factory(OAuth\RefreshToken\Entity::class)->create($tokenData);
+        $this->refreshToken = OAuth\RefreshToken\Entity::factory()->create($tokenData);
 
         $this->token = $this->refreshToken['token'];
 

@@ -141,11 +141,12 @@ class ClientTest extends TestCase
             $appData = ['name' => 'apptest', 'website' => 'https://www.example.com', 'type' => 'partner'];
         }
 
-        $this->application = factory(Application\Entity::class)->create($appData);
 
-        $this->prodClient = factory(Client\Entity::class)->create(['application_id' => $this->application->getId(), 'environment' => 'prod']);
+        $this->application= Application\Entity::factory()->create($appData);
 
-        $this->devClient = factory(Client\Entity::class)->create(['application_id' => $this->application->getId(), 'environment' => 'dev']);
+        $this->prodClient = Client\Entity::factory()->create(['application_id' => $this->application->getId(), 'environment' => 'prod']);
+
+        $this->devClient = Client\Entity::factory()->create(['application_id' => $this->application->getId(), 'environment' => 'dev']);
     }
 
     protected function assertValidClient(array $content)

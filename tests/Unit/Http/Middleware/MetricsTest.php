@@ -96,7 +96,7 @@ class MetricsTest extends UnitTestCase
         $request = new Request();
 
         $middleware = new Metrics();
-        $expectedResponse = Response::create("['message' => 'success']");
+        $expectedResponse = new Response("['message' => 'success']");
         $response = $middleware->handle($request, function ($req) use ($expectedResponse) {
             return $expectedResponse;
         });
@@ -140,7 +140,7 @@ class MetricsTest extends UnitTestCase
         $request = new Request();
 
         $middleware = new Metrics();
-        $expectedResponse = Response::create("['message' => 'success']");
+        $expectedResponse = new Response("['message' => 'success']");
         $response = $middleware->handle($request, function ($req) use ($expectedResponse) {
             return $expectedResponse;
         });

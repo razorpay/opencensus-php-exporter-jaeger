@@ -46,6 +46,8 @@ class RequestsTest extends UnitTestCase
      */
     public function testRequest()
     {
+        $this->expectNotToPerformAssertions();
+
         $url = self::URL;
         $headers = self::HEADER;
         $data = [];
@@ -102,6 +104,7 @@ class RequestsTest extends UnitTestCase
      */
     public function testGetRequest()
     {
+        $this->expectNotToPerformAssertions();
         $url = self::URL;
         $headers = self::HEADER;
         $options = [];
@@ -153,6 +156,7 @@ class RequestsTest extends UnitTestCase
      */
     public function testHeadRequest()
     {
+        $this->expectNotToPerformAssertions();
         $url = self::URL;
         $headers = self::HEADER;
         $options = [];
@@ -203,6 +207,7 @@ class RequestsTest extends UnitTestCase
      */
     public function testDeleteRequest()
     {
+        $this->expectNotToPerformAssertions();
         $url = self::URL;
         $headers = self::HEADER;
         $options = [];
@@ -253,6 +258,7 @@ class RequestsTest extends UnitTestCase
      */
     public function testTraceRequest()
     {
+        $this->expectNotToPerformAssertions();
         $url = self::URL;
         $headers = self::HEADER;
         $options = [];
@@ -303,6 +309,7 @@ class RequestsTest extends UnitTestCase
      */
     public function testPostRequest()
     {
+        $this->expectNotToPerformAssertions();
         $url = self::URL;
         $headers = self::HEADER;
         $data = [];
@@ -354,6 +361,7 @@ class RequestsTest extends UnitTestCase
      */
     public function testPutRequest()
     {
+        $this->expectNotToPerformAssertions();
         $url = self::URL;
         $headers = self::HEADER;
         $data = [];
@@ -405,6 +413,7 @@ class RequestsTest extends UnitTestCase
      */
     public function testOptionsRequest()
     {
+        $this->expectNotToPerformAssertions();
         $url = self::URL;
         $headers = self::HEADER;
         $data = [];
@@ -456,6 +465,7 @@ class RequestsTest extends UnitTestCase
      */
     public function testPatchRequest()
     {
+        $this->expectNotToPerformAssertions();
         $url = self::URL;
         $headers = self::HEADER;
         $data = [];

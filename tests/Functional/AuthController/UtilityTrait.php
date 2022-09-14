@@ -24,11 +24,12 @@ trait UtilityTrait
 
     public function createAndSetClientWithEnvironment(string $env = 'dev')
     {
-        $this->application = factory(Application\Entity::class)->create();
+
+        $this->application= Application\Entity::factory()->create();
 
         $clientName = $env . 'Client';
 
-        $this->{$clientName} = factory(Client\Entity::class)->create(
+        $this->{$clientName} = Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $this->application->id,

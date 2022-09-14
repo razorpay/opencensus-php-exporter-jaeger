@@ -461,14 +461,14 @@ return [
         'response'  => [
             'content'     => [
                 'error' => [
-                    'description' => 'Check the `grant_type` parameter'
+                    'description' => 'Check that all required parameters have been provided'
                 ],
             ],
             'status_code' => 400
         ],
         'exception' => [
             'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
-            'message' => 'Check the `grant_type` parameter',
+            'message' => 'Check that all required parameters have been provided',
         ],
     ],
 
@@ -533,14 +533,14 @@ return [
         'response'  => [
             'content'     => [
                 'error' => [
-                    'description' => 'No records found with the given Id'
+                    'description' => 'Invalid Client or Grant type'
                 ],
             ],
             'status_code' => 400
         ],
         'exception' => [
-            'class'   => 'Razorpay\OAuth\Exception\DBQueryException',
-            'message' => 'No records found with the given Id',
+            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
+            'message' => 'Invalid Client or Grant type',
         ],
     ],
 

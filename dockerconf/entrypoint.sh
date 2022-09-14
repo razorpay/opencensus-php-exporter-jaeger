@@ -67,6 +67,6 @@ echo  "Fix file owner"
 chown -R nginx.nginx /app
 
 echo "Starting Auth Service - PHP-FPM"
-/usr/sbin/php-fpm7
+/usr/sbin/php-fpm81
 echo "Starting Auth Service - Nginx"
 /usr/sbin/nginx -g 'daemon off;'

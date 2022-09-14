@@ -50,7 +50,7 @@ class OAuthTest extends TestCase
 
         $response = $this->sendRequest($data['request']);
 
-        $expectedString = 'No records found with the given Id';
+        $expectedString = 'Client authentication failed';
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());
@@ -58,11 +58,11 @@ class OAuthTest extends TestCase
 
     public function testGetAuthorizeUrlWithClient()
     {
-        $application = factory(Application\Entity::class)->create();
+        $application = Application\Entity::factory()->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+        Client\Entity::factory()->create(['application_id' => $application->getId(), 'environment' => 'prod']);
 
-        $devClient = factory(Client\Entity::class)->create(
+        $devClient = Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $application->getId(),
@@ -105,11 +105,11 @@ class OAuthTest extends TestCase
     {
         $data = & $this->testData[__FUNCTION__];
 
-        $application = factory(Application\Entity::class)->create();
+        $application = Application\Entity::factory()->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+       Client\Entity::factory()->create(['application_id' => $application->getId(), 'environment' => 'prod']);
 
-        factory(Client\Entity::class)->create(
+       Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $application->getId(),
@@ -127,11 +127,11 @@ class OAuthTest extends TestCase
 
     public function testPostAuthCodeInvalidToken()
     {
-        $application = factory(Application\Entity::class)->create();
+        $application = Application\Entity::factory()->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+        Client\Entity::factory()->create(['application_id' => $application->getId(), 'environment' => 'prod']);
 
-        factory(Client\Entity::class)->create(
+        Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $application->getId(),
@@ -146,11 +146,11 @@ class OAuthTest extends TestCase
     {
         $data = & $this->testData[__FUNCTION__];
 
-        $application = factory(Application\Entity::class)->create();
+        $application = Application\Entity::factory()->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+        Client\Entity::factory()->create(['application_id' => $application->getId(), 'environment' => 'prod']);
 
-        factory(Client\Entity::class)->create(
+        Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $application->getId(),
@@ -168,11 +168,11 @@ class OAuthTest extends TestCase
 
     public function testPostAuthCodeInvalidRole()
     {
-        $application = factory(Application\Entity::class)->create();
+        $application = Application\Entity::factory()->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+        Client\Entity::factory()->create(['application_id' => $application->getId(), 'environment' => 'prod']);
 
-        factory(Client\Entity::class)->create(
+        Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $application->getId(),
@@ -185,11 +185,11 @@ class OAuthTest extends TestCase
 
     public function testPostAuthCodeWithReject()
     {
-        $application = factory(Application\Entity::class)->create();
+        $application = Application\Entity::factory()->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
+        Client\Entity::factory()->create(['application_id' => $application->id, 'environment' => 'prod']);
 
-        factory(Client\Entity::class)->create(
+        Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $application->id,
@@ -373,13 +373,13 @@ class OAuthTest extends TestCase
     {
         $this->setInternalAuth('rzp', env('APP_API_SECRET'));
 
-        $this->application = factory(Application\Entity::class)->create(
+        $this->application = Application\Entity::factory()->create(
             [
                 'type'          =>  'tally',
             ]
         );
 
-        $this->devClient = factory(Client\Entity::class)->create(
+        $this->devClient = Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $this->application->id,
@@ -404,13 +404,13 @@ class OAuthTest extends TestCase
     {
         $this->setInternalAuth('rzp', env('APP_API_SECRET'));
 
-        $this->application = factory(Application\Entity::class)->create(
+        $this->application = Application\Entity::factory()->create(
             [
                 'type'          =>  'public',
             ]
         );
 
-        $this->devClient = factory(Client\Entity::class)->create(
+        $this->devClient = Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $this->application->id,
@@ -435,13 +435,13 @@ class OAuthTest extends TestCase
     {
         $this->setInternalAuth('rzp', env('APP_API_SECRET'));
 
-        $this->application = factory(Application\Entity::class)->create(
+        $this->application = Application\Entity::factory()->create(
             [
                 'type'          =>  'tally',
             ]
         );
 
-        $this->devClient = factory(Client\Entity::class)->create(
+        $this->devClient = Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $this->application->id,
@@ -470,13 +470,13 @@ class OAuthTest extends TestCase
     public function testTallyTokenInvalidInput()
     {
         $this->setInternalAuth('rzp', env('APP_API_SECRET'));
-        $this->application = factory(Application\Entity::class)->create(
+        $this->application = Application\Entity::factory()->create(
             [
                 'type'          =>  'tally',
             ]
         );
 
-        $this->devClient = factory(Client\Entity::class)->create(
+        $this->devClient = Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $this->application->id,
@@ -563,11 +563,11 @@ class OAuthTest extends TestCase
 
     public function testPostAuthCodeWithWrongResponseType()
     {
-        $application = factory(Application\Entity::class)->create();
+        $application = Application\Entity::factory()->create();
 
-        factory(Client\Entity::class)->create(['application_id' => $application->id, 'environment' => 'prod']);
+        Client\Entity::factory()->create(['application_id' => $application->id, 'environment' => 'prod']);
 
-        factory(Client\Entity::class)->create(
+        Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $application->id,
@@ -580,10 +580,10 @@ class OAuthTest extends TestCase
 
     protected function generateAuthCode()
     {
-        $this->application = factory(Application\Entity::class)->create();
-        factory(Client\Entity::class)->create(['application_id' => $this->application->id, 'environment' => 'prod']);
+        $this->application = Application\Entity::factory()->create();
+        Client\Entity::factory()->create(['application_id' => $this->application->id, 'environment' => 'prod']);
 
-        $this->devClient = factory(Client\Entity::class)->create(
+        $this->devClient = Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $this->application->id,

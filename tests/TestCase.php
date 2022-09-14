@@ -69,7 +69,7 @@ class TestCase extends LumenTestCase
 
     protected function loadTestData()
     {
-        static $testData = null;
+        $testData = null;
 
         if (($this->testDataFilePath !== null) and
             ($testData === null))

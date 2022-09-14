@@ -14,7 +14,7 @@ class ValidatorTest extends UnitTestCase
     const INVALID_LENGTH = 'Validation failed. The client id must be 14 characters.';
     const INVALID_GRANT_TYPE = 'Validation failed. The selected grant type is invalid.';
     const INVALID_EMAIL = 'Validation failed. The login id must be a valid email address.';
-    const INVALID_URI_FORMAT = 'Validation failed. The redirect uri format is invalid.';
+    const INVALID_URI_FORMAT = 'Validation failed. The redirect uri must be a valid URL.';
 
     public function setUp(): void
     {

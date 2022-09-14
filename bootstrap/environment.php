@@ -51,7 +51,7 @@ if (function_exists('read_env_file') === false)
             return;
         }
 
-        $dotEnv = Dotenv::create($envDir, $fileName);
+        $dotEnv = Dotenv::createImmutable($envDir, $fileName);
 
         $dotEnv->load();
     }

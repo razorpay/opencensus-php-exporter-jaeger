@@ -49,7 +49,7 @@ class Handler extends ExceptionHandler
      * @param  \Exception  $e
      * @return void
      */
-    public function report(\Exception $e)
+    public function report(\Exception|\Throwable $e)
     {
         // Trace Exceptions here
     }
@@ -63,7 +63,7 @@ class Handler extends ExceptionHandler
      * @return \Illuminate\Http\Response
      * @throws RouteNotFoundException
      */
-    public function render($request, \Exception $e)
+    public function render($request, \Exception|\Throwable $e)
     {
         if ($e instanceOf OAuthBaseException)
         {
@@ -94,7 +94,7 @@ class Handler extends ExceptionHandler
         return $this->genericExceptionHandler($e);
     }
 
-    protected function genericExceptionHandler(\Exception $exception)
+    protected function genericExceptionHandler(\Exception|\Throwable $exception)
     {
         if ($this->isToStringException($exception))
         {

@@ -29,7 +29,7 @@ class OAuthWrapperAPITest extends TestCase
 
         $response = $this->sendRequest($data['request']);
 
-        $expectedString = 'No records found with the given Id';
+        $expectedString = 'Client authentication failed';
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());
@@ -37,9 +37,9 @@ class OAuthWrapperAPITest extends TestCase
 
     public function testGetAuthorizeMultiTokenUrlWithInvalidTestClientId()
     {
-        $application = factory(Application\Entity::class)->create();
+        $application = Application\Entity::factory()->create();
 
-        $prodClient = factory(Client\Entity::class)->create([
+        $prodClient = Client\Entity::factory()->create([
             'id'             => '40000000000000',
             'application_id' => $application->getId(),
             'redirect_url'   => ['https://www.example.com', 'http://localhost'],
@@ -53,7 +53,7 @@ class OAuthWrapperAPITest extends TestCase
 
         $response = $this->sendRequest($data);
 
-        $expectedString = 'No records found with the given Id';
+        $expectedString = 'Client authentication failed';
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());
@@ -154,16 +154,16 @@ class OAuthWrapperAPITest extends TestCase
 
     private function createAndSetUpTestAndLiveClient()
     {
-        $application = factory(Application\Entity::class)->create();
+        $application = Application\Entity::factory()->create();
 
-        $prodClient = factory(Client\Entity::class)->create([
+        $prodClient = Client\Entity::factory()->create([
             'id'             => '40000000000000',
             'application_id' => $application->getId(),
             'redirect_url'   => ['https://www.example.com', 'http://localhost'],
             'environment'    => 'prod'
         ]);
 
-        $devClient = factory(Client\Entity::class)->create(
+        $devClient = Client\Entity::factory()->create(
             [
                 'id'             => '30000000000000',
                 'application_id' => $application->getId(),

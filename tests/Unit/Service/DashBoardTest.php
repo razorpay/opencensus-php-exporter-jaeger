@@ -16,7 +16,6 @@ class DashBoardTest
 
     public function setUp(): void
     {
-        parent::setUp();
         putenv('APP_API_URL=www.example.com');
         putenv('APP_DASHBOARD_SECRET=some_secret');
         putenv('APP_API_LIVE_USERNAME=live');
@@ -28,7 +27,6 @@ class DashBoardTest
 
     public function tearDown(): void
     {
-        parent::tearDown();
     }
 
     /**

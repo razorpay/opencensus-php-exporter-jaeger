@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\JsonResponse;
 use Request;
 use App\Constants\Mode;
 use App\Error\ErrorCode;
@@ -134,7 +135,7 @@ class Api
         throw new LogicException('Error when fetching org data');
     }
 
-    public function getUserByEmail(string $emailId): array
+    public function getUserByEmail(string $emailId): array|JsonResponse
     {
         $url = $this->apiUrl . self::USERS_ROUTE;
 
@@ -144,7 +145,7 @@ class Api
 
         try
         {
-            $response = Requests::request($url, $this->defaultHeaders, $payload, Requests::GET, $this->options);
+            $response = Requests::request($url, $this->defaultHeaders, $payload, options: $this->options);
 
             $apiResponse = json_decode($response->body, true);
         }
@@ -168,7 +169,7 @@ class Api
         if ($response->status_code == 429)
         {
             Trace::info(TraceCode::REQUESTS_GOT_THROTTLED, ['api response' => $apiResponse]);
-            return  response()->json(['message' => $apiResponse], 429);
+            return response()->json(['message' => $apiResponse], 429);
         }
 
         throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);

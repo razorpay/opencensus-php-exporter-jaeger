@@ -41,6 +41,7 @@ class SpanTraceTest extends UnitTestCase
      */
     public function testInSpan()
     {
+        $this->expectNotToPerformAssertions();
         $spanOptions = [];
         $callable = function () {
             // process something directly here...
@@ -63,6 +64,7 @@ class SpanTraceTest extends UnitTestCase
      */
     public function testStartSpan()
     {
+        $this->expectNotToPerformAssertions();
         $spanOptions = [];
         $this->openCensusMock
             ->shouldReceive('startSpan')
@@ -103,6 +105,7 @@ class SpanTraceTest extends UnitTestCase
      */
     public function testWithSpan()
     {
+        $this->expectNotToPerformAssertions();
         $span = new Span();
         $this->openCensusMock
             ->shouldReceive('withSpan')
@@ -143,6 +146,7 @@ class SpanTraceTest extends UnitTestCase
      */
     public function testInjectContext()
     {
+        $this->expectNotToPerformAssertions();
         $headers = new ArrayHeaders([]);
         $this->openCensusMock
             ->shouldReceive('injectContext')
@@ -183,6 +187,7 @@ class SpanTraceTest extends UnitTestCase
      */
     public function testSpanContext()
     {
+        $this->expectNotToPerformAssertions();
         $this->openCensusMock
             ->shouldReceive('spanContext')
             ->andReturn([]);
@@ -219,6 +224,7 @@ class SpanTraceTest extends UnitTestCase
      */
     public function testAddAttribute()
     {
+        $this->expectNotToPerformAssertions();
         $attribute = [Tracing::SPAN_KIND => Tracing::CLIENT];
         $value = 'merchant_id';
         $options = [];
@@ -262,6 +268,7 @@ class SpanTraceTest extends UnitTestCase
      */
     public function testAddAttributeWithContext()
     {
+        $this->expectNotToPerformAssertions();
         $context = [
             'key1' => ['a', 'b'],
             'key2' => ['a', 'b']

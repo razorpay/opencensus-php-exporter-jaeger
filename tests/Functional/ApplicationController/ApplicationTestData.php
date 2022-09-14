@@ -79,14 +79,14 @@ return [
         'response'  => [
             'content'     => [
                 'error' => [
-                    'description' => 'Validation failed. The website format is invalid.',
+                    'description' => 'Validation failed. The website must be a valid URL.',
                 ],
             ],
             'status_code' => 500,
         ],
         'exception' => [
             'class'   => Razorpay\Spine\Exception\ValidationFailureException::class,
-            'message' => 'Validation failed. The website format is invalid.',
+            'message' => 'Validation failed. The website must be a valid URL.',
         ],
     ],
 
@@ -184,14 +184,14 @@ return [
         'response'  => [
             'content'     => [
                 'error' => [
-                    'description' => 'Validation failed. The website format is invalid.',
+                    'description' => 'Validation failed. The website must be a valid URL.',
                 ],
             ],
             'status_code' => 500,
         ],
         'exception' => [
             'class'   => Razorpay\Spine\Exception\ValidationFailureException::class,
-            'message' => 'Validation failed. The website format is invalid.',
+            'message' => 'Validation failed. The website must be a valid URL.',
         ],
     ],
 

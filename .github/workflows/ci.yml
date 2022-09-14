@@ -41,16 +41,20 @@ jobs:
     runs-on: [ self-hosted ]
     needs: [ cancel ]
     continue-on-error: false
+    container:
+      image: harbor.razorpay.com/razorpay/onggi:php-8.1-nginx
+      options: "--entrypoint /bin/bash"
+      credentials:
+        username: ${{ secrets.HARBOR_DOCKER_USERNAME }}
+        password: ${{ secrets.HARBOR_DOCKER_PASSWORD }}
     steps:
       - name: checkout
         id: checkout
         uses: actions/checkout@v2
       - name: Running tests
         id: running_test
-        uses: docker://razorpay/onggi:php-7.2-nginx
-        with:
-          entrypoint: /bin/sh
-          args: ci-assets/run_unit_tests.sh
+        run: |
+          /bin/sh ./ci-assets/run_unit_tests.sh
         env:
           DB_HOST: db-auth
           DB_PORT: 3306
@@ -77,13 +81,13 @@ jobs:
           SONARCLOUD_URL: https://sonar.razorpay.com
           SONAR_INTEGRATION_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
         with:
+          projectBaseDir: /github/workspace/app/
           args: >
             -Dsonar.host.url=https://sonar.razorpay.com
             -Dsonar.projectKey=${{ steps.set_sonar_project.outputs.sonar_project }}
             -Dsonar.projectName=${{ steps.set_sonar_project.outputs.sonar_project }}
             -Dsonar.projectVersion=${{ github.sha }}
             -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-            -Dsonar.projectBaseDir=/github/workspace/app/
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.php.coverage.reportPaths=/github/workspace/clover.xml
             -Dsonar.exclusions=tests/**,vendor,storage/**,Exception/**,Services/Mock/**

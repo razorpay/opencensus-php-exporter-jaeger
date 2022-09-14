@@ -180,7 +180,7 @@ class ApplicationTest extends TestCase
             $appData = ['name' => 'apptest', 'website' => 'https://www.example.com'];
         }
 
-        return factory(Application\Entity::class)->create($appData);
+        return Application\Entity::factory()->create($appData);
     }
 
     private function fetchApplications(array $appIds, $withTrashed = false)
@@ -210,8 +210,8 @@ class ApplicationTest extends TestCase
         $appToDelete = $this->createAuthApplication([
             'id' => 'apptodelete000', 'name' => 'apptest', 'website' => 'https://www.example.com'
         ]);
-        factory(Client\Entity::class)->create(['application_id' => $appToDelete->getId(), 'environment' => 'prod']);
-        factory(Client\Entity::class)->create(['application_id' => $appToDelete->getId(), 'environment' => 'dev']);
+        Client\Entity::factory()->create(['application_id' => $appToDelete->getId(), 'environment' => 'prod']);
+        Client\Entity::factory()->create(['application_id' => $appToDelete->getId(), 'environment' => 'dev']);
 
         $appToRestore1 = $this->createTestApplication('apptorestore01');
         $appToRestore2 = $this->createTestApplication('apptorestore02');
@@ -225,10 +225,10 @@ class ApplicationTest extends TestCase
             'id' => $id, 'name' => 'apptest',
             'website' => 'https://www.example.com', 'deleted_at' => time()
         ]);
-        factory(Client\Entity::class)->create([
+        Client\Entity::factory()->create([
             'application_id' => $app->getId(), 'environment' => 'prod', 'revoked_at' => time()
         ]);
-        factory(Client\Entity::class)->create([
+        Client\Entity::factory()->create([
             'application_id' => $app->getId(), 'environment' => 'dev', 'revoked_at' => time()
         ]);
 
