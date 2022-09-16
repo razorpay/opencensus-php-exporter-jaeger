@@ -11,7 +11,6 @@ RUN cd /ext && phpize81 && ./configure --enable-opencensus --with-php-config=/us
 FROM $ONGGI_IMAGE
 
 ARG GIT_COMMIT_HASH
-ARG GIT_TOKEN
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
 COPY --chown=nginx:nginx . /app/
@@ -33,7 +32,10 @@ RUN pip install --no-cache-dir "razorpay.alohomora==0.5.0"
 
 WORKDIR /app
 
-RUN composer config -g -a github-oauth.github.com ${GIT_TOKEN} \
+ARG GIT_USERNAME
+RUN --mount=type=secret,id=git_token set -eux \
+    && git config --global user.name ${GIT_USERNAME} \
+    && composer config -g -a github-oauth.github.com $(cat /run/secrets/git_token) \
     && composer install --no-interaction --no-dev \
     && composer clear-cache \
     # Disable opcache for now

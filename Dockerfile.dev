@@ -16,7 +16,6 @@ FROM $ONGGI_IMAGE
 
 RUN pip install --no-cache-dir "razorpay.alohomora==0.5.0"
 
-ARG GIT_TOKEN
 ARG GIT_COMMIT_HASH
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
