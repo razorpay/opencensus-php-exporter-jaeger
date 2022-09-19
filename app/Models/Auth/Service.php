@@ -383,15 +383,7 @@ class Service
 
         $token = $this->oauthServer->authenticateWithPublicToken($response[Token::PUBLIC_TOKEN]);
 
-        $grantType = $input[RequestParams::GRANT_TYPE];
-
-        // Adding this check since we don't want to make webhook call
-        // for mobile app grant type
-        if (empty($grantType) === true ||
-            in_array($grantType, Constant::WHITELISTED_GRANT_TYPE_FOR_WEBHOOK) === false)
-        {
-            $this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
-        }
+        $this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
 
         return $response;
     }
