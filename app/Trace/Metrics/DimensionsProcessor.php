@@ -47,6 +47,10 @@ class DimensionsProcessor implements Processor
             }
         }
 
+        // This env variable will have the deployment type - prod, canary or baseline
+        // The env variable gets populated during deployment and is defined in kube-manifests
+        $dimensions['deployment_type'] = getenv('DEPLOYMENT_TYPE') ?: '';
+
         return $dimensions;
     }
 

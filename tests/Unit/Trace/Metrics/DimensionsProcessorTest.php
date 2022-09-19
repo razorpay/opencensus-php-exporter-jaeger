@@ -17,7 +17,7 @@ class DimensionsProcessorTest extends UnitTestCase
      * process should override values of dimensions based on whitelisted values.
      * @return void
      */
-    public function testDimensionsProcessorProcess()
+    public function testDimensionsProcessorProcess(): void
     {
         $whiteListedLabels = [
             'merchant_id' => ['xyz_merchant']
@@ -44,14 +44,42 @@ class DimensionsProcessorTest extends UnitTestCase
             ->with(['LocalIpv4'])
             ->andReturn(['LocalIpv4' => '10.123.123.123']);
 
+        putenv('DEPLOYMENT_TYPE=canary');
+
         $dimensionProcessor = new DimensionsProcessor();
         $dimension = $dimensionProcessor->process(['merchant_id' => 'some_other_merchant', 'client_id' => 'dummy_client', 'state' => '']);
+
+
         $this->assertEquals([
             'merchant_id' => 'other',
             'client_id' => 'dummy_client',
             'instance' => '10.123.123.123',
             'state' => 'other',
+            'deployment_type' => 'canary'
         ], $dimension);
+    }
+
+    /**
+     * @Test
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * Dimension should contain deployment_type as empty when deployment_type is not set in env variables
+     * @return void
+     */
+    public function testDimensionsProcessorProcessWhenDeploymentTypeIsNotSet(): void
+    {
+        $dimensionProcessor = new DimensionsProcessor();
+        $dimension = $dimensionProcessor->process(['merchant_id' => 'some_other_merchant', 'client_id' => 'dummy_client', 'state' => 'other']);
+
+        $this->assertEquals([
+            'merchant_id' => 'some_other_merchant',
+            'client_id' => 'dummy_client',
+            'instance' => '10.123.123.123',
+            'state' => 'other',
+            'deployment_type' => ''
+        ], $dimension);
+
+
     }
 
 }
