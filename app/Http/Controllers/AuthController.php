@@ -16,7 +16,6 @@ class AuthController extends Controller
     public function getRoot()
     {
         $response['message'] = 'Welcome to Razorpay Auth!';
-
         return response()->json($response);
     }
 

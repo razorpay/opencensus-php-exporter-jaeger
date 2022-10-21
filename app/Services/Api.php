@@ -9,6 +9,7 @@ use App\Error\ErrorCode;
 use App\Constants\RequestParams;
 use App\Exception\BadRequestException;
 use Trace;
+use OpenCensus\Trace\Tracer;
 use App\Request\Requests;
 
 use Illuminate\Support\Str;
@@ -250,7 +251,10 @@ class Api
 
         try
         {
-            $response = Requests::post($url, $this->defaultHeaders, [], $options);
+            $response = Tracer::inSpan(['name' => 'triggerBankingAccountsWebhook.post'],
+                function() use($url, $options) {
+                    return Requests::post($url, $this->defaultHeaders, [], $options);
+                });
 
             return json_decode($response->body, true);
         }

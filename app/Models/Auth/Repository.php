@@ -5,6 +5,7 @@ namespace App\Models\Auth;
 use Illuminate\Support\Facades\DB;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 
+use OpenCensus\Trace\Tracer;
 use Razorpay\OAuth\Token;
 use Razorpay\OAuth\Token\Type;
 use Razorpay\Trace\Logger as Trace;
@@ -56,7 +57,10 @@ class Repository extends Token\Repository
             throw $ex;
         }
 
-        $this->saveOrFail($accessTokenEntity);
+        Tracer::inSpan(['name' => 'persistNewAccessToken.saveOrFail'],
+            function () use($accessTokenEntity) {
+                $this->saveOrFail($accessTokenEntity);
+            });
     }
 
     public function findByPublicTokenIdAndMode(string $publicToken, string $mode)
