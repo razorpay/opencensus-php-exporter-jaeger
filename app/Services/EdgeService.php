@@ -31,7 +31,7 @@ class EdgeService
 
         $this->headers = ['apikey' => $secret, 'Content-Type' => 'application/json', RequestParams::DEV_SERVE_USER => Request::header(RequestParams::DEV_SERVE_USER)];
 
-        $this->defaultOptions = ['timeout' => 5];
+        $this->defaultOptions = ['timeout' => env('EDGE_TIMEOUT',5) ];
     }
 
     public function postPublicIdToEdge(array $payload)
