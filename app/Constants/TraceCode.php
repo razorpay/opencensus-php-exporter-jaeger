@@ -59,6 +59,8 @@ class TraceCode extends BaseTraceCode
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE                           = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE';
     const CREATE_CONSUMER_IN_EDGE                                   = 'CREATE_CONSUMER_IN_EDGE';
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED                    = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED';
+    const CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED          = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED';
+    const CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED           = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED';
 
     // ----- Razorx -----
     const RAZORX_REQUEST_FAILED                                     = 'RAZORX_REQUEST_FAILED';
@@ -92,5 +94,8 @@ class TraceCode extends BaseTraceCode
     const MISSING_CLIENT_CREDENTIALS                                = "MISSING_CLIENT_CREDENTIALS";
     // Adding this for outbox log (outbox-php pkg)
     const OUTBOX_JOB_CREATED                                        = 'OUTBOX_JOB_CREATED';
+
+    // logged when client data doesnt have a valid application attached to it
+    const OUTBOX_INVALID_CLIENT                                     = 'OUTBOX_INVALID_CLIENT';
 }
 

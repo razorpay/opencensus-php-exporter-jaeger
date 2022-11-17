@@ -21,8 +21,6 @@ class EdgeServiceTest extends UnitTestCase
     public function setUp(): void
     {
         parent::setUp();
-        putenv('EDGE_URL=www.example.com');
-        putenv('EDGE_SECRET=some_secret');
         $this->setRequestMock(Mockery::mock('overload:App\Request\Requests'));
     }
 
@@ -93,7 +91,7 @@ class EdgeServiceTest extends UnitTestCase
             ]])
             ->once();
 
-        $edgeService = new EdgeService([]);
+        $edgeService = new EdgeService([],'www.example.com', 'some_secret');
         $edgeService->postPublicIdToEdge(
             [
                 Constant::MID => 'merchant_id',
@@ -134,7 +132,7 @@ class EdgeServiceTest extends UnitTestCase
             ]])
             ->once();
 
-        $edgeService = new EdgeService([]);
+        $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
         $edgeService->postPublicIdToEdge(
             [
                 Constant::MID => 'merchant_id',
@@ -174,7 +172,7 @@ class EdgeServiceTest extends UnitTestCase
             ]])
             ->once();
 
-        $edgeService = new EdgeService([]);
+        $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
         try {
             $edgeService->postPublicIdToEdge(
                 [
@@ -227,7 +225,7 @@ class EdgeServiceTest extends UnitTestCase
             ]])
             ->once();
 
-        $edgeService = new EdgeService([]);
+        $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
         try {
             $edgeService->postPublicIdToEdge(
                 [

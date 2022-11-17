@@ -47,7 +47,19 @@ class AppServiceProvider extends ServiceProvider
                 return new Mock\EdgeService($app);
             }
 
-            return new EdgeService($app);
+            return new EdgeService($app,  env('EDGE_URL'),  env('EDGE_SECRET'));
+        });
+
+        $this->app->singleton('edge_postgres', function($app)
+        {
+            $edgeMock = env('EDGE_POSTGRES_MOCK', false);
+
+            if ($edgeMock === true)
+            {
+                return new Mock\EdgeService($app);
+            }
+
+            return new EdgeService($app,  env('EDGE_POSTGRES_URL'),  env('EDGE_POSTGRES_SECRET'));
         });
 
         $this->app->singleton('raven', function ($app) {

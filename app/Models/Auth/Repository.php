@@ -14,6 +14,24 @@ use App\Constants\TraceCode;
 
 class Repository extends Token\Repository
 {
+    /**
+     * @var $enable_cassandra_outbox
+     */
+    protected $enable_cassandra_outbox;
+
+    /**
+     * @var $enable_postgres_outbox
+     */
+    protected $enable_postgres_outbox;
+
+    public function __construct() {
+        parent::__construct();
+
+        $this->enable_cassandra_outbox = env("ENABLE_CASSANDRA_OUTBOX", true);
+
+        $this->enable_postgres_outbox = env("ENABLE_POSTGRES_OUTBOX", false);
+    }
+
     public function getEntityClass()
     {
         return "Razorpay\\OAuth\\Token\\Entity";
@@ -34,9 +52,7 @@ class Repository extends Token\Repository
             // This will check if public token exist in edge and in auth service after 1 hour
             // If it is not present in auth service but present in edge, then it will delete from edge.
             DB::transaction(function () use ($accessTokenEntity) {
-                app("outbox")->sendWithDelay("check_token_consistency",
-                                             ["public_id" => $accessTokenEntity->getPublicTokenWithPrefix()],
-                                             600);
+                $this->outboxSend($accessTokenEntity);
             });
 
             // We need to create oauth public_token in edge inside `identifier` table so that it can be validated at edge.
@@ -47,7 +63,30 @@ class Repository extends Token\Repository
                         Constant::TTL          => $accessTokenTTLInSeconds,
                         Constant::USER_ID      => $accessTokenEntity->getUserId()
             ];
-            app("edge")->postPublicIdToEdge($payload);
+            if ($this->enable_cassandra_outbox)
+            {
+                try
+                {
+                    app("edge")->postPublicIdToEdge($payload);
+                }
+                catch (\Throwable $ex)
+                {
+                    app("trace")->traceException($ex, Trace::CRITICAL, TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED);
+                    throw $ex;
+                }
+            }
+            if ($this->enable_postgres_outbox)
+            {
+                try
+                {
+                    app("edge_postgres")->postPublicIdToEdge($payload);
+                }
+                catch (\Throwable $ex)
+                {
+                    app("trace")->traceException($ex, Trace::CRITICAL, TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED);
+                    throw $ex;
+                }
+            }
         }
         catch (\Throwable $ex)
         {
@@ -78,5 +117,24 @@ class Repository extends Token\Repository
             ->where(Token\Entity::TYPE, Type::ACCESS_TOKEN)
             ->where(Token\Entity::EXPIRES_AT, '>' , 1629168659)
             ->get();
+    }
+
+    /**
+     * @param AccessTokenEntityInterface $accessTokenEntity
+     * @return void
+     */
+    function outboxSend(AccessTokenEntityInterface $accessTokenEntity): void {
+        if ($this->enable_cassandra_outbox)
+        {
+            app("outbox")->sendWithDelay("check_token_consistency",
+                ["public_id" => $accessTokenEntity->getPublicTokenWithPrefix()],
+                600);
+        }
+        if ($this->enable_postgres_outbox)
+        {
+            app("outbox")->sendWithDelay("check_token_consistency_postgres",
+                ["public_id" => $accessTokenEntity->getPublicTokenWithPrefix()],
+                600);
+        }
     }
 }

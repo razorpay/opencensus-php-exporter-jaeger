@@ -19,17 +19,19 @@ class EdgeService
 {
     protected $apiUrl;
 
+    protected $secret;
+
     protected $headers;
 
     protected $defaultOptions;
 
-    public function __construct($app)
+    public function __construct($app, $edgeUrl, $edgeSecret)
     {
-        $this->apiUrl = env('EDGE_URL');
+        $this->apiUrl = $edgeUrl;
 
-        $secret  = env('EDGE_SECRET');
+        $this->secret  = $edgeSecret;
 
-        $this->headers = ['apikey' => $secret, 'Content-Type' => 'application/json', RequestParams::DEV_SERVE_USER => Request::header(RequestParams::DEV_SERVE_USER)];
+        $this->headers = ['apikey' => $this->secret, 'Content-Type' => 'application/json', RequestParams::DEV_SERVE_USER => Request::header(RequestParams::DEV_SERVE_USER)];
 
         $this->defaultOptions = ['timeout' => env('EDGE_TIMEOUT',5) ];
     }

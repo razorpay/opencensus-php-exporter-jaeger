@@ -28,6 +28,16 @@ class PublicTokenMigrate extends Command
     protected $description = 'Migrate OAuth public tokens to Kong as identifier';
 
     /**
+     * @var $enable_cassandra_outbox
+     */
+    protected $enable_cassandra_outbox;
+
+    /**
+     * @var $enable_postgres_outbox
+     */
+    protected $enable_postgres_outbox;
+
+    /**
      * Create a new command instance.
      *
      * @return void
@@ -35,6 +45,10 @@ class PublicTokenMigrate extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->enable_cassandra_outbox = env("ENABLE_CASSANDRA_OUTBOX", true);
+
+        $this->enable_postgres_outbox = env("ENABLE_POSTGRES_OUTBOX", false);
     }
 
     /**
@@ -50,18 +64,33 @@ class PublicTokenMigrate extends Command
             $count++;
             Trace::info(TraceCode::MIGRATE_PUBLIC_TOKEN_REQUEST, array('count' => $count, 'token_id' => $token->getPublicTokenWithPrefix()));
             DB::transaction(function () use ($token) {
-                app("outbox")->send("create_public_token",
-                    [
-                        "merchant_id" => $token->getMerchantId(),
-                        "public_id" => $token->getPublicTokenWithPrefix(),
-                        "ttl" => $token->getExpiryDateTime()->getTimestamp() - (new \DateTime('now'))->getTimestamp(),
-                        "mode" => $token->getMode(),
-                        "jti" => $token->getIdentifier(),
-                        "user_id" => $token->getUserId(),
-                    ], null, false);
+                $payload = [
+                    "merchant_id" => $token->getMerchantId(),
+                    "public_id" => $token->getPublicTokenWithPrefix(),
+                    "ttl" => $token->getExpiryDateTime()->getTimestamp() - (new \DateTime('now'))->getTimestamp(),
+                    "mode" => $token->getMode(),
+                    "jti" => $token->getIdentifier(),
+                    "user_id" => $token->getUserId(),
+                ];
+                $this->outboxSend($payload);
             });
         }
 
         return null;
+    }
+
+    /**
+     * @param array $payload
+     * @return void
+     */
+    function outboxSend(array $payload): void {
+        if ($this->enable_cassandra_outbox)
+        {
+            app("outbox")->send("create_public_token", $payload, null, false);
+        }
+        if ($this->enable_postgres_outbox)
+        {
+            app("outbox")->send("create_public_token_postgres", $payload, null, false);
+        }
     }
 }

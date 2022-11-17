@@ -26,6 +26,16 @@ class ClientMigrate extends Command
     protected $description = 'Migrate OAuth clients to Kong';
 
     /**
+     * @var $enable_cassandra_outbox
+     */
+    protected $enable_cassandra_outbox;
+
+    /**
+     * @var $enable_postgres_outbox
+     */
+    protected $enable_postgres_outbox;
+
+    /**
      * Create a new command instance.
      *
      * @return void
@@ -33,6 +43,10 @@ class ClientMigrate extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->enable_cassandra_outbox = env("ENABLE_CASSANDRA_OUTBOX", true);
+
+        $this->enable_postgres_outbox = env("ENABLE_POSTGRES_OUTBOX", false);
     }
 
     /**
@@ -49,10 +63,32 @@ class ClientMigrate extends Command
             $count++;
             Trace::info(TraceCode::MIGRATE_CLIENT_REQUEST, array('count' => $count, 'client_id' => $client->getId()));
             DB::transaction(function () use ($client, $core) {
-                app("outbox")->send("create_client", $core->getOutboxPayload($client, $client->application));
+                $this->outboxSend($core, $client);
             });
         }
 
         return null;
+    }
+
+    /**
+     * @param Core $core
+     * @param mixed $client
+     * @return void
+     */
+    function outboxSend(Core $core, mixed $client): void {
+        // if the application is not present then ignore
+        if ($client->application === null) {
+            Trace::info(TraceCode::OUTBOX_INVALID_CLIENT, array('client_id' => $client->getId()));
+            return;
+        }
+
+        if ($this->enable_cassandra_outbox)
+        {
+            app("outbox")->send("create_client", $core->getOutboxPayload($client, $client->application));
+        }
+        if ($this->enable_postgres_outbox)
+        {
+            app("outbox")->send("create_client_postgres", $core->getOutboxPayload($client, $client->application));
+        }
     }
 }
