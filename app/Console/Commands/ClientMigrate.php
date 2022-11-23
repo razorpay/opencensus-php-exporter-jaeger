@@ -59,12 +59,22 @@ class ClientMigrate extends Command
     {
         $count = 0;
         $core  = new Core;
-        foreach (Client::all() as $client) {
-            $count++;
-            Trace::info(TraceCode::MIGRATE_CLIENT_REQUEST, array('count' => $count, 'client_id' => $client->getId()));
-            DB::transaction(function () use ($client, $core) {
-                $this->outboxSend($core, $client);
-            });
+
+        $action = getenv('CLIENT_MIGRATE_ACTION');
+        $client_ids = getenv('CLIENT_MIGRATE_IDS');
+
+        if (!empty($client_ids)) {
+            $clients = explode(',', $client_ids);
+            foreach (Client::with(['application' => function ($query) {
+                $query->withTrashed();
+                }])->whereIn('id', $clients)->withTrashed()->get() as $client)
+            {
+                $count++;
+                Trace::info(TraceCode::MIGRATE_CLIENT_REQUEST, array('count' => $count, 'client_id' => $client->getId(), 'action' => $action));
+                DB::transaction(function () use ($client, $core, $action) {
+                    $this->outboxSend($core, $client, $action);
+                });
+            }
         }
 
         return null;

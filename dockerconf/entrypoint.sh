@@ -57,6 +57,7 @@ php artisan migrate --force
 
 # If ARTISAN_COMMAND env is set, run the command and exit
 if [ -n "${ARTISAN_COMMAND+x}" ]; then
+  echo "Running ${ARTISAN_COMMAND}"
   cd /app
   php artisan "$ARTISAN_COMMAND"
   exit 0

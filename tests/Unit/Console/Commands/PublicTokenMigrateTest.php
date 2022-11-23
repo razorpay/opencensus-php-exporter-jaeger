@@ -49,7 +49,7 @@ class PublicTokenMigrateTest extends UnitTestCase
      * @Test
      * @runInSeparateProcess
      * @preserveGlobalState disabled
-     * validateRequest should validate request inputs based on tallyAuthorizeRequestRules defined.
+     * testPublicTokenDescription asserts if proper descriptions is set.
      * @return void
      */
     public function testPublicTokenDescription()
@@ -63,7 +63,7 @@ class PublicTokenMigrateTest extends UnitTestCase
      * @Test
      * @runInSeparateProcess
      * @preserveGlobalState disabled
-     * validateRequest should validate request inputs based on tallyAuthorizeRequestRules defined.
+     * testPublicTokenHandler validates DB transaction is performed.
      * @return void
      */
     public function testPublicTokenHandler()

@@ -3,7 +3,6 @@
 namespace App\Tests\Unit\Console\Commands;
 
 use App\Console\Commands\ClientMigrate;
-use App\Console\Commands\PublicTokenMigrate;
 use App\Tests\Unit\UnitTestCase;
 use Illuminate\Support\Facades\DB;
 use Mockery;
@@ -68,35 +67,27 @@ class ClientMigrateTest extends UnitTestCase
      * @Test
      * @runInSeparateProcess
      * @preserveGlobalState disabled
-     * validateRequest should validate request inputs based on tallyAuthorizeRequestRules defined.
+     * testClientMigrateHandler validates DB transaction is performed.
      * @return void
      */
-    public function testPublicTokenDescription()
-    {
-        $command = new PublicTokenMigrate();
-        $this->assertEquals('Migrate OAuth public tokens to Kong as identifier', $command->getDescription());
-    }
-
-    /**
-     * @Test
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     * validateRequest should validate request inputs based on tallyAuthorizeRequestRules defined.
-     * @return void
-     */
-    public function testPublicTokenHandler()
+    public function testClientMigrateHandler()
     {
         $client = new \Razorpay\OAuth\Client\Entity();
+        $client->application = new \Razorpay\OAuth\Application\Entity();
 
         $this->getOauthClientEntityMock()
             ->shouldIgnoreMissing()
-            ->shouldReceive('all')
+            ->shouldReceive('with->whereIn->withTrashed->get')
             ->andReturn([$client]);
 
         $client->shouldReceive('getId')
             ->andReturn(self::CLIENT_ID);
 
-        $client->application = new \Razorpay\OAuth\Application\Entity();
+        $client_id = $client->getId();
+
+        // set required env vars
+        putenv("CLIENT_MIGRATE_ACTION=create");
+        putenv("CLIENT_MIGRATE_IDS=$client_id");
 
         Trace::shouldReceive('info')
             ->once();
@@ -112,21 +103,26 @@ class ClientMigrateTest extends UnitTestCase
      * @Test
      * @runInSeparateProcess
      * @preserveGlobalState disabled
-     * testPublicTokenHandlerWithException should throw Exception.
+     * testClientMigrateHandlerWithException should throw Exception when client id doesn't exists.
      * @return void
      */
-    public function testPublicTokenHandlerWithException()
+    public function testClientMigrateHandlerWithException()
     {
 
         $client = new \Razorpay\OAuth\Client\Entity();
         $this->getOauthClientEntityMock()
             ->shouldIgnoreMissing()
-            ->shouldReceive('all')
+            ->shouldReceive('with->whereIn->withTrashed->get')
             ->andReturn([$client]);
+
         $client->shouldReceive('getId')
             ->andReturn('');
 
         $client->application = new \Razorpay\OAuth\Application\Entity();
+
+        // set required env vars
+        putenv("CLIENT_MIGRATE_ACTION=create");
+        putenv("CLIENT_MIGRATE_IDS=testclientid");
 
         Trace::shouldReceive('info')
             ->once()
@@ -139,5 +135,4 @@ class ClientMigrateTest extends UnitTestCase
             $this->assertEquals(self::ERROR_MESSAGE, $ex->getMessage());
         }
     }
-
 }
