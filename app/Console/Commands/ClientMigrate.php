@@ -61,7 +61,10 @@ class ClientMigrate extends Command
         $core  = new Core;
 
         $action = getenv('CLIENT_MIGRATE_ACTION');
+        $action = empty($action) ? "create" : $action;
         $client_ids = getenv('CLIENT_MIGRATE_IDS');
+        $chunk_size = getenv('CLIENT_MIGRATE_CHUNK_SIZE');
+        $chunk_size = empty($chunk_size) ? 50000 : (int) $chunk_size;
 
         if (!empty($client_ids)) {
             $clients = explode(',', $client_ids);
@@ -71,34 +74,45 @@ class ClientMigrate extends Command
             {
                 $count++;
                 Trace::info(TraceCode::MIGRATE_CLIENT_REQUEST, array('count' => $count, 'client_id' => $client->getId(), 'action' => $action));
-                DB::transaction(function () use ($client, $core, $action) {
-                    $this->outboxSend($core, $client, $action);
+                $payload = [];
+                if ($action == 'create') {
+                    $payload = $core->getOutboxPayload($client, $client->application);
+                } elseif ($action == 'delete') {
+                    $payload['id'] = $client->getId();
+                    $payload['application_type'] = $client->application->getType();
+                }
+                DB::transaction(function () use ($action, $payload) {
+                    $this->outboxSend($action, $payload);
                 });
             }
+        } else {
+            // Full migration
+            Client::orderBy('id')->chunk($chunk_size, function ($clients) use($core, $action, &$count) {
+                foreach ($clients as $client) {
+                    $count++;
+                    Trace::info(TraceCode::MIGRATE_CLIENT_REQUEST, array('count' => $count, 'client_id' => $client->getId(), 'action' => $action));
+                    $payload = $core->getOutboxPayload($client, $client->application);
+                    DB::transaction(function () use ($action, $payload) {
+                        $this->outboxSend($action, $payload);
+                    });
+                }
+            });
         }
 
         return null;
     }
 
     /**
-     * @param Core $core
-     * @param mixed $client
+     * @param string $action
+     * @param array $payload
      * @return void
      */
-    function outboxSend(Core $core, mixed $client): void {
-        // if the application is not present then ignore
-        if ($client->application === null) {
-            Trace::info(TraceCode::OUTBOX_INVALID_CLIENT, array('client_id' => $client->getId()));
-            return;
+    function outboxSend(string $action, array $payload): void {
+        if ($this->enable_cassandra_outbox) {
+            app("outbox")->send($action . "_client", $payload);
         }
-
-        if ($this->enable_cassandra_outbox)
-        {
-            app("outbox")->send("create_client", $core->getOutboxPayload($client, $client->application));
-        }
-        if ($this->enable_postgres_outbox)
-        {
-            app("outbox")->send("create_client_postgres", $core->getOutboxPayload($client, $client->application));
+        if ($this->enable_postgres_outbox) {
+            app("outbox")->send($action . "_client_postgres", $payload);
         }
     }
 }
