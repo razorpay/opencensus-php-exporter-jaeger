@@ -240,4 +240,65 @@ class EdgeServiceTest extends UnitTestCase
             $this->assertEquals('Could not create consumer in edge', $ex->getMessage());
         }
     }
+
+    /**
+     * @Test
+     * testGetOauth2ClientSuccess checks if oauth2 client is present on edge
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @return void
+     * @throws LogicException
+     */
+    public function testGetOauth2ClientSuccess()
+    {
+        $clientId="123";
+        $expectedResponse = new RequestsResponse();
+        $expectedResponse->status_code = 200;
+        $expectedResponse->success = true;
+
+        $this->getRequestMock()
+            ->shouldReceive('get')
+            ->once()
+            ->andReturn($expectedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::GET_OAUTH_CLIENT_FROM_EDGE, Mockery::any()])
+            ->once();
+
+
+        $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
+        $edgeService->getOauth2Client($clientId);
+    }
+
+    /**
+     * @Test
+     * testGetOauth2ClientNotFound throws exception if oauth2 client is absent on edge
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @return void
+     * @throws LogicException
+     */
+    public function testGetOauth2ClientNotFound()
+    {
+        $clientId="123";
+        $expectedResponse = new RequestsResponse();
+        $expectedResponse->status_code = 404;
+        $expectedResponse->success = false;
+
+        $this->getRequestMock()
+            ->shouldReceive('get')
+            ->once()
+            ->andReturn($expectedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::GET_OAUTH_CLIENT_FROM_EDGE, Mockery::any()])
+            ->once();
+
+        $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
+        try {
+            $edgeService->getOauth2Client($clientId);
+        } catch (\Exception $ex) {
+            $this->assertEquals("oauth2 client is not present.", $ex->getMessage());
+        }
+    }
 }

@@ -63,7 +63,7 @@ class BulkApplicationCreateTest extends UnitTestCase
     {
         putenv("BULK_APPLICATION_CREATE_FILE_NAME=non_existent_file.csv");
 
-        Trace::shouldReceive('info')
+        Trace::shouldReceive('error')
             ->withArgs([TraceCode::ERROR_EXCEPTION, Mockery::any()])
             ->once();
 
@@ -168,7 +168,7 @@ class BulkApplicationCreateTest extends UnitTestCase
             ->withArgs([TraceCode::CREATE_APPLICATION_REQUEST, Mockery::any()])
             ->never();
 
-        Trace::shouldReceive('info')
+        Trace::shouldReceive('error')
             ->withArgs([TraceCode::ERROR_EXCEPTION, Mockery::any()])
             ->once();
 
@@ -207,7 +207,7 @@ class BulkApplicationCreateTest extends UnitTestCase
             ->withArgs([TraceCode::CREATE_APPLICATION_REQUEST, Mockery::any()])
             ->never();
 
-        Trace::shouldReceive('info')
+        Trace::shouldReceive('error')
             ->withArgs([TraceCode::ERROR_EXCEPTION, Mockery::any()])
             ->once();
 

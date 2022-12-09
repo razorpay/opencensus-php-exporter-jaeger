@@ -71,7 +71,7 @@ class BulkApplicationCreate extends Command
                 }
                 catch (\Exception $ex)
                 {
-                    Trace::info(TraceCode::ERROR_EXCEPTION, [
+                    Trace::error(TraceCode::ERROR_EXCEPTION, [
                         "merchant_id" => $merchantId,
                         "message" => "Could not fetch Application",
                         "exception" => $ex->getMessage()]);
@@ -101,7 +101,7 @@ class BulkApplicationCreate extends Command
                 }
                 catch (\Exception $ex)
                 {
-                    Trace::info(TraceCode::ERROR_EXCEPTION, [
+                    Trace::error(TraceCode::ERROR_EXCEPTION, [
                         "merchant_id" => $merchantId,
                         "message" => "Could not create Application",
                         "exception" => $ex->getMessage()]);
@@ -117,7 +117,7 @@ class BulkApplicationCreate extends Command
         }
         catch (\Exception $ex)
         {
-            Trace::info(TraceCode::ERROR_EXCEPTION, [
+            Trace::error(TraceCode::ERROR_EXCEPTION, [
                 "message" => "Could not open file " . $fileName,
                 "exception" => $ex->getMessage()]);
         }

@@ -33,6 +33,7 @@ class TraceCode extends BaseTraceCode
     const POST_AUTHORIZE_MULTI_TOKEN_REQUEST                        = 'POST_AUTHORIZE_MULTI_TOKEN_REQUEST';
     const POST_AUTHORIZE_CREATE_LIVE_TOKEN                          = 'POST_AUTHORIZE_CREATE_LIVE_TOKEN';
     const POST_AUTHORIZE_CREATE_TEST_TOKEN                          = 'POST_AUTHORIZE_CREATE_TEST_TOKEN';
+    const VALIDATE_CLIENT_EDGE_SYNC                                 = 'VALIDATE_CLIENT_EDGE_SYNC';
 
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';
@@ -61,6 +62,7 @@ class TraceCode extends BaseTraceCode
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED                    = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED';
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED          = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED';
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED           = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED';
+    const GET_OAUTH_CLIENT_FROM_EDGE                                = 'GET_OAUTH_CLIENT_FROM_EDGE';
 
     // ----- Razorx -----
     const RAZORX_REQUEST_FAILED                                     = 'RAZORX_REQUEST_FAILED';

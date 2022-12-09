@@ -139,4 +139,36 @@ class EdgeService
                 ]);
         }
     }
+
+    /**
+     * @param string $clientId
+     * @return void
+     * @throws LogicException
+     * @throws NotFoundException
+     */
+    public function getOauth2Client(string $clientId): void
+    {
+        $url = $this->apiUrl . '/oauth2/' . $clientId;
+
+        Trace::info(TraceCode::GET_OAUTH_CLIENT_FROM_EDGE,
+            [
+                'client_id' => $clientId,
+            ]);
+
+        $response = Requests::get($url, $this->headers, $this->defaultOptions);
+
+        if ($response->status_code === 404) {
+            throw new NotFoundException("oauth2 client is not present.");
+        }
+
+        if ($response->success === false and $response->status_code !== 409) {
+            throw new LogicException(
+                "Request to find oauth2 client in edge failed",
+                [
+                    "response_body" => $response->body,
+                    "http_status" => $response->status_code,
+                ]);
+        }
+
+    }
 }
