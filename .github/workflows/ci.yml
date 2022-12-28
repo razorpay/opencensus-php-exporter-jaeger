@@ -187,7 +187,6 @@ jobs:
     name: Edge E2E test webhook
     runs-on: [ self-hosted ]
     needs: [ build ]
-    if: '${{ github.ref != ''refs/heads/master'' }}'
     steps:
       - uses: actions/checkout@v2
       - name: Find current pr
