@@ -183,10 +183,28 @@ jobs:
           SLACK_CHANNEL: tech_distelli # Optional. (defaults to webhook)
           SLACK_ICON: https://avatars3.githubusercontent.com/u/9919?s=40&v=4 # Optional. can be (repository, sender, an URL) (defaults to webhook app avatar)
         uses: rtCamp/action-slack-notify@ca2febb266f78a54a245d815081549c522099b76
+  edge-e2e-test-webhook:
+    name: Edge E2E test webhook
+    runs-on: [ self-hosted ]
+    needs: [ build ]
+    if: '${{ github.ref != ''refs/heads/master'' }}'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Find current pr
+        uses: jwalton/gh-find-current-pr@v1.3.0
+        id: findPr
+      - name: Triggers argo workflows webhook to execute e2e tests
+        if: steps.findPr.outputs.number || github.ref == 'refs/heads/master'
+        env:
+          SPINNAKER_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+          GITHUB_TOKEN: '${{ secrets.GIT_TOKEN }}'
+          EDGE_PIPELINE_ID: "207b79ee-3ec7-4a69-8b66-f3715f729dc0"
+        run: >
+          ./.github/scripts/run-edge-e2e.sh ${{ github.sha }} ${{ secrets.ARGO_TOKEN }}
   workflow_status:
     runs-on: [ self-hosted ]
     name: Update Status Check
-    needs: [ build, run_test ]
+    needs: [ build, run_test, edge-e2e-test-webhook ]
     if: always()
     steps:
       - name: Failed
@@ -206,18 +224,3 @@ jobs:
           -d '{ "state" : "success" , "context" : "github/combined-status-check" , "description" : "github/combined-status-check", "target_url" : "https://github.com/${{ github.repository }}" }' \
           https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}
           exit 0
-  e2e_tests_webhook:
-    name: Run E2E tests
-    runs-on: [ self-hosted ]
-    needs: [ build ]
-    steps:
-      - name: "Git Clone"
-        uses: razorpay/checkout-action@30aedaf6f35b3b7756b8095789c1e18674bcf2f6
-        with:
-          submodules: true
-      - name: Triggers rundeck's webhook to execute e2e tests
-        env:
-          GIT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
-          EDGE_PIPELINE_ID: "207b79ee-3ec7-4a69-8b66-f3715f729dc0"
-        run: |
-          sh ./.github/scripts/rundeck.sh ${{ github.sha }}
