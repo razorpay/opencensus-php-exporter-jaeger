@@ -23,13 +23,17 @@ use App\Services\DataLake\EventCode as DataLakeEventCode;
 
 class Service
 {
-    const ID                = 'id';
-    const ROLE              = 'role';
-    const OWNER             = 'owner';
-    const TALLY_AUTH_OTP    = 'tally_auth_otp';
-    const OTP               = 'otp';
-    const LIVE               = 'live';
-    const TEST               = 'test';
+    const ID                          = 'id';
+    const ROLE                        = 'role';
+    const BANKING_ROLE                = 'banking_role';
+    const VIEW_ONLY                   = "view_only";
+    const BANKING_TYPE                = "banking";
+    const OWNER                       = 'owner';
+    const TALLY_AUTH_OTP              = 'tally_auth_otp';
+    const OTP                         = 'otp';
+    const LIVE                        = 'live';
+    const TEST                        = 'test';
+    const ACCOUNTING_INTEGRATION      = "accounting_integration";
 
     protected $raven;
     private $signAlgo;
@@ -142,11 +146,15 @@ class Service
             RequestParams::MERCHANT_ID  => isset($input[RequestParams::MERCHANT_ID]) ? $input[RequestParams::MERCHANT_ID] : null
         ]);
 
+        $product = isset($input[RequestParams::PRODUCT]) ? $input[RequestParams::PRODUCT] : '';
+
+        $feature = isset($input[RequestParams::FEATURE]) ? $input[RequestParams::FEATURE] : '';
+
         (new Validator)->validateRequest($input, Validator::$tallyAuthorizeRequestRules);
 
         $this->verifyTallyClient($input[RequestParams::CLIENT_ID]);
 
-        $userId = $this->validateMerchantUser($input[RequestParams::LOGIN_ID], $input[RequestParams::MERCHANT_ID]);
+        $userId = $this->validateMerchantUserWithFeature($input[RequestParams::LOGIN_ID], $input[RequestParams::MERCHANT_ID], $product, $feature);
 
         $ravenContext = $userId . '_' . $input[RequestParams::CLIENT_ID];
 
@@ -172,7 +180,7 @@ class Service
         return ["success" => true];
     }
 
-    public function validateMerchantUser(string $loginId, string $merchantId)
+    public function validateMerchantUserWithFeature(string $loginId, string $merchantId, string $product, string $feature)
     {
         // Get user details filter by email_id
         $user = $this->getApiService()->getUserByEmail($loginId);
@@ -192,6 +200,18 @@ class Service
         if ($merchant === null)
         {
             throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_MERCHANT_OR_USER);
+        }
+
+        // Allowing all users except view only, if the request is received from banking(RX) product and accounting_integration
+        // TODO: add metric in case of failure
+        if ($product === self::BANKING_TYPE && $feature === self::ACCOUNTING_INTEGRATION)
+        {
+            if (isset($merchant[self::BANKING_ROLE]) && $merchant[self::BANKING_ROLE] !== self::VIEW_ONLY)
+            {
+                return $user[self::ID];
+            }
+
+            throw new BadRequestException(ErrorCode::BAD_REQUEST_ROLE_NOT_ALLOWED);
         }
 
         if (isset($merchant[self::ROLE]) && $merchant[self::ROLE] === self::OWNER)
@@ -271,13 +291,17 @@ class Service
             RequestParams::GRANT_TYPE  => isset($input[RequestParams::GRANT_TYPE]) ? $input[RequestParams::GRANT_TYPE] : null
         ]);
 
+        $product = isset($input[RequestParams::PRODUCT]) ? $input[RequestParams::PRODUCT] : '';
+
+        $feature = isset($input[RequestParams::FEATURE]) ? $input[RequestParams::FEATURE] : '';
+
         (new Validator)->validateRequest($input, Validator::$tallyAccessTokenRequestRules);
 
         $this->verifyTallyClient($input[RequestParams::CLIENT_ID]);
 
         (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID], $input[RequestParams::GRANT_TYPE], $input[RequestParams::CLIENT_SECRET], true);
 
-        $userId = $this->validateMerchantUser($input[RequestParams::LOGIN_ID], $input[RequestParams::MERCHANT_ID]);
+        $userId = $this->validateMerchantUserWithFeature($input[RequestParams::LOGIN_ID], $input[RequestParams::MERCHANT_ID], $product, $feature);
 
         $ravenContext = $userId . '_' . $input[RequestParams::CLIENT_ID];
 

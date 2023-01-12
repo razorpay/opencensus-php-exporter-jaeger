@@ -381,6 +381,50 @@ return [
         ]
     ],
 
+    'testValidateTallyAuthUserForAccountingIntegration' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/authorize/tally',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'login_id'            => 'test@razorpay.com',
+                'product'             => 'banking',
+                'feature'             => 'accounting_integration'
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'success' => true,
+            ],
+            'status_code' => 200
+        ]
+    ],
+
+    'testValidateTallyAuthUserForAccountingWithViewOnly' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/authorize/tally',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'login_id'            => 'test1@razorpay.com',
+                'product'             => 'banking',
+                'feature'             => 'accounting_integration'
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'error' => [
+                    'description' => 'The current user profile is restricted from this action'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'App\Exception\BadRequestException',
+            'message' => 'The current user profile is restricted from this action',
+        ],
+    ],
+
     'testValidateTallyAuthUserInvalidInput' => [
         'request'  => [
             'method'  => 'POST',
@@ -413,6 +457,27 @@ return [
                 'grant_type'          => 'tally_client_credentials',
                 'pin'                 => '0007',
                 'login_id'            => 'test@razorpay.com',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'token_type' => 'Bearer',
+            ],
+            'status_code' => 200
+        ]
+    ],
+
+    'testTallyTokenForAccountingIntegration' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/tokens/tally',
+            'content' => [
+                'merchant_id'         => '10000000000000',
+                'grant_type'          => 'tally_client_credentials',
+                'pin'                 => '0007',
+                'login_id'            => 'test@razorpay.com',
+                'product'             => 'banking',
+                'feature'             => 'accounting_integration'
             ]
         ],
         'response' => [

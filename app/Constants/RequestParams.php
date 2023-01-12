@@ -14,6 +14,8 @@ class RequestParams
     const TOKEN_TYPE_HINT           = 'token_type_hint';
     const LOGIN_ID                  = 'login_id';
     const MERCHANT_ID               = 'merchant_id';
+    const FEATURE                   = 'feature';
+    const PRODUCT                   = 'product';
     const USER_ID                   = 'user_id';
     const AUTHORIZATION_CODE        = 'authorization_code';
     const GRANT_TYPE                = 'grant_type';
