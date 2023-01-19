@@ -59,10 +59,15 @@ class TraceCode extends BaseTraceCode
     // ----- Edge Service ----
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE                           = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE';
     const CREATE_CONSUMER_IN_EDGE                                   = 'CREATE_CONSUMER_IN_EDGE';
-    const CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED                    = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_FAILED';
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED          = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED';
     const CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED           = 'CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED';
     const GET_OAUTH_CLIENT_FROM_EDGE                                = 'GET_OAUTH_CLIENT_FROM_EDGE';
+
+    // ----- Signer Cache ----
+    const SIGNER_CACHE_CREATE_CREDENTIALS                           = 'SIGNER_CACHE_CREATE_CREDENTIALS';
+    const SIGNER_CACHE_CREATE_CREDENTIALS_FAILED                    = 'SIGNER_CACHE_CREATE_CREDENTIALS_FAILED';
+    const SIGNER_CACHE_REDIS_ERROR                                  = 'SIGNER_CACHE_REDIS_ERROR';
+    const SIGNER_CACHE_INVALID_TTL_ERROR                            = 'SIGNER_CACHE_INVALID_TTL_ERROR';
 
     // ----- Razorx -----
     const RAZORX_REQUEST_FAILED                                     = 'RAZORX_REQUEST_FAILED';

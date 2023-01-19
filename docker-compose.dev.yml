@@ -46,3 +46,8 @@ services:
       MYSQL_DATABASE: auth
       MYSQL_USER: auth
       MYSQL_PASSWORD: 123
+  signer-cache:
+    image: redis:6-alpine
+    ports:
+      - 26379:6379
+    container_name: signer-cache

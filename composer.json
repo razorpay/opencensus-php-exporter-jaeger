@@ -17,12 +17,13 @@
         "razorpay/spine": "^2.0.0",
         "lcobucci/jwt":"4.1.5",
         "razorpay/oauth":"dev-oauth_dualwrite",
-        "razorpay/outbox-php": "^1.0.0",
+        "razorpay/outbox-php": "^2.0.0",
         "laravel/helpers": "^1.5",
         "ext-json": "*",
         "opencensus/opencensus": "~0.7",
         "opencensus/opencensus-exporter-jaeger": "^v0.1.2-alpha",
-        "laravel/legacy-factories": "^1.3"
+        "laravel/legacy-factories": "^1.3",
+        "predis/predis": "^2.0"
     },
     "repositories": [
         {

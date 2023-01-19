@@ -94,16 +94,25 @@ return [
     */
 
     'redis' => [
+        // This connection is used by Services/SignerCache.php
+        'signer_cache' => [
+            'host'               => env('SIGNER_CACHE_HOST'),
+            'port'               => env('SIGNER_CACHE_PORT'),
+            'username'           => env('SIGNER_CACHE_USERNAME'),
+            'password'           => env('SIGNER_CACHE_PASSWORD'),
+            'scheme'             => env('SIGNER_CACHE_SCHEME'),
 
-        'cluster' => env('REDIS_CLUSTER', false),
+            // Difference between timeout and read_write timeout: https://squizzle.me/php/predis/doc/Configuration
+            'timeout'            => env('SIGNER_CACHE_CONN_TIMEOUT_SECS'),
+            'read_write_timeout' => env('SIGNER_CACHE_RW_TIMEOUT_SECS'),
 
-        'default' => [
-            'host'     => env('REDIS_HOST', '127.0.0.1'),
-            'port'     => env('REDIS_PORT', 6379),
-            'database' => env('REDIS_DATABASE', 0),
-            'password' => env('REDIS_PASSWORD', null),
+            // When `persistent` is set to true, it means connection will not be closed until PHP process dies
+            'persistent'         => true,
+            'ssl'                => [
+                'verify_peer'      => false,
+                'verify_peer_name' => false,
+                'crypto_type'      => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT
+            ]
         ],
-
     ],
-
 ];

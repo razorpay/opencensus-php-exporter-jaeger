@@ -4,6 +4,9 @@ namespace Unit\Models\Auth;
 
 use App\Models\Auth\Repository;
 use App\Tests\Unit\UnitTestCase;
+use Illuminate\Support\Facades\DB;
+use Mockery;
+use Razorpay\OAuth\Token\Entity;
 
 class RepositoryTest extends UnitTestCase
 {
@@ -31,49 +34,61 @@ class RepositoryTest extends UnitTestCase
 
     /**
      * @Test
-     * persistNewAccessToken should persist access token in Edge from Auth Service.
+     * persistNewAccessToken should sync the public token with Edge and Signer cache and persist the access token entity in Auth Service DB.
      * @return void
-     * @doesNotPerformAssertions
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @throws \Throwable
      */
-    /*    public function testPersistNewAccessTokenThroughException()
-        {
-            $edgeMock = Mockery::mock('overload:App\Services\EdgeService');
-            $outboxMock = Mockery::mock('overload:Razorpay\Outbox\Job\Core');
+    public function testPersistNewAccessToken(): void
+    {
+        $edgeMock = Mockery::mock('overload:App\Services\EdgeService');
+        $signerCacheMock = Mockery::mock('overload:App\Services\SignerCache');
+        $tracerMock = Mockery::mock('overload:OpenCensus\Trace\Tracer');
 
-            $application = new ApplicationEntity();
-            $devClient = new ClientEntity();
-            $devClient->fill([
-                'id' => '30000000000000',
-                'application_id' => $application->id,
-                'redirect_url' => ['https://www.example.com'],
-                'environment' => 'dev'
+        $application = new \Razorpay\OAuth\Application\Entity();
+        $devClient = new \Razorpay\OAuth\Client\Entity();
+        $devClient->fill([
+            'id' => '30000000000000',
+            'application_id' => $application->id,
+            'redirect_url' => ['https://www.example.com'],
+            'environment' => 'dev',
+        ]);
+
+        $devClient->generateSecret();
+
+        $token = new Entity();
+        $token->setClient($devClient);
+
+        $token->forceFill([
+            Entity::MERCHANT_ID => 'absdshthyegd12',
+            Entity::MODE => 'test',
+            Entity::EXPIRES_AT => 1629168660,
+            Entity::PUBLIC_TOKEN => 'absfehftshst12',
+            Entity::USER_ID => 'absfehftshst78'
+        ]);
+
+        DB::shouldReceive('transaction')
+            ->twice();
+
+        $edgeMock->shouldReceive('postPublicIdToEdge')
+            ->once()
+            ->with([
+            "public_token" => $token->getPublicTokenWithPrefix(),
+            "identifier" => $token->getIdentifier(),
+            "mode" => $token->getMode(),
+            "ttl" =>  Mockery::any(),
+            "user_id" => $token->getUserId()
             ]);
-            $token = new Entity();
-            $token->setClient($devClient);
 
-            $token->forceFill([
-                Entity::MERCHANT_ID => 'absdshthyegd12',
-                Entity::MODE => 'test',
-                Entity::EXPIRES_AT => 1629168660,
-                Entity::PUBLIC_TOKEN => 'absfehftshst12',
-                Entity::USER_ID => 'absfehftshst78'
-            ]);
+        $signerCacheMock->shouldReceive('writeCredentials')
+            ->once()
+            ->with($token->getPublicTokenWithPrefix(), $token->getClient()->getSecret(), Mockery::any());
 
-            $ex = new \Exception('');
-            $edgeMock->shouldReceive('postPublicIdToEdge')
-                ->once()
-                ->andThrow(ex);
+        $tracerMock->shouldReceive('inSpan')->once()->with(['name' => 'persistNewAccessToken.saveOrFail'], Mockery::any());
 
-            $outboxMock->shouldReceive('sendWithDelay')
-                ->once();
+        $repository = new Repository();
+        $repository->persistNewAccessToken($token);
 
-            DB::shouldReceive('transaction')
-                ->once();
-            Trace::shouldReceive('traceException')
-                ->withArgs([TraceCode::CREATE_APPLICATION_REQUEST, Mockery::any()])
-                ->once();
-
-            $repository = new Repository();
-            $repository->persistNewAccessToken($token);
-        }*/
+    }
 }

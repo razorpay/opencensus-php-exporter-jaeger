@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Auth\Constant;
 use App\Constants\RequestParams;
+use Exception;
+use Razorpay\Trace\Logger;
 use Trace;
 use Request;
 use App\Request\Requests;
@@ -25,7 +27,9 @@ class EdgeService
 
     protected $defaultOptions;
 
-    public function __construct($app, $edgeUrl, $edgeSecret)
+    protected bool $isPostgres; // Used only while emitting failure metric
+
+    public function __construct($app, $edgeUrl, $edgeSecret, $isPostgres = false)
     {
         $this->apiUrl = $edgeUrl;
 
@@ -34,8 +38,14 @@ class EdgeService
         $this->headers = ['apikey' => $this->secret, 'Content-Type' => 'application/json', RequestParams::DEV_SERVE_USER => Request::header(RequestParams::DEV_SERVE_USER)];
 
         $this->defaultOptions = ['timeout' => env('EDGE_TIMEOUT',5) ];
+
+        $this->isPostgres = $isPostgres;
     }
 
+    /**
+     * @throws LogicException
+     * @throws NotFoundException
+     */
     public function postPublicIdToEdge(array $payload)
     {
         $start = millitime();
@@ -54,12 +64,28 @@ class EdgeService
             $this->createIdentifier($merchantId, $postPayload);
             $success = true;
         }
-        catch(NotFoundException $ex)
+        catch(NotFoundException)
         {
-            $this->createConsumer($merchantId);
+            // If Identifier creation failed, try creating the consumer first and then identifier
+            try
+            {
+                $this->createConsumer($merchantId);
 
-            $this->createIdentifier($merchantId, $postPayload);
-            $success = true;
+                $this->createIdentifier($merchantId, $postPayload);
+                $success = true;
+            }
+            catch (Exception $ex)
+            {
+                $traceCode = $this->isPostgres ? TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED : TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED;
+                app("trace")->traceException($ex, Logger::ERROR, $traceCode);
+                throw $ex;
+            }
+        }
+        catch(Exception $ex)
+        {
+            $traceCode = $this->isPostgres ? TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED : TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED;
+            app("trace")->traceException($ex, Logger::ERROR, $traceCode);
+            throw $ex;
         }
         finally
         {

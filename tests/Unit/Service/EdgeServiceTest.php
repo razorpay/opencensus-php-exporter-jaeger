@@ -12,6 +12,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Razorpay\OAuth\Token\Mode;
 use Razorpay\Trace\Facades\Trace;
+use Razorpay\Trace\Logger;
 use WpOrg\Requests\Response as RequestsResponse;
 
 class EdgeServiceTest extends UnitTestCase
@@ -172,6 +173,10 @@ class EdgeServiceTest extends UnitTestCase
             ]])
             ->once();
 
+        Trace::shouldReceive('traceException')
+            ->withArgs([Mockery::any(), Logger::ERROR, TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED])
+            ->once();
+
         $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
         try {
             $edgeService->postPublicIdToEdge(
@@ -217,6 +222,10 @@ class EdgeServiceTest extends UnitTestCase
 
         Trace::shouldReceive('info')
             ->withArgs([TraceCode::CREATE_CONSUMER_IN_EDGE, Mockery::any()])
+            ->once();
+
+        Trace::shouldReceive('traceException')
+            ->withArgs([Mockery::any(), Logger::ERROR, TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED])
             ->once();
 
         Trace::shouldReceive('histogram')

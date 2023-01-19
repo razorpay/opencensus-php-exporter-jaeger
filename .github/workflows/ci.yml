@@ -75,6 +75,8 @@ jobs:
           DB_USERNAME: root
           DB_PASSWORD: root
           DB_DATABASE: auth
+          SIGNER_CACHE_HOST: signer-cache
+          SIGNER_CACHE_PORT: 6379
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
           BRANCH: ${{ github.ref }}
       - name: Set Sonarqube Project
@@ -159,6 +161,15 @@ jobs:
         ports:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      signer-cache:
+        image: redis:6-alpine
+        ports:
+          - 6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
   slack-notify:
     runs-on: [ self-hosted ]
     name: Build Notify

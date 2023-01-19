@@ -8,6 +8,7 @@ use App\Services\EdgeService;
 
 use App\Services\RazorX\RazorXClient;
 use App\Http\Middleware\EventTracker;
+use App\Services\SignerCache;
 use Illuminate\Support\ServiceProvider;
 use App\Services\Segment\SegmentAnalyticsClient;
 
@@ -59,7 +60,11 @@ class AppServiceProvider extends ServiceProvider
                 return new Mock\EdgeService($app);
             }
 
-            return new EdgeService($app,  env('EDGE_POSTGRES_URL'),  env('EDGE_POSTGRES_SECRET'));
+            return new EdgeService($app,  env('EDGE_POSTGRES_URL'),  env('EDGE_POSTGRES_SECRET'), isPostgres: true);
+        });
+
+        $this->app->singleton('signer_cache', function() {
+            return new SignerCache();
         });
 
         $this->app->singleton('raven', function ($app) {
