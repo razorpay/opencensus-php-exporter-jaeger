@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\ClientMigrate;
+use App\Console\Commands\PublicOAuthCredentialMigrate;
 use App\Console\Commands\PublicTokenMigrate;
 use App\Console\Commands\BulkApplicationCreate;
 use App\Console\Commands\BulkApplicationValidate;
@@ -14,6 +15,7 @@ class Kernel extends ConsoleKernel
         ClientMigrate::class,
         PublicTokenMigrate::class,
         BulkApplicationCreate::class,
+        PublicOAuthCredentialMigrate::class,
         BulkApplicationValidate::class
     ];
 }
