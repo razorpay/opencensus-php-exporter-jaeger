@@ -17,7 +17,7 @@
         "razorpay/spine": "^2.0.0",
         "lcobucci/jwt":"4.1.5",
         "razorpay/oauth":"dev-oauth_dualwrite",
-        "razorpay/outbox-php": "^2.0.0",
+        "razorpay/outbox-php": "^1.0.1",
         "laravel/helpers": "^1.5",
         "ext-json": "*",
         "opencensus/opencensus": "~0.7",

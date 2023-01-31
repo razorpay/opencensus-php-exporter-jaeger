@@ -106,7 +106,7 @@ class Repository extends Token\Repository
         DB::transaction(function () use ($accessTokenEntity) {
             app("outbox")->sendWithDelay(Constant::OUTBOX_PAYLOAD_SIGNER_CACHE_CHECK_TOKEN_CONSISTENCY,
                 ["public_id" => $accessTokenEntity->getPublicTokenWithPrefix()],
-                Constant::OUTBOX_CHECK_TOKEN_CONSISTENCY_JOB_DELAY_MS);
+                Constant::OUTBOX_CHECK_TOKEN_CONSISTENCY_JOB_DELAY_SECS);
         });
 
         $rawSecret = $accessTokenEntity->getClient()->getSecret();
@@ -139,13 +139,13 @@ class Repository extends Token\Repository
         {
             app("outbox")->sendWithDelay("check_token_consistency",
                 ["public_id" => $accessTokenEntity->getPublicTokenWithPrefix()],
-                Constant::OUTBOX_CHECK_TOKEN_CONSISTENCY_JOB_DELAY_MS);
+                Constant::OUTBOX_CHECK_TOKEN_CONSISTENCY_JOB_DELAY_SECS);
         }
         if ($this->enable_postgres_outbox)
         {
             app("outbox")->sendWithDelay("check_token_consistency_postgres",
                 ["public_id" => $accessTokenEntity->getPublicTokenWithPrefix()],
-                Constant::OUTBOX_CHECK_TOKEN_CONSISTENCY_JOB_DELAY_MS);
+                Constant::OUTBOX_CHECK_TOKEN_CONSISTENCY_JOB_DELAY_SECS);
         }
     }
 }
