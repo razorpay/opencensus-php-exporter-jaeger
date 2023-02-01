@@ -56,3 +56,9 @@ DB name and connection info.
 APP_ENV=testing php artisan migrate:reset && php artisan migrate
 ```
 - Run `phpunit --debug` for tests
+
+## Secret Management
+Devstack deployment of auth service fetches secrets from `kubestash-dev-serve/auth/auth-secrets`
+
+Deployments in other environments (`automation`/`prod`/`perf`) use alohomora to manage secrets.
+To add a new secret, ensure that secret is defined in `.env.vault.j2` and added in `credstash-<env>-auth`
