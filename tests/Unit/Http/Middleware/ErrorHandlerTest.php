@@ -71,6 +71,6 @@ class ErrorHandlerTest extends UnitTestCase
             $this->assertEquals($request, $req);
         });
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertJsonStringEqualsJsonString('{"error":"Server error"}', $response->getContent());
+        $this->assertJsonStringEqualsJsonString('{"error":{"code":"SERVER_ERROR","description":"The server encountered an error. The incident has been reported to admins"}}', $response->getContent());
     }
 }

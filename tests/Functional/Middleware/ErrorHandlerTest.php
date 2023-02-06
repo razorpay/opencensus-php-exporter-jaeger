@@ -65,7 +65,7 @@ class ErrorHandlerTest extends TestCase
         $data = $this->testData['testCreateApplication'];
 
         $response = $this->sendRequest($data['request']);
-        $expectedString = 'Server error';
+        $expectedString = '{"error":{"code":"SERVER_ERROR","description":"The server encountered an error. The incident has been reported to admins"}}';
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());

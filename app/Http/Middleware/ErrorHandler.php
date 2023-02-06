@@ -45,7 +45,8 @@ class ErrorHandler
                 // deletes the topmost output buffer and all of its contents
                 ob_clean();
 
-                $response = response()->json(['error' => 'Server error'], 500);
+                $resp = ['error' => ['code' => 'SERVER_ERROR', 'description' => 'The server encountered an error. The incident has been reported to admins']];
+                $response = response()->json($resp, 500);
                 return $response;
             }
         }
