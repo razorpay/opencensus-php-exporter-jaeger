@@ -110,5 +110,8 @@ class TraceCode extends BaseTraceCode
 
     // logged when client data doesnt have a valid application attached to it
     const OUTBOX_INVALID_CLIENT                                     = 'OUTBOX_INVALID_CLIENT';
+
+    // logged when fatal errors are thrown
+    const PHP_FATAL_ERROR                                           =  'PHP_FATAL_ERROR';
 }
 

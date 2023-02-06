@@ -9,6 +9,7 @@ use App\Services\EdgeService;
 use App\Services\RazorX\RazorXClient;
 use App\Http\Middleware\EventTracker;
 use App\Services\SignerCache;
+use App\Http\Middleware\ErrorHandler;
 use Illuminate\Support\ServiceProvider;
 use App\Services\Segment\SegmentAnalyticsClient;
 
@@ -96,6 +97,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerValidatorResolver();
 
         $this->app->singleton(EventTracker::class);
+        $this->app->singleton(ErrorHandler::class);
 
         //$path = $this->app->getConfigurationPath('jaeger');
 
