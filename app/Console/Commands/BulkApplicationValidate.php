@@ -28,10 +28,7 @@ class BulkApplicationValidate extends Command
     private string $applicationType;
     private string $inputFileName;
     private Service $applicationService;
-    private EdgeService $edgeCassandra;
-    private EdgeService $edgePostgres;
-    private bool $enable_cassandra_outbox;
-    private bool $enable_postgres_outbox;
+    private EdgeService $edge;
     private int $edgeCallWaitTimeInMs;
 
     /**
@@ -43,16 +40,10 @@ class BulkApplicationValidate extends Command
     {
         parent::__construct();
         $this->inputFileName = env("BULK_APPLICATION_CREATE_FILE_NAME", '');
-        $this->enable_cassandra_outbox = env("ENABLE_CASSANDRA_OUTBOX", true);
-        $this->enable_postgres_outbox = env("ENABLE_POSTGRES_OUTBOX", true);
         $this->applicationType = env("BULK_APPLICATION_CREATE_APP_TYPE", '');
         $this->applicationService = new Service();
-        if ($this->enable_cassandra_outbox){
-            $this->edgeCassandra = new EdgeService([], env('EDGE_URL'), env('EDGE_SECRET'));
-        }
-        if ($this->enable_postgres_outbox){
-            $this->edgePostgres = new EdgeService([], env('EDGE_POSTGRES_URL'), env('EDGE_POSTGRES_SECRET'));
-        }
+
+        $this->edge = new EdgeService([], env('EDGE_URL'), env('EDGE_SECRET'));
         $this->edgeCallWaitTimeInMs = intval(env("EDGE_CALL_WAIT_MS", 1000));
     }
 
@@ -93,7 +84,7 @@ class BulkApplicationValidate extends Command
 
                 if ($numApplications <= 0) {
                     Trace::info(TraceCode::VALIDATE_CLIENT_EDGE_SYNC, [
-                        "client_id" => $merchantId,
+                        "merchant_id" => $merchantId,
                         "message" => "zero client at auth service"
                     ]);
                     continue;
@@ -104,13 +95,7 @@ class BulkApplicationValidate extends Command
                     foreach ($fetchResponse["items"] as $item) {
                         foreach ($item["client_details"] as $client) {
                             $clientId = $client["id"];
-                            //we need to check in both cassandra and postgres
-                            if ($this->enable_cassandra_outbox) {
-                                $this->edgeCassandra->getOauth2Client($clientId);
-                            }
-                            if ($this->enable_postgres_outbox) {
-                                $this->edgePostgres->getOauth2Client($clientId);
-                            }
+                            $this->edge->getOauth2Client($clientId);
                             //rate limiting edge requests
                             usleep($this->edgeCallWaitTimeInMs * 1000);
                             Trace::info(TraceCode::VALIDATE_CLIENT_EDGE_SYNC, [
@@ -137,7 +122,7 @@ class BulkApplicationValidate extends Command
             fclose($handle);
         } catch (\Exception $ex) {
             Trace::error(TraceCode::VALIDATE_CLIENT_EDGE_SYNC, [
-                "message" => "unknown error occured",
+                "message" => "unknown error occurred",
                 "exception" => $ex->getMessage()]);
         }
 

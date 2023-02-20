@@ -26,8 +26,6 @@ class BulkApplicationValidateTest extends UnitTestCase
         putenv("BULK_APPLICATION_CREATE_APP_NAME=MyApp");
         putenv("BULK_APPLICATION_CREATE_APP_TYPE=mobile_app");
         putenv("BULK_APPLICATION_CREATE_APP_WEBSITE=https://www.example.com");
-        putenv('ENABLE_CASSANDRA_OUTBOX=true');
-        putenv('ENABLE_POSTGRES_OUTBOX=true');
     }
 
     public function tearDown(): void
@@ -99,8 +97,6 @@ class BulkApplicationValidateTest extends UnitTestCase
     public function testIfClientsAreSyncedToEdge(): void
     {
         putenv('BULK_APPLICATION_CREATE_FILE_NAME=sample.csv');
-        putenv('ENABLE_CASSANDRA_OUTBOX=true');
-        putenv('ENABLE_POSTGRES_OUTBOX=true');
 
         $application = $this->getApplication();
         $this->getApplicationServiceMock()
@@ -110,41 +106,6 @@ class BulkApplicationValidateTest extends UnitTestCase
                 'items' => [$application]
             ]);
 
-        //each edge service getOauth2Client will be called once. as mockery will refer to same mock for both service
-        $this->getEdgeServiceMock()
-            ->shouldReceive('getOauth2Client')
-            ->andReturn()
-            ->once();
-
-        Trace::shouldReceive('info')
-            ->withArgs([TraceCode::VALIDATE_CLIENT_EDGE_SYNC, Mockery::any()])
-            ->twice();
-
-        $command = new BulkApplicationValidate();
-        $command->handle();
-    }
-
-    /**
-     * @Test
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     * testIfClientsAreSyncedToEdgePostgres when clients are sync to one of the edge instances when other one is disabled
-     * @return void
-     */
-    public function testIfClientsAreSyncedToEdgePostgres(): void
-    {
-        putenv('BULK_APPLICATION_CREATE_FILE_NAME=sample.csv');
-        putenv('ENABLE_CASSANDRA_OUTBOX=false');
-
-        $application = $this->getApplication();
-        $this->getApplicationServiceMock()
-            ->shouldReceive('fetchMultiple')
-            ->andReturn([
-                'count' => 1,
-                'items' => [$application]
-            ]);
-
-        //only one edge service getOauth2Client will be called once.
         $this->getEdgeServiceMock()
             ->shouldReceive('getOauth2Client')
             ->andReturn()
@@ -210,6 +171,41 @@ class BulkApplicationValidateTest extends UnitTestCase
 
         Trace::shouldReceive('error')
             ->withArgs([TraceCode::VALIDATE_CLIENT_EDGE_SYNC, Mockery::any()])
+            ->once();
+
+        $command = new BulkApplicationValidate();
+        $command->handle();
+    }
+
+    /**
+     * @Test
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * testHandlerWithZeroApplicationsReturned validates that Edge call is not made when no applications are returned
+     * @return void
+     */
+    public function testHandlerWithZeroApplicationsReturned(): void
+    {
+        putenv('BULK_APPLICATION_CREATE_FILE_NAME=sample.csv');
+
+
+        $this->getApplicationServiceMock()
+            ->shouldReceive('fetchMultiple')
+            ->andReturn([
+                'count' => 0,
+                'items' => []
+            ]);
+
+        $this->getEdgeServiceMock()
+            ->shouldReceive('getOauth2Client')
+            ->andReturn()
+            ->never();
+
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::VALIDATE_CLIENT_EDGE_SYNC, [
+                'merchant_id' => '10000000000001',
+                'message' => 'zero client at auth service']])
             ->once();
 
         $command = new BulkApplicationValidate();
