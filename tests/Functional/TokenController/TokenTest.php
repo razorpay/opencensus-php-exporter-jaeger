@@ -22,6 +22,11 @@ class TokenTest extends TestCase
      */
     protected $devClient;
 
+    /**
+     * @var Client\Entity
+     */
+    protected $prodClient;
+
     public function setup(): void
     {
         $this->testDataFilePath = __DIR__ . '/TokenTestData.php';
@@ -62,6 +67,22 @@ class TokenTest extends TestCase
         $this->assertEquals(2, $content['count']);
 
         $this->assertEquals('collection', $content['entity']);
+    }
+
+    public function testGettAllTokensWithRevokedClient() {
+        $this->application = Application\Entity::factory()->create();
+        $this->prodClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $this->application->id, Client\Entity::ENVIRONMENT => 'prod']);
+        $this->devClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $this->application->id, Client\Entity::ENVIRONMENT => 'dev', Client\Entity::REVOKED_AT => time()]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::CLIENT_ID => $this->devClient->getId()]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::CLIENT_ID => $this->prodClient->getId()]);
+
+        $data = & $this->testData['testGetAllTokens'];
+        $content = $this->makeRequestAndGetContent($data['request']);
+
+        $this->assertEquals(1, $content['count']);
+        $this->assertEquals('collection', $content['entity']);
+        $this->assertEquals(1, count($content['items']));
+        $this->assertEquals($this->prodClient->id, $content['items'][0]['client_id']);
     }
 
     public function testDeleteToken()
