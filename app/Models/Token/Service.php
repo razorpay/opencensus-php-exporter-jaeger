@@ -3,6 +3,8 @@
 namespace App\Models\Token;
 
 use App\Constants\RequestParams;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use Razorpay\OAuth\Exception\BadRequestException;
 use Razorpay\OAuth\Token;
 use Razorpay\OAuth\RefreshToken;
 
@@ -25,9 +27,11 @@ class Service
      * Validate input request and validate refresh token and access token and revokes them
      * Calls OAuth Token service according to the token_type_hint passed
      *
-     * @param array  $input
+     * @param array $input
      *
      *
+     * @throws BadRequestException
+     * @throws OAuthServerException
      */
     public function handleRevokeTokenRequest($input)
     {
@@ -35,7 +39,7 @@ class Service
 
         if($input[RequestParams::TOKEN_TYPE_HINT] === 'access_token')
         {
-            $this->oauthTokenService->revokeAccessToken($input);
+            $this->oauthTokenService->revokeAccessTokenAfterValidation($input);
         }
 
         if($input[RequestParams::TOKEN_TYPE_HINT] === 'refresh_token')
@@ -49,11 +53,12 @@ class Service
      * @param $id
      * @param $input
      * @return void
+     * @throws \Exception
      */
     public function handleRevokeTokenRequestForMobileApp($id, $input)
     {
         $this->validator->validateInput(Constant::REVOKE_FOR_MOBILE_APP, $input);
 
-        $this->oauthTokenService->revokeToken($id, $input);
+        $this->oauthTokenService->revokeAccessToken($id, $input);
     }
 }

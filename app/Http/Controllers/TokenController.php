@@ -77,6 +77,9 @@ class TokenController extends Controller
         return response()->json(["exist"=> true]);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function revoke(string $id)
     {
         $input = Request::all();
@@ -85,7 +88,7 @@ class TokenController extends Controller
 
         $token = (new Token\Repository)->findOrFailPublic($id);
 
-        $this->oauthTokenService->revoketoken($id, $input);
+        $this->oauthTokenService->revokeAccessToken($id, $input);
 
         $this->revokeMerchantApplicationMapping($token, $input);
 

@@ -27,6 +27,8 @@ class EdgeService
 
     protected $defaultOptions;
 
+    protected int $maxAttempts;
+
     protected bool $isPostgres; // Used only while emitting failure metric
 
     public function __construct($app, $edgeUrl, $edgeSecret, $isPostgres = false)
@@ -37,7 +39,9 @@ class EdgeService
 
         $this->headers = ['apikey' => $this->secret, 'Content-Type' => 'application/json', RequestParams::DEV_SERVE_USER => Request::header(RequestParams::DEV_SERVE_USER)];
 
-        $this->defaultOptions = ['timeout' => env('EDGE_TIMEOUT',5) ];
+        $this->defaultOptions = ['timeout' => env('EDGE_TIMEOUT',3) ];
+
+        $this->maxAttempts = intval(env('EDGE_MAX_ATTEMPTS', 3));
 
         $this->isPostgres = $isPostgres;
     }
@@ -45,54 +49,58 @@ class EdgeService
     /**
      * @throws LogicException
      * @throws NotFoundException
+     * @throws Exception
      */
     public function postPublicIdToEdge(array $payload)
     {
         $start = millitime();
         $success = false;
         $merchantId = $payload[Constant::MID];
+        $numAttempts = 0;
 
-        try
-        {
-            $postPayload = [
-                'kid'        => $payload[Constant::PUBLIC_TOKEN],
-                'jti'        => $payload[Constant::IDENTIFIER],
-                'user_id'    => $payload[Constant::USER_ID],
-                'tags'       => $this->getTags($payload[Constant::MODE]),
-                'ttl'        => $payload[Constant::TTL],
-            ];
-            $this->createIdentifier($merchantId, $postPayload);
-            $success = true;
-        }
-        catch(NotFoundException)
-        {
-            // If Identifier creation failed, try creating the consumer first and then identifier
-            try
-            {
-                $this->createConsumer($merchantId);
-
+        // Retry the request for the configured number of maxAttempts until the request succeeds
+        while (!$success) {
+            try {
+                $numAttempts++;
+                $postPayload = [
+                    'kid' => $payload[Constant::PUBLIC_TOKEN],
+                    'jti' => $payload[Constant::IDENTIFIER],
+                    'user_id' => $payload[Constant::USER_ID],
+                    'tags' => $this->getTags($payload[Constant::MODE]),
+                    'ttl' => $payload[Constant::TTL],
+                ];
                 $this->createIdentifier($merchantId, $postPayload);
                 $success = true;
-            }
-            catch (Exception $ex)
-            {
-                $traceCode = $this->isPostgres ? TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED : TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED;
-                app("trace")->traceException($ex, Logger::ERROR, $traceCode);
-                throw $ex;
+            } catch (NotFoundException) {
+                // If Identifier creation failed, try creating the consumer first and then identifier
+                try {
+                    $this->createConsumer($merchantId);
+                    $this->createIdentifier($merchantId, $postPayload);
+                    $success = true;
+                } catch (Exception $ex) {
+                    $this->traceExceptionAndCheckAttempts($ex, $numAttempts);
+                }
+            } catch (Exception $ex) {
+                $this->traceExceptionAndCheckAttempts($ex, $numAttempts);
+            } finally {
+                $duration = millitime() - $start;
+                app('trace')->histogram(Metric::HTTP_REQUEST_EDGE_IDENTIFIER, $duration, [
+                    Metric::LABEL_STATUS => $success,
+                    Metric::LABEL_ATTEMPTS => $numAttempts
+                ]);
             }
         }
-        catch(Exception $ex)
-        {
-            $traceCode = $this->isPostgres ? TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED : TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED;
-            app("trace")->traceException($ex, Logger::ERROR, $traceCode);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function traceExceptionAndCheckAttempts(Exception $ex, int $numAttempts): void{
+        $traceCode = $this->isPostgres ? TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_POSTGRES_FAILED : TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED;
+        app("trace")->traceException($ex, Logger::ERROR, $traceCode);
+
+        if ($numAttempts >= $this->maxAttempts) {
             throw $ex;
-        }
-        finally
-        {
-            $duration = millitime() - $start;
-            app('trace')->histogram(Metric::HTTP_REQUEST_EDGE_IDENTIFIER, $duration, [
-                Metric::LABEL_STATUS => $success,
-            ]);
         }
     }
 

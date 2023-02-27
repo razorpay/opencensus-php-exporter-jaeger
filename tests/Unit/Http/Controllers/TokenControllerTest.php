@@ -335,7 +335,7 @@ class TokenControllerTest extends UnitTestCase
             ->andReturn([]);
 
         $this->getRazorpayOauthTokenServiceMock()
-            ->shouldReceive('revoketoken')
+            ->shouldReceive('revokeAccessToken')
             ->withArgs(['tokenId', Mockery::any()])
             ->andReturn([]);
 

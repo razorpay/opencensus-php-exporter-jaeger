@@ -35,15 +35,17 @@ class Repository extends Token\Repository
     }
 
     /**
-     * Persists a new access token to permanent storage.
-     *
+     * Makes sync calls
+     * to Edge to sync the public token and,
+     * to Signer Redis to sync public OAuth credentials.
+     * Also, creates delayed check_token_consistency_jobs for each of the sync calls
+     * DOES NOT persist the token in DB.
      * @param AccessTokenEntityInterface $accessTokenEntity
      * @throws \Throwable
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
         // TODO: Improve Code Design. Details here: https://razorpay.atlassian.net/browse/EAX-500
-
         // The TTL calculated below will always be positive since the expiry date time of an access token is derived by adding now and TTL during token generation, where TTL is determined from the grant type.
         // All grant types will have a TTL that is big enough to make sure the ttl calculated below will never be negative.
         $ttlInSeconds = $accessTokenEntity->getExpiryDateTime()->getTimestamp() - (new \DateTime('now'))->getTimestamp();
@@ -59,17 +61,10 @@ class Repository extends Token\Repository
         // This enables us to decrease the chances of creating futile check token consistency jobs for signer cache
 
         $this->postPublicOAuthCredentialsToSignerCache($accessTokenEntity, $ttlInSeconds);
-
         // If any of the sync calls (to Edge or Signer Cache) fail, we will return an error to the user
         // This is a short-term fix to handle sync failures.
         // Long term fix would be to avoid making sync calls for grant types where strong consistency is not required
         // And use an eventual consistency model for those cases
-
-        Tracer::inSpan(['name' => 'persistNewAccessToken.saveOrFail'],
-            function () use($accessTokenEntity) {
-                // Persist the token in DB
-                $this->saveOrFail($accessTokenEntity);
-            });
     }
 
     protected function postPublicIdToEdge(AccessTokenEntityInterface $accessTokenEntity, int $ttlInSeconds)

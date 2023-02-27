@@ -70,7 +70,7 @@ class TokenServiceTest extends UnitTestCase
         ];
 
         $this->getOauthTokenService()
-            ->shouldReceive('revokeAccessToken')
+            ->shouldReceive('revokeAccessTokenAfterValidation')
             ->once()
             ->with($input);
 

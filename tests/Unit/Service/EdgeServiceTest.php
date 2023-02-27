@@ -89,6 +89,7 @@ class EdgeServiceTest extends UnitTestCase
         Trace::shouldReceive('histogram')
             ->withArgs([Metric::HTTP_REQUEST_EDGE_IDENTIFIER, Mockery::any(), [
                 Metric::LABEL_STATUS => true,
+                Metric::LABEL_ATTEMPTS => 1,
             ]])
             ->once();
 
@@ -130,6 +131,7 @@ class EdgeServiceTest extends UnitTestCase
         Trace::shouldReceive('histogram')
             ->withArgs([Metric::HTTP_REQUEST_EDGE_IDENTIFIER, Mockery::any(), [
                 Metric::LABEL_STATUS => true,
+                Metric::LABEL_ATTEMPTS => 1,
             ]])
             ->once();
 
@@ -158,24 +160,41 @@ class EdgeServiceTest extends UnitTestCase
         $createIdentifier = new RequestsResponse();
         $createIdentifier->status_code = 400;
         $createIdentifier->success = false;
+        $maxAttempts = 3;
 
         $this->getRequestMock()
             ->shouldReceive('post')
-            ->andReturn($createIdentifier);
+            ->andReturn($createIdentifier)
+            ->times($maxAttempts);
 
         Trace::shouldReceive('info')
             ->withArgs([TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE, Mockery::any()])
+            ->times($maxAttempts);
+
+        Trace::shouldReceive('histogram')
+            ->withArgs([Metric::HTTP_REQUEST_EDGE_IDENTIFIER, Mockery::any(), [
+                Metric::LABEL_STATUS => false,
+                Metric::LABEL_ATTEMPTS => 1,
+            ]])
             ->once();
 
         Trace::shouldReceive('histogram')
             ->withArgs([Metric::HTTP_REQUEST_EDGE_IDENTIFIER, Mockery::any(), [
                 Metric::LABEL_STATUS => false,
+                Metric::LABEL_ATTEMPTS => 2,
+            ]])
+            ->once();
+
+        Trace::shouldReceive('histogram')
+            ->withArgs([Metric::HTTP_REQUEST_EDGE_IDENTIFIER, Mockery::any(), [
+                Metric::LABEL_STATUS => false,
+                Metric::LABEL_ATTEMPTS => 3,
             ]])
             ->once();
 
         Trace::shouldReceive('traceException')
             ->withArgs([Mockery::any(), Logger::ERROR, TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED])
-            ->once();
+            ->times($maxAttempts);
 
         $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
         try {
@@ -209,6 +228,7 @@ class EdgeServiceTest extends UnitTestCase
         $createConsumer1 = new RequestsResponse();
         $createConsumer1->status_code = 400;
         $createConsumer1->success = false;
+        $maxAttempts = 3;
 
         $this->getRequestMock()
             ->shouldReceive('post')
@@ -218,19 +238,34 @@ class EdgeServiceTest extends UnitTestCase
 
         Trace::shouldReceive('info')
             ->withArgs([TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE, Mockery::any()])
-            ->once();
+            ->times($maxAttempts);
 
         Trace::shouldReceive('info')
             ->withArgs([TraceCode::CREATE_CONSUMER_IN_EDGE, Mockery::any()])
-            ->once();
+            ->times($maxAttempts);
 
         Trace::shouldReceive('traceException')
             ->withArgs([Mockery::any(), Logger::ERROR, TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE_CASSANDRA_FAILED])
+            ->times($maxAttempts);
+
+        Trace::shouldReceive('histogram')
+            ->withArgs([Metric::HTTP_REQUEST_EDGE_IDENTIFIER, Mockery::any(), [
+                Metric::LABEL_STATUS => false,
+                Metric::LABEL_ATTEMPTS => 1,
+            ]])
             ->once();
 
         Trace::shouldReceive('histogram')
             ->withArgs([Metric::HTTP_REQUEST_EDGE_IDENTIFIER, Mockery::any(), [
                 Metric::LABEL_STATUS => false,
+                Metric::LABEL_ATTEMPTS => 2,
+            ]])
+            ->once();
+
+        Trace::shouldReceive('histogram')
+            ->withArgs([Metric::HTTP_REQUEST_EDGE_IDENTIFIER, Mockery::any(), [
+                Metric::LABEL_STATUS => false,
+                Metric::LABEL_ATTEMPTS => 3,
             ]])
             ->once();
 
@@ -308,6 +343,38 @@ class EdgeServiceTest extends UnitTestCase
             $edgeService->getOauth2Client($clientId);
         } catch (\Exception $ex) {
             $this->assertEquals("oauth2 client is not present.", $ex->getMessage());
+        }
+    }
+
+    /**
+     * @Test
+     * testGetOauth2ClientRequestError throws exception if oauth2 client request to Edge fails
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @return void
+     * @throws LogicException
+     */
+    public function testGetOauth2ClientRequestError()
+    {
+        $clientId="123";
+        $expectedResponse = new RequestsResponse();
+        $expectedResponse->status_code = 500;
+        $expectedResponse->success = false;
+
+        $this->getRequestMock()
+            ->shouldReceive('get')
+            ->once()
+            ->andReturn($expectedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::GET_OAUTH_CLIENT_FROM_EDGE, Mockery::any()])
+            ->once();
+
+        $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
+        try {
+            $edgeService->getOauth2Client($clientId);
+        } catch (\Exception $ex) {
+            $this->assertEquals("Request to find oauth2 client in edge failed", $ex->getMessage());
         }
     }
 }
