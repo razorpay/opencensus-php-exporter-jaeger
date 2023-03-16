@@ -172,6 +172,30 @@ return [
         ],
     ],
 
+    'testPostAuthCodeWithInvalidMerchantId' => [
+        'request'   => [
+            'method'  => 'delete',
+            'url'     => '/authorize',
+            'content' => [
+                'token'       => 'success',
+                'client_id'   => '30000000000000',
+                'merchant_id' => '',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'Invalid id passed for merchant'
+                ],
+            ],
+            'status_code' => 400
+        ],
+        'exception' => [
+            'class'   => 'App\Exception\BadRequestValidationFailureException',
+            'message' => 'Invalid id passed for merchant',
+        ],
+    ],
+
     'testPostAccessToken' => [
         'request'  => [
             'method'  => 'POST',

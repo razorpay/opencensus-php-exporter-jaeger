@@ -99,7 +99,7 @@ class Service
     {
         Trace::info(TraceCode::POST_AUTHORIZE_REQUEST, ['merchant_id' => $input['merchant_id']]);
 
-        if (isset($input['merchant_id']) === false)
+        if (isset($input['merchant_id']) === false or empty($input['merchant_id']))
         {
             throw new BadRequestValidationFailureException('Invalid id passed for merchant');
         }

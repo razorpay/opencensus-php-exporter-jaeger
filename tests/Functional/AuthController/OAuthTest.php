@@ -183,6 +183,23 @@ class OAuthTest extends TestCase
         $this->startTest();
     }
 
+    public function testPostAuthCodeWithInvalidMerchantId()
+    {
+        $application = Application\Entity::factory()->create();
+
+        Client\Entity::factory()->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+
+        Client\Entity::factory()->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $application->getId(),
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $this->startTest();
+    }
+
     public function testPostAuthCodeWithReject()
     {
         $application = Application\Entity::factory()->create();
