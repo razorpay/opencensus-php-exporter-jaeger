@@ -9,7 +9,7 @@ Trace data to a Jaeger instance using Thrift (Compact Protocol) over UDP.
 
 ## Requirements
 
-* PHP >= 5.6
+* PHP >= 5.6 
 * 64-bit version of PHP
 
 ## Installation & basic usage
