@@ -52,7 +52,7 @@ jobs:
           tags: c.rzp.io/${{ github.repository }}:${{ github.sha }}
   run_test:
     name: Test Suite
-    runs-on: [ self-hosted ]
+    runs-on: [ self-hosted, non-api ]
     needs: [ cancel ]
     continue-on-error: false
     container:
@@ -208,7 +208,7 @@ jobs:
         env:
           SPINNAKER_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
           GITHUB_TOKEN: '${{ secrets.GIT_TOKEN }}'
-          EDGE_PIPELINE_ID: "207b79ee-3ec7-4a69-8b66-f3715f729dc0"
+          EDGE_PIPELINE_ID: "deployment-v2"
         run: >
           ./.github/scripts/run-edge-e2e.sh ${{ github.sha }} ${{ secrets.ARGO_TOKEN }}
   workflow_status:
