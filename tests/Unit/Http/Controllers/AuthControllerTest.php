@@ -2,12 +2,13 @@
 
 namespace App\Tests\Unit\Http\Controllers;
 
+use Mockery;
+use Exception;
+use ReflectionException;
+use Mockery\MockInterface;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AuthController;
 use App\Tests\Unit\UnitTestCase as UnitTestCase;
-use Exception;
-use Illuminate\Support\Facades\DB;
-use Mockery;
-use Mockery\MockInterface;
 
 class AuthControllerTest extends UnitTestCase
 {
@@ -113,10 +114,10 @@ class AuthControllerTest extends UnitTestCase
      * @Test '/authorize'
      * @runInSeparateProcess
      * @preserveGlobalState disabled
-     * getAuthorize should return ERROR VIEW('authorize') with Exception String.
+     * getAuthorize should return ERROR VIEW('authorize_error') with Exception String.
      * @return void
      */
-    public function testGetAuthorizeExceptionView()
+    public function testGetAuthorizeExceptionView(): void
     {
         $this->getAuthServiceMock()
             ->shouldReceive('getAuthorizeViewData')
@@ -126,7 +127,44 @@ class AuthControllerTest extends UnitTestCase
         $response = $controller->getAuthorize();
 
         $partialResponse = $this->getErrorMessage(self::VALIDATION_FAILED);
+
+        $this->assertEquals(AuthController::AUTHORIZE_ERROR_VIEW, $response->name());
         $this->assertEquals($response->getData(), $partialResponse);
+    }
+
+    /**
+     * @Test '/authorize'
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * getAuthorize should return VIEW('authorize_pg') with Data.
+     * @return void
+     */
+    public function testGetAuthorizeForPG(): void
+    {
+        $mockResponseData = [
+            'application'   =>
+                [
+                    'name' => 'Acme Corp',
+                    'logo' => null
+                ],
+            'scopes'        => [
+                "read_only" => "Allow read-only access to all the Payment Gateway resources"
+            ],
+            'dashboard_url' => 'https://example.com/',
+            'query_params'  => ''
+        ];
+
+        $this->getAuthServiceMock()
+             ->shouldReceive('getAuthorizeViewData')
+             ->andReturn($mockResponseData);
+
+        $controller = new AuthController();
+
+        $response   = $controller->getAuthorize();
+
+        $this->assertEquals(AuthController::AUTHORIZE_PG_VIEW, $response->name());
+
+        $this->assertEquals($response['data'], $mockResponseData);
     }
 
     /**
@@ -136,25 +174,31 @@ class AuthControllerTest extends UnitTestCase
      * getAuthorize should return VIEW('authorize') with Data.
      * @return void
      */
-    public function testGetAuthorize()
+    public function testGetAuthorizeForDefault(): void
     {
         $mockResponseData = [
-            'application' =>
+            'application'   =>
                 [
                     'name' => 'Acme Corp',
                     'logo' => null
                 ],
-            'scopes' => ['read_only'],
+            'scopes'        => [
+                "rx_read_only" => "Allow read-only access to all the Payment Gateway resources"
+            ],
             'dashboard_url' => 'https://example.com/',
-            'query_params' => ''
+            'query_params'  => ''
         ];
 
         $this->getAuthServiceMock()
-            ->shouldReceive('getAuthorizeViewData')
-            ->andReturn($mockResponseData);
+             ->shouldReceive('getAuthorizeViewData')
+             ->andReturn($mockResponseData);
 
         $controller = new AuthController();
-        $response = $controller->getAuthorize();
+
+        $response   = $controller->getAuthorize();
+
+        $this->assertEquals(AuthController::AUTHORIZE_DEFAULT_VIEW, $response->name());
+
         $this->assertEquals($response['data'], $mockResponseData);
     }
 
@@ -308,7 +352,7 @@ class AuthControllerTest extends UnitTestCase
      * getAuthorizeMultiToken should Return VIEW('authorize_multi_token') with data
      * @return void
      */
-    public function testGetAuthorizeMultiToken()
+    public function testGetAuthorizeMultiToken(): void
     {
         $mockResponseData = [
             'application' =>
@@ -316,7 +360,9 @@ class AuthControllerTest extends UnitTestCase
                     'name' => 'Acme Corp',
                     'logo' => null
                 ],
-            'scopes' => ['read_only'],
+            'scopes'        => [
+                "read_only" => "Allow read-only access to all the Payment Gateway resources"
+            ],
             'dashboard_url' => 'https://example.com/',
             'query_params' => ''
         ];
@@ -326,9 +372,11 @@ class AuthControllerTest extends UnitTestCase
             ->andReturn($mockResponseData);
 
         $controller = new AuthController();
-        $response = $controller->getAuthorizeMultiToken()->getData();
+        $response = $controller->getAuthorizeMultiToken();
 
-        $this->assertEquals($response['data'], $mockResponseData);
+        $this->assertEquals(AuthController::AUTHORIZE_MULTI_TOKEN_VIEW, $response->name());
+
+        $this->assertEquals($response->getData()['data'], $mockResponseData);
     }
 
     /**
@@ -338,7 +386,7 @@ class AuthControllerTest extends UnitTestCase
      * getAuthorizeMultiToken should Return VIEW('authorize_error') with data
      * @return void
      */
-    public function testGetAuthorizeMultiTokenWithException()
+    public function testGetAuthorizeMultiTokenWithException(): void
     {
         $this->getAuthServiceMock()
             ->shouldReceive('getAuthorizeMultiTokenViewData')
@@ -348,6 +396,9 @@ class AuthControllerTest extends UnitTestCase
         $response = $controller->getAuthorizeMultiToken();
 
         $partialResponse = $this->getErrorMessage(self::VALIDATION_FAILED);
+
+        $this->assertEquals(AuthController::AUTHORIZE_ERROR_VIEW, $response->name());
+
         $this->assertEquals($response->getData(), $partialResponse);
     }
 
@@ -370,10 +421,45 @@ class AuthControllerTest extends UnitTestCase
     }
 
     /**
-     * @return \string[][]
+     * @return string[][]
      */
     public function getErrorMessage($message)
     {
         return ['error' => ['message' => $message]];
+    }
+
+    /**
+     * Tests the scope to view map
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @throws ReflectionException
+     */
+    public function testGetViewForScope()
+    {
+        $class = new \ReflectionClass('App\Http\Controllers\AuthController');
+
+        $method = $class->getMethod('getViewForScope');
+
+        // test for PG scopes
+        $response = $method->invokeArgs(new AuthController(), [["read_only"]]);
+        $this->assertEquals(AuthController::AUTHORIZE_PG_VIEW, $response);
+
+        $response = $method->invokeArgs(new AuthController(), [["read_write"]]);
+        $this->assertEquals(AuthController::AUTHORIZE_PG_VIEW, $response);
+
+        // test for non PG scopes
+        $response = $method->invokeArgs(new AuthController(), [["rx_read_only"]]);
+        $this->assertEquals(AuthController::AUTHORIZE_DEFAULT_VIEW, $response);
+
+        // test for unmapped scopes
+        $response = $method->invokeArgs(new AuthController(), [["unmapped_scope"]]);
+        $this->assertEquals(AuthController::AUTHORIZE_DEFAULT_VIEW, $response);
+
+        // test that the view corresponding to the first scope is picked if multiple scopes are passed
+        $response = $method->invokeArgs(new AuthController(), [["read_write", "rx_read_write"]]);
+        $this->assertEquals(AuthController::AUTHORIZE_PG_VIEW, $response);
+
+        $response = $method->invokeArgs(new AuthController(), [["rx_read_write", "read_write"]]);
+        $this->assertEquals(AuthController::AUTHORIZE_DEFAULT_VIEW, $response);
     }
 }

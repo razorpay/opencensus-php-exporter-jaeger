@@ -56,7 +56,7 @@ class OAuthTest extends TestCase
         $this->assertStringContainsString($expectedString, $response->getContent());
     }
 
-    public function testGetAuthorizeUrlWithClient()
+    public function testGetAuthorizeUrlWithClientWithNonPGScope()
     {
         $application = Application\Entity::factory()->create();
 
@@ -75,7 +75,7 @@ class OAuthTest extends TestCase
             'url'    => '/authorize?response_type=code' .
                 '&client_id=' . $devClient->getId() .
                 '&redirect_uri=https://www.example.com' .
-                '&scope=read_only' .
+                '&scope=rx_read_only' .
                 '&state=123',
         ];
 
@@ -84,6 +84,39 @@ class OAuthTest extends TestCase
         $expectedString = 'Allow <span class="emphasis">' .
             $application->getName() .
             '</span> to access your <span class="emphasis merchant-name"></span> account on Razorpay?';
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertStringContainsString($expectedString, $response->getContent());
+    }
+
+    public function testGetAuthorizeUrlWithClientWithPGScope()
+    {
+        $application = Application\Entity::factory()->create();
+
+        Client\Entity::factory()->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+
+        $devClient = Client\Entity::factory()->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $application->getId(),
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $data = [
+            'method' => 'get',
+            'url'    => '/authorize?response_type=code' .
+                        '&client_id=' . $devClient->getId() .
+                        '&redirect_uri=https://www.example.com' .
+                        '&scope=read_only' .
+                        '&state=123',
+        ];
+
+        $response = $this->sendRequest($data);
+
+        $expectedString = '<span class="emphasis">'.
+                          $application->getName() .
+                          '</span> wants access to your Razorpay Account.';
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());

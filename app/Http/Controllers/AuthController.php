@@ -3,19 +3,38 @@
 namespace App\Http\Controllers;
 
 use Request;
-use Illuminate\Contracts\Debug\ExceptionHandler;
-
 use App\Models\Auth;
 use App\Exception\BadRequestException;
+use Razorpay\OAuth\Scope\ScopeConstants;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Razorpay\OAuth\Exception\BadRequestException as OAuthBadRequestException;
 
 class AuthController extends Controller
 {
-    protected $authService;
+    public const AUTHORIZE_DEFAULT_VIEW = 'authorize';
+
+    public const AUTHORIZE_PG_VIEW = 'authorize_pg';
+
+    public const AUTHORIZE_MULTI_TOKEN_VIEW = 'authorize_multi_token';
+
+    public const AUTHORIZE_ERROR_VIEW = 'authorize_error';
+
+    protected const SCOPE_TO_VIEW_MAP = [
+        ScopeConstants::READ_ONLY               => self::AUTHORIZE_PG_VIEW,
+        ScopeConstants::READ_WRITE              => self::AUTHORIZE_PG_VIEW,
+        ScopeConstants::RX_READ_ONLY            => self::AUTHORIZE_DEFAULT_VIEW,
+        ScopeConstants::RX_READ_WRITE           => self::AUTHORIZE_DEFAULT_VIEW,
+        ScopeConstants::TALLY_READ_ONLY         => self::AUTHORIZE_DEFAULT_VIEW,
+        ScopeConstants::TALLY_READ_WRITE        => self::AUTHORIZE_DEFAULT_VIEW,
+        ScopeConstants::APPLE_WATCH_READ_WRITE  => self::AUTHORIZE_DEFAULT_VIEW,
+        ScopeConstants::X_MOBILE_APP            => self::AUTHORIZE_DEFAULT_VIEW,
+        ScopeConstants::X_MOBILE_APP_2_FA_TOKEN => self::AUTHORIZE_DEFAULT_VIEW,
+    ];
 
     public function getRoot()
     {
         $response['message'] = 'Welcome to Razorpay Auth!';
+
         return response()->json($response);
     }
 
@@ -46,9 +65,11 @@ class AuthController extends Controller
         {
             $data = $this->service()->getAuthorizeViewData($input);
 
+            $view = $this->getViewForScope(array_keys($data['scopes']));
+
             $data['query_params'] = request()->getQueryString();
 
-            return view('authorize')->with('data', $data);
+            return view($view)->with('data', $data);
         }
         catch (\Throwable $e)
         {
@@ -128,7 +149,7 @@ class AuthController extends Controller
 
             $data['query_params'] = request()->getQueryString();
 
-            return view('authorize_multi_token')->with('data', $data);
+            return view(self::AUTHORIZE_MULTI_TOKEN_VIEW)->with('data', $data);
         }
         catch (\Throwable $e)
         {
@@ -172,7 +193,7 @@ class AuthController extends Controller
         //
         if ((env('APP_DEBUG') === true) or
             (($e instanceof BadRequestException) or
-            ($e instanceof OAuthBadRequestException)))
+             ($e instanceof OAuthBadRequestException)))
         {
             $message = $e->getMessage();
         }
@@ -182,12 +203,32 @@ class AuthController extends Controller
         ];
 
         // TODO: Think of displaying the request_id on the error page. Will help resolving issues.
-        return view('authorize_error')->with('error', $error);
+        return view(self::AUTHORIZE_ERROR_VIEW)->with('error', $error);
     }
 
     protected function service()
     {
         return new Auth\Service();
+    }
+
+    /**
+     * Returns the Auth screen template to be used as the view corresponding to the requested scopes.
+     * If the requested scope is not mapped to any view then the default view is returned.
+     *
+     * Currently, we return the template corresponding to the first scope requested by the client.
+     *
+     * @param array $scopes
+     *
+     * @return string
+     */
+    protected function getViewForScope(array $scopes): string
+    {
+        if (array_key_exists($scopes[0], self::SCOPE_TO_VIEW_MAP) === true)
+        {
+            return self::SCOPE_TO_VIEW_MAP[$scopes[0]];
+        }
+
+        return self::AUTHORIZE_DEFAULT_VIEW;
     }
 }
 
