@@ -32,6 +32,8 @@ DATA='{
         "repository_name": "razorpay/auth-service",
         "chart_values": {
             "ephemeral_db": true,
+            "web_requests_cpu" : "200m",
+            "auth_replicas" : 2,
             "auth-outbox-relay": {
                 "ttl": "{{ .Values.ttl }}",
                 "devstack_label": "{{ .Values.devstack_label }}",
@@ -46,7 +48,9 @@ DATA='{
             "name": "credcase",
             "commit_id": "'"$CREDCASE_COMMIT"'",
             "chart_values": {
-              "ephemeral_db": true
+              "ephemeral_db": true,
+              "web_requests_cpu" : "100m",
+              "credcase_replicas" : 2
             }
         },
         {
@@ -55,14 +59,18 @@ DATA='{
             "chart_values": {
                 "create_mock_upstream": true,
                 "mock_image": '$MOCK_GATEWAY_COMMIT',
+                "mock_upstream_replicas" : 2,
                 "argo": {
                   "execute": true,
                   "tf_commit": '$TERRAFORM_COMMIT'
                 },
+                "ephemeral_cache":true,
                 "ephemeral_db":true,
                 "database":{
                   "bootstrap":true
-                }
+                },
+                "edge_cpu_requests" : "200m",
+                "edge_replicas" : 2
             }
         },
         {
@@ -83,7 +91,9 @@ DATA='{
                       "user": "spine",
                       "ingest": true
                     }
-                ]
+                ],
+                 "authz_admin_replicas":2,
+                 "authz_enforcer_replicas":2
             }
         }
     ]
