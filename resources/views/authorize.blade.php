@@ -187,6 +187,12 @@
 
             </ul>
         </div>
+
+        <div class="main-content">
+            <p class="emphasis">
+                You can remove this app from your account under Settings.
+        </div>
+
         <div class="line-break"></div>
         <div>
             <input type="checkbox" class="checkbox">

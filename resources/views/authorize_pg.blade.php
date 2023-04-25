@@ -227,6 +227,12 @@
                 @endif
             </ul>
         </div>
+
+        <div class="main-content">
+            <p class="emphasis">
+                You can remove this app from your account under Settings.
+        </div>
+
         <div class="line-break"></div>
         <div class="button-toolbar">
             <form method="POST" action="/authorize">

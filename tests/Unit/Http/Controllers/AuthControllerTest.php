@@ -148,7 +148,7 @@ class AuthControllerTest extends UnitTestCase
                     'logo' => null
                 ],
             'scopes'        => [
-                "read_only" => "Allow read-only access to all the Payment Gateway resources"
+                "read_only" => "View payments, view refunds, view disputes & settlements"
             ],
             'dashboard_url' => 'https://example.com/',
             'query_params'  => ''
@@ -183,7 +183,7 @@ class AuthControllerTest extends UnitTestCase
                     'logo' => null
                 ],
             'scopes'        => [
-                "rx_read_only" => "Allow read-only access to all the Payment Gateway resources"
+                "rx_read_only" => "View payments, view refunds, view disputes & settlements"
             ],
             'dashboard_url' => 'https://example.com/',
             'query_params'  => ''
@@ -361,7 +361,7 @@ class AuthControllerTest extends UnitTestCase
                     'logo' => null
                 ],
             'scopes'        => [
-                "read_only" => "Allow read-only access to all the Payment Gateway resources"
+                "read_only" => "View payments, view refunds, view disputes & settlements"
             ],
             'dashboard_url' => 'https://example.com/',
             'query_params' => ''
