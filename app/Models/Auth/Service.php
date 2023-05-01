@@ -499,8 +499,12 @@ class Service
 
         $appId     = $client->getApplicationId();
         $partnerId = $client->getMerchantId();
+        $data      = [
+            'env'   => $client->getEnvironment(),
+            'ip'    => $this->app['request']->ip(),
+        ];
 
-        $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId);
+        $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId, $data);
     }
 
   public function getAuthorizeMultiTokenViewData(array $input)

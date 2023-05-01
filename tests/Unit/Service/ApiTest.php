@@ -352,12 +352,20 @@ class ApiTest extends UnitTestCase
             ->andReturn($expectedResponse);
 
         $api = new Api();
+
+        $data =   [
+            'env' => 'prod',
+            'ip'  => 'example'
+        ];
+
         $api->mapMerchantToApplication(
             'app_id',
             'merchant_id',
-            'partner_id'
+            'partner_id',
+            $data
         );
     }
+
 
     /**
      * @Test
@@ -387,11 +395,18 @@ class ApiTest extends UnitTestCase
             ->andReturn($exception);
 
         $api = new Api();
+
+        $data =   [
+            'env' => 'prod',
+            'ip'  => 'example'
+        ];
+
         try {
             $api->mapMerchantToApplication(
                 'app_id',
                 'merchant_id',
-                'partner_id'
+                'partner_id',
+                $data
             );
         } catch (LogicException $ex) {
             $this->assertEquals('primary_host_name missing merchant org details', $ex->getMessage());
