@@ -194,15 +194,13 @@ class Api
         return $protocolIdentifier.$orgDetails['primary_host_name'];
     }
 
-    public function mapMerchantToApplication(string $appId, string $merchantId, string $partnerId, array $data)
+    public function mapMerchantToApplication(string $appId, string $merchantId, string $partnerId)
     {
         $url = $this->apiUrl . '/merchants/' . $merchantId . '/applications';
 
         $postPayload = [
             'application_id'   => $appId,
             'partner_id'       => $partnerId,
-            'env'              => $data['env'],
-            'ip'               => $data['ip'],
         ];
 
         try
