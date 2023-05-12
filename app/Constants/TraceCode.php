@@ -40,6 +40,10 @@ class TraceCode extends BaseTraceCode
     const POST_AUTHORIZE_CREATE_LIVE_TOKEN                          = 'POST_AUTHORIZE_CREATE_LIVE_TOKEN';
     const POST_AUTHORIZE_CREATE_TEST_TOKEN                          = 'POST_AUTHORIZE_CREATE_TEST_TOKEN';
     const VALIDATE_CLIENT_EDGE_SYNC                                 = 'VALIDATE_CLIENT_EDGE_SYNC';
+    const REVOKE_TOKENS_REQUEST                                     = 'REVOKE_TOKENS_REQUEST';
+    const REVOKE_TOKEN_FAILED                                       = 'REVOKE_TOKEN_FAILED';
+    const REVOKE_APPLICATION_ACCESS_REQUEST                         = 'REVOKE_APPLICATION_ACCESS_REQUEST';
+    const MERCHANT_APP_MAPPING_REVOKE_REQUEST                       = 'MERCHANT_APP_MAPPING_REVOKE_REQUEST';
     const GET_SUBMERCHANT_APPLICATIONS_REQUEST                      = 'GET_SUBMERCHANT_APPLICATIONS_REQUEST';
 
     // ----- Failure Codes ----

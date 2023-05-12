@@ -446,6 +446,11 @@ class ApiTest extends UnitTestCase
     public function testRevokeMerchantApplicationMappingThrowsException()
     {
         $exception = new Exception('some_error');
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::MERCHANT_APP_MAPPING_REVOKE_REQUEST, Mockery::any()])
+            ->once();
+
         $this->getRequestMock()
             ->shouldReceive('delete')
             ->once()

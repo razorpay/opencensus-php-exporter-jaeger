@@ -81,6 +81,21 @@ return [
         ]
     ],
 
+    'testRevokeApplicationAccess' => [
+        'request'  => [
+            'url'     => '/tokens/submerchant/revoke_for_application/{id}',
+            'method'  => 'PUT',
+            'content' => [
+                'merchant_id' => '10000000000000',
+            ]
+        ],
+        'response' => [
+            'content' => [
+                'message' => 'Application Access Revoked'
+            ]
+        ]
+    ],
+
     'testRevokeAccessTokenByPartner' => [
         'request'  => [
             'method'  => 'POST',

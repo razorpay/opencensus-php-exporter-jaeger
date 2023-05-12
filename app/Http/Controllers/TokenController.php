@@ -136,6 +136,30 @@ class TokenController extends Controller
     }
 
     /**
+     * It revokes all submerchant tokens active for an application.
+     * Once all tokens are revoked, it will make a call to API service to revoke submerchant-application mapping
+     * and trigger a webhook to this application to notify partner about this revocation.
+     * @param string $id
+     *
+     * @throws LogicException
+     */
+    public function revokeSubmerchantTokensForApplication(string $id)
+    {
+        $input = Request::all();
+
+        Trace::info(TraceCode::REVOKE_APPLICATION_ACCESS_REQUEST, compact('id', 'input'));
+
+        $response = $this->authServerTokenService->revokeApplicationAccess($id, $input);
+
+        if($response === false)
+        {
+            throw new LogicException('Error while revoking application access');
+        }
+
+        return response()->json(['message' => 'Application Access Revoked']);
+    }
+
+    /**
      * Revoke access token for mobile
      * @param $tokens
      * @return void

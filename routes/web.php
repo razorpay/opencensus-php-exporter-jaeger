@@ -79,6 +79,12 @@ $app->patch('/applications/{id}', [
     'uses'       => 'ApplicationController@update'
 ]);
 
+$app->put('/tokens/submerchant/revoke_for_application/{id}', [
+    'middleware' => ['auth.api','auth.hypertrace'],
+    'as'         => 'revoke_application_access',
+    'uses'       => 'TokenController@revokeSubmerchantTokensForApplication'
+]);
+
 $app->post('/clients', [
     'middleware' => ['auth.api','auth.hypertrace'],
     'as'         => 'create_application_clients',

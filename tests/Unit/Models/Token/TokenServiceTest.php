@@ -2,22 +2,33 @@
 
 namespace Unit\Models\Admin;
 
-use App\Constants\RequestParams;
-use App\Models\Token\Service;
-use App\Tests\Unit\UnitTestCase;
 use Mockery\MockInterface;
+use App\Constants\TraceCode;
+use App\Models\Token\Service;
+use App\Constants\RequestParams;
+use App\Tests\Unit\UnitTestCase;
+use Razorpay\OAuth\Token\Entity;
+use Razorpay\Trace\Facades\Trace;
+use Razorpay\OAuth\Base\PublicCollection;
 
 class TokenServiceTest extends UnitTestCase
 {
+    const MERCHANT_ID = '10000000000000';
+    const APPLICATION_ID = '10000000000000';
+    const TOKEN_ID = '30000000000000';
 
     protected $oauthTokenService;
     protected $oauthRefreshTokenService;
+    protected $razorpayOauthTokenRepositoryMock;
+    private $authServiceMock;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->setOauthTokenService(\Mockery::mock('overload:Razorpay\OAuth\Token\Service'));
+        $this->setAuthServiceMock(\Mockery::mock('overload:App\Models\Auth\Service'));
         $this->setOauthRefreshTokenService(\Mockery::mock('overload:Razorpay\OAuth\RefreshToken\Service'));
+        $this->setRazorpayOauthTokenRepositoryMock(\Mockery::mock('overload:Razorpay\OAuth\Token\Repository'));
     }
 
 
@@ -38,6 +49,19 @@ class TokenServiceTest extends UnitTestCase
     }
 
     /**
+     * @param mixed $authServiceMock
+     */
+    public function setAuthServiceMock($authServiceMock)
+    {
+        $this->authServiceMock = $authServiceMock;
+    }
+
+    public function getAuthServiceMock()
+    {
+        return $this->authServiceMock;
+    }
+
+    /**
      * @return MockInterface
      */
     public function getOauthRefreshTokenService()
@@ -51,6 +75,22 @@ class TokenServiceTest extends UnitTestCase
     public function setOauthRefreshTokenService($oauthRefreshTokenService)
     {
         $this->oauthRefreshTokenService = $oauthRefreshTokenService;
+    }
+
+    /**
+     * @return MockInterface
+     */
+    public function getRazorpayOauthTokenRepositoryMock()
+    {
+        return $this->razorpayOauthTokenRepositoryMock;
+    }
+
+    /**
+     * @param mixed $razorpayOauthTokenRepositoryMock
+     */
+    public function setRazorpayOauthTokenRepositoryMock($razorpayOauthTokenRepositoryMock)
+    {
+        $this->razorpayOauthTokenRepositoryMock = $razorpayOauthTokenRepositoryMock;
     }
 
     /**
@@ -76,6 +116,195 @@ class TokenServiceTest extends UnitTestCase
 
         $service = new Service();
         $service->handleRevokeTokenRequest($input);
+    }
+
+    /**
+     * @Test '/tokens/submerchant/revoke_for_application/{id}'
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * revokeSubmerchantTokensForApplication should delete all tokens along with submerchant-application mapping
+     * @return void
+     */
+    public function testRevokeApplicationAccess()
+    {
+        $input = ['merchant_id' => self::MERCHANT_ID];
+        $token = new Entity();
+        $token->setAttribute("id", self::TOKEN_ID);
+
+        $fetchTokenMockedResponse = PublicCollection::make([$token]);
+
+        $this->getRazorpayOauthTokenRepositoryMock()
+            ->shouldReceive('fetchTokenIdsByMerchantAndApp')
+            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID])
+            ->andReturn($fetchTokenMockedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::REVOKE_TOKENS_REQUEST, \Mockery::any()])
+            ->once();
+
+        $this->getRazorpayOauthTokenRepositoryMock()
+            ->shouldReceive('beginTransaction');
+
+        $this->getOauthTokenService()
+            ->shouldReceive('revokeAccessToken')
+            ->withArgs([self::TOKEN_ID, $input])
+            ->andReturn([])
+            ->once();
+
+        $this->getAuthServiceMock()
+            ->shouldReceive('getApiService')
+            ->andReturn(\Mockery::mock('overload:App\Services\Api', function ($mock) {
+                $mock->shouldReceive('revokeMerchantApplicationMapping')
+                    ->once()
+                    ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID])
+                    ->andReturn(true);
+            }));
+
+        $this->getRazorpayOauthTokenRepositoryMock()
+            ->shouldReceive('commit');
+
+        $service = new Service();
+        $response = $service->revokeApplicationAccess(self::APPLICATION_ID, $input);
+
+        $this->assertEquals(true, $response);
+    }
+
+    /**
+     * @Test '/tokens/submerchant/revoke_for_application/{id}'
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * revokeSubmerchantTokensForApplication should give an error when subm-app mapping deletion API fails
+     * @return void
+     */
+    public function testRevokeApplicationAccessWhileAccessMapDeleteFailed()
+    {
+        $input = ['merchant_id' => self::MERCHANT_ID];
+        $token = new Entity();
+        $token->setAttribute("id", self::TOKEN_ID);
+
+        $fetchTokenMockedResponse = PublicCollection::make([$token]);
+
+        $this->getRazorpayOauthTokenRepositoryMock()
+            ->shouldReceive('fetchTokenIdsByMerchantAndApp')
+            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID])
+            ->andReturn($fetchTokenMockedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::REVOKE_TOKENS_REQUEST, \Mockery::any()])
+            ->once();
+
+        $this->getRazorpayOauthTokenRepositoryMock()
+            ->shouldReceive('beginTransaction');
+
+        $this->getOauthTokenService()
+            ->shouldReceive('revokeAccessToken')
+            ->withArgs([self::TOKEN_ID, $input])
+            ->andReturn([])
+            ->once();
+
+        $this->getAuthServiceMock()
+            ->shouldReceive('getApiService')
+            ->andReturn(\Mockery::mock('overload:App\Services\Api', function ($mock) {
+                $mock->shouldReceive('revokeMerchantApplicationMapping')
+                    ->once()
+                    ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID])
+                    ->andReturn(false);
+            }));
+
+        $this->getRazorpayOauthTokenRepositoryMock()
+            ->shouldReceive('rollback');
+
+        $service = new Service();
+        $response = $service->revokeApplicationAccess(self::APPLICATION_ID, $input);
+
+        $this->assertEquals(false, $response);
+    }
+
+    /**
+     * @Test '/tokens/submerchant/revoke_for_application/{id}'
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * revokeSubmerchantTokensForApplication should return an error when token revoke step fails
+     * @return void
+     */
+    public function testRevokeApplicationAccessWhileTokenRevokeFailed()
+    {
+        $input = ['merchant_id' => self::MERCHANT_ID];
+        $token = new Entity();
+        $token->setAttribute("id", self::TOKEN_ID);
+
+        $fetchTokenMockedResponse = PublicCollection::make([$token]);
+
+        $this->getRazorpayOauthTokenRepositoryMock()
+            ->shouldReceive('fetchTokenIdsByMerchantAndApp')
+            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID])
+            ->andReturn($fetchTokenMockedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::REVOKE_TOKENS_REQUEST, \Mockery::any()])
+            ->once();
+
+        $this->getRazorpayOauthTokenRepositoryMock()
+            ->shouldReceive('beginTransaction');
+
+        $this->getOauthTokenService()
+            ->shouldReceive('revokeAccessToken')
+            ->withArgs([self::TOKEN_ID, $input])
+            ->andThrow(new \Exception('Some error'));
+
+        Trace::shouldReceive('critical')
+            ->withArgs([TraceCode::REVOKE_TOKEN_FAILED, \Mockery::any()])
+            ->once();
+
+        $this->getRazorpayOauthTokenRepositoryMock()
+            ->shouldReceive('rollback');
+
+        $this->getAuthServiceMock()
+            ->shouldReceive('getApiService')
+            ->andReturn(\Mockery::mock('overload:App\Services\Api', function ($mock) {
+                $mock->shouldReceive('revokeMerchantApplicationMapping')
+                    ->never();
+            }));
+
+        $service = new Service();
+        $response = $service->revokeApplicationAccess(self::APPLICATION_ID, $input);
+
+        $this->assertEquals(false, $response);
+    }
+
+    /**
+     * @Test '/tokens/submerchant/revoke_for_application/{id}'
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * revokeSubmerchantTokensForApplication should return an error when we there are no active tokens
+     * for the merchant-application pair.
+     *
+     * @return void
+     */
+    public function testRevokeApplicationAccessWithNoActiveToken()
+    {
+        $input = ['merchant_id' => self::MERCHANT_ID];
+
+        $fetchTokenMockedResponse = PublicCollection::make([]);
+
+        $this->getRazorpayOauthTokenRepositoryMock()
+            ->shouldReceive('fetchTokenIdsByMerchantAndApp')
+            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID])
+            ->andReturn($fetchTokenMockedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::REVOKE_TOKENS_REQUEST, \Mockery::any()])
+            ->once();
+
+        try
+        {
+            $service = new Service();
+            $service->revokeApplicationAccess(self::APPLICATION_ID, $input);
+        }
+        catch (\Exception $ex)
+        {
+            $this->assertEquals("This application doesn't have any access of the merchant", $ex->getMessage());
+        }
     }
 
     /**

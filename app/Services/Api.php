@@ -223,11 +223,20 @@ class Api
 
     public function revokeMerchantApplicationMapping(string $appId, string $merchantId)
     {
+        Trace::info(TraceCode::MERCHANT_APP_MAPPING_REVOKE_REQUEST,
+            [
+                'merchant_id'    => $merchantId,
+                'application_id' => $appId
+            ]
+        );
+
         $url = $this->apiUrl . '/merchants/' . $merchantId . '/applications/' . $appId;
 
         try
         {
             Requests::delete($url, $this->defaultHeaders, $this->options);
+
+            return true;
         }
         catch (\Throwable $e)
         {
@@ -238,6 +247,8 @@ class Api
             ];
 
             Trace::critical(TraceCode::MERCHANT_APP_MAPPING_FAILED, $tracePayload);
+
+            return false;
         }
     }
 

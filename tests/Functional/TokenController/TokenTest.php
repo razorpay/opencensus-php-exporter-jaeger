@@ -94,6 +94,21 @@ class TokenTest extends TestCase
         $this->startTest($data);
     }
 
+    public function testRevokeApplicationAccess()
+    {
+        $this->application = Application\Entity::factory()->create();
+        $this->prodClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $this->application->id, Client\Entity::ENVIRONMENT => 'prod']);
+        $this->devClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $this->application->id, Client\Entity::ENVIRONMENT => 'dev', Client\Entity::REVOKED_AT => time()]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::CLIENT_ID => $this->devClient->getId()]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::CLIENT_ID => $this->prodClient->getId()]);
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $data['request']['url'] = '/tokens/submerchant/revoke_for_application/'.$this->application->id;
+
+        $this->startTest($data);
+    }
+
     public function testRevokeAccessTokenByPartner()
     {
         $authCode = $this->generateAuthCode();
