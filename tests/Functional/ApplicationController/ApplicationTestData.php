@@ -207,6 +207,116 @@ return [
         ]
     ],
 
+    'testGetSubmerchantApplications' => [
+        'request'  => [
+            'url'     => '/applications/submerchant',
+            'method'  => 'GET',
+            'content' => [
+                'merchant_id' => '10000000000000',
+            ]
+        ],
+        'response' => [
+            'content' => [
+                'entity' => 'collection',
+                'count' => 1,
+                'items' => [
+                    [
+                        'application_name' => 'apptest',
+                        'scopes'    => [
+                            [
+                                'scope'         => 'read_only',
+                                'description'   => 'apptest can view payments, view refunds, view disputes & settlements'
+                            ]
+                        ],
+                        'access_granted_at' => 1562400123,
+                        'logo_url' => '/logos/8f6s8096pYQw0v.png'
+                    ]
+                ]
+            ]
+        ]
+    ],
+
+    'testGetSubmerchantApplicationsWithVaryingScopesAndCreationTime' => [
+        'request'  => [
+            'url'     => '/applications/submerchant',
+            'method'  => 'GET',
+            'content' => [
+                'merchant_id' => '10000000000000',
+            ]
+        ],
+        'response' => [
+            'content' => [
+                'entity' => 'collection',
+                'count' => 1,
+                'items' => [
+                    [
+                        'application_name' => 'apptest',
+                        'scopes'    => [
+                            [
+                                'scope'         => 'rx_read_only',
+                                'description'   => 'apptest has read-only access to all the RazorpayX resources'
+                            ],
+                            [
+                                'scope'         => 'read_write',
+                                'description'   => 'apptest can create & view payments, create & view refunds, view disputes & settlements'
+                            ]
+                        ],
+                        'access_granted_at' => 1562400120,
+                        'logo_url' => '/logos/8f6s8096pYQw0v.png'
+                    ]
+                ]
+            ]
+        ]
+    ],
+
+    'testGetMultipleSubmerchantApplications' => [
+        'request'  => [
+            'url'     => '/applications/submerchant',
+            'method'  => 'GET',
+            'content' => [
+                'merchant_id' => '10000000000000',
+            ]
+        ],
+        'response' => [
+            'content' => [
+                'entity' => 'collection',
+                'count' => 2,
+                'items' => [
+                    [
+                        'application_name' => 'apptestSecond',
+                        'scopes'    => [
+                            [
+                                'scope'         => 'rx_read_only',
+                                'description'   => 'apptestSecond has read-only access to all the RazorpayX resources'
+                            ],
+                            [
+                                'scope'         => 'read_write',
+                                'description'   => 'apptestSecond can create & view payments, create & view refunds, view disputes & settlements'
+                            ]
+                        ],
+                        'access_granted_at' => 1562400124,
+                        'logo_url' => '/logos/8f6s8096pYQw0g.png'
+                    ],
+                    [
+                        'application_name' => 'apptestFirst',
+                        'scopes'    => [
+                            [
+                                'scope'         => 'read_write',
+                                'description'   => 'apptestFirst can create & view payments, create & view refunds, view disputes & settlements'
+                            ],
+                            [
+                                'scope'         => 'read_only',
+                                'description'   => 'apptestFirst can view payments, view refunds, view disputes & settlements'
+                            ]
+                        ],
+                        'access_granted_at' => 1562400120,
+                        'logo_url' => '/logos/8f6s8096pYQw0v.png'
+                    ]
+                ]
+            ]
+        ]
+    ],
+
     //    TODO: Revert this after aggregator to reseller migration is complete (PLAT-33)
     'testRestoreApplication' => [
         'request'  => [

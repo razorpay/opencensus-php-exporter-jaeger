@@ -29,6 +29,13 @@ $app->delete('/authorize', [
     'uses' => 'AuthController@deleteAuthorize'
 ]);
 
+// This API will fetch all applications that a sub-merchant has given access to
+$app->get('/applications/submerchant', [
+    'middleware' => ['auth.api','auth.hypertrace'],
+    'as'         => 'get_submerchant_applications',
+    'uses'       => 'ApplicationController@getSubmerchantApplications'
+]);
+
 $app->post('/token', [
     'middleware' =>'auth.hypertrace',
     'as'   => 'post_access_token',

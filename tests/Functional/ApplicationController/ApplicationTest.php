@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\ApplicationController;
 
+use Razorpay\OAuth\Token;
 use Razorpay\OAuth\Client;
 use Razorpay\OAuth\Application;
 use App\Tests\TestCase as TestCase;
@@ -144,6 +145,95 @@ class ApplicationTest extends TestCase
         $data = $this->prepareTestData();
 
         $this->startTest($data);
+    }
+
+    public function testGetSubmerchantApplications()
+    {
+        $this->createTestApp(['name' => 'apptest', 'website' => 'https://www.example.com', 'logo_url' => '/logos/8f6s8096pYQw0v.png']);
+
+        $this->client = Client\Entity::factory()->create(['application_id' => $this->application->getId(), 'environment' => 'prod']);
+
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_only'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400123]);
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $content = $this->makeRequestAndGetContent($data['request']);
+
+        $data['response']['content']['items'][0]['application_id'] = $this->application->getId();
+
+        $this->assertEquals($data['response']['content'], $content);
+    }
+
+    public function testGetSubmerchantApplicationsWhenNoTokenExists()
+    {
+        $this->createTestApp(['name' => 'apptest', 'website' => 'https://www.example.com', 'logo_url' => '/logos/8f6s8096pYQw0v.png']);
+
+        Client\Entity::factory()->create(['application_id' => $this->application->getId(), 'environment' => 'prod']);
+
+        $data = & $this->testData['testGetSubmerchantApplications'];
+
+        $data['response'] = [
+            'content' => [
+                'entity' => 'collection',
+                'count' => 0,
+                'items' => []
+            ]
+        ];
+
+        $content = $this->makeRequestAndGetContent($data['request']);
+
+        $this->assertEquals($data['response']['content'], $content);
+    }
+
+    public function testGetSubmerchantApplicationsWithVaryingScopesAndCreationTime()
+    {
+        $this->createTestApp(['name' => 'apptest', 'website' => 'https://www.example.com', 'logo_url' => '/logos/8f6s8096pYQw0v.png']);
+
+        $this->client = Client\Entity::factory()->create(['application_id' => $this->application->getId(), 'environment' => 'prod']);
+
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_only'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400120, Token\Entity::REVOKED_AT => 1562400520]);
+
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_write'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400122]);
+
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['rx_read_only', 'read_write'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400124]);
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $content = $this->makeRequestAndGetContent($data['request']);
+
+        $data['response']['content']['items'][0]['application_id'] = $this->application->getId();
+
+        $this->assertEquals($data['response']['content'], $content);
+    }
+
+    public function testGetMultipleSubmerchantApplications()
+    {
+        $this->createTestApp(['name' => 'apptestFirst', 'website' => 'https://www.example.com', 'logo_url' => '/logos/8f6s8096pYQw0v.png']);
+
+        $app1 = $this->application;
+
+        $this->createTestApp(['name' => 'apptestSecond', 'website' => 'https://www.example.com', 'logo_url' => '/logos/8f6s8096pYQw0g.png']);
+
+        $app2 = $this->application;
+
+        $this->clientA = Client\Entity::factory()->create(['application_id' => $app1->getId(), 'environment' => 'prod']);
+
+        $this->clientB = Client\Entity::factory()->create(['application_id' => $app2->getId(), 'environment' => 'prod']);
+
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_only'], Token\Entity::CLIENT_ID => $this->clientA->getId(), Token\Entity::CREATED_AT => 1562400120]);
+
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_write'], Token\Entity::CLIENT_ID => $this->clientA->getId(), Token\Entity::CREATED_AT => 1562400122, Token\Entity::EXPIRES_AT => 1562410122]);
+
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['rx_read_only', 'read_write'], Token\Entity::CLIENT_ID => $this->clientB->getId(), Token\Entity::CREATED_AT => 1562400124]);
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $content = $this->makeRequestAndGetContent($data['request']);
+
+        $data['response']['content']['items'][0]['application_id'] = $app2->getId();
+        $data['response']['content']['items'][1]['application_id'] = $app1->getId();
+
+        $this->assertEquals($data['response']['content'], $content);
     }
 
     //    TODO: Revert this after aggregator to reseller migration is complete (PLAT-33)

@@ -226,4 +226,48 @@ class ApplicationControllerTest extends UnitTestCase
 
         $this->assertJsonStringEqualsJsonString(json_encode($partialResponse), $response);
     }
+
+    /**
+     * @Test '/applications/submerchant'
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * getSubmerchantApplications should return an array of applications
+     * @return void
+     */
+    public function testGetSubmerchantApplications()
+    {
+        $mockedResponse = [
+            'entity' => 'collection',
+            'count' => 1,
+            'admin' => true,
+            'items' => [
+                [
+                    'application_name' => 'app1',
+                    'application_id' => self::APPLICATION_ID,
+                    'access_granted_at' => 7862400,
+                    'scopes'    => [
+                        [
+                            'scope'         => 'read_only',
+                            'description'   => 'app1 can view payments, view refunds, view disputes & settlements'
+                        ]
+                    ],
+                    'logo_url' => self::LOGO
+                ]
+            ]
+        ];
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::GET_SUBMERCHANT_APPLICATIONS_REQUEST, Mockery::any()])
+            ->once();
+        RequestFacade::shouldReceive('all')->andReturn([]);
+        $this->getApplicationServiceMock()
+            ->shouldReceive('fetchSubmerchantApplications')
+            ->withArgs([Mockery::any()])
+            ->andReturn($mockedResponse);
+
+        $controller = new ApplicationController();
+        $response = $controller->getSubmerchantApplications()->getContent();
+
+        $this->assertJsonStringEqualsJsonString(json_encode($mockedResponse), $response);
+    }
 }

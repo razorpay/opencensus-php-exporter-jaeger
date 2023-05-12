@@ -40,6 +40,7 @@ class TraceCode extends BaseTraceCode
     const POST_AUTHORIZE_CREATE_LIVE_TOKEN                          = 'POST_AUTHORIZE_CREATE_LIVE_TOKEN';
     const POST_AUTHORIZE_CREATE_TEST_TOKEN                          = 'POST_AUTHORIZE_CREATE_TEST_TOKEN';
     const VALIDATE_CLIENT_EDGE_SYNC                                 = 'VALIDATE_CLIENT_EDGE_SYNC';
+    const GET_SUBMERCHANT_APPLICATIONS_REQUEST                      = 'GET_SUBMERCHANT_APPLICATIONS_REQUEST';
 
     // ----- Failure Codes ----
     const AUTH_AUTHORIZE_FAILURE                                    = 'AUTH_AUTHORIZE_FAILURE';

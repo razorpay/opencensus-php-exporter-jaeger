@@ -79,4 +79,15 @@ class ApplicationController extends Controller
 
         return response()->json([]);
     }
+
+    public function getSubmerchantApplications()
+    {
+        $input = Request::all();
+
+        Trace::info(TraceCode::GET_SUBMERCHANT_APPLICATIONS_REQUEST, $input);
+
+        $apps = $this->service->fetchSubmerchantApplications($input);
+
+        return response()->json($apps);
+    }
 }
