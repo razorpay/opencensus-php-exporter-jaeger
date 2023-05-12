@@ -62,7 +62,8 @@ DATA='{
                 "mock_upstream_replicas" : 2,
                 "argo": {
                   "execute": true,
-                  "tf_commit": '$TERRAFORM_COMMIT'
+                  "tf_commit": '$TERRAFORM_COMMIT',
+                  "services": "request-termination"
                 },
                 "ephemeral_cache":true,
                 "ephemeral_db":true,
