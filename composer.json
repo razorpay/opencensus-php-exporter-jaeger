@@ -16,7 +16,7 @@
         "laravel/lumen-framework": "^9.1.0",
         "razorpay/spine": "^2.0.0",
         "lcobucci/jwt":"4.1.5",
-        "razorpay/oauth":"dev-oauth_dualwrite",
+        "razorpay/oauth":"^6.1.1",
         "razorpay/outbox-php": "^2.0.0",
         "laravel/helpers": "^1.5",
         "ext-json": "*",

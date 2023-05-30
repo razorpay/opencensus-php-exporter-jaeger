@@ -55,6 +55,8 @@ class RepositoryTest extends UnitTestCase
             'environment' => 'dev',
         ]);
 
+        $secret = "13213";
+        $tracerMock->shouldReceive('inSpan')->once()->with(\Mockery::any(), \Mockery::any())->andReturn($secret);
         $devClient->generateSecret();
 
         $token = new Entity();

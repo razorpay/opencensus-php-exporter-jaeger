@@ -26,7 +26,6 @@ class AuthController extends Controller
         ScopeConstants::RX_READ_WRITE           => self::AUTHORIZE_DEFAULT_VIEW,
         ScopeConstants::TALLY_READ_ONLY         => self::AUTHORIZE_DEFAULT_VIEW,
         ScopeConstants::TALLY_READ_WRITE        => self::AUTHORIZE_DEFAULT_VIEW,
-        ScopeConstants::APPLE_WATCH_READ_WRITE  => self::AUTHORIZE_DEFAULT_VIEW,
         ScopeConstants::X_MOBILE_APP            => self::AUTHORIZE_DEFAULT_VIEW,
         ScopeConstants::X_MOBILE_APP_2_FA_TOKEN => self::AUTHORIZE_DEFAULT_VIEW,
     ];
