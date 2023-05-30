@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db8c98c9baed0626cf2795fb5a67bfcc",
+    "content-hash": "45b744bea06e65f22db198c6222dcd33",
     "packages": [
         {
             "name": "apache/thrift",
@@ -4986,12 +4986,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "e0b528cadc023e0746851f07f8028799835beb10"
+                "reference": "50d42ecc7b9ee8fa372b9a07654373ee8f97ca51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/e0b528cadc023e0746851f07f8028799835beb10",
-                "reference": "e0b528cadc023e0746851f07f8028799835beb10",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/50d42ecc7b9ee8fa372b9a07654373ee8f97ca51",
+                "reference": "50d42ecc7b9ee8fa372b9a07654373ee8f97ca51",
                 "shasum": ""
             },
             "require": {
@@ -5036,7 +5036,7 @@
                 "source": "https://github.com/razorpay/oauth/tree/6.1.2",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2023-05-29T09:03:58+00:00"
+            "time": "2023-05-30T07:29:46+00:00"
         },
         {
             "name": "razorpay/outbox-php",
