@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "45b744bea06e65f22db198c6222dcd33",
+    "content-hash": "dbf3c4008c44834c622c83acb9430bd1",
     "packages": [
         {
             "name": "apache/thrift",
@@ -4982,16 +4982,16 @@
         },
         {
             "name": "razorpay/oauth",
-            "version": "6.1.2",
+            "version": "dev-oauth_dualwrite",
             "source": {
                 "type": "git",
                 "url": "git@github.com:razorpay/oauth.git",
-                "reference": "50d42ecc7b9ee8fa372b9a07654373ee8f97ca51"
+                "reference": "286407ae4209b4d4a423abf97b50d38d5e7b233c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/razorpay/oauth/zipball/50d42ecc7b9ee8fa372b9a07654373ee8f97ca51",
-                "reference": "50d42ecc7b9ee8fa372b9a07654373ee8f97ca51",
+                "url": "https://api.github.com/repos/razorpay/oauth/zipball/286407ae4209b4d4a423abf97b50d38d5e7b233c",
+                "reference": "286407ae4209b4d4a423abf97b50d38d5e7b233c",
                 "shasum": ""
             },
             "require": {
@@ -5033,10 +5033,10 @@
                 "service"
             ],
             "support": {
-                "source": "https://github.com/razorpay/oauth/tree/6.1.2",
+                "source": "https://github.com/razorpay/oauth/tree/oauth_dualwrite",
                 "issues": "https://github.com/razorpay/oauth/issues"
             },
-            "time": "2023-05-30T07:29:46+00:00"
+            "time": "2023-05-12T01:59:54+00:00"
         },
         {
             "name": "razorpay/outbox-php",
@@ -9812,7 +9812,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "razorpay/oauth": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
