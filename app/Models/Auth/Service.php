@@ -46,7 +46,7 @@ class Service
             "App Policies" => "https://razorpay.com/s/terms/partners/payments-oauth/read-only"
         ],
         ScopeConstants::READ_WRITE    => [
-            "App Policies" => "https://razorpay.com/s/terms/partners/payments-oauth/read-write"
+            "App Policies" => "https://razorpay.com/s/terms/partners/payments-oauth/read-and-write/"
         ],
         ScopeConstants::RX_READ_ONLY  => [
             "RazorpayX Policies" => "https://razorpay.com/terms/razorpayx/partnership/"
