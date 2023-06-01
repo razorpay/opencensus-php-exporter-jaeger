@@ -75,7 +75,7 @@ class OAuthTest extends TestCase
             'url'    => '/authorize?response_type=code' .
                 '&client_id=' . $devClient->getId() .
                 '&redirect_uri=https://www.example.com' .
-                '&scope=rx_read_only' .
+                '&scope=tally_read_only' .
                 '&state=123',
         ];
 
@@ -89,7 +89,7 @@ class OAuthTest extends TestCase
         $this->assertStringContainsString($expectedString, $response->getContent());
     }
 
-    public function testGetAuthorizeUrlWithClientWithPGScope()
+    public function testGetAuthorizeUrlWithClientWithPGAndXScope()
     {
         $application = Application\Entity::factory()->create();
 
@@ -116,7 +116,25 @@ class OAuthTest extends TestCase
 
         $expectedString = '<span class="emphasis">'.
                           $application->getName() .
-                          '</span> wants access to your Razorpay Account.';
+                          '</span> wants access to your Razorpay Account';
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertStringContainsString($expectedString, $response->getContent());
+
+        $data = [
+            'method' => 'get',
+            'url'    => '/authorize?response_type=code' .
+                        '&client_id=' . $devClient->getId() .
+                        '&redirect_uri=https://www.example.com' .
+                        '&scope=rx_read_only' .
+                        '&state=123',
+        ];
+
+        $response = $this->sendRequest($data);
+
+        $expectedString = '<span class="emphasis">'.
+                          $application->getName() .
+                          '</span> wants access to your Razorpay Account';
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());

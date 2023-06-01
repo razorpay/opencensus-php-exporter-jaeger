@@ -13,17 +13,17 @@ class AuthController extends Controller
 {
     public const AUTHORIZE_DEFAULT_VIEW = 'authorize';
 
-    public const AUTHORIZE_PG_VIEW = 'authorize_pg';
+    public const AUTHORIZE_PG_X_VIEW = 'authorize_pg_x';
 
     public const AUTHORIZE_MULTI_TOKEN_VIEW = 'authorize_multi_token';
 
     public const AUTHORIZE_ERROR_VIEW = 'authorize_error';
 
     protected const SCOPE_TO_VIEW_MAP = [
-        ScopeConstants::READ_ONLY               => self::AUTHORIZE_PG_VIEW,
-        ScopeConstants::READ_WRITE              => self::AUTHORIZE_PG_VIEW,
-        ScopeConstants::RX_READ_ONLY            => self::AUTHORIZE_DEFAULT_VIEW,
-        ScopeConstants::RX_READ_WRITE           => self::AUTHORIZE_DEFAULT_VIEW,
+        ScopeConstants::READ_ONLY               => self::AUTHORIZE_PG_X_VIEW,
+        ScopeConstants::READ_WRITE              => self::AUTHORIZE_PG_X_VIEW,
+        ScopeConstants::RX_READ_ONLY            => self::AUTHORIZE_PG_X_VIEW,
+        ScopeConstants::RX_READ_WRITE           => self::AUTHORIZE_PG_X_VIEW,
         ScopeConstants::TALLY_READ_ONLY         => self::AUTHORIZE_DEFAULT_VIEW,
         ScopeConstants::TALLY_READ_WRITE        => self::AUTHORIZE_DEFAULT_VIEW,
         ScopeConstants::APPLE_WATCH_READ_WRITE  => self::AUTHORIZE_DEFAULT_VIEW,
@@ -65,7 +65,7 @@ class AuthController extends Controller
         {
             $data = $this->service()->getAuthorizeViewData($input);
 
-            $view = $this->getViewForScope(array_keys($data['scopes']));
+            $view = $this->getViewForScope($data['scope_names']);
 
             $data['query_params'] = request()->getQueryString();
 

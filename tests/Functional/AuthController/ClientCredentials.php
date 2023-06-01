@@ -46,7 +46,7 @@ class ClientCredentials extends TestCase
     public function testPostAccessTokenWithScope()
     {
         $this->createAndSetClientWithEnvironment();
-        $scopes = array('read_only', 'read_write', 'apple_watch_read_write');
+        $scopes = array('read_only', 'read_write');
         foreach($this->modes as $mode)
         {
             foreach($scopes as $scope)

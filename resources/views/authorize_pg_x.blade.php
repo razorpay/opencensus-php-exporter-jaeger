@@ -200,7 +200,7 @@
     <div class="inner-content">
         <div class="content-hero">
             <div class="hero-description">
-                <span class="emphasis">{{$data['application']['name']}}</span> wants access to your Razorpay Account.
+                <span class="emphasis">{{$data['application']['name']}}</span> wants access to your Razorpay Account
             </div>
 
             <div class="app-logos">
@@ -220,8 +220,8 @@
                 >
             </p>
             <ul id="scopes">
-                @if($data['scopes'])
-                    @foreach($data['scopes'] as $item)
+                @if($data['scope_descriptions'])
+                    @foreach($data['scope_descriptions'] as $item)
                         <li>{{$item}}</li>
                     @endforeach
                 @endif
@@ -230,6 +230,18 @@
 
         <div class="main-content">
             <p class="emphasis">
+                You may review detailed
+                @foreach($data['scope_policies'] as $text => $link)
+                        @if ($loop->first and $loop->last)
+                            <a href={{$link}} target="_blank">{{$text}}</a>.
+                        @elseif ($loop->first)
+                            <a href={{$link}} target="_blank">{{$text}}</a>
+                        @elseif ($loop->last)
+                            and <a href={{$link}} target="_blank">{{$text}}</a>.
+                        @else
+                            , <a href={{$link}} target="_blank">{{$text}}</a>
+                        @endif
+                    @endforeach
                 You can remove this app from your account under Settings.
         </div>
 
@@ -243,7 +255,7 @@
                     class="merchant-id"
                     value=""
                 />
-                <button class="btn btn-submit">Authorize</button>
+                <button class="btn btn-submit" disabled>Authorize</button>
             </form>
             <form method="POST" action="/authorize">
                 {{ method_field('DELETE') }}
@@ -254,7 +266,7 @@
                     class="merchant-id"
                     value=""
                 />
-                <button class="btn btn-default">Cancel</button>
+                <button class="btn btn-default" disabled>Cancel</button>
             </form>
         </div>
     </div>
@@ -303,6 +315,7 @@
         function enableButtonsAndShowEmail() {
             //elements.buttons.prop('disabled', false);
             $(".btn-default").prop("disabled", false);
+            $('.btn-submit').prop("disabled", false);
             elements.user_details.show();
         }
 

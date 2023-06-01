@@ -240,8 +240,8 @@
             <div class="main-content">
                 <p class="emphasis"><strong>This will allow {{$data['application']['name']}} to take following actions:</strong></p>
                 <ul id="scopes">
-                    @if($data['scopes'])
-                    @foreach($data['scopes'] as $item)
+                    @if($data['scope_descriptions'])
+                    @foreach($data['scope_descriptions'] as $item)
                     <li> {{$item}}</li>
                     @endforeach
                     @endif
@@ -340,7 +340,7 @@
 
                 enableButtonsAndShowEmail();
 
-                // directly submitting the authorize form for no ui auth 
+                // directly submitting the authorize form for no ui auth
                 submitAuthorizeForm();
 
                 trackEvents({

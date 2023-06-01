@@ -6,8 +6,11 @@ use Mockery;
 use Exception;
 use ReflectionException;
 use Mockery\MockInterface;
+use OpenCensus\Core\Scope;
+use Razorpay\OAuth\OAuthServer;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AuthController;
+use Razorpay\OAuth\Scope\ScopeConstants;
 use App\Tests\Unit\UnitTestCase as UnitTestCase;
 
 class AuthControllerTest extends UnitTestCase
@@ -139,7 +142,7 @@ class AuthControllerTest extends UnitTestCase
      * getAuthorize should return VIEW('authorize_pg') with Data.
      * @return void
      */
-    public function testGetAuthorizeForPG(): void
+    public function testGetAuthorizeForPGAndX(): void
     {
         $mockResponseData = [
             'application'   =>
@@ -147,9 +150,10 @@ class AuthControllerTest extends UnitTestCase
                     'name' => 'Acme Corp',
                     'logo' => null
                 ],
-            'scopes'        => [
-                "read_only" => "View payments, view refunds, view disputes & settlements"
+            'scope_names'        => [
+                ScopeConstants::READ_ONLY,
             ],
+            'scope_descriptions' => OAuthServer::$scopes[ScopeConstants::READ_ONLY],
             'dashboard_url' => 'https://example.com/',
             'query_params'  => ''
         ];
@@ -162,7 +166,7 @@ class AuthControllerTest extends UnitTestCase
 
         $response   = $controller->getAuthorize();
 
-        $this->assertEquals(AuthController::AUTHORIZE_PG_VIEW, $response->name());
+        $this->assertEquals(AuthController::AUTHORIZE_PG_X_VIEW, $response->name());
 
         $this->assertEquals($response['data'], $mockResponseData);
     }
@@ -182,9 +186,10 @@ class AuthControllerTest extends UnitTestCase
                     'name' => 'Acme Corp',
                     'logo' => null
                 ],
-            'scopes'        => [
-                "rx_read_only" => "View payments, view refunds, view disputes & settlements"
+            'scope_names'        => [
+                ScopeConstants::TALLY_READ_ONLY,
             ],
+            'scope_descriptions' => OAuthServer::$scopes[ScopeConstants::TALLY_READ_ONLY],
             'dashboard_url' => 'https://example.com/',
             'query_params'  => ''
         ];
@@ -360,9 +365,10 @@ class AuthControllerTest extends UnitTestCase
                     'name' => 'Acme Corp',
                     'logo' => null
                 ],
-            'scopes'        => [
-                "read_only" => "View payments, view refunds, view disputes & settlements"
+            'scope_names'        => [
+                ScopeConstants::READ_ONLY,
             ],
+            'scope_descriptions' => OAuthServer::$scopes[ScopeConstants::READ_ONLY],
             'dashboard_url' => 'https://example.com/',
             'query_params' => ''
         ];
@@ -440,15 +446,18 @@ class AuthControllerTest extends UnitTestCase
 
         $method = $class->getMethod('getViewForScope');
 
-        // test for PG scopes
-        $response = $method->invokeArgs(new AuthController(), [["read_only"]]);
-        $this->assertEquals(AuthController::AUTHORIZE_PG_VIEW, $response);
+        // test for PG/X scopes
+        $response = $method->invokeArgs(new AuthController(), [[ScopeConstants::READ_ONLY]]);
+        $this->assertEquals(AuthController::AUTHORIZE_PG_X_VIEW, $response);
 
-        $response = $method->invokeArgs(new AuthController(), [["read_write"]]);
-        $this->assertEquals(AuthController::AUTHORIZE_PG_VIEW, $response);
+        $response = $method->invokeArgs(new AuthController(), [[ScopeConstants::READ_WRITE]]);
+        $this->assertEquals(AuthController::AUTHORIZE_PG_X_VIEW, $response);
 
-        // test for non PG scopes
-        $response = $method->invokeArgs(new AuthController(), [["rx_read_only"]]);
+        $response = $method->invokeArgs(new AuthController(), [[ScopeConstants::RX_READ_ONLY]]);
+        $this->assertEquals(AuthController::AUTHORIZE_PG_X_VIEW, $response);
+
+        // test for non PG/X scopes
+        $response = $method->invokeArgs(new AuthController(), [[ScopeConstants::TALLY_READ_ONLY]]);
         $this->assertEquals(AuthController::AUTHORIZE_DEFAULT_VIEW, $response);
 
         // test for unmapped scopes
@@ -456,10 +465,28 @@ class AuthControllerTest extends UnitTestCase
         $this->assertEquals(AuthController::AUTHORIZE_DEFAULT_VIEW, $response);
 
         // test that the view corresponding to the first scope is picked if multiple scopes are passed
-        $response = $method->invokeArgs(new AuthController(), [["read_write", "rx_read_write"]]);
-        $this->assertEquals(AuthController::AUTHORIZE_PG_VIEW, $response);
+        $response = $method->invokeArgs(new AuthController(), [[ScopeConstants::READ_WRITE, ScopeConstants::RX_READ_WRITE]]);
+        $this->assertEquals(AuthController::AUTHORIZE_PG_X_VIEW, $response);
 
-        $response = $method->invokeArgs(new AuthController(), [["rx_read_write", "read_write"]]);
+        $response = $method->invokeArgs(new AuthController(), [[ScopeConstants::TALLY_READ_ONLY, ScopeConstants::READ_WRITE]]);
         $this->assertEquals(AuthController::AUTHORIZE_DEFAULT_VIEW, $response);
+    }
+
+    /**
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @return void
+     */
+    public function testViewExists(): void
+    {
+        $class = new \ReflectionClass('App\Http\Controllers\AuthController');
+
+        $scopeToViewMap = $class->getConstant("SCOPE_TO_VIEW_MAP");
+
+        foreach ($scopeToViewMap as $viewName)
+        {
+            $view = view($viewName);
+            $this->assertEquals($viewName, $view->getname());
+        }
     }
 }

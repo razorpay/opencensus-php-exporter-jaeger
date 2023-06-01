@@ -10,10 +10,13 @@ use Razorpay\OAuth;
 use App\Constants\Mode;
 use App\Error\ErrorCode;
 use Razorpay\OAuth\Client;
+use Illuminate\Support\Arr;
 use App\Constants\TraceCode;
 use App\Constants\RequestParams;
+use Illuminate\Support\Collection;
 use App\Exception\BadRequestException;
 use Razorpay\OAuth\Token\Entity as Token;
+use Razorpay\OAuth\Scope\ScopeConstants;
 use App\Services\DataLake\DEEventsKafkaProducer;
 use App\Services\DataLake\Event\OnBoardingEvent;
 use Razorpay\OAuth\Application\Type as ApplicationType;
@@ -38,6 +41,21 @@ class Service
     protected $raven;
     private $signAlgo;
 
+    protected const SCOPE_TO_POLICY_MAP = [
+        ScopeConstants::READ_ONLY     => [
+            "App Policies" => "https://razorpay.com/s/terms/partners/payments-oauth/read-only"
+        ],
+        ScopeConstants::READ_WRITE    => [
+            "App Policies" => "https://razorpay.com/s/terms/partners/payments-oauth/read-write"
+        ],
+        ScopeConstants::RX_READ_ONLY  => [
+            "RazorpayX Policies" => "https://razorpay.com/terms/razorpayx/partnership/"
+        ],
+        ScopeConstants::RX_READ_WRITE => [
+            "RazorpayX Policies" => "https://razorpay.com/terms/razorpayx/partnership/"
+        ],
+    ];
+
     public function __construct()
     {
         $this->app = App::getFacadeRoot();
@@ -58,7 +76,7 @@ class Service
      * @return array
      * @throws BadRequestException
      * @throws OAuth\Exception\BadRequestException
-     * @throws OAuth\Exception\ServerException
+     * @throws OAuth\Exception\ServerException|App\Exception\LogicException
      */
     public function getAuthorizeViewData(array $input): array
     {
@@ -74,9 +92,11 @@ class Service
         $hostName = $this->getApiService()->getOrgHostName($appData['merchant_id']);
 
         $authorizeData = [
-            'application'   => $appData,
-            'scopes'        => $this->parseScopesForDisplay($scopes),
-            'dashboard_url' => $hostName,
+            'application'        => $appData,
+            'scope_names'        => $scopes->pluck('id')->all(),
+            'scope_descriptions' => $this->parseScopeDescriptionsForDisplay($scopes),
+            'dashboard_url'      => $hostName,
+            'scope_policies'     => $this->parseScopePoliciesForDisplay($scopes),
         ];
 
         if (empty($authorizeData['application']['logo']) === false)
@@ -469,16 +489,64 @@ class Service
         return $data;
     }
 
-    protected function parseScopesForDisplay($scopes)
+    /**
+     * Filter out scopes.
+     * Currently, only drops read-only scopes if read-write scope is present
+     *
+     * @param Collection $scopes
+     *
+     * @return Collection
+     */
+    protected function filterScopesForDisplay(Collection $scopes): Collection
     {
-        $scopesArray = [];
+        return $scopes->reject(function ($item) use ($scopes) {
+            $id = $item["id"];
+            if ($id === ScopeConstants::READ_ONLY && $scopes->contains("id", ScopeConstants::READ_WRITE)) {
+                return true;
+            }
+            if ($id === ScopeConstants::RX_READ_ONLY && $scopes->contains("id", ScopeConstants::RX_READ_WRITE)) {
+                return true;
+            }
+            return false;
+        });
+    }
 
-        foreach ($scopes as $scope)
-        {
-            $scopesArray[$scope['id']] = $scope['description'];
-        }
+    /**
+     * Maps the scope name to corresponding TnC Policy URL
+     * @param Collection $scopes
+     *
+     * @return array
+     */
+    protected function parseScopePoliciesForDisplay(Collection $scopes): array
+    {
+        $scopes = $this->filterScopesForDisplay($scopes);
 
-        return $scopesArray;
+        $scopePoliciesArray = $scopes->filter(
+            function($item) {
+                return array_key_exists($item["id"], self::SCOPE_TO_POLICY_MAP);
+            }
+        )->map(
+            function($item) {
+                return self::SCOPE_TO_POLICY_MAP[$item["id"]];
+            }
+        );
+
+        return $scopePoliciesArray->collapse()->all();
+    }
+
+    /**
+     * Extracts the scope descriptions from the collection of Scopes
+     * @param Collection $scopes
+     *
+     * @return array
+     */
+    protected function parseScopeDescriptionsForDisplay(Collection $scopes): array
+    {
+        $scopes = $this->filterScopesForDisplay($scopes);
+
+        $detailedDescriptions = $scopes->pluck('description')->all();
+
+        return array_unique(Arr::collapse($detailedDescriptions));
     }
 
     protected function notifyMerchantApplicationAuthorized(
