@@ -195,7 +195,7 @@ class ApplicationTest extends TestCase
 
         Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_write'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400122]);
 
-        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['rx_read_only', 'read_write'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400124]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['rx_read_only', 'read_write', 'apple_watch_read_write'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400124]);
 
         $data = & $this->testData[__FUNCTION__];
 

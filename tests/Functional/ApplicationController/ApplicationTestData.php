@@ -259,6 +259,10 @@ return [
                             [
                                 'scope'         => 'read_write',
                                 'description'   => 'apptest can create & view payments, create & view refunds, view disputes & settlements'
+                            ],
+                            [
+                                'scope'         => 'apple_watch_read_write',
+                                'description'   => 'apptest has read and write (create, edit, delete) access for Apple Watch whitelisted routes'
                             ]
                         ],
                         'access_granted_at' => 1562400120,
