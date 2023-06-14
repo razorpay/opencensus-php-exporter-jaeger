@@ -109,6 +109,22 @@ class TokenTest extends TestCase
         $this->startTest($data);
     }
 
+    //Since the token's created_at is older then 6 months, their refresh token would have expired and hence we are ignoring those tokens
+    public function testRevokeApplicationAccessWithExpiredRefreshToken()
+    {
+        $this->application = Application\Entity::factory()->create();
+        $this->prodClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $this->application->id, Client\Entity::ENVIRONMENT => 'prod']);
+        $this->devClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $this->application->id, Client\Entity::ENVIRONMENT => 'dev']);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::CLIENT_ID => $this->devClient->getId(), Token\Entity::CREATED_AT => 1562400123]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::CLIENT_ID => $this->prodClient->getId(), Token\Entity::CREATED_AT => 1562400123]);
+
+        $data = & $this->testData[__FUNCTION__];
+
+        $data['request']['url'] = '/tokens/submerchant/revoke_for_application/'.$this->application->id;
+
+        $this->runRequestResponseFlow($data);
+    }
+
     public function testRevokeAccessTokenByPartner()
     {
         $authCode = $this->generateAuthCode();

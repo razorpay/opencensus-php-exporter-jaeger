@@ -96,6 +96,28 @@ return [
         ]
     ],
 
+    'testRevokeApplicationAccessWithExpiredRefreshToken' => [
+        'request'  => [
+            'url'     => '/tokens/submerchant/revoke_for_application/{id}',
+            'method'  => 'PUT',
+            'content' => [
+                'merchant_id' => '10000000000000',
+            ]
+        ],
+        'response'  => [
+            'content'     => [
+                'error' => [
+                    'description' => 'The server encountered an error. The incident has been reported to admins'
+                ],
+            ],
+            'status_code' => 500
+        ],
+        'exception' => [
+            'class'   => App\Exception\LogicException::class,
+            'message' => 'This application doesn\'t have any access of the merchant',
+        ],
+    ],
+
     'testRevokeAccessTokenByPartner' => [
         'request'  => [
             'method'  => 'POST',

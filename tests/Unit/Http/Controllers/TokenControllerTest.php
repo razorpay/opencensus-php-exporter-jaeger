@@ -329,9 +329,18 @@ class TokenControllerTest extends UnitTestCase
             ->withArgs(['tokenId'])
             ->andReturn($token);
 
+        $this->getRazorpayOauthTokenServiceMock()
+            ->shouldReceive('latestExpiredRefreshTokenTime')
+            ->andReturn(\Mockery::mock('overload:php_jar\stubs\date\date_c', function ($mock) {
+                $mock->shouldReceive('getTimestamp')
+                    ->once()
+                    ->andReturn(1562400012);
+            }));
+
         $this->getRazorpayOauthTokenRepositoryMock()
-            ->shouldReceive('fetchAccessTokensByAppAndMerchant')
-            ->withArgs([$application->id, self::APPLICATION_ID])
+            ->shouldReceive('fetchTokenIdsByMerchantAndApp')
+            ->withArgs([$application->id, self::APPLICATION_ID,
+                Mockery::any()])
             ->andReturn([]);
 
         $this->getRazorpayOauthTokenServiceMock()

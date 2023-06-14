@@ -2,6 +2,8 @@
 
 namespace App\Tests\Functional\ApplicationController;
 
+use DateTimeImmutable;
+use Razorpay\OAuth\OAuthServer;
 use Razorpay\OAuth\Token;
 use Razorpay\OAuth\Client;
 use Razorpay\OAuth\Application;
@@ -24,6 +26,11 @@ class ApplicationTest extends TestCase
      */
     private $clientEntity;
 
+    /**
+     * @var int
+     */
+    private $latestExpiredRefreshTokenTime;
+
     public function setup(): void
     {
         $this->testDataFilePath = __DIR__ . '/ApplicationTestData.php';
@@ -34,6 +41,9 @@ class ApplicationTest extends TestCase
 
         $this->applicationEntity = new Application\Entity();
         $this->clientEntity = new Client\Entity();
+
+        $this->latestExpiredRefreshTokenTime = (new DateTimeImmutable())
+            ->sub(new \DateInterval(OAuthServer::REFRESH_TOKEN_TTL_PERIOD))->getTimestamp();
     }
 
     public function testCreateApplication()
@@ -153,13 +163,14 @@ class ApplicationTest extends TestCase
 
         $this->client = Client\Entity::factory()->create(['application_id' => $this->application->getId(), 'environment' => 'prod']);
 
-        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_only'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400123]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_only'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => $this->latestExpiredRefreshTokenTime + 1000]);
 
         $data = & $this->testData[__FUNCTION__];
 
         $content = $this->makeRequestAndGetContent($data['request']);
 
-        $data['response']['content']['items'][0]['application_id'] = $this->application->getId();
+        $data['response']['content']['items'][0]['application_id']    = $this->application->getId();
+        $data['response']['content']['items'][0]['access_granted_at'] = $this->latestExpiredRefreshTokenTime + 1000;
 
         $this->assertEquals($data['response']['content'], $content);
     }
@@ -193,9 +204,9 @@ class ApplicationTest extends TestCase
 
         Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_only'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400120, Token\Entity::REVOKED_AT => 1562400520]);
 
-        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_write'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400122]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_write'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => $this->latestExpiredRefreshTokenTime + 1000]);
 
-        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['rx_read_only', 'read_write', 'apple_watch_read_write'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => 1562400124]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['rx_read_only', 'read_write', 'apple_watch_read_write'], Token\Entity::CLIENT_ID => $this->client->getId(), Token\Entity::CREATED_AT => $this->latestExpiredRefreshTokenTime + 2000]);
 
         $data = & $this->testData[__FUNCTION__];
 
@@ -220,11 +231,11 @@ class ApplicationTest extends TestCase
 
         $this->clientB = Client\Entity::factory()->create(['application_id' => $app2->getId(), 'environment' => 'prod']);
 
-        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_only'], Token\Entity::CLIENT_ID => $this->clientA->getId(), Token\Entity::CREATED_AT => 1562400120]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_only'], Token\Entity::CLIENT_ID => $this->clientA->getId(), Token\Entity::CREATED_AT => $this->latestExpiredRefreshTokenTime + 1000]);
 
-        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_write'], Token\Entity::CLIENT_ID => $this->clientA->getId(), Token\Entity::CREATED_AT => 1562400122, Token\Entity::EXPIRES_AT => 1562410122]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['read_write'], Token\Entity::CLIENT_ID => $this->clientA->getId(), Token\Entity::CREATED_AT => $this->latestExpiredRefreshTokenTime + 2000, Token\Entity::EXPIRES_AT => 1562410122]);
 
-        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['rx_read_only', 'read_write'], Token\Entity::CLIENT_ID => $this->clientB->getId(), Token\Entity::CREATED_AT => 1562400124]);
+        Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::SCOPES => ['rx_read_only', 'read_write'], Token\Entity::CLIENT_ID => $this->clientB->getId(), Token\Entity::CREATED_AT => $this->latestExpiredRefreshTokenTime + 3000]);
 
         $data = & $this->testData[__FUNCTION__];
 
@@ -232,6 +243,8 @@ class ApplicationTest extends TestCase
 
         $data['response']['content']['items'][0]['application_id'] = $app2->getId();
         $data['response']['content']['items'][1]['application_id'] = $app1->getId();
+        $data['response']['content']['items'][0]['access_granted_at'] = $this->latestExpiredRefreshTokenTime + 3000;
+        $data['response']['content']['items'][1]['access_granted_at'] = $this->latestExpiredRefreshTokenTime + 1000;
 
         $this->assertEquals($data['response']['content'], $content);
     }

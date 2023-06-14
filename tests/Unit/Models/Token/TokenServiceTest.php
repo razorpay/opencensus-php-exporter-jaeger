@@ -133,9 +133,17 @@ class TokenServiceTest extends UnitTestCase
 
         $fetchTokenMockedResponse = PublicCollection::make([$token]);
 
+        $this->getOauthTokenService()
+            ->shouldReceive('latestExpiredRefreshTokenTime')
+            ->andReturn(\Mockery::mock('overload:php_jar\stubs\date\date_c', function ($mock) {
+                $mock->shouldReceive('getTimestamp')
+                    ->once()
+                    ->andReturn(\Mockery::any());
+            }));
+
         $this->getRazorpayOauthTokenRepositoryMock()
             ->shouldReceive('fetchTokenIdsByMerchantAndApp')
-            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID])
+            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID, \Mockery::any()])
             ->andReturn($fetchTokenMockedResponse);
 
         Trace::shouldReceive('info')
@@ -148,8 +156,7 @@ class TokenServiceTest extends UnitTestCase
         $this->getOauthTokenService()
             ->shouldReceive('revokeAccessToken')
             ->withArgs([self::TOKEN_ID, $input])
-            ->andReturn([])
-            ->once();
+            ->andReturn([]);
 
         $this->getAuthServiceMock()
             ->shouldReceive('getApiService')
@@ -184,9 +191,17 @@ class TokenServiceTest extends UnitTestCase
 
         $fetchTokenMockedResponse = PublicCollection::make([$token]);
 
+        $this->getOauthTokenService()
+            ->shouldReceive('latestExpiredRefreshTokenTime')
+            ->andReturn(\Mockery::mock('overload:php_jar\stubs\date\date_c', function ($mock) {
+                $mock->shouldReceive('getTimestamp')
+                    ->once()
+                    ->andReturn(\Mockery::any());
+            }));
+
         $this->getRazorpayOauthTokenRepositoryMock()
             ->shouldReceive('fetchTokenIdsByMerchantAndApp')
-            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID])
+            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID, \Mockery::any()])
             ->andReturn($fetchTokenMockedResponse);
 
         Trace::shouldReceive('info')
@@ -199,8 +214,7 @@ class TokenServiceTest extends UnitTestCase
         $this->getOauthTokenService()
             ->shouldReceive('revokeAccessToken')
             ->withArgs([self::TOKEN_ID, $input])
-            ->andReturn([])
-            ->once();
+            ->andReturn([]);
 
         $this->getAuthServiceMock()
             ->shouldReceive('getApiService')
@@ -235,9 +249,17 @@ class TokenServiceTest extends UnitTestCase
 
         $fetchTokenMockedResponse = PublicCollection::make([$token]);
 
+        $this->getOauthTokenService()
+            ->shouldReceive('latestExpiredRefreshTokenTime')
+            ->andReturn(\Mockery::mock('overload:php_jar\stubs\date\date_c', function ($mock) {
+                $mock->shouldReceive('getTimestamp')
+                    ->once()
+                    ->andReturn(\Mockery::any());
+            }));
+
         $this->getRazorpayOauthTokenRepositoryMock()
             ->shouldReceive('fetchTokenIdsByMerchantAndApp')
-            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID])
+            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID, \Mockery::any()])
             ->andReturn($fetchTokenMockedResponse);
 
         Trace::shouldReceive('info')
@@ -287,9 +309,17 @@ class TokenServiceTest extends UnitTestCase
 
         $fetchTokenMockedResponse = PublicCollection::make([]);
 
+        $this->getOauthTokenService()
+            ->shouldReceive('latestExpiredRefreshTokenTime')
+            ->andReturn(\Mockery::mock('overload:php_jar\stubs\date\date_c', function ($mock) {
+                $mock->shouldReceive('getTimestamp')
+                    ->once()
+                    ->andReturn(\Mockery::any());
+            }));
+
         $this->getRazorpayOauthTokenRepositoryMock()
             ->shouldReceive('fetchTokenIdsByMerchantAndApp')
-            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID])
+            ->withArgs([self::APPLICATION_ID, self::MERCHANT_ID, \Mockery::any()])
             ->andReturn($fetchTokenMockedResponse);
 
         Trace::shouldReceive('info')

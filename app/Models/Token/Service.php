@@ -3,9 +3,11 @@
 namespace App\Models\Token;
 
 use Trace;
-use LogicException;
+use App\Exception\LogicException;
 use App\Models\Auth;
+use DateTimeImmutable;
 use App\Constants\TraceCode;
+use Razorpay\OAuth\OAuthServer;
 use App\Constants\RequestParams;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Razorpay\OAuth\Exception\BadRequestException;
@@ -79,7 +81,11 @@ class Service
 
         $merchantId = $input['merchant_id'];
 
-        $allActiveTokens = (new Token\Repository)->fetchTokenIdsByMerchantAndApp($appId, $merchantId);
+        $latestExpiredRefreshTokenTime = (new Token\Service())->latestExpiredRefreshTokenTime()->getTimestamp();
+
+        // While fetching the list of access token Ids, we will filter out any access token which is older then 6 months,
+        // since its respective refresh token would have expired.
+        $allActiveTokens = (new Token\Repository)->fetchTokenIdsByMerchantAndApp($appId, $merchantId, $latestExpiredRefreshTokenTime);
 
         Trace::info(TraceCode::REVOKE_TOKENS_REQUEST,
             [

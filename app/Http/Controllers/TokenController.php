@@ -208,9 +208,11 @@ class TokenController extends Controller
 
         $appId = $client->getApplicationId();
 
-        $allActiveAppTokens = (new Token\Repository)->fetchAccessTokensByAppAndMerchant($appId, $merchantId);
+        $latestExpiredRefreshTokenTime = (new Token\Service())->latestExpiredRefreshTokenTime()->getTimestamp();
 
-        if (count($allActiveAppTokens) > 0)
+        $allActiveAppTokenIds = (new Token\Repository)->fetchTokenIdsByMerchantAndApp($appId, $merchantId, $latestExpiredRefreshTokenTime);
+
+        if (count($allActiveAppTokenIds) > 0)
         {
             return;
         }
