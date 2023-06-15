@@ -6,6 +6,7 @@ use App\Exception\Handler;
 use App\Services\Mock;
 use App\Services\EdgeService;
 
+use App\Services\SplitzService;
 use App\Services\RazorX\RazorXClient;
 use App\Http\Middleware\EventTracker;
 use App\Services\SignerCache;
@@ -88,6 +89,17 @@ class AppServiceProvider extends ServiceProvider
             //}
             //======== not required as of now. uncomment if RazorxMock client is required==============
             return new RazorXClient();
+        });
+
+        $this->app->singleton('splitz', function ($app) {
+            $splitzMock = $app['config']['trace.services.splitz.mock'];
+
+            if ($splitzMock === true)
+            {
+                return new Mock\SplitzService();
+            }
+
+            return new SplitzService();
         });
 
         $this->app->singleton('segment-analytics', function ($app) {

@@ -118,4 +118,9 @@ class Api
             "success" => false,
         ];
     }
+
+    public function getOrgHostName(string $merchantId): string
+    {
+        return "https://api-test.com";
+    }
 }

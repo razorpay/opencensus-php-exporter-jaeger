@@ -50,4 +50,6 @@ return [
     'metrics' => require __DIR__ . '/metrics.php',
 
     'services' => require __DIR__ . '/services.php',
+
+    'app' => require __DIR__ . '/application.php',
 ];

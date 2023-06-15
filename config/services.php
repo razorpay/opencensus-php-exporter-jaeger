@@ -8,7 +8,16 @@ return [
         'request_timeout'    => env('SEGMENT_ANALYTICS_TIMEOUT', 500),
         'connection_timeout' => env('SEGMENT_ANALYTICS_CONNECTION_TIMEOUT', 500),
         'auth' => [
-            'write_key'       => env('SEGMENT_ANALYTICS_WRITE_KEY'),
+            'write_key'      => env('SEGMENT_ANALYTICS_WRITE_KEY'),
         ],
+    ],
+
+    'splitz' => [
+        'url'                => env('SPLITZ_URL'),
+        'username'           => 'auth',
+        'secret'             => env('SPLITZ_SECRET'),
+        'request_timeout'    => env('SPLITZ_REQUEST_TIMEOUT', 0.1),
+        'enabled'            => env('SPLITZ_ENABLED', true),
+        'mock'               => env('SPLITZ_MOCK', false)
     ]
 ];

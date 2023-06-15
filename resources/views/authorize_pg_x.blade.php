@@ -275,6 +275,8 @@
     (function () {
         var dashboardUrl = "{{$data['dashboard_url']}}";
         var queryParams = "{{$data['query_params']}}";
+        var onboardingUrl = "{{$data['onboarding_url']}}";
+        var isOnboardingExpEnabled = "{{$data['isOnboardingExpEnabled']}}";
         var pageUrl = window.location.href;
         var verifyToken = null;
         var elements = {
@@ -336,7 +338,10 @@
             var userUrl = dashboardUrl + "/user/session";
             $.get({
                 url: userUrl,
-                data: {query: queryParams},
+                data: {
+                  query: queryParams,
+                  source: isOnboardingExpEnabled ? "oauth" : ""
+                },
                 dataType: "json",
                 xhrFields: {
                     withCredentials: true,
@@ -349,6 +354,12 @@
                     if (status === 200) {
                         if (res.success === true) {
                             if (res.data.role === "owner") {
+                              if (shouldRedirect(res)) {
+                                pageUrl = window.location.href;
+                                var pageUrl = encodeURIComponent(pageUrl);
+
+                                window.location.href = getSignInUrl(pageUrl);
+                              }
                                 handleUserSuccess(res.data);
                             } else {
                                 showError("invalid_role");
@@ -362,13 +373,23 @@
                     if (xhr.status === 401) {
                         pageUrl = window.location.href;
                         var pageUrl = encodeURIComponent(pageUrl);
-                        var signinUrl = dashboardUrl + "?next=" + pageUrl;
 
-                        window.location.href = signinUrl;
+                        window.location.href = getSignInUrl(pageUrl);
                     } else {
                         showError("unknown_error");
                     }
                 });
+        }
+
+        function getSignInUrl(pageUrl) {
+            let signInUrl = isOnboardingExpEnabled ? onboardingUrl : dashboardUrl;
+            let url = new URL(signInUrl);
+            url.searchParams.append("next", pageUrl);
+            return url.toString()
+        }
+
+        function shouldRedirect(res) {
+            return res.data.oauth_action === "REDIRECT"
         }
 
         function getAppLogoFullUrl(logoUrl) {

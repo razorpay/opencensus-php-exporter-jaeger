@@ -56,6 +56,11 @@ class Service
         ],
     ];
 
+    protected const SCOPES_ALLOWED_FOR_ONBOARDING = [
+        ScopeConstants::READ_ONLY,
+        ScopeConstants::READ_WRITE
+    ];
+
     public function __construct()
     {
         $this->app = App::getFacadeRoot();
@@ -91,12 +96,18 @@ class Service
 
         $hostName = $this->getApiService()->getOrgHostName($appData['merchant_id']);
 
+        $isOnboardingAllowedForScope = $this->isMerchantOnboardingEnabledForScope($scopes);
+
+        $isOnboardingExpEnabled = $this->checkIfOnboardingExpIsEnabled($appData['merchant_id'], $isOnboardingAllowedForScope);
+
         $authorizeData = [
-            'application'        => $appData,
-            'scope_names'        => $scopes->pluck('id')->all(),
-            'scope_descriptions' => $this->parseScopeDescriptionsForDisplay($scopes),
-            'dashboard_url'      => $hostName,
-            'scope_policies'     => $this->parseScopePoliciesForDisplay($scopes),
+            'application'            => $appData,
+            'scope_names'            => $scopes->pluck('id')->all(),
+            'scope_descriptions'     => $this->parseScopeDescriptionsForDisplay($scopes),
+            'dashboard_url'          => $hostName,
+            'scope_policies'         => $this->parseScopePoliciesForDisplay($scopes),
+            'onboarding_url'         => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled),
+            'isOnboardingExpEnabled' => $isOnboardingExpEnabled
         ];
 
         if (empty($authorizeData['application']['logo']) === false)
@@ -480,6 +491,7 @@ class Service
         $application = $client->application;
 
         $data = [
+            'id'          => $application->getId(),
             'name'        => $application->getName(),
             'url'         => $application->getWebsite(),
             'logo'        => $application->getLogoUrl(),
@@ -757,5 +769,41 @@ class Service
         $event = new OnBoardingEvent(DataLakeEventCode::OAUTH_MULTI_TOKEN_AUTH_CODE_GENERATE, $properties);
 
         (new DEEventsKafkaProducer($event))->trackEvent();
+    }
+
+    private function getOnboardingUrl(string $applicationId, bool $isPhantomOnboardingEnabled) : ?string
+    {
+        if ($isPhantomOnboardingEnabled)
+        {
+            $phantomUrl = $this->app['config']['trace.app.phantom_onboarding_url'];
+
+            return $phantomUrl . '?applicationId=' . $applicationId;
+        }
+
+        return null;
+    }
+
+    private function checkIfOnboardingExpIsEnabled(string $merchantId, bool $isOnboardingAllowed) : bool
+    {
+        if (!$isOnboardingAllowed)
+        {
+            return false;
+        }
+
+        $properties = [
+            'id'            =>  $merchantId,
+            'experiment_id' => $this->app['config']['trace.app.experiments.phantom_oauth_onboarding_exp_id']
+        ];
+
+        return $this->app['splitz']->isExperimentEnabled($properties);
+    }
+
+    private function isMerchantOnboardingEnabledForScope($scopes) : bool
+    {
+        if (!empty($scopes) && (in_array($scopes[0]['id'], self::SCOPES_ALLOWED_FOR_ONBOARDING)))
+        {
+            return true;
+        }
+        return false;
     }
 }

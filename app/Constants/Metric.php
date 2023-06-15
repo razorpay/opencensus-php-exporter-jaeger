@@ -21,4 +21,7 @@ class Metric
 
     const SIGNER_CACHE_REQUEST_DURATION_SECONDS             = 'signer_cache_request_duration_seconds.histogram';
     const SIGNER_CACHE_WRITE_LATENCY_SECONDS                = 'signer_cache_write_latency_seconds.histogram';
+
+    const SPLITZ_REQUESTS_TOTAL                             = 'splitz_requests_total';
+    const SPLITZ_REQUEST_DURATION_MILLISECONDS              = 'splitz_request_duration_milliseconds.histogram';
 }

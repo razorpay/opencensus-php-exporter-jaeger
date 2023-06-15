@@ -119,5 +119,10 @@ class TraceCode extends BaseTraceCode
 
     // logged when fatal errors are thrown
     const PHP_FATAL_ERROR                                           =  'PHP_FATAL_ERROR';
+
+    const SPLITZ_REQUEST                                            = 'SPLITZ_REQUEST';
+    const SPLITZ_REQUEST_RESPONSE                                   = 'SPLITZ_REQUEST_RESPONSE';
+    const SPLITZ_REQUEST_FAILED                                     = 'SPLITZ_REQUEST_FAILED';
+    const SPLITZ_INTEGRATION_ERROR                                  = 'SPLITZ_INTEGRATION_ERROR';
 }
 
