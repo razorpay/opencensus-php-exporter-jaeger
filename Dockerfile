@@ -1,4 +1,4 @@
-ARG ONGGI_IMAGE=c.rzp.io/razorpay/onggi:php-8.1-nginx
+ARG ONGGI_IMAGE=c.rzp.io/razorpay/onggi-multi-arch:php-8.1-nginx
 
 FROM $ONGGI_IMAGE as opencensus-ext
 

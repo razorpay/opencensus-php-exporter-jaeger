@@ -34,6 +34,7 @@ DATA='{
             "ephemeral_db": true,
             "web_requests_cpu" : "200m",
             "auth_replicas" : 2,
+            "auth_node_selector" : "node.kubernetes.io/worker-bvt-devstack-graviton",
             "auth-outbox-relay": {
                 "ttl": "{{ .Values.ttl }}",
                 "devstack_label": "{{ .Values.devstack_label }}",
