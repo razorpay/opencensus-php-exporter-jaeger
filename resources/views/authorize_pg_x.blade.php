@@ -4,20 +4,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta charset="UTF-8"/>
     <title>Razorpay - Authorize {{$data['application']['name']}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <style>
         body {
+            -webkit-font-smoothing: antialiased;
+            height: 100vh;
             margin: 0;
             /*line-height: 1.4;*/
             color: #8497a0;
             font-size: 12px;
             line-height: 1.8;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-            Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            font-family: 'Lato', sans-serif;
         }
 
-        a {
-            color: #09f;
+        .header-logo {
+          display: none;
+        }
+
+        @media (min-width: 1024px) {
+          .header-logo {
+            display: block;
+            position: absolute;
+            left: 58px;
+            top: 42px;
+          }
+        }
+
+        main {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100vw;
+          height: 100vh;
+          background: transparent;
+          background-image: url("/images/dweb-vector.svg");
+          background-repeat: repeat-x;
+          background-position: center bottom;
         }
 
         .header {
@@ -39,14 +64,6 @@
             max-width: 588px;
             margin: 0 auto;
             padding: 0 20px;
-        }
-
-        .rzp-logo {
-            height: 100%;
-            background: url(https://razorpay.com/images/logo-black.png);
-            background-repeat: no-repeat;
-            background-size: contain;
-            background-position: 20px 0;
         }
 
         .content-hero {
@@ -99,13 +116,6 @@
             margin: 8px 0 0 0;
         }
 
-        .body-section {
-        }
-
-        p {
-            margin: 14px 0 0 0;
-        }
-
         .main-content {
             padding-top: 12px;
         }
@@ -136,141 +146,29 @@
             outline: none;
         }
 
-        button.btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        button.btn-submit {
-            background: #7268b7;
-        }
-
-        button.btn-default {
-            border: 1px #eee;
-            color: #8497a0;
-            margin-left: 14px;
-        }
-
         form {
             display: inline-block;
         }
 
         .error-container {
             display: none;
-            margin-top: 20px;
             border: 1px #faedd1 solid;
             background: #fcf8e3;
             color: #907545;
             padding: 12px;
+            margin: 0px 24px 12px 24px;
             line-height: 1.4;
         }
 
-        .close-window {
-            color: #907545;
-        }
-
-        .tc-link {
-            color: #3987f0;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .line-break {
-            border: 1px solid #e6ebf3;
-            margin: 16px 0;
-        }
-
-        .tc-content {
-            position: relative;
-            top: -2px;
-        }
     </style>
 </head>
 <body>
-<div class="header">
-    <div class="content rzp-logo">
-        <div class="header-user-details">
-            Logged in as <span id="user_email">foo@bar.com</span>.
-        </div>
-    </div>
-</div>
-<div class="body-section content">
-    <div class="error-container"></div>
+<img class="header-logo" src="images/rzp-logo-dark.svg" />
+<main>
+  @include('partials.card')
+</main>
+@include('partials.copyright')
 
-    <div class="inner-content">
-        <div class="content-hero">
-            <div class="hero-description">
-                <span class="emphasis">{{$data['application']['name']}}</span> wants access to your Razorpay Account
-            </div>
-
-            <div class="app-logos">
-                <div style="padding: 0" class="app-logo">
-                    <img style="width: 100%" class="application-logo"/>
-                </div>
-                <div style="padding: 0" class="app-logo">
-                    <img style="width: 100%" class="merchant-logo"/>
-                </div>
-            </div>
-        </div>
-
-        <div class="main-content">
-            <p class="emphasis">
-                <strong
-                >This will allow {{$data['application']['name']}} to:</strong
-                >
-            </p>
-            <ul id="scopes">
-                @if($data['scope_descriptions'])
-                    @foreach($data['scope_descriptions'] as $item)
-                        <li>{{$item}}</li>
-                    @endforeach
-                @endif
-            </ul>
-        </div>
-
-        <div class="main-content">
-            <p class="emphasis">
-                You may review detailed
-                @foreach($data['scope_policies'] as $text => $link)
-                        @if ($loop->first and $loop->last)
-                            <a href={{$link}} target="_blank">{{$text}}</a>.
-                        @elseif ($loop->first)
-                            <a href={{$link}} target="_blank">{{$text}}</a>
-                        @elseif ($loop->last)
-                            and <a href={{$link}} target="_blank">{{$text}}</a>.
-                        @else
-                            , <a href={{$link}} target="_blank">{{$text}}</a>
-                        @endif
-                    @endforeach
-                You can remove this app from your account under Settings.
-        </div>
-
-        <div class="line-break"></div>
-        <div class="button-toolbar">
-            <form method="POST" action="/authorize">
-                <input type="hidden" name="token" class="verify_token" value=""/>
-                <input
-                    type="hidden"
-                    name="merchant_id"
-                    class="merchant-id"
-                    value=""
-                />
-                <button class="btn btn-submit" disabled>Authorize</button>
-            </form>
-            <form method="POST" action="/authorize">
-                {{ method_field('DELETE') }}
-                <input type="hidden" name="token" class="verify_token" value=""/>
-                <input
-                    type="hidden"
-                    name="merchant_id"
-                    class="merchant-id"
-                    value=""
-                />
-                <button class="btn btn-default" disabled>Cancel</button>
-            </form>
-        </div>
-    </div>
-</div>
 <script type="text/javascript">
     (function () {
         var dashboardUrl = "{{$data['dashboard_url']}}";
@@ -301,7 +199,6 @@
 
         function showError(type) {
             var error = errorHtml[type];
-
             elements.buttons.prop("disabled", true);
             elements.error_pane.html(error);
             elements.error_pane.show();
@@ -316,7 +213,7 @@
 
         function enableButtonsAndShowEmail() {
             //elements.buttons.prop('disabled', false);
-            $(".btn-default").prop("disabled", false);
+            $('.btn-default').prop("disabled", false);
             $('.btn-submit').prop("disabled", false);
             elements.user_details.show();
         }
@@ -350,7 +247,6 @@
             })
                 .done(function (res, textStatus, xhr) {
                     var status = xhr.status;
-
                     if (status === 200) {
                         if (res.success === true) {
                             if (res.data.role === "owner") {
@@ -394,10 +290,10 @@
 
         function getAppLogoFullUrl(logoUrl) {
             if (logoUrl !== null && !/^http/.test(logoUrl)) {
-                logoUrl = `https://cdn.razorpay.com${logoUrl.replace(
-                    /\.([^\.]+$)/,
-                    "_medium.$1"
-                )}`;
+              logoUrl = `https://cdn.razorpay.com${logoUrl.replace(
+                  /\.([^\.]+$)/,
+                      "_medium.$1"
+                  )}`;
             }
             elements.application_logo.attr("src", logoUrl);
         }

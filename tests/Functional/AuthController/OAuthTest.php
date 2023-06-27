@@ -114,9 +114,9 @@ class OAuthTest extends TestCase
 
         $response = $this->sendRequest($data);
 
-        $expectedString = '<span class="emphasis">'.
+        $expectedString = '<p class="access-heading">'.
                           $application->getName() .
-                          '</span> wants access to your Razorpay Account';
+                          ' wants access to your Razorpay Account</p>';
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());
@@ -132,9 +132,9 @@ class OAuthTest extends TestCase
 
         $response = $this->sendRequest($data);
 
-        $expectedString = '<span class="emphasis">'.
+        $expectedString = '<p class="access-heading">'.
                           $application->getName() .
-                          '</span> wants access to your Razorpay Account';
+                          ' wants access to your Razorpay Account</p>';
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());
