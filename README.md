@@ -57,6 +57,9 @@ APP_ENV=testing php artisan migrate:reset && php artisan migrate
 ```
 - Run `phpunit --debug` for tests
 
+## Contributing
+Check [CONTRIBUTING.md](CONTRIBUTING.md)
+
 ## Secret Management
 Devstack deployment of auth service fetches secrets from `kubestash-dev-serve/auth/auth-secrets`
 
