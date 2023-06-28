@@ -40,7 +40,7 @@
           width: 100vw;
           height: 100vh;
           background: transparent;
-          background-image: url("/images/dweb-vector.svg");
+          background-image: url("https://easy.razorpay.com/build/browser/static/static/logos/dweb-botton-vector.svg");
           background-repeat: repeat-x;
           background-position: center bottom;
         }
@@ -163,7 +163,7 @@
     </style>
 </head>
 <body>
-<img class="header-logo" src="images/rzp-logo-dark.svg" />
+<img class="header-logo" src="https://easy.razorpay.com/federated-bundles/onboarding/build/browser/static/src/App/Onboarding/images/rzp-logo-dark.svg" />
 <main>
   @include('partials.card')
 </main>

@@ -15,7 +15,7 @@
     .card {
       height: 100vh;
       background: #040847;
-      background-image: url("/images/mweb-vector.svg");
+      background-image: url("https://easy.razorpay.com/federated-bundles/onboarding/build/browser/static/static/logos/vector.svg");
       background-position: inherit;
       background-size: cover;
     }
@@ -432,6 +432,6 @@
   </div>
   </div>
   <div class="rzp-logo">
-    <p style="color: #FFFFFF;">Powered by</p> <img src="images/rzp-logo-light.svg"/>
+    <p style="color: #FFFFFF;">Powered by</p> <img src="https://easy.razorpay.com/federated-bundles/onboarding/build/browser/static/src/App/Onboarding/images/rzp-logo-light.svg"/>
   </div>
 </div>
