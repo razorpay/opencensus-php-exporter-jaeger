@@ -279,9 +279,8 @@
 
         function getSignInUrl(pageUrl) {
             let signInUrl = isOnboardingExpEnabled ? onboardingUrl : dashboardUrl;
-            let url = new URL(signInUrl);
-            url.searchParams.append("next", pageUrl);
-            return url.toString()
+            let url = signInUrl + "?next=" + pageUrl;
+            return url;
         }
 
         function shouldRedirect(res) {
