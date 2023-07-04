@@ -278,9 +278,12 @@
         }
 
         function getSignInUrl(pageUrl) {
-            let signInUrl = isOnboardingExpEnabled ? onboardingUrl : dashboardUrl;
-            let url = signInUrl + "?next=" + pageUrl;
-            return url;
+            if (isOnboardingExpEnabled) {
+                let url = new URL(onboardingUrl);
+                url.searchParams.append("next", pageUrl);
+                return url;
+            }
+            return dashboardUrl + "?next=" + pageUrl;
         }
 
         function shouldRedirect(res) {
