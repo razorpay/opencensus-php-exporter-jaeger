@@ -55,7 +55,9 @@ class RepositoryTest extends UnitTestCase
             'environment' => 'dev',
         ]);
 
+        $tracerMock->shouldReceive('inSpan')->once()->with(['name' => 'Client.Entity.generateSecret.encrypt'], Mockery::any())->andReturn("hashed_secret");
         $devClient->generateSecret();
+
 
         $token = new Entity();
         $token->setClient($devClient);
@@ -81,6 +83,7 @@ class RepositoryTest extends UnitTestCase
             "user_id" => $token->getUserId()
             ]);
 
+        $tracerMock->shouldReceive('inSpan')->once()->with(['name' => 'Client.Entity.getSecretAttribute.decrypt'], Mockery::any());
         $signerCacheMock->shouldReceive('writeCredentials')
             ->once()
             ->with($token->getPublicTokenWithPrefix(), $token->getClient()->getSecret(), Mockery::any());
