@@ -203,6 +203,7 @@ class Api
             'partner_id'       => $partnerId,
             'env'              => $data['env'],
             'ip'               => $data['ip'],
+            'scope_policies'   => $data['scope_policies'],
         ];
 
         try

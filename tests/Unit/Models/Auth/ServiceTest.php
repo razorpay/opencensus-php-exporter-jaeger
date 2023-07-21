@@ -14,23 +14,16 @@ class ServiceTest extends UnitTestCase
     /**
      * @throws ReflectionException
      */
-    public function testParseScopePoliciesForDisplay()
+    public function testParseScopePolicies()
     {
         $class            = new \ReflectionClass('App\Models\Auth\Service');
         $scopeToPolicyMap = $class->getConstant("SCOPE_TO_POLICY_MAP");
-        $method           = $class->getMethod("parseScopePoliciesForDisplay");
+        $method           = $class->getMethod("parseScopePolicies");
 
         // test read_only
         $expected = $scopeToPolicyMap[ScopeConstants::READ_ONLY];
         $actual   = $method->invokeArgs(
-            (new Service()),
-            [
-                collect(
-                    [
-                        new Scope\Entity(ScopeConstants::READ_ONLY),
-                    ]
-                )
-            ]
+            (new Service()), [[ScopeConstants::READ_ONLY]]
         );
 
         $this->assertEquals($expected, $actual);
@@ -38,14 +31,7 @@ class ServiceTest extends UnitTestCase
         // test read_write
         $expected = $scopeToPolicyMap[ScopeConstants::READ_WRITE];
         $actual   = $method->invokeArgs(
-            (new Service()),
-            [
-                collect(
-                    [
-                        new Scope\Entity(ScopeConstants::READ_WRITE),
-                    ]
-                )
-            ]
+            (new Service()), [[ScopeConstants::READ_WRITE]]
         );
 
         $this->assertEquals($expected, $actual);
@@ -53,15 +39,7 @@ class ServiceTest extends UnitTestCase
         // test read_only and rx_read_only
         $expected = $scopeToPolicyMap[ScopeConstants::READ_ONLY] + $scopeToPolicyMap[ScopeConstants::RX_READ_ONLY];
         $actual   = $method->invokeArgs(
-            (new Service()),
-            [
-                collect(
-                    [
-                        new Scope\Entity(ScopeConstants::RX_READ_ONLY),
-                        new Scope\Entity(ScopeConstants::READ_ONLY),
-                    ]
-                )
-            ]
+            (new Service()), [[ScopeConstants::RX_READ_ONLY, ScopeConstants::READ_ONLY]]
         );
 
         $this->assertEquals($expected, $actual);
@@ -69,15 +47,7 @@ class ServiceTest extends UnitTestCase
         // test read_only and read_write
         $expected = $scopeToPolicyMap[ScopeConstants::READ_WRITE];
         $actual   = $method->invokeArgs(
-            (new Service()),
-            [
-                collect(
-                    [
-                        new Scope\Entity(ScopeConstants::READ_WRITE),
-                        new Scope\Entity(ScopeConstants::READ_ONLY)
-                    ]
-                )
-            ]
+            (new Service()), [[ScopeConstants::READ_WRITE, ScopeConstants::READ_ONLY]]
         );
 
         $this->assertEquals($expected, $actual);

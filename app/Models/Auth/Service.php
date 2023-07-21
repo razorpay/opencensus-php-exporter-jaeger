@@ -105,7 +105,7 @@ class Service
             'scope_names'            => $scopes->pluck('id')->all(),
             'scope_descriptions'     => $this->parseScopeDescriptionsForDisplay($scopes),
             'dashboard_url'          => $hostName,
-            'scope_policies'         => $this->parseScopePoliciesForDisplay($scopes),
+            'scope_policies'         => $this->parseScopePolicies($scopes->pluck('id')->all()),
             'onboarding_url'         => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled),
             'isOnboardingExpEnabled' => $isOnboardingExpEnabled
         ];
@@ -163,7 +163,11 @@ class Service
                 $data[Token::USER_ID],
                 $merchantId);
 
-            $this->mapMerchantToApplication($clientId, $merchantId);
+            $scopes = is_string($queryParamsArray['scope']) ? [$queryParamsArray['scope']] : $queryParamsArray['scope'];
+
+            $scopePolicies = $this->parseScopePolicies($scopes);
+
+            $this->mapMerchantToApplication($clientId, $merchantId, $scopePolicies);
         }
 
         return $authCode->getHeaders()['Location'][0];
@@ -505,45 +509,42 @@ class Service
      * Filter out scopes.
      * Currently, only drops read-only scopes if read-write scope is present
      *
-     * @param Collection $scopes
+     * @param array $scopes
      *
-     * @return Collection
+     * @return array
      */
-    protected function filterScopesForDisplay(Collection $scopes): Collection
+    protected function filterScopes(array $scopes): array
     {
-        return $scopes->reject(function ($item) use ($scopes) {
-            $id = $item["id"];
-            if ($id === ScopeConstants::READ_ONLY && $scopes->contains("id", ScopeConstants::READ_WRITE)) {
-                return true;
+        return array_filter($scopes, function ($item) use ($scopes) {
+            if ($item === ScopeConstants::READ_ONLY && in_array(ScopeConstants::READ_WRITE, $scopes)) {
+                return false;
             }
-            if ($id === ScopeConstants::RX_READ_ONLY && $scopes->contains("id", ScopeConstants::RX_READ_WRITE)) {
-                return true;
+            if ($item === ScopeConstants::RX_READ_ONLY && in_array(ScopeConstants::RX_READ_WRITE, $scopes)) {
+                return false;
             }
-            return false;
+            return true;
         });
     }
 
     /**
      * Maps the scope name to corresponding TnC Policy URL
-     * @param Collection $scopes
+     * @param array $scopes
      *
      * @return array
      */
-    protected function parseScopePoliciesForDisplay(Collection $scopes): array
+    protected function parseScopePolicies(array $scopes): array
     {
-        $scopes = $this->filterScopesForDisplay($scopes);
+        $scopes = $this->filterScopes($scopes);
 
-        $scopePoliciesArray = $scopes->filter(
-            function($item) {
-                return array_key_exists($item["id"], self::SCOPE_TO_POLICY_MAP);
-            }
-        )->map(
-            function($item) {
-                return self::SCOPE_TO_POLICY_MAP[$item["id"]];
-            }
-        );
+        $scopePoliciesArray = array_filter($scopes, function ($item) {
+            return array_key_exists($item, self::SCOPE_TO_POLICY_MAP);
+        });
 
-        return $scopePoliciesArray->collapse()->all();
+        $scopePoliciesArray = array_map(function ($item) {
+            return self::SCOPE_TO_POLICY_MAP[$item];
+        }, $scopePoliciesArray);
+
+        return array_unique(array_merge(...$scopePoliciesArray));
     }
 
     /**
@@ -554,11 +555,15 @@ class Service
      */
     protected function parseScopeDescriptionsForDisplay(Collection $scopes): array
     {
-        $scopes = $this->filterScopesForDisplay($scopes);
+        $filteredScopeNames = $this->filterScopes($scopes->pluck('id')->all());
 
-        $detailedDescriptions = $scopes->pluck('description')->all();
+        $filteredScopeObjects = array_filter($scopes->all(), function ($item) use ($filteredScopeNames) {
+            return in_array($item['id'], $filteredScopeNames);
+        });
 
-        return array_unique(Arr::collapse($detailedDescriptions));
+       $filteredDescriptions = array_column($filteredScopeObjects, 'description');
+
+        return array_unique(Arr::collapse($filteredDescriptions));
     }
 
     protected function notifyMerchantApplicationAuthorized(
@@ -571,7 +576,16 @@ class Service
         $apiService->notifyMerchant($clientId, $userId, $merchantId);
     }
 
-    protected function mapMerchantToApplication(string $clientId, string $merchantId)
+    /**
+     * This function calls API service to map merchant to the partner application.
+     * @param string $clientId
+     * @param string $merchantId
+     * @param array $scopePolicies This is an array of mapping of policy name and policy Url. We are consuming this
+     * data in API to generate consent docs via BVS based on scopes requested during authorize.
+     *
+     * @return void
+     */
+    protected function mapMerchantToApplication(string $clientId, string $merchantId, array $scopePolicies)
     {
         $apiService = $this->getApiService();
 
@@ -580,8 +594,9 @@ class Service
         $appId     = $client->getApplicationId();
         $partnerId = $client->getMerchantId();
         $data      = [
-            'env'   => $client->getEnvironment(),
-            'ip'    => $this->app['request']->ip(),
+            'env'            => $client->getEnvironment(),
+            'ip'             => $this->app['request']->ip(),
+            'scope_policies' => $scopePolicies,
         ];
 
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId, $data);
@@ -701,7 +716,11 @@ class Service
 
             $merchantId = $data[Token::MERCHANT_ID];
 
-            $this->mapMerchantToApplication($clientId, $merchantId);
+            $scopes = is_string($queryParamsArray['scope']) ? [$queryParamsArray['scope']] : $queryParamsArray['scope'];
+
+            $scopePolicies = $this->parseScopePolicies($scopes);
+
+            $this->mapMerchantToApplication($clientId, $merchantId, $scopePolicies);
         }
 
         return $authCode;

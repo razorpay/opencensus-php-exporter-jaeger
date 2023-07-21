@@ -354,8 +354,12 @@ class ApiTest extends UnitTestCase
         $api = new Api();
 
         $data =   [
-            'env' => 'prod',
-            'ip'  => 'example'
+            'env'            => 'prod',
+            'ip'             => 'example',
+            'scope_policies' => [
+                "App Policies"       => "https://razorpay.com/s/terms/partners/payments-oauth/read-and-write/",
+                "RazorpayX Policies" => "https://razorpay.com/terms/razorpayx/partnership/"
+            ]
         ];
 
         $api->mapMerchantToApplication(
@@ -398,7 +402,11 @@ class ApiTest extends UnitTestCase
 
         $data =   [
             'env' => 'prod',
-            'ip'  => 'example'
+            'ip'  => 'example',
+            'scope_policies' => [
+                "App Policies"       => "https://razorpay.com/s/terms/partners/payments-oauth/read-and-write/",
+                "RazorpayX Policies" => "https://razorpay.com/terms/razorpayx/partnership/"
+            ]
         ];
 
         try {
