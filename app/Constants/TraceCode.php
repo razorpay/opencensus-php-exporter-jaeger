@@ -109,6 +109,9 @@ class TraceCode extends BaseTraceCode
     // Used in oauth logs (oauth library)
     const INVALID_CLIENT_CREDENTIALS                                = "INVALID_CLIENT_CREDENTIALS";
     const INVALID_REFRESH_TOKEN                                     = "INVALID_REFRESH_TOKEN";
+    const ENCRYPTION_FAILED                                         = "ENCRYPTION_FAILED";
+    const DECRYPTION_FAILED_V2                                      = "DECRYPTION_FAILED_V2";
+    const DECRYPTION_FAILED_V1                                      = "DECRYPTION_FAILED_V1";
 
     const MISSING_CLIENT_CREDENTIALS                                = "MISSING_CLIENT_CREDENTIALS";
     // Adding this for outbox log (outbox-php pkg)
