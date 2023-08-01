@@ -3,7 +3,6 @@
 namespace App\Models\Auth;
 
 use App;
-use Request;
 use Trace;
 use App\Services;
 use Razorpay\OAuth;
@@ -65,7 +64,6 @@ class Service
     {
         $this->app = App::getFacadeRoot();
 
-
         $this->signAlgo = OAuth\SignAlgoConstant::ES256;
 
         $this->oauthServer = new OAuth\OAuthServer(env('APP_ENV'), new Repository, $this->signAlgo);
@@ -100,14 +98,17 @@ class Service
 
         $isOnboardingExpEnabled = $this->checkIfOnboardingExpIsEnabled($appData['merchant_id'], $isOnboardingAllowedForScope);
 
+        $scopeIds = $scopes->pluck('id')->all();
+
         $authorizeData = [
-            'application'            => $appData,
-            'scope_names'            => $scopes->pluck('id')->all(),
-            'scope_descriptions'     => $this->parseScopeDescriptionsForDisplay($scopes),
-            'dashboard_url'          => $hostName,
-            'scope_policies'         => $this->parseScopePolicies($scopes->pluck('id')->all()),
-            'onboarding_url'         => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled),
-            'isOnboardingExpEnabled' => $isOnboardingExpEnabled
+            'application'               => $appData,
+            'scope_names'               => $scopeIds,
+            'scope_descriptions'        => $this->parseScopeDescriptionsForDisplay($scopes),
+            'dashboard_url'             => $hostName,
+            'scope_policies'            => $this->parseScopePolicies($scopeIds),
+            'platform_fee_policy_url'   => $this->fetchCustomPolicyUrlForApplication($appData['id'], $scopeIds),
+            'onboarding_url'            => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled),
+            'isOnboardingExpEnabled'    => $isOnboardingExpEnabled
         ];
 
         if (empty($authorizeData['application']['logo']) === false)
@@ -592,7 +593,9 @@ class Service
         $client = (new OAuth\Client\Repository)->findOrFailPublic($clientId);
 
         $appId     = $client->getApplicationId();
+
         $partnerId = $client->getMerchantId();
+
         $data      = [
             'env'            => $client->getEnvironment(),
             'ip'             => $this->app['request']->ip(),
@@ -600,6 +603,42 @@ class Service
         ];
 
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId, $data);
+    }
+
+    /**
+     * This function calls API service to fetch custom TnC url for a partner application.
+     * This custom TnC url will then be rendered in authorise page so that consent of
+     * the merchant can be captured after authorisation.
+     * @param string $appId
+     * @param array $scopes
+     *
+     * @return void
+     */
+    protected function fetchCustomPolicyUrlForApplication(string $appId, array $scopes)
+    {
+        // don't fetch custom TnC url if both read_only & read_write scopes doesn't exist
+        if (in_array(ScopeConstants::READ_ONLY, $scopes) === false and
+            in_array(ScopeConstants::READ_WRITE, $scopes) === false)
+        {
+            return null;
+        }
+
+        $startTime = microtime(true);
+
+        $apiService = $this->getApiService();
+
+        $response =  $apiService->fetchPartnerConfigForApplication($appId);
+
+        $endTime = microtime(true);
+
+        Trace::info(TraceCode::PARTNER_CONFIG_FETCH,
+            [
+                'response' => $response,
+                'time_taken' => $endTime - $startTime
+            ]
+        );
+
+        return $response['partner_metadata']['policy_url'] ?? null;
     }
 
   public function getAuthorizeMultiTokenViewData(array $input)
@@ -630,11 +669,6 @@ class Service
         {
             throw new BadRequestException(ErrorCode::BAD_REQUEST_INVALID_TEST_CLIENT);
         }
-    }
-
-    private function getValidMultiTokenClients()
-    {
-        return explode(',', env("MULTI_TOKEN_CLIENTS"));
     }
 
     public function postAuthCodeMultiToken(array $input)
@@ -683,6 +717,11 @@ class Service
 
             throw $e;
         }
+    }
+
+    private function getValidMultiTokenClients()
+    {
+        return explode(',', env("MULTI_TOKEN_CLIENTS"));
     }
 
     private function getAuthCodeMultiTokenInput(array $queryParams, $mode)

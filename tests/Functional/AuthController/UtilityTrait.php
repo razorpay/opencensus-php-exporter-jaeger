@@ -22,10 +22,11 @@ trait UtilityTrait
         $content = array_merge($content, $parameters);
     }
 
-    public function createAndSetClientWithEnvironment(string $env = 'dev')
+    public function createAndSetClientWithEnvironment(string $env = 'dev', string $appId = null)
     {
+        $appAttributes = empty($appId) === false ? ['id' => $appId] : [];
 
-        $this->application= Application\Entity::factory()->create();
+        $this->application= Application\Entity::factory()->create($appAttributes);
 
         $clientName = $env . 'Client';
 

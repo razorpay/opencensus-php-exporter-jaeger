@@ -10,7 +10,7 @@
       display: flex;
       flex-direction: column;
     }
-  
+
   @media (max-width: 768px) {
     .card {
       height: 100vh;
@@ -62,9 +62,9 @@
 
 
   .access-heading {
-    font-size: 24px; 
-    font-weight: 700; 
-    color: #ffffff; 
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
     line-height: 32px;
     margin: 0;
   }
@@ -72,9 +72,9 @@
   @media (max-width: 768px) {
     .access-heading {
       text-align: center;
-      font-size: 20px; 
-      font-weight: 700; 
-      color: #ffffff; 
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
       line-height: 28px;
     }
   }
@@ -133,7 +133,7 @@
     align-items: center;
   }
 
-  @media (max-width: 768px) { 
+  @media (max-width: 768px) {
     .card-footer {
       border: none;
       background: #FFFFFF;
@@ -150,7 +150,7 @@
     border: 2px solid rgba(121, 135, 156, 0.18);
   }
 
-  @media (max-width: 768px) { 
+  @media (max-width: 768px) {
     .divider {
       display: none;
     }
@@ -163,13 +163,13 @@
     color: #79879C;
   }
 
-  @media (max-width: 768px) { 
+  @media (max-width: 768px) {
     .logged-user {
       margin-left: 0px;
     }
   }
 
-  
+
   .scope {
     margin-left: 74px;
     color: #5D6D86;
@@ -183,9 +183,9 @@
   }
 
   .scope-list {
-    font-size: 18px; 
-    line-height: 24px; 
-    margin-top: 16px; 
+    font-size: 18px;
+    line-height: 24px;
+    margin-top: 16px;
     margin-left: 20px;
   }
 
@@ -287,7 +287,7 @@
       width: 100%;
     }
   }
-  
+
 
   .tertiary:hover {
     background: rgba(21, 102, 241, 0.04);
@@ -315,7 +315,7 @@
     gap: 10px;
   }
 
-  @media (max-width: 768px) { 
+  @media (max-width: 768px) {
     .button-wrapper {
       justify-content: center;
       margin-right: 0px;
@@ -327,7 +327,7 @@
     margin-top: 53px;
   }
 
-  @media (max-width: 768px) { 
+  @media (max-width: 768px) {
     .card-body {
       background: #FFFFFF;
       border-radius: 16px;
@@ -365,7 +365,7 @@
 
 <div class="card">
   <div class="card-header">
-    <div class="heading-wrapper"> 
+    <div class="heading-wrapper">
       <div class="heading-with-image">
         <p class="access-heading">{{$data['application']['name']}} wants access to your Razorpay Account</p>
       </div>
@@ -391,7 +391,7 @@
       </ul>
     </section>
     <section class="policies">
-    <p class="policies-text">You may review detailed 
+    <p class="policies-text">You may review detailed
       @foreach($data['scope_policies'] as $text => $link)
         @if ($loop->first and $loop->last)
             <a class="underline" href={{$link}} target="_blank">{{$text}}</a>.
@@ -405,6 +405,14 @@
     @endforeach
     You can remove this app from your account under Settings.</p>
     </section>
+    @if(empty($data['platform_fee_policy_url']) === false)
+        <section class="policies">
+          <p class="policies-text">
+              You are also authorizing Razorpay to deduct merchant services fee for each transaction as per terms specified
+              for {{$data['application']['name']}} <a class="underline" href={{$data['platform_fee_policy_url']}} target="_blank">here</a>.
+          </p>
+        </section>
+    @endif
     <div class="card-footer">
     <div class="button-wrapper">
       <form class="cancel-form" method="POST" action="/authorize">

@@ -35,7 +35,6 @@ class Api
     public function __construct()
     {
         $this->apiUrl = env('APP_API_URL');
-
         $this->defaultHeaders = [RequestParams::DEV_SERVE_USER => Request::header(RequestParams::DEV_SERVE_USER)];
         $this->options = ['auth' => $this->getAuthenticationOption(Mode::LIVE)];
     }
@@ -284,6 +283,32 @@ class Api
         }
 
         throw new LogicException('Error when triggering merchant banking webhooks');
+    }
+
+    public function fetchPartnerConfigForApplication(string $appId)
+    {
+        $url = $this->apiUrl . '/partner_config_guest?application_id=' . $appId;
+
+        try
+        {
+            $options = array_merge($this->options, ['timeout' => env('APP_API_REQUEST_TIMEOUT')]);
+
+            $response = Requests::get($url, $this->defaultHeaders, $options);
+
+            return json_decode($response->body, true);
+        }
+        catch (\Throwable $e)
+        {
+            $tracePayload = [
+                'class'   => get_class($e),
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::critical(TraceCode::PARTNER_CONFIG_FETCH_FAILED, $tracePayload);
+        }
+
+        return null;
     }
 
     /**

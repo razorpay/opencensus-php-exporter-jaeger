@@ -121,6 +121,11 @@ class OAuthTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());
 
+        $platformFeeCondition = 'You are also authorizing Razorpay to deduct merchant services fee for each transaction as per terms specified
+              for ' . $application->getName() . ' <a class="underline" href=https://www.xyz.com/terms target="_blank">here</a>';
+
+        $this->assertStringContainsString($platformFeeCondition, $response->getContent());
+
         $data = [
             'method' => 'get',
             'url'    => '/authorize?response_type=code' .
@@ -138,6 +143,44 @@ class OAuthTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());
+    }
+
+    public function testGetAuthorizeUrlWithClientWithXScope()
+    {
+        $application = Application\Entity::factory()->create();
+
+        Client\Entity::factory()->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+
+        $devClient = Client\Entity::factory()->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $application->getId(),
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $data = [
+            'method' => 'get',
+            'url'    => '/authorize?response_type=code' .
+                '&client_id=' . $devClient->getId() .
+                '&redirect_uri=https://www.example.com' .
+                '&scope=rx_read_only' .
+                '&state=123',
+        ];
+
+        $response = $this->sendRequest($data);
+
+        $expectedString = '<p class="access-heading">'.
+            $application->getName() .
+            ' wants access to your Razorpay Account</p>';
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertStringContainsString($expectedString, $response->getContent());
+
+        $platformFeeCondition = 'You are also authorizing Razorpay to deduct merchant services fee for each transaction as per terms specified
+              for ' . $application->getName() . ' <a class="underline" href=https://www.xyz.com/terms target="_blank">here</a>';
+
+        $this->assertStringNotContainsString($platformFeeCondition, $response->getContent());
     }
 
     public function testGetAuthorizeUrlNoStateParam()

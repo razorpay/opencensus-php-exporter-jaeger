@@ -58,6 +58,8 @@ class TraceCode extends BaseTraceCode
     const RAVEN_GENERATE_OTP_FAILED                                 = 'RAVEN_GENERATE_OTP_FAILED';
     const RAVEN_VERIFY_OTP_FAILED                                   = 'RAVEN_VERIFY_OTP_FAILED';
     const REQUESTS_GOT_THROTTLED                                    = 'REQUESTS_GOT_THROTTLED';
+    const PARTNER_CONFIG_FETCH                                      = 'PARTNER_CONFIG_FETCH';
+    const PARTNER_CONFIG_FETCH_FAILED                               = 'PARTNER_CONFIG_FETCH_FAILED';
 
     // ----- Generic Codes ----
     const MISC_TOSTRING_ERROR                                       = 'MISC_TOSTRING_ERROR';

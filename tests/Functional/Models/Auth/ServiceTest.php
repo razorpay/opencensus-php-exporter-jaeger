@@ -3,8 +3,8 @@
 namespace Functional\Models\Auth;
 
 use App\Tests\TestCase;
-use App\Models\Auth\Service;
 use Razorpay\OAuth\Scope;
+use App\Models\Auth\Service;
 use Razorpay\OAuth\Scope\ScopeConstants;
 use App\Tests\Functional\AuthController\UtilityTrait;
 
@@ -17,6 +17,7 @@ class ServiceTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $this->oauthServerMock = \Mockery::mock('Razorpay\OAuth\OAuthServer');
     }
 
@@ -52,7 +53,8 @@ class ServiceTest extends TestCase
         $this->assertEquals("10000000000000", $response["application"]["merchant_id"]);
         $this->assertEquals($this->application->getId(), $response["application"]["id"]);
         $this->assertEquals("https://api-test.com", $response['dashboard_url']);
-        //$this->assertNull($response['onboarding_url']);
+        $this->assertNotNull($response['platform_fee_policy_url']);
+        $this->assertNotNull($response['onboarding_url']);
     }
 
     public function testGetAuthorizeViewDataForPhantom()
@@ -129,5 +131,71 @@ class ServiceTest extends TestCase
         $this->assertEquals($this->application->getId(), $response["application"]["id"]);
         $this->assertEquals("https://api-test.com", $response['dashboard_url']);
         $this->assertNull($response['onboarding_url']);
+    }
+
+    /**
+     * @throws \Razorpay\OAuth\Exception\ServerException
+     * @throws \App\Exception\LogicException
+     * @throws \App\Exception\BadRequestException
+     * @throws \Razorpay\OAuth\Exception\BadRequestException
+     */
+    public function testFetchCustomPolicyUrlForApplicationThrowsException()
+    {
+        $input = [
+            'state'         => '123',
+            'scope'         => 'read_only',
+            'client_id'     => '30000000000000',
+            'redirect_uri'  => 'https://www.example.com',
+            'response_type' => 'code'
+        ];
+
+        $this->createAndSetClientWithEnvironment('dev', '20000000000000');
+
+        $service = new Service();
+        $service->oauthServer = $this->oauthServerMock;
+
+        $this->oauthServerMock
+            ->shouldReceive('validateAuthorizeRequestAndGetScopes')
+            ->andReturn(collect(
+                [
+                    new Scope\Entity(ScopeConstants::READ_ONLY),
+                ]));
+
+        $response = $service->getAuthorizeViewData($input);
+
+        $this->assertNull($response['platform_fee_policy_url']);
+    }
+
+    /**
+     * @throws \App\Exception\BadRequestException
+     * @throws \Razorpay\OAuth\Exception\ServerException
+     * @throws \App\Exception\LogicException
+     * @throws \Razorpay\OAuth\Exception\BadRequestException
+     */
+    public function testFetchCustomPolicyUrlForApplicationWithUrlNotConfigured()
+    {
+        $input = [
+            'state'         => '123',
+            'scope'         => 'read_only',
+            'client_id'     => '30000000000000',
+            'redirect_uri'  => 'https://www.example.com',
+            'response_type' => 'code'
+        ];
+
+        $this->createAndSetClientWithEnvironment('dev', '20000000000001');
+
+        $service = new Service();
+        $service->oauthServer = $this->oauthServerMock;
+
+        $this->oauthServerMock
+            ->shouldReceive('validateAuthorizeRequestAndGetScopes')
+            ->andReturn(collect(
+                [
+                    new Scope\Entity(ScopeConstants::READ_ONLY),
+                ]));
+
+        $response = $service->getAuthorizeViewData($input);
+
+        $this->assertNull($response['platform_fee_policy_url']);
     }
 }

@@ -652,4 +652,29 @@ class ApiTest extends UnitTestCase
         $response = $api->getUserByEmail("abc@example.com");
         $this->assertEquals('{"message":{"message":"some message"}}', $response->getContent());
     }
+
+    /**
+     * @Test
+     * testFetchPartnerConfigForApplication should fetch partner config for oauth app.
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @return void
+     */
+    public function testFetchPartnerConfigForApplication(): void
+    {
+        $expectedResponse = new RequestsResponse();
+        $expectedResponse->status_code = 200;
+        $expectedResponse->body = '{"partner_metadata": {"policy_url": "https://www.xyz.com/terms"}}';
+
+        $this->getRequestMock()
+             ->shouldReceive('get')
+             ->once()
+             ->andReturn($expectedResponse);
+
+        $api = new Api();
+
+        $apiResponse = $api->fetchPartnerConfigForApplication('random_app_id');
+
+        $this->assertEquals(["partner_metadata" => ["policy_url" => "https://www.xyz.com/terms"]], $apiResponse);
+    }
 }

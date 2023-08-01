@@ -2,6 +2,7 @@
 
 namespace App\Services\Mock;
 
+use Exception;
 use App\Exception\LogicException;
 
 class Api
@@ -122,5 +123,32 @@ class Api
     public function getOrgHostName(string $merchantId): string
     {
         return "https://api-test.com";
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function fetchPartnerConfigForApplication(string $appId): ?array
+    {
+        if ($appId === '20000000000000')
+        {
+            try
+            {
+                // some error occurred while making a call to API service
+                throw new Exception("Some error");
+            }
+            catch (\Throwable $e)
+            {
+                // trace logs
+
+                return null;
+            }
+        }
+        else if ($appId === '20000000000001')
+        {
+            return [];
+        }
+
+        return ['partner_metadata' => ['policy_url' => 'https://www.xyz.com/terms']];
     }
 }

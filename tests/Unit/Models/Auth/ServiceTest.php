@@ -126,7 +126,21 @@ class ServiceTest extends UnitTestCase
         );
 
         $this->assertEquals($expected, $actual);
-
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    public function testFetchCustomPolicyUrlForApplication()
+    {
+        $class  = new \ReflectionClass('App\Models\Auth\Service');
+
+        $method = $class->getMethod("fetchCustomPolicyUrlForApplication");
+
+        $expected = 'https://www.xyz.com/terms';
+
+        $actual   = $method->invokeArgs((new Service()), ['randomAppId', [ScopeConstants::READ_ONLY]]);
+
+        $this->assertEquals($expected, $actual);
+    }
 }
