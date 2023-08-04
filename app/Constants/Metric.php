@@ -24,4 +24,8 @@ class Metric
 
     const SPLITZ_REQUESTS_TOTAL                             = 'splitz_requests_total';
     const SPLITZ_REQUEST_DURATION_MILLISECONDS              = 'splitz_request_duration_milliseconds.histogram';
+
+    // for partners with custom TnC policy
+    const FETCH_CUSTOM_POLICY_REQUESTS_TOTAL                = 'fetch_custom_policy_requests_total';
+    const MERCHANT_APP_MAPPING_REQUESTS_TOTAL                = 'merchant_app_mapping_requests_total';
 }

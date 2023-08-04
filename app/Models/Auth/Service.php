@@ -133,6 +133,7 @@ class Service
         {
             throw new BadRequestValidationFailureException('Invalid id passed for merchant');
         }
+
         Trace::info(TraceCode::POST_AUTHORIZE_REQUEST, ['merchant_id' => $input['merchant_id']]);
 
         $data = $this->resolveTokenOnDashboard($input['token'], $input['merchant_id']);
@@ -167,6 +168,8 @@ class Service
             $scopes = is_string($queryParamsArray['scope']) ? [$queryParamsArray['scope']] : $queryParamsArray['scope'];
 
             $scopePolicies = $this->parseScopePolicies($scopes);
+
+            $this->addCustomPolicyIfApplicable($scopePolicies, $scopes, $input);
 
             $this->mapMerchantToApplication($clientId, $merchantId, $scopePolicies);
         }
@@ -581,12 +584,12 @@ class Service
      * This function calls API service to map merchant to the partner application.
      * @param string $clientId
      * @param string $merchantId
-     * @param array $scopePolicies This is an array of mapping of policy name and policy Url. We are consuming this
+     * @param array $scopePolicies - This is an array of mapping of policy name and policy Url. We are consuming this
      * data in API to generate consent docs via BVS based on scopes requested during authorize.
      *
      * @return void
      */
-    protected function mapMerchantToApplication(string $clientId, string $merchantId, array $scopePolicies)
+    protected function mapMerchantToApplication(string $clientId, string $merchantId, array $scopePolicies): void
     {
         $apiService = $this->getApiService();
 
@@ -596,10 +599,10 @@ class Service
 
         $partnerId = $client->getMerchantId();
 
-        $data      = [
-            'env'            => $client->getEnvironment(),
-            'ip'             => $this->app['request']->ip(),
-            'scope_policies' => $scopePolicies,
+        $data = [
+            'env'                       => $client->getEnvironment(),
+            'ip'                        => $this->app['request']->ip(),
+            'scope_policies'            => $scopePolicies
         ];
 
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId, $data);
@@ -613,6 +616,7 @@ class Service
      * @param array $scopes
      *
      * @return void
+     * @throws \Exception
      */
     protected function fetchCustomPolicyUrlForApplication(string $appId, array $scopes)
     {
@@ -863,5 +867,18 @@ class Service
             return true;
         }
         return false;
+    }
+
+    private function addCustomPolicyIfApplicable(array & $scopePolicies, array $scopes, array $input): void
+    {
+        // don't add the custom TnC url if both read_only & read_write scopes doesn't exist
+        if (empty($input['platform_fee_policy_url']) === true or
+            (in_array(ScopeConstants::READ_ONLY, $scopes) === false and
+            in_array(ScopeConstants::READ_WRITE, $scopes) === false))
+        {
+            return;
+        }
+
+        $scopePolicies[Constant::CUSTOM_POLICY] =  $input['platform_fee_policy_url'];
     }
 }

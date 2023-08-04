@@ -143,4 +143,24 @@ class ServiceTest extends UnitTestCase
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testAddCustomPolicyIfApplicable()
+    {
+        $class  = new \ReflectionClass('App\Models\Auth\Service');
+
+        $method = $class->getMethod("addCustomPolicyIfApplicable");
+
+        $scopePolicies = ['App Policies' => 'https://razorpay.com/s/terms/partners/payments-oauth/read-and-write/'];
+
+        $input = ['platform_fee_policy_url' =>  'https://www.xyz.com/terms'];
+
+        $method->invokeArgs((new Service()), [&$scopePolicies, [ScopeConstants::READ_WRITE], $input]);
+
+        $expectedScopePolicies = [
+            'App Policies'  => 'https://razorpay.com/s/terms/partners/payments-oauth/read-and-write/',
+            'Custom Policy' => 'https://www.xyz.com/terms'
+        ];
+
+        $this->assertEquals($expectedScopePolicies, $scopePolicies);
+    }
 }

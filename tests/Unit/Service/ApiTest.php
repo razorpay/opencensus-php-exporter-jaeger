@@ -357,8 +357,9 @@ class ApiTest extends UnitTestCase
             'env'            => 'prod',
             'ip'             => 'example',
             'scope_policies' => [
-                "App Policies"       => "https://razorpay.com/s/terms/partners/payments-oauth/read-and-write/",
-                "RazorpayX Policies" => "https://razorpay.com/terms/razorpayx/partnership/"
+                'App Policies'       => 'https://razorpay.com/s/terms/partners/payments-oauth/read-and-write/',
+                'RazorpayX Policies' => 'https://razorpay.com/terms/razorpayx/partnership/',
+                'Custom Policy'      => 'https://www.xyz.com/terms'
             ]
         ];
 

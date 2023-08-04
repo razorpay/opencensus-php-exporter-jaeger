@@ -405,7 +405,7 @@
     @endforeach
     You can remove this app from your account under Settings.</p>
     </section>
-    @if(empty($data['platform_fee_policy_url']) === false)
+    @if (empty($data['platform_fee_policy_url']) === false)
         <section class="policies">
           <p class="policies-text">
               You are also authorizing Razorpay to deduct merchant services fee for each transaction as per terms specified
@@ -434,6 +434,14 @@
               class="merchant-id"
               value=""
           />
+          @if (empty($data['platform_fee_policy_url']) === false)
+              <input
+                  type="hidden"
+                  name="platform_fee_policy_url"
+                  class="platform-fee-policy-url"
+                  value={{$data['platform_fee_policy_url']}}
+              />
+          @endif
         <button class="btn primary btn-submit" disabled> Authorize </button>
       </form>
     </div>

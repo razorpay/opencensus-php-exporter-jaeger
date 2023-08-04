@@ -2,20 +2,21 @@
 
 namespace App\Services;
 
-use Illuminate\Http\JsonResponse;
+use Trace;
 use Request;
+use OpenCensus\Trace\Tracer;
+use Illuminate\Support\Str;
+use Illuminate\Http\JsonResponse;
+
 use App\Constants\Mode;
 use App\Error\ErrorCode;
-use App\Constants\RequestParams;
-use App\Exception\BadRequestException;
-use Trace;
-use OpenCensus\Trace\Tracer;
+use App\Constants\Metric;
 use App\Request\Requests;
-
-use Illuminate\Support\Str;
-
 use App\Constants\TraceCode;
+use App\Models\Auth\Constant;
+use App\Constants\RequestParams;
 use App\Exception\LogicException;
+use App\Exception\BadRequestException;
 
 class Api
 {
@@ -207,7 +208,15 @@ class Api
 
         try
         {
-            Requests::post($url, $this->defaultHeaders, $postPayload, $this->options);
+            $response = Requests::post($url, $this->defaultHeaders, $postPayload, $this->options);
+
+            app('trace')->count(
+                Metric::MERCHANT_APP_MAPPING_REQUESTS_TOTAL,
+                [
+                    Metric::LABEL_STATUS =>  $response->status_code,
+                    'has_custom_policy'  => (empty($data['scope_policies'][Constant::CUSTOM_POLICY]) === false)
+                ]
+            );
         }
         catch (\Throwable $e)
         {
@@ -294,6 +303,13 @@ class Api
             $options = array_merge($this->options, ['timeout' => env('APP_API_REQUEST_TIMEOUT')]);
 
             $response = Requests::get($url, $this->defaultHeaders, $options);
+
+            app('trace')->count(
+                Metric::FETCH_CUSTOM_POLICY_REQUESTS_TOTAL,
+                [
+                    Metric::LABEL_STATUS =>  $response->status_code
+                ]
+            );
 
             return json_decode($response->body, true);
         }
