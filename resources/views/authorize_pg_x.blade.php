@@ -159,12 +159,33 @@
             margin: 0px 24px 12px 24px;
             line-height: 1.4;
         }
+        #loader {
+            width: 40px;
+            height: 40px;
+            border: 3.5px solid #1a90ff;
+            border-bottom-color: rgb(26, 144, 255);
+            border-bottom-color: #eee;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 600ms linear infinite;
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+        }
+            100% {
+                transform: rotate(360deg);
+        }
+        } 
 
     </style>
 </head>
 <body>
 <img class="header-logo" src="https://easy.razorpay.com/federated-bundles/onboarding/build/browser/static/src/App/Onboarding/images/rzp-logo-dark.svg" />
 <main>
+    <div id="loader"></div>
   @include('partials.card')
 </main>
 @include('partials.copyright')
@@ -218,6 +239,16 @@
             elements.user_details.show();
         }
 
+        function showLoader(){
+            document.querySelector('#loader').style.display = 'block';
+            document.querySelector('.card').style.display = 'none';
+        }
+
+        function hideLoader(){
+            document.querySelector('#loader').style.display = 'none';
+            document.querySelector('.card').style.display = 'flex';
+        }
+
         function handleUserSuccess(data) {
             validateResponseData(data);
 
@@ -227,7 +258,7 @@
             elements.merchant_name.text(data.merchant_name);
             elements.token.attr("value", verifyToken);
             elements.merchant_id.attr("value", data.merchant_id);
-
+            hideLoader();
             enableButtonsAndShowEmail();
         }
 
@@ -306,9 +337,10 @@
             showError: showError,
             elements: elements,
             getAppLogoFullUrl: getAppLogoFullUrl,
+            showLoader: showLoader
         };
     })();
-
+    RazorpayAuthorize.showLoader();
     RazorpayAuthorize.getAppLogoFullUrl(`{{$data['application']['logo']}}`);
     RazorpayAuthorize.getUser();
 </script>
