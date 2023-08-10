@@ -242,11 +242,15 @@
         function showLoader(){
             document.querySelector('#loader').style.display = 'block';
             document.querySelector('.card').style.display = 'none';
+            document.querySelector('.copyright').style.display = 'none';
+            document.querySelector('.header-logo').style.display = 'none';
         }
 
         function hideLoader(){
             document.querySelector('#loader').style.display = 'none';
             document.querySelector('.card').style.display = 'flex';
+            document.querySelector('.copyright').style.display = 'block';
+            document.querySelector('.header-logo').style.display = 'block';
         }
 
         function handleUserSuccess(data) {
