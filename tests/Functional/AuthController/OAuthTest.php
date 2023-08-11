@@ -91,6 +91,8 @@ class OAuthTest extends TestCase
 
     public function testGetAuthorizeUrlWithClientWithPGAndXScope()
     {
+        config(['trace.services.splitz.mock' => true]);
+
         $application = Application\Entity::factory()->create();
 
         Client\Entity::factory()->create(['application_id' => $application->getId(), 'environment' => 'prod']);

@@ -133,13 +133,15 @@ class ServiceTest extends UnitTestCase
      */
     public function testFetchCustomPolicyUrlForApplication()
     {
+        config(['trace.services.splitz.mock' => true]);
+
         $class  = new \ReflectionClass('App\Models\Auth\Service');
 
         $method = $class->getMethod("fetchCustomPolicyUrlForApplication");
 
         $expected = 'https://www.xyz.com/terms';
 
-        $actual   = $method->invokeArgs((new Service()), ['randomAppId', [ScopeConstants::READ_ONLY]]);
+        $actual   = $method->invokeArgs((new Service()), ['randomMid', 'randomAppId', [ScopeConstants::READ_ONLY]]);
 
         $this->assertEquals($expected, $actual);
     }

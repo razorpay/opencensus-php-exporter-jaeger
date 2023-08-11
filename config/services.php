@@ -19,5 +19,19 @@ return [
         'request_timeout'    => env('SPLITZ_REQUEST_TIMEOUT', 0.1),
         'enabled'            => env('SPLITZ_ENABLED', true),
         'mock'               => env('SPLITZ_MOCK', false)
-    ]
+    ],
+
+    'dcs' => [
+        'mock'          => env('DCS_MOCK', false),
+        'live'          => [
+            "url"           => env('DCS_LIVE_URL'),
+            'username'      => 'auth',
+            'password'      => env('DCS_AUTH_PASSWORD_LIVE'),
+        ],
+        'test'          => [
+            "url"           => env('DCS_TEST_URL'),
+            'username'      => 'auth',
+            'password'      => env('DCS_AUTH_PASSWORD_TEST'),
+        ],
+    ],
 ];

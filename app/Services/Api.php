@@ -294,20 +294,40 @@ class Api
         throw new LogicException('Error when triggering merchant banking webhooks');
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function fetchPartnerConfigForApplication(string $appId)
     {
         $url = $this->apiUrl . '/partner_config_guest?application_id=' . $appId;
 
         try
         {
+            Trace::info(TraceCode::PARTNER_CONFIG_FETCH_REQUEST,
+                [
+                    'application_id' => $appId,
+                ]
+            );
+
+            $startTime = microtime(true);
+
             $options = array_merge($this->options, ['timeout' => env('APP_API_REQUEST_TIMEOUT')]);
 
             $response = Requests::get($url, $this->defaultHeaders, $options);
+
+            $endTime = microtime(true);
 
             app('trace')->count(
                 Metric::FETCH_CUSTOM_POLICY_REQUESTS_TOTAL,
                 [
                     Metric::LABEL_STATUS =>  $response->status_code
+                ]
+            );
+
+            Trace::info(TraceCode::PARTNER_CONFIG_FETCH_RESPONSE,
+                [
+                    'response'      => $response,
+                    'time_taken'    => $endTime - $startTime
                 ]
             );
 
@@ -322,9 +342,9 @@ class Api
             ];
 
             Trace::critical(TraceCode::PARTNER_CONFIG_FETCH_FAILED, $tracePayload);
-        }
 
-        return null;
+            throw $e;
+        }
     }
 
     /**

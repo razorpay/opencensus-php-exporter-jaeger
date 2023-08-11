@@ -660,6 +660,7 @@ class ApiTest extends UnitTestCase
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      * @return void
+     * @throws \Throwable
      */
     public function testFetchPartnerConfigForApplication(): void
     {

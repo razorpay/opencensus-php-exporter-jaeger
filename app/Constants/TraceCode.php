@@ -58,7 +58,8 @@ class TraceCode extends BaseTraceCode
     const RAVEN_GENERATE_OTP_FAILED                                 = 'RAVEN_GENERATE_OTP_FAILED';
     const RAVEN_VERIFY_OTP_FAILED                                   = 'RAVEN_VERIFY_OTP_FAILED';
     const REQUESTS_GOT_THROTTLED                                    = 'REQUESTS_GOT_THROTTLED';
-    const PARTNER_CONFIG_FETCH                                      = 'PARTNER_CONFIG_FETCH';
+    const PARTNER_CONFIG_FETCH_REQUEST                              = 'PARTNER_CONFIG_FETCH_REQUEST';
+    const PARTNER_CONFIG_FETCH_RESPONSE                             = 'PARTNER_CONFIG_FETCH_RESPONSE';
     const PARTNER_CONFIG_FETCH_FAILED                               = 'PARTNER_CONFIG_FETCH_FAILED';
 
     // ----- Generic Codes ----
@@ -129,5 +130,9 @@ class TraceCode extends BaseTraceCode
     const SPLITZ_REQUEST_RESPONSE                                   = 'SPLITZ_REQUEST_RESPONSE';
     const SPLITZ_REQUEST_FAILED                                     = 'SPLITZ_REQUEST_FAILED';
     const SPLITZ_INTEGRATION_ERROR                                  = 'SPLITZ_INTEGRATION_ERROR';
+
+    const DCS_REQUEST                                               = 'DCS_REQUEST';
+    const DCS_RESPONSE                                              = 'DCS_RESPONSE';
+    const DCS_INTEGRATION_ERROR                                     = 'DCS_INTEGRATION_ERROR';
 }
 

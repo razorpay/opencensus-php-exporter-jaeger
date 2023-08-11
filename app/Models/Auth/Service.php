@@ -14,14 +14,16 @@ use App\Constants\TraceCode;
 use App\Constants\RequestParams;
 use Illuminate\Support\Collection;
 use App\Exception\BadRequestException;
-use Razorpay\OAuth\Token\Entity as Token;
 use Razorpay\OAuth\Scope\ScopeConstants;
+use Razorpay\OAuth\Token\Entity as Token;
 use App\Services\DataLake\DEEventsKafkaProducer;
 use App\Services\DataLake\Event\OnBoardingEvent;
+use App\Services\Dcs\Features\Constants as Features;
 use Razorpay\OAuth\Application\Type as ApplicationType;
 use App\Exception\BadRequestValidationFailureException;
 use App\Services\Segment\EventCode as SegmentEventCode;
 use App\Services\DataLake\EventCode as DataLakeEventCode;
+
 
 class Service
 {
@@ -80,6 +82,8 @@ class Service
      * @throws BadRequestException
      * @throws OAuth\Exception\BadRequestException
      * @throws OAuth\Exception\ServerException|App\Exception\LogicException
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function getAuthorizeViewData(array $input): array
     {
@@ -92,11 +96,13 @@ class Service
 
         $appData = $this->validateAndGetApplicationDataForAuthorize($input);
 
-        $hostName = $this->getApiService()->getOrgHostName($appData['merchant_id']);
+        $merchantId = $appData['merchant_id'];
+
+        $hostName = $this->getApiService()->getOrgHostName($merchantId);
 
         $isOnboardingAllowedForScope = $this->isMerchantOnboardingEnabledForScope($scopes);
 
-        $isOnboardingExpEnabled = $this->checkIfOnboardingExpIsEnabled($appData['merchant_id'], $isOnboardingAllowedForScope);
+        $isOnboardingExpEnabled = $this->checkIfOnboardingExpIsEnabled($merchantId, $isOnboardingAllowedForScope);
 
         $scopeIds = $scopes->pluck('id')->all();
 
@@ -106,7 +112,7 @@ class Service
             'scope_descriptions'        => $this->parseScopeDescriptionsForDisplay($scopes),
             'dashboard_url'             => $hostName,
             'scope_policies'            => $this->parseScopePolicies($scopeIds),
-            'platform_fee_policy_url'   => $this->fetchCustomPolicyUrlForApplication($appData['id'], $scopeIds),
+            'platform_fee_policy_url'   => $this->fetchCustomPolicyUrlForApplication($merchantId, $appData['id'], $scopeIds),
             'onboarding_url'            => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled),
             'isOnboardingExpEnabled'    => $isOnboardingExpEnabled
         ];
@@ -612,14 +618,23 @@ class Service
      * This function calls API service to fetch custom TnC url for a partner application.
      * This custom TnC url will then be rendered in authorise page so that consent of
      * the merchant can be captured after authorisation.
+     * @param string $merchantId
      * @param string $appId
      * @param array $scopes
      *
      * @return void
-     * @throws \Exception
+     * @throws \Razorpay\Dcs\Kv\V1\ApiException
+     * @throws \Throwable
      */
-    protected function fetchCustomPolicyUrlForApplication(string $appId, array $scopes)
+    protected function fetchCustomPolicyUrlForApplication(string $merchantId, string $appId, array $scopes)
     {
+        $isExpEnabled = $this->isCustomTncExpEnabled($merchantId);
+
+        if ($isExpEnabled !== true)
+        {
+            return null;
+        }
+
         // don't fetch custom TnC url if both read_only & read_write scopes doesn't exist
         if (in_array(ScopeConstants::READ_ONLY, $scopes) === false and
             in_array(ScopeConstants::READ_WRITE, $scopes) === false)
@@ -627,25 +642,21 @@ class Service
             return null;
         }
 
-        $startTime = microtime(true);
-
         $apiService = $this->getApiService();
 
+        $isRoutePartnershipsEnabled = $this->app['dcs']->isFeatureEnabledForEntityIdsAndFeatureName([$merchantId, $appId], Features::ENABLE_ROUTE_PARTNERSHIPS);
+
+        if ($isRoutePartnershipsEnabled !== true)
+        {
+            return null;
+        }
+
         $response =  $apiService->fetchPartnerConfigForApplication($appId);
-
-        $endTime = microtime(true);
-
-        Trace::info(TraceCode::PARTNER_CONFIG_FETCH,
-            [
-                'response' => $response,
-                'time_taken' => $endTime - $startTime
-            ]
-        );
 
         return $response['partner_metadata']['policy_url'] ?? null;
     }
 
-  public function getAuthorizeMultiTokenViewData(array $input)
+    public function getAuthorizeMultiTokenViewData(array $input)
     {
         (new Validator)->validateAuthorizeRequestMultiToken($input);
 
@@ -880,5 +891,15 @@ class Service
         }
 
         $scopePolicies[Constant::CUSTOM_POLICY] =  $input['platform_fee_policy_url'];
+    }
+
+    private function isCustomTncExpEnabled(string $merchantId): bool
+    {
+        $properties = [
+            'id'            =>  $merchantId,
+            'experiment_id' => $this->app['config']['trace.app.experiments.partner_custom_tnc_exp_id']
+        ];
+
+        return $this->app['splitz']->isExperimentEnabled($properties);
     }
 }

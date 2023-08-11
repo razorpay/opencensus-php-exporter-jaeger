@@ -27,5 +27,7 @@ class Metric
 
     // for partners with custom TnC policy
     const FETCH_CUSTOM_POLICY_REQUESTS_TOTAL                = 'fetch_custom_policy_requests_total';
-    const MERCHANT_APP_MAPPING_REQUESTS_TOTAL                = 'merchant_app_mapping_requests_total';
+    const MERCHANT_APP_MAPPING_REQUESTS_TOTAL               = 'merchant_app_mapping_requests_total';
+
+    const DCS_REQUESTS_TOTAL                                = 'dcs_requests_total';
 }

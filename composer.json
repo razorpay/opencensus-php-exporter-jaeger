@@ -23,7 +23,8 @@
         "opencensus/opencensus": "~0.7",
         "opencensus/opencensus-exporter-jaeger": "^v0.1.2-alpha",
         "laravel/legacy-factories": "^1.3",
-        "predis/predis": "^2.0"
+        "predis/predis": "^2.0",
+        "razorpay/dcs-php-sdk": "dev-master"
     },
     "repositories": [
         {
@@ -53,6 +54,16 @@
         {
             "type": "vcs",
             "url": "git@github.com:razorpay/opencensus-php-exporter-jaeger.git"
+        },
+        {
+            "type": "vcs",
+            "no-api": true,
+            "url": "git@github.com:razorpay/dcs-php-sdk.git"
+        },
+        {
+            "type": "vcs",
+            "no-api": true,
+            "url": "git@github.com:razorpay/config-proto.git"
         }
     ],
     "require-dev": {

@@ -28,6 +28,8 @@ class ServiceTest extends TestCase
 
     public function testGetAuthorizeViewData() : void
     {
+        config(['trace.services.splitz.mock' => true]);
+
         $input = [
             'state'         => '123',
             'scope'         => 'read_only',
@@ -137,7 +139,7 @@ class ServiceTest extends TestCase
      * @throws \Razorpay\OAuth\Exception\ServerException
      * @throws \App\Exception\LogicException
      * @throws \App\Exception\BadRequestException
-     * @throws \Razorpay\OAuth\Exception\BadRequestException
+     * @throws \Razorpay\OAuth\Exception\BadRequestException|\Throwable
      */
     public function testFetchCustomPolicyUrlForApplicationThrowsException()
     {
@@ -170,7 +172,7 @@ class ServiceTest extends TestCase
      * @throws \App\Exception\BadRequestException
      * @throws \Razorpay\OAuth\Exception\ServerException
      * @throws \App\Exception\LogicException
-     * @throws \Razorpay\OAuth\Exception\BadRequestException
+     * @throws \Razorpay\OAuth\Exception\BadRequestException|\Throwable
      */
     public function testFetchCustomPolicyUrlForApplicationWithUrlNotConfigured()
     {

@@ -2,16 +2,17 @@
 
 namespace App\Providers;
 
-use App\Exception\Handler;
-use App\Services\Mock;
-use App\Services\EdgeService;
+use Illuminate\Support\ServiceProvider;
 
+use App\Services\Mock;
+use App\Exception\Handler;
+use App\Services\SignerCache;
+use App\Services\EdgeService;
 use App\Services\SplitzService;
 use App\Services\RazorX\RazorXClient;
-use App\Http\Middleware\EventTracker;
-use App\Services\SignerCache;
 use App\Http\Middleware\ErrorHandler;
-use Illuminate\Support\ServiceProvider;
+use App\Http\Middleware\EventTracker;
+use App\Services\Dcs\Service as DcsService;
 use App\Services\Segment\SegmentAnalyticsClient;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,16 +21,17 @@ class AppServiceProvider extends ServiceProvider
      * Register any application services.
      *
      * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function register()
     {
-
         $this->app->singleton('Illuminate\Routing\RouteCollectionInterface', function ($app)
         {
             return new \Illuminate\Routing\RouteCollection();
         });
 
-        $this->app->singleton('Illuminate\Contracts\Routing\ResponseFactory', function ($app) {
+        $this->app->singleton('Illuminate\Contracts\Routing\ResponseFactory', function ($app)
+        {
             return new \Illuminate\Routing\ResponseFactory(
                 $app['Illuminate\Contracts\View\Factory'],
                 $app['Illuminate\Routing\Redirector']
@@ -65,11 +67,13 @@ class AppServiceProvider extends ServiceProvider
             return new EdgeService($app,  env('EDGE_POSTGRES_URL'),  env('EDGE_POSTGRES_SECRET'), isPostgres: true);
         });
 
-        $this->app->singleton('signer_cache', function() {
+        $this->app->singleton('signer_cache', function()
+        {
             return new SignerCache();
         });
 
-        $this->app->singleton('raven', function ($app) {
+        $this->app->singleton('raven', function ($app)
+        {
             $ravenMock = env('APP_RAVEN_MOCK', false);
 
             if ($ravenMock === true)
@@ -80,7 +84,8 @@ class AppServiceProvider extends ServiceProvider
             return new \App\Services\Raven();
         });
 
-        $this->app->singleton('razorx', function ($app) {
+        $this->app->singleton('razorx', function ($app)
+        {
             //======== not required as of now. uncomment if RazorxMock client is required==============
             //$razorxMock = env('RAZORX_MOCK', false);
             //if ($razorxMock === true)
@@ -91,7 +96,8 @@ class AppServiceProvider extends ServiceProvider
             return new RazorXClient();
         });
 
-        $this->app->singleton('splitz', function ($app) {
+        $this->app->singleton('splitz', function ($app)
+        {
             $splitzMock = $app['config']['trace.services.splitz.mock'];
 
             if ($splitzMock === true)
@@ -102,7 +108,8 @@ class AppServiceProvider extends ServiceProvider
             return new SplitzService();
         });
 
-        $this->app->singleton('segment-analytics', function ($app) {
+        $this->app->singleton('segment-analytics', function ($app)
+        {
             return new SegmentAnalyticsClient();
         });
 
@@ -110,6 +117,18 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(EventTracker::class);
         $this->app->singleton(ErrorHandler::class);
+
+        $this->app->singleton('dcs', function ($app)
+        {
+            $dcsMock = $app['config']['trace.services.dcs.mock'];
+
+            if ($dcsMock === true)
+            {
+                return new Mock\Dcs();
+            }
+
+            return new DcsService();
+        });
 
         //$path = $this->app->getConfigurationPath('jaeger');
 
