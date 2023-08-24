@@ -1,0 +1,27 @@
+name: CI Base
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  wait-build:
+    name: Auth image build
+    runs-on: [self-hosted, non-api]
+    steps:
+      - name: Wait for auth image to build
+        uses: lewagon/wait-on-check-action@v1.0.0
+        with:
+          ref: ${{ github.sha }}
+          check-name: 'Build Image'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 300
+  base-deployment-webhook:
+    needs: [wait-build]
+    runs-on: [self-hosted, non-api]
+    steps:
+      - name: Trigger spinnaker base infra pipeline
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          https://${{ secrets.SPINNAKER_BASIC_AUTH }}@deploy-github-actions.razorpay.com/webhooks/webhook/devserve-auth  \
+          -d "{\"repo\":\"auth-service\",\"parameters\":{\"auth_commit_id\":\"${{ github.sha }}\"}}"
+
