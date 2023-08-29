@@ -179,16 +179,24 @@
                 transform: rotate(360deg);
         }
         } 
+        .rzp-auth-header-footer {
+            margin: 0px;
+            padding: 0px;
+        }
 
     </style>
 </head>
 <body>
-<img class="header-logo" src="https://easy.razorpay.com/federated-bundles/onboarding/build/browser/static/src/App/Onboarding/images/rzp-logo-dark.svg" />
+    <div class="rzp-auth-header-footer">
+        <img class="header-logo" src="https://easy.razorpay.com/federated-bundles/onboarding/build/browser/static/src/App/Onboarding/images/rzp-logo-dark.svg" />
+    </div>
 <main>
     <div id="loader"></div>
   @include('partials.card')
 </main>
-@include('partials.copyright')
+<div class="rzp-auth-header-footer">
+    @include('partials.copyright')
+</div>
 
 <script type="text/javascript">
     (function () {
@@ -242,15 +250,13 @@
         function showLoader(){
             document.querySelector('#loader').style.display = 'block';
             document.querySelector('.card').style.display = 'none';
-            document.querySelector('.copyright').style.display = 'none';
-            document.querySelector('.header-logo').style.display = 'none';
+            document.querySelector('.rzp-auth-header-footer').style.display = 'none';
         }
 
         function hideLoader(){
             document.querySelector('#loader').style.display = 'none';
             document.querySelector('.card').style.display = 'flex';
-            document.querySelector('.copyright').style.display = 'block';
-            document.querySelector('.header-logo').style.display = 'block';
+            document.querySelector('.rzp-auth-header-footer').style.display = 'block';
         }
 
         function handleUserSuccess(data) {
