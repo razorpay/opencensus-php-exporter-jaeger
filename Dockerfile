@@ -2,6 +2,8 @@ ARG ONGGI_IMAGE=c.rzp.io/razorpay/onggi-multi-arch:php-8.1-nginx
 
 FROM $ONGGI_IMAGE as opencensus-ext
 
+RUN apk add dumb-init
+
 WORKDIR /
 ARG OPENCENSUS_VERSION_TAG=v0.8.0-beta
 RUN set -eux && \
@@ -30,6 +32,8 @@ RUN pear81 config-set php_ini /etc/php81/php.ini && \
 
 RUN pip install --no-cache-dir "razorpay.alohomora==0.5.0"
 
+COPY ./dockerconf/php-fpm-www.conf /etc/php81/php-fpm.conf
+
 WORKDIR /app
 
 ARG GIT_USERNAME
@@ -49,4 +53,5 @@ COPY --from=opencensus-ext /usr/lib/php81/modules/opencensus.so /usr/lib/php81/m
 
 EXPOSE 80
 
-ENTRYPOINT ["/app/dockerconf/entrypoint.sh"]
+#--rewrite 15:3 rewrties SIGTERM to SIGQUIT before proxying it through dumb-init
+ENTRYPOINT ["/usr/bin/dumb-init", "--rewrite", "15:3", "--single-child","/app/dockerconf/entrypoint.sh"]
