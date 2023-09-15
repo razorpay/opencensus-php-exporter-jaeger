@@ -23,13 +23,17 @@ To contribute to Auth service, it is possible that you will also need to make ch
 15. Merge Auth service PR 🎉
 
 ## Deployment
+
 1. It is the responsibility of the change owner to deploy and monitor the changes. This should be taken up right after merging the changes to master. Make sure all CI checks pass before going ahead.
 2. Ensure that the secrets are updated in the correct location before deploying, if any.
-3. Deploy the changes to canary using [this](https://deploy.razorpay.com/#/applications/canary-auth/executions/configure/01b58966-36b9-4d90-aea2-eb14522d8617) pipeline after informing to @spine-edge-oncall. This will rollout the changes to 20% of the traffic.
+3. Execute [deployment-pipeline-v2](https://deploy.razorpay.com/#/applications/prod-auth/executions?q=dep&pipeline=deployment-pipeline-v2), after informing to @spine-edge-oncall. This firsts deploy changes to [canary](https://deploy.razorpay.com/#/applications/canary-auth/executions?pipeline=canary-deployment-v2) and waits for manual judgment before moving to prod.
 4. To monitor the changes in canary, refer to the canary panels in [this](https://vajra.razorpay.com/d/KXKw41nMk/auth-service?orgId=1) Vajra dashboard.
 5. Traffic on auth service is generally low so request failures may not be visible in the Vajra charts. Use coralogix to inspect for failures by selecting the application as `auth` and subsystem as `auth-canary`.
-6. Once confidence is established, ask @spine-edge-oncall to deploy the changes for the rest 80% of the traffic ([Prod Pipeline](https://deploy.razorpay.com/#/applications/prod-auth/executions/configure/563659c1-4488-4c05-8ad8-3b80ef467cce)).
+6. Once canary observations are complete and deployment is good to move to prod, [approve](https://deploy.razorpay.com/#/applications/prod-auth/executions/01HA97V5E4D9E15XKXP1TAQ4TE?q=dep&pipeline=deployment-pipeline-v2&stage=4&step=0&details=manualJudgment) the production deployment stage.
 
+## Hotfix
+
+1. To deploy the hotfix execute the [deployment-pipeline-v2](https://deploy.razorpay.com/#/applications/prod-auth/executions?q=dep&pipeline=deployment-pipeline-v2) with `deployment_type=hotfix`. this deploys the commit provided on canary and prod in parallel.
 
 
 
