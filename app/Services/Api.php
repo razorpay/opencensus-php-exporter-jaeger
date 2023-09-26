@@ -204,6 +204,7 @@ class Api
             'env'              => $data['env'],
             'ip'               => $data['ip'],
             'scope_policies'   => $data['scope_policies'],
+            'dashboard_access' => $data['dashboard_access'],
         ];
 
         try

@@ -172,12 +172,12 @@ class Service
                 $merchantId);
 
             $scopes = is_string($queryParamsArray['scope']) ? [$queryParamsArray['scope']] : $queryParamsArray['scope'];
-
             $scopePolicies = $this->parseScopePolicies($scopes);
-
             $this->addCustomPolicyIfApplicable($scopePolicies, $scopes, $input);
 
-            $this->mapMerchantToApplication($clientId, $merchantId, $scopePolicies);
+            $dashboardAccess = $input['dashboard_access'] ?? null;
+
+            $this->mapMerchantToApplication($clientId, $merchantId, $scopePolicies, $dashboardAccess);
         }
 
         return $authCode->getHeaders()['Location'][0];
@@ -592,23 +592,23 @@ class Service
      * @param string $merchantId
      * @param array $scopePolicies - This is an array of mapping of policy name and policy Url. We are consuming this
      * data in API to generate consent docs via BVS based on scopes requested during authorize.
+     * @param bool|null $dashboardAccess - This is to be consumed in API to create dashboard access for partner to subM accounts.
      *
      * @return void
      */
-    protected function mapMerchantToApplication(string $clientId, string $merchantId, array $scopePolicies): void
+    protected function mapMerchantToApplication(string $clientId, string $merchantId, array $scopePolicies, bool $dashboardAccess = null): void
     {
         $apiService = $this->getApiService();
 
         $client = (new OAuth\Client\Repository)->findOrFailPublic($clientId);
 
         $appId     = $client->getApplicationId();
-
         $partnerId = $client->getMerchantId();
-
-        $data = [
+        $data      = [
             'env'                       => $client->getEnvironment(),
             'ip'                        => $this->app['request']->ip(),
-            'scope_policies'            => $scopePolicies
+            'scope_policies'            => $scopePolicies,
+            'dashboard_access'          => $dashboardAccess ?? null
         ];
 
         $apiService->mapMerchantToApplication($appId, $merchantId, $partnerId, $data);
