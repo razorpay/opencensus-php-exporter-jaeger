@@ -424,7 +424,7 @@
             class="merchant-id"
             value=""
         />
-        <button class="btn tertiary btn-default" disabled> Cancel </button>
+        <button class="btn tertiary btn-default" disabled onclick="cancelBtnClick()"> Cancel </button>
       </form>
       <form class="authorize-form" method="POST" action="/authorize">
           <input type="hidden" name="token" class="verify_token" value=""/>
@@ -442,7 +442,7 @@
                   value={{$data['platform_fee_policy_url']}}
               />
           @endif
-        <button class="btn primary btn-submit" disabled> Authorize </button>
+        <button class="btn primary btn-submit" disabled onclick="authorizeBtnClick()"> Authorize </button>
       </form>
     </div>
   </div>

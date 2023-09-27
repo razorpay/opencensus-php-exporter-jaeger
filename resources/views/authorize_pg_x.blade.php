@@ -8,6 +8,33 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    @include('partials/analytics')
+    <script>
+        
+        function authorizeBtnClick() {
+            let merchant_id= document.querySelector(".merchant-id").value
+            trackEvents({
+                eventName: 'OAuth Partner Consent Screen Authorize Clicked',
+                toCleverTap: true,
+                properties: {
+                    mid: merchant_id,
+                    isPhantomOnboarding:"{{$data['isOnboardingExpEnabled']}}"? true : false,
+                }
+            });
+        }
+
+        function cancelBtnClick() {
+            let merchant_id= document.querySelector(".merchant-id").value
+            trackEvents({
+                eventName: 'OAuth Partner Consent Screen Cancel Clicked',
+                toCleverTap: true,
+                properties: {
+                    mid: merchant_id,
+                    isPhantomOnboarding:"{{$data['isOnboardingExpEnabled']}}"? true : false,
+                }
+            });
+        }
+    </script>
     <style>
         body {
             -webkit-font-smoothing: antialiased;
@@ -226,6 +253,27 @@
                 "<strong>An unknown error occurred.</strong> <br /> Please contact Razorpay support to report this issue.",
         };
 
+        function onLoadOauthSuccess(res){
+            trackEvents({
+                eventName: 'OAuth Partner Consent Screen Loaded',
+                toCleverTap: true,
+                properties: {
+                    mid: res.merchant_id,
+                    isPhantomOnboarding:"{{$data['isOnboardingExpEnabled']}}"? true : false,
+                }
+            });
+        }
+
+        function onLoadOauthError(){
+            trackEvents({
+                eventName: 'OAuth Partner Consent Error Screen Loaded',
+                toCleverTap: true,
+                properties: {
+                    isPhantomOnboarding:"{{$data['isOnboardingExpEnabled']}}"? true : false,
+                }
+            });
+        }
+        
         function showError(type) {
             var error = errorHtml[type];
             elements.buttons.prop("disabled", true);
@@ -261,7 +309,6 @@
 
         function handleUserSuccess(data) {
             validateResponseData(data);
-
             verifyToken = data.token;
             elements.user_email.text(data.email);
             elements.merchant_logo.attr("src", data.logo);
@@ -298,11 +345,14 @@
                                 window.location.href = getSignInUrl(pageUrl);
                               }
                                 handleUserSuccess(res.data);
+                                onLoadOauthSuccess(res.data)
                             } else {
                                 showError("invalid_role");
+                                onLoadOauthError()
                             }
                         } else {
                             showError("unknown_error");
+                            onLoadOauthError()
                         }
                     }
                 })
