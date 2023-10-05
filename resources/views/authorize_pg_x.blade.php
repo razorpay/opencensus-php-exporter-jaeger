@@ -245,6 +245,7 @@
             merchant_name: $(".merchant-name"),
             merchant_id: $(".merchant-id"),
             application_logo: $(".application-logo"),
+            dashboard_access: $(".dashboard-access"),
         };
 
         var errorHtml = {
@@ -316,6 +317,11 @@
             elements.merchant_name.text(data.merchant_name);
             elements.token.attr("value", verifyToken);
             elements.merchant_id.attr("value", data.merchant_id);
+
+            if (queryParams?.oauth_referral === '1') {
+              elements.dashboard_access.attr("value", true);
+            }
+
             hideLoader();
             enableButtonsAndShowEmail();
         }

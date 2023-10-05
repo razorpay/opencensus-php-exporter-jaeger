@@ -434,6 +434,12 @@
               class="merchant-id"
               value=""
           />
+          <input
+              type="hidden"
+              name="dashboard_access"
+              class="dashboard-access"
+              value="false"
+          />
           @if (empty($data['platform_fee_policy_url']) === false)
               <input
                   type="hidden"
