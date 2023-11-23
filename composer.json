@@ -4,7 +4,7 @@
     "type": "library",
     "require": {
         "php-64bit": "^8.0",
-        "opencensus/opencensus": "~0.4",
+        "opencensus/opencensus": "^1.0.0",
         "apache/thrift": "^0.11",
         "ext-sockets": "*",
         "phpspec/prophecy": "*"
@@ -29,5 +29,12 @@
     },
     "scripts": {
         "post-dependencies-solving": "OpenCensus\\Trace\\Exporter\\Installer::checkPhpExtDependency"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "no-api": true,
+            "url": "git@github.com:razorpay/opencensus-php.git"
+        }
+    ]
 }
