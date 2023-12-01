@@ -29,5 +29,7 @@ class Metric
     const FETCH_CUSTOM_POLICY_REQUESTS_TOTAL                = 'fetch_custom_policy_requests_total';
     const MERCHANT_APP_MAPPING_REQUESTS_TOTAL               = 'merchant_app_mapping_requests_total';
 
+    const FETCH_DEFAULT_PARTNER_CONFIG_REQUESTS_TOTAL       = 'fetch_default_partner_config_requests_total';
+
     const DCS_REQUESTS_TOTAL                                = 'dcs_requests_total';
 }

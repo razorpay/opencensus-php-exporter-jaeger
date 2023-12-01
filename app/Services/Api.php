@@ -231,6 +231,67 @@ class Api
         }
     }
 
+
+    /***
+     * This function would fetch the default partner config associated for the partner
+     * @param string $partnerId
+     * @param string $expand
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function getDefaultPartnerConfig(string $partnerId, $expand = null)
+    {
+        $url = $this->apiUrl . '/partner_config/check_default?partner_id='.$partnerId;
+
+        if(empty($expand) === false)
+        {
+           $url = $url . '&expand=' . $expand;
+        }
+
+        try
+        {
+            Trace::info(TraceCode::DEFAULT_PARTNER_CONFIG_FETCH_REQUEST,
+                [
+                    'partner_id' => $partnerId,
+                ]
+            );
+
+            $startTime = microtime(true);
+
+            $options = array_merge($this->options, ['timeout' => env('APP_API_REQUEST_TIMEOUT')]);
+
+            $response = Requests::get($url, $this->defaultHeaders, $options);
+
+            $endTime = microtime(true);
+
+            app('trace')->count(
+                Metric::FETCH_DEFAULT_PARTNER_CONFIG_REQUESTS_TOTAL,
+                [
+                    Metric::LABEL_STATUS =>  $response->status_code
+                ]
+            );
+
+            Trace::info(TraceCode::DEFAULT_PARTNER_CONFIG_FETCH_RESPONSE,
+                [
+                    'response'      => $response,
+                    'time_taken'    => $endTime - $startTime
+                ]
+            );
+
+            return json_decode($response->body, true);
+        }
+        catch (\Throwable $e)
+        {
+            $tracePayload = [
+                'class'   => get_class($e),
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+            ];
+
+            Trace::critical(TraceCode::DEFAULT_PARTNER_CONFIG_FETCH_FAILED, $tracePayload);
+        }
+    }
+
     public function revokeMerchantApplicationMapping(string $appId, string $merchantId)
     {
         Trace::info(TraceCode::MERCHANT_APP_MAPPING_REVOKE_REQUEST,

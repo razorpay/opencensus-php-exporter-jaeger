@@ -681,4 +681,66 @@ class ApiTest extends UnitTestCase
 
         $this->assertEquals(["partner_metadata" => ["policy_url" => "https://www.xyz.com/terms"]], $apiResponse);
     }
+
+    /**
+     * @Test
+     * testGetDefaultPartnerConfig should fetch partner config for oauth app.
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @return void
+     * @throws \Throwable
+     */
+    public function testGetDefaultPartnerConfig(): void
+    {
+        $expectedResponse = new RequestsResponse();
+        $expectedResponse->status_code = 200;
+        $expectedResponse->body = '{"is_default_plan_exists": false}';
+
+        $this->getRequestMock()
+            ->shouldReceive('get')
+            ->once()
+            ->andReturn($expectedResponse);
+
+        $api = new Api();
+
+        $apiResponse = $api->getDefaultPartnerConfig('merchant_id', 'default_plan_id');
+
+        $this->assertEquals(["is_default_plan_exists" => false], $apiResponse);
+    }
+
+    /**
+     * @Test
+     * testGetDefaultPartnerConfig should fetch partner config for oauth app.
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @return void
+     * @throws \Throwable
+     */
+    public function testGetDefaultPartnerConfigWithException(): void
+    {
+        $exception = new Exception('some_error');
+        $this->getRequestMock()
+            ->shouldReceive('get')
+            ->once()
+            ->andThrow($exception);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::DEFAULT_PARTNER_CONFIG_FETCH_REQUEST, [
+                'partner_id' => 'partner_id',
+            ]])
+            ->once();
+
+        Trace::shouldReceive('critical')
+            ->withArgs([TraceCode::DEFAULT_PARTNER_CONFIG_FETCH_FAILED, [
+                'class' => get_class($exception),
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
+            ]])
+            ->once();
+
+        $api = new Api();
+
+        $api->getDefaultPartnerConfig('partner_id', 'default_plan_id');
+
+    }
 }

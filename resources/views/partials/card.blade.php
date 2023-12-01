@@ -413,6 +413,15 @@
           </p>
         </section>
     @endif
+    @if ($data['isDefaultPricingExists'] === true)
+    <section class="policies">
+      <p class="policies-text">
+        We agree to pay the <span class="underline partner-pricing-plans-link">Fees specified</span> for
+        all transactions initiated through the Partner <span class="emphasis merchant-name"></span>.
+        For transactions initiated otherwise, fees as agreed with Razorpay separately shall apply.
+      </p>
+    </section>
+    @endif
     <div class="card-footer">
     <div class="button-wrapper">
       <form class="cancel-form" method="POST" action="/authorize">
@@ -457,3 +466,25 @@
     <p style="color: #FFFFFF;">Powered by</p> <img src="https://easy.razorpay.com/federated-bundles/onboarding/build/browser/static/src/App/Onboarding/images/rzp-logo-light.svg"/>
   </div>
 </div>
+
+
+<script type="text/javascript">
+  (function() {
+    $('.partner-pricing-plans-link').click(function() {
+      window.openModal({
+        title: "",
+        body: '\
+        <div class="modal-body-heading">You are being taken to the Pricing&nbsp;Plans&nbsp;Page</div>\
+        <div>This will open a new tab. Please come back to this page to Agree to the authorisation, as payments cannot be collected without it.</div><br/>\
+      ',
+        footer: '\
+        <div class="button-wrapper">\
+          <button class="btn tertiary btn-default" onclick="window.closeModal()"> Cancel </button>\
+          <button class="btn primary btn-submit" onclick="window.open(\'{{$data["partner_pricing_plans_url"] ?? "https://dashboard.razorpay.com/app/partner-pricing-plans"}}\', \'_blank\')"> Proceed </button>\
+        </div>\
+        ',
+        customClass: 'modal-pricing-plans'
+      });
+    })
+  })();
+</script>

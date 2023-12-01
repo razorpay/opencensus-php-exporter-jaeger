@@ -104,6 +104,8 @@ class Service
 
         $isOnboardingExpEnabled = $this->checkIfOnboardingExpIsEnabled($merchantId, $isOnboardingAllowedForScope);
 
+        $defaultPartnerConfig = $this->getApiService()->getDefaultPartnerConfig($merchantId, 'default_plan_id');
+
         $scopeIds = $scopes->pluck('id')->all();
 
         $authorizeData = [
@@ -113,8 +115,10 @@ class Service
             'dashboard_url'             => $hostName,
             'scope_policies'            => $this->parseScopePolicies($scopeIds),
             'platform_fee_policy_url'   => $this->fetchCustomPolicyUrlForApplication($merchantId, $appData['id'], $scopeIds),
+            'partner_pricing_plans_url' => env('DASHBOARD_HOST'). 'app/partner-pricing-plans?partner_id='. $merchantId,
             'onboarding_url'            => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled),
-            'isOnboardingExpEnabled'    => $isOnboardingExpEnabled
+            'isOnboardingExpEnabled'    => $isOnboardingExpEnabled,
+            'isDefaultPricingExists'    => $defaultPartnerConfig['is_default_plan_exists'] ?? false,
         ];
 
         if (empty($authorizeData['application']['logo']) === false)

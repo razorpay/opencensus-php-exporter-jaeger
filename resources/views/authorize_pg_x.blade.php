@@ -11,7 +11,7 @@
     @include('partials/environment')
     @include('partials/analytics')
     <script>
-        
+
         function authorizeBtnClick() {
             let merchant_id= document.querySelector(".merchant-id").value
             trackEvents({
@@ -206,7 +206,7 @@
             100% {
                 transform: rotate(360deg);
         }
-        } 
+        }
         .rzp-auth-header-footer {
             margin: 0px;
             padding: 0px;
@@ -220,11 +220,12 @@
     </div>
 <main>
     <div id="loader"></div>
-  @include('partials.card')
+    @include('partials.card')
 </main>
 <div class="rzp-auth-header-footer">
     @include('partials.copyright')
 </div>
+@include('partials.modal')
 
 <script type="text/javascript">
     (function () {
@@ -275,7 +276,7 @@
                 }
             });
         }
-        
+
         function showError(type) {
             var error = errorHtml[type];
             elements.buttons.prop("disabled", true);
@@ -321,7 +322,6 @@
             if (queryParams?.oauth_referral === '1') {
               elements.dashboard_access.attr("value", true);
             }
-
             hideLoader();
             enableButtonsAndShowEmail();
         }

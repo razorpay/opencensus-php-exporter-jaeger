@@ -59,8 +59,11 @@ class TraceCode extends BaseTraceCode
     const RAVEN_VERIFY_OTP_FAILED                                   = 'RAVEN_VERIFY_OTP_FAILED';
     const REQUESTS_GOT_THROTTLED                                    = 'REQUESTS_GOT_THROTTLED';
     const PARTNER_CONFIG_FETCH_REQUEST                              = 'PARTNER_CONFIG_FETCH_REQUEST';
+    const DEFAULT_PARTNER_CONFIG_FETCH_REQUEST                      = 'DEFAULT_PARTNER_CONFIG_FETCH_REQUEST';
     const PARTNER_CONFIG_FETCH_RESPONSE                             = 'PARTNER_CONFIG_FETCH_RESPONSE';
+    const DEFAULT_PARTNER_CONFIG_FETCH_RESPONSE                     = 'DEFAULT_PARTNER_CONFIG_FETCH_RESPONSE';
     const PARTNER_CONFIG_FETCH_FAILED                               = 'PARTNER_CONFIG_FETCH_FAILED';
+    const DEFAULT_PARTNER_CONFIG_FETCH_FAILED                       = 'DEFAULT_PARTNER_CONFIG_FETCH_FAILED';
 
     // ----- Generic Codes ----
     const MISC_TOSTRING_ERROR                                       = 'MISC_TOSTRING_ERROR';

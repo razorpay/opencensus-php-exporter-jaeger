@@ -128,6 +128,16 @@ class Api
     /**
      * @throws Exception
      */
+    public function getDefaultPartnerConfig(string $partnerId, $expand = null): ?array
+    {
+        return [
+            'is_default_plan_exists' => false,
+        ];
+    }
+
+    /**
+     * @throws Exception
+     */
     public function fetchPartnerConfigForApplication(string $appId): ?array
     {
         if ($appId === '20000000000000')
