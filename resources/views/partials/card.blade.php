@@ -124,7 +124,11 @@
   }
 
   .card-footer {
+    @if ($data['showPartnerPricingAgreement'] === true)
+    margin-top: 10px;
+    @else 
     margin-top: 63px;
+    @endif
     height: 128px;
     width: 100%;
     border: 1px solid rgba(93, 109, 134, 0.08);
@@ -211,7 +215,11 @@
   }
 
   .policies {
+    @if ($data['showPartnerPricingAgreement'] === true)
+    margin: 20px 104px 0px 74px;
+    @else 
     margin: 40px 104px 0px 74px;
+    @endif
   }
 
   @media (max-width: 768px) {
@@ -324,7 +332,11 @@
   }
 
   .card-body {
+    @if ($data['showPartnerPricingAgreement'] === true)
+    margin-top: 20px;
+    @else 
     margin-top: 53px;
+    @endif
   }
 
   @media (max-width: 768px) {
@@ -413,7 +425,7 @@
           </p>
         </section>
     @endif
-    @if ($data['isDefaultPricingExists'] === true)
+    @if ($data['showPartnerPricingAgreement'] === true)
     <section class="policies">
       <p class="policies-text">
         We agree to pay the <span class="underline partner-pricing-plans-link">Fees specified</span> for
@@ -471,6 +483,10 @@
 <script type="text/javascript">
   (function() {
     $('.partner-pricing-plans-link').click(function() {
+      window.onProceedClick = function(){
+        window.open('{{$data["partner_pricing_plans_url"] ?? "https://dashboard.razorpay.com/app/partner-pricing-plans"}}', '_blank');
+        window.closeModal()
+      }
       window.openModal({
         title: "",
         body: '\
@@ -480,7 +496,7 @@
         footer: '\
         <div class="button-wrapper">\
           <button class="btn tertiary btn-default" onclick="window.closeModal()"> Cancel </button>\
-          <button class="btn primary btn-submit" onclick="window.open(\'{{$data["partner_pricing_plans_url"] ?? "https://dashboard.razorpay.com/app/partner-pricing-plans"}}\', \'_blank\')"> Proceed </button>\
+          <button class="btn primary btn-submit" onclick="window.onProceedClick()"> Proceed </button>\
         </div>\
         ',
         customClass: 'modal-pricing-plans'

@@ -118,7 +118,7 @@ class Service
             'partner_pricing_plans_url' => env('DASHBOARD_HOST'). 'app/partner-pricing-plans?partner_id='. $merchantId,
             'onboarding_url'            => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled),
             'isOnboardingExpEnabled'    => $isOnboardingExpEnabled,
-            'isDefaultPricingExists'    => $defaultPartnerConfig['is_default_plan_exists'] ?? false,
+            'showPartnerPricingAgreement'    => $defaultPartnerConfig['is_default_plan_exists'] ?? false,
         ];
 
         if (empty($authorizeData['application']['logo']) === false)
