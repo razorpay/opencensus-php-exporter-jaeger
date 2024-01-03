@@ -18,11 +18,20 @@ use WpOrg\Requests\Response as RequestsResponse;
 class EdgeServiceTest extends UnitTestCase
 {
     private $requestMock;
+    private $createIdentifierPayload;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->setRequestMock(Mockery::mock('overload:App\Request\Requests'));
+        $this->createIdentifierPayload = [
+            'kid' => 'kid',
+            'jti' => 'jti',
+            'user_id' => 'user_id',
+            'tags' => ['r~read_only', 'm~t'],
+            'ttl' => 'ttl',
+            'ref_id' => 'client_id'
+        ];
     }
 
     public function tearDown(): void
@@ -79,7 +88,10 @@ class EdgeServiceTest extends UnitTestCase
             ->andReturn($createIdentifier1);
 
         Trace::shouldReceive('info')
-            ->withArgs([TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE, Mockery::any()])
+            ->withArgs([TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE,  [
+                'merchant_id'   => 'merchant_id',
+                'request_body'  => $this->createIdentifierPayload,
+            ]])
             ->twice();
 
         Trace::shouldReceive('info')
@@ -102,6 +114,8 @@ class EdgeServiceTest extends UnitTestCase
                 Constant::USER_ID => 'user_id',
                 Constant::MODE => Mode::TEST,
                 Constant::TTL => 'ttl',
+                Constant::CLIENT_ID => 'client_id',
+                Constant::SCOPES => ['read_only']
             ]);
     }
 
@@ -125,7 +139,10 @@ class EdgeServiceTest extends UnitTestCase
             ->andReturn($expectedResponse);
 
         Trace::shouldReceive('info')
-            ->withArgs([TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE, Mockery::any()])
+            ->withArgs([TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE, [
+                'merchant_id'   => 'merchant_id',
+                'request_body'  => $this->createIdentifierPayload,
+            ]])
             ->once();
 
         Trace::shouldReceive('histogram')
@@ -144,6 +161,8 @@ class EdgeServiceTest extends UnitTestCase
                 Constant::USER_ID => 'user_id',
                 Constant::MODE => Mode::TEST,
                 Constant::TTL => 'ttl',
+                Constant::CLIENT_ID => 'client_id',
+                Constant::SCOPES => ['read_only']
             ]);
     }
 
@@ -168,7 +187,10 @@ class EdgeServiceTest extends UnitTestCase
             ->times($maxAttempts);
 
         Trace::shouldReceive('info')
-            ->withArgs([TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE, Mockery::any()])
+            ->withArgs([TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE, [
+                'merchant_id'   => 'merchant_id',
+                'request_body'  => $this->createIdentifierPayload,
+            ]])
             ->times($maxAttempts);
 
         Trace::shouldReceive('histogram')
@@ -206,6 +228,8 @@ class EdgeServiceTest extends UnitTestCase
                     Constant::USER_ID => 'user_id',
                     Constant::MODE => Mode::TEST,
                     Constant::TTL => 'ttl',
+                    Constant::CLIENT_ID => 'client_id',
+                    Constant::SCOPES => ['read_only']
                 ]);
         } catch (\Exception $ex) {
             $this->assertEquals('Could not create identifier in edge', $ex->getMessage());
@@ -237,7 +261,10 @@ class EdgeServiceTest extends UnitTestCase
             ->andReturn($createConsumer1);
 
         Trace::shouldReceive('info')
-            ->withArgs([TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE, Mockery::any()])
+            ->withArgs([TraceCode::CREATE_OAUTH_IDENTIFIER_IN_EDGE, [
+                'merchant_id'   => 'merchant_id',
+                'request_body'  => $this->createIdentifierPayload,
+            ]])
             ->times($maxAttempts);
 
         Trace::shouldReceive('info')
@@ -279,6 +306,8 @@ class EdgeServiceTest extends UnitTestCase
                     Constant::USER_ID => 'user_id',
                     Constant::MODE => Mode::TEST,
                     Constant::TTL => 'ttl',
+                    Constant::CLIENT_ID => 'client_id',
+                    Constant::SCOPES => ['read_only']
                 ]);
         } catch (\Exception $ex) {
             $this->assertEquals('Could not create consumer in edge', $ex->getMessage());

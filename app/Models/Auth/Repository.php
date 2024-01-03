@@ -82,7 +82,9 @@ class Repository extends Token\Repository
             Constant::MID          => $accessTokenEntity->getMerchantId(),
             Constant::MODE         => $accessTokenEntity->getMode(),
             Constant::TTL          => $ttlInSeconds,
-            Constant::USER_ID      => $accessTokenEntity->getUserId()
+            Constant::USER_ID      => $accessTokenEntity->getUserId(),
+            Constant::CLIENT_ID    => $accessTokenEntity->getClient()->getIdentifier(),
+            Constant::SCOPES       => $accessTokenEntity->getScopes() ?? []  # Scopes get added as tags
         ];
         if ($this->enable_cassandra_outbox)
         {

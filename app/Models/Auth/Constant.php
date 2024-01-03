@@ -10,6 +10,8 @@ class Constant
     const IDENTIFIER   = 'identifier';
     const USER_ID      = 'user_id';
     const TTL          = "ttl";
+    const CLIENT_ID    = "client_id";
+    const SCOPES       = "scopes";
 
     // custom TnC policy for a partner
     const CUSTOM_POLICY = 'Custom Policy';

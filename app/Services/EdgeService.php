@@ -66,8 +66,9 @@ class EdgeService
                     'kid' => $payload[Constant::PUBLIC_TOKEN],
                     'jti' => $payload[Constant::IDENTIFIER],
                     'user_id' => $payload[Constant::USER_ID],
-                    'tags' => $this->getTags($payload[Constant::MODE]),
+                    'tags' => $this->getTags($payload[Constant::SCOPES], $payload[Constant::MODE]),
                     'ttl' => $payload[Constant::TTL],
+                    'ref_id' => $payload[Constant::CLIENT_ID]
                 ];
                 $this->createIdentifier($merchantId, $postPayload);
                 $success = true;
@@ -132,9 +133,11 @@ class EdgeService
         }
     }
 
-    private function getTags(string $mode): array
+    private function getTags(array $scopes, string $mode): array
     {
-        $tags = ["r~oauth.public"];
+        $tags = [];
+        foreach ($scopes as $scope)
+            $tags[] = "r~" . $scope;
 
         if ($mode === Mode::TEST)
         {
