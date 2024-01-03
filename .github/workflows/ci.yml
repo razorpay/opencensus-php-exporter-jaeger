@@ -23,6 +23,13 @@ jobs:
     continue-on-error: false
     name: Build Image
     steps:
+      - uses: razorpay/create-github-app-token@v1
+        name: Generate Github Token
+        id: app-token
+        with:
+          app-id: ${{ secrets.WORKFLOWGATEKEEPER_APP_ID }}
+          private-key: ${{ secrets.WORKFLOWGATEKEEPER_PRIVATEKEY }}
+          repositories: "auth-service,opencensus-php,config-proto,dcs-php-sdk,metrics-php,trace,spine,oauth,outbox-php,opencensus-php-exporter-jaeger"
       - name: checkout
         id: checkout
         uses: actions/checkout@v3
@@ -48,7 +55,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           context: .
           secrets: |
-            git_token=${{ secrets.GIT_TOKEN }}
+            git_token=${{ steps.app-token.outputs.token }}
           build-args: |
             GIT_COMMIT_HASH=${{ github.sha }}
             GIT_USERNAME=rzp
@@ -66,6 +73,13 @@ jobs:
         username: ${{ secrets.HARBOR_DOCKER_USERNAME }}
         password: ${{ secrets.HARBOR_DOCKER_PASSWORD }}
     steps:
+      - uses: razorpay/create-github-app-token@v1
+        name: Generate Github Token
+        id: app-token
+        with:
+          app-id: ${{ secrets.WORKFLOWGATEKEEPER_APP_ID }}
+          private-key: ${{ secrets.WORKFLOWGATEKEEPER_PRIVATEKEY }}
+          repositories: "auth-service,opencensus-php,config-proto,dcs-php-sdk,metrics-php,trace,spine,oauth,outbox-php,opencensus-php-exporter-jaeger,edge,credcase,authz,outbox-relay,terraform-kong,mock-gateway"
       - name: checkout
         id: checkout
         uses: actions/checkout@v2
@@ -81,7 +95,7 @@ jobs:
           DB_DATABASE: auth
           SIGNER_CACHE_HOST: signer-cache
           SIGNER_CACHE_PORT: 6379
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GIT_TOKEN: ${{ steps.app-token.outputs.token }}
           BRANCH: ${{ github.ref }}
       - name: Set Sonarqube Project
         id: set_sonar_project
@@ -134,7 +148,7 @@ jobs:
         if: github.ref != 'refs/heads/master' && success() && steps.findPr.outputs.number
         uses: razorpay/create-comment@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         with:
           check-only-first-line: true
           unique: true
@@ -203,6 +217,13 @@ jobs:
     runs-on: [ self-hosted ]
     needs: [ build ]
     steps:
+      - uses: razorpay/create-github-app-token@v1
+        name: Generate Github Token
+        id: app-token
+        with:
+          app-id: ${{ secrets.WORKFLOWGATEKEEPER_APP_ID }}
+          private-key: ${{ secrets.WORKFLOWGATEKEEPER_PRIVATEKEY }}
+          repositories: "auth-service,opencensus-php,config-proto,dcs-php-sdk,metrics-php,trace,spine,oauth,outbox-php,opencensus-php-exporter-jaeger,edge,credcase,authz,outbox-relay,terraform-kong,mock-gateway"
       - uses: actions/checkout@v2
       - name: Find current pr
         uses: jwalton/gh-find-current-pr@v1.3.0
@@ -211,7 +232,7 @@ jobs:
         if: steps.findPr.outputs.number || github.ref == 'refs/heads/master'
         env:
           SPINNAKER_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
-          GITHUB_TOKEN: '${{ secrets.GIT_TOKEN }}'
+          GITHUB_TOKEN: '${{ steps.app-token.outputs.token }}'
           EDGE_PIPELINE_ID: "deployment-v2"
         run: >
           ./.github/scripts/run-edge-e2e.sh ${{ github.sha }} ${{ secrets.ARGO_TOKEN }}
