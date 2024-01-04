@@ -133,7 +133,39 @@ class EdgeService
         }
     }
 
-    private function getTags(array $scopes, string $mode): array
+    /**
+     * patchIdentifier patches public tokens in Edge with the provided payload
+     * @throws Exception
+     */
+    public function patchIdentifier(string $publicToken, array $payload)
+    {
+        $url = $this->apiUrl . '/identifiers/' . $publicToken;
+
+        Trace::info(TraceCode::PATCH_OAUTH_IDENTIFIER_IN_EDGE,
+            [
+                'public_token'   => $publicToken,
+                'payload'        => $payload,
+            ]);
+
+        $response = Requests::patch($url, $this->headers, json_encode($payload), $this->defaultOptions);
+
+        if($response->status_code === 404)
+        {
+            throw new NotFoundException("public token is not present");
+        }
+
+        if ($response->success === false)
+        {
+            throw new LogicException(
+                "Could not patch identifier in edge",
+                [
+                    "response_body" => $response->body,
+                    "http_status" => $response->status_code,
+                ]);
+        }
+    }
+
+    public function getTags(array $scopes, string $mode): array
     {
         $tags = [];
         foreach ($scopes as $scope)
@@ -206,6 +238,5 @@ class EdgeService
                     "http_status" => $response->status_code,
                 ]);
         }
-
     }
 }

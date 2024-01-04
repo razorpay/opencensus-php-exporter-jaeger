@@ -10,7 +10,7 @@ use Razorpay\Trace\Facades\Trace;
 
 class PublicOAuthCredentialMigrate extends Command
 {
-    use CryptTrait;
+    use CryptTrait, RateLimitTrait;
     /**
      * The name and signature of the console command.
      *
@@ -28,11 +28,6 @@ class PublicOAuthCredentialMigrate extends Command
     private Repository $tokenRepo;
     private SignerCache $signerCache;
     private int $queryBatchSize;
-
-    private int $rateLimitCounter;
-    private int $rateLimitThresholdPerSec;
-    private float $rateLimitTimeStart;
-    private int $rateLimitBackoffIntervalSecs;
 
     /**
      * Create a new command instance.
@@ -117,30 +112,5 @@ class PublicOAuthCredentialMigrate extends Command
             'fail' => $numFail]);
 
         return null;
-    }
-
-
-    /**
-     * Checks if number of requests made in the previous second are less than threshold
-     * If more requests were made, it pauses the execution for the number of seconds specified in backoff interval
-     *
-     * @return void
-     */
-    protected function rateLimitIfRequired(): void
-    {
-        $this->rateLimitCounter++;
-
-        if ($this->rateLimitCounter > $this->rateLimitThresholdPerSec)
-        {
-            if (microtime(true) - $this->rateLimitTimeStart < 1)
-            {
-                Trace::info(TraceCode::MIGRATE_PUBLIC_OAUTH_CREDS_RATE_LIMIT, ['message' => 'Rate limit applied. Sleeping for ' . $this->rateLimitBackoffIntervalSecs . ' secs']);
-                sleep($this->rateLimitBackoffIntervalSecs);
-            }
-
-
-            $this->rateLimitCounter = 0;
-            $this->rateLimitTimeStart = microtime(true);
-        }
     }
 }

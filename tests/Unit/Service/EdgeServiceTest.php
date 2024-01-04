@@ -5,9 +5,11 @@ namespace Unit\Service;
 use App\Constants\Metric;
 use App\Constants\TraceCode;
 use App\Exception\LogicException;
+use App\Exception\NotFoundException;
 use App\Models\Auth\Constant;
 use App\Services\EdgeService;
 use App\Tests\Unit\UnitTestCase;
+use Exception;
 use Mockery;
 use Mockery\MockInterface;
 use Razorpay\OAuth\Token\Mode;
@@ -231,7 +233,7 @@ class EdgeServiceTest extends UnitTestCase
                     Constant::CLIENT_ID => 'client_id',
                     Constant::SCOPES => ['read_only']
                 ]);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $this->assertEquals('Could not create identifier in edge', $ex->getMessage());
         }
     }
@@ -309,7 +311,7 @@ class EdgeServiceTest extends UnitTestCase
                     Constant::CLIENT_ID => 'client_id',
                     Constant::SCOPES => ['read_only']
                 ]);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $this->assertEquals('Could not create consumer in edge', $ex->getMessage());
         }
     }
@@ -370,7 +372,7 @@ class EdgeServiceTest extends UnitTestCase
         $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
         try {
             $edgeService->getOauth2Client($clientId);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $this->assertEquals("oauth2 client is not present.", $ex->getMessage());
         }
     }
@@ -402,8 +404,127 @@ class EdgeServiceTest extends UnitTestCase
         $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
         try {
             $edgeService->getOauth2Client($clientId);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $this->assertEquals("Request to find oauth2 client in edge failed", $ex->getMessage());
         }
+    }
+
+    /**
+     * @Test
+     * testPatchIdentifierSuccess tests behaviour of patchIdentifier() when HTTP request succeeds
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @return void
+     * @throws Exception
+     */
+    public function testPatchIdentifierSuccess(): void
+    {
+        $publicToken = "rzp_live_oauth_URaRQBKbGjbAB";
+        $payload = [
+          'tags' => ['r~read_only', 'm~t'],
+          'ref_id' => '1ZgJKbhclient1'
+        ];
+
+        $expectedResponse = new RequestsResponse();
+        $expectedResponse->status_code = 200;
+        $expectedResponse->success = true;
+
+        $this->getRequestMock()
+            ->shouldReceive('patch')
+            ->once()
+            ->andReturn($expectedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::PATCH_OAUTH_IDENTIFIER_IN_EDGE,
+                [
+                    'public_token' => $publicToken,
+                    'payload' => $payload
+                ]])
+            ->once();
+
+        $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
+        $edgeService->patchIdentifier($publicToken, $payload);
+    }
+
+    /**
+     * @Test
+     * testPatchIdentifierNotFound tests behaviour of patchIdentifier() when identifier is not found at Edge
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @return void
+     * @throws Exception
+     */
+    public function testPatchIdentifierNotFound(): void
+    {
+        $publicToken = "rzp_live_oauth_URaRQBKbGjbAB";
+        $payload = [
+            'tags' => ['r~read_only', 'm~t'],
+            'ref_id' => '1ZgJKbhclient1'
+        ];
+
+        $expectedResponse = new RequestsResponse();
+        $expectedResponse->status_code = 404;
+        $expectedResponse->success = true;
+
+        $this->getRequestMock()
+            ->shouldReceive('patch')
+            ->once()
+            ->andReturn($expectedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::PATCH_OAUTH_IDENTIFIER_IN_EDGE,
+                [
+                    'public_token' => $publicToken,
+                    'payload' => $payload
+                ]])
+            ->once();
+
+        $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
+        try {
+            $edgeService->patchIdentifier($publicToken, $payload);
+        } catch (NotFoundException $ex) {
+            $this->assertEquals("public token is not present", $ex->getMessage());
+        };
+    }
+
+    /**
+     * @Test
+     * testPatchIdentifierFailed tests behaviour of patchIdentifier() when request to Edge fails
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @return void
+     * @throws Exception
+     */
+    public function testPatchIdentifierFailed(): void
+    {
+        $publicToken = "rzp_live_oauth_URaRQBKbGjbAB";
+        $payload = [
+            'tags' => ['r~read_only', 'm~t'],
+            'ref_id' => '1ZgJKbhclient1'
+        ];
+
+        $expectedResponse = new RequestsResponse();
+        $expectedResponse->status_code = 500;
+        $expectedResponse->success = false;
+
+        $this->getRequestMock()
+            ->shouldReceive('patch')
+            ->once()
+            ->andReturn($expectedResponse);
+
+        Trace::shouldReceive('info')
+            ->withArgs([TraceCode::PATCH_OAUTH_IDENTIFIER_IN_EDGE,
+                [
+                    'public_token' => $publicToken,
+                    'payload' => $payload
+                ]])
+            ->once();
+
+        $edgeService = new EdgeService([], 'www.example.com', 'some_secret');
+        try {
+            $edgeService->patchIdentifier($publicToken, $payload);
+        } catch (LogicException $ex) {
+            $this->assertEquals("Could not patch identifier in edge", $ex->getMessage());
+        };
     }
 }
