@@ -248,6 +248,7 @@
             application_logo: $(".application-logo"),
             dashboard_access: $(".dashboard-access"),
         };
+        var  queryParamsJson = queryStringToJSON(queryParams)
 
         var errorHtml = {
             invalid_role:
@@ -319,7 +320,7 @@
             elements.token.attr("value", verifyToken);
             elements.merchant_id.attr("value", data.merchant_id);
 
-            if (queryParams?.oauth_referral === '1') {
+            if (queryParamsJson?.oauth_referral === '1') {
               elements.dashboard_access.attr("value", true);
             }
             hideLoader();
@@ -345,7 +346,7 @@
                     if (status === 200) {
                         if (res.success === true) {
                             if (res.data.role === "owner") {
-                              if (shouldRedirect(res)) {
+                              if (shouldRedirect(queryParamsJson, res)) {
                                 pageUrl = window.location.href;
                                 var pageUrl = encodeURIComponent(pageUrl);
 
@@ -375,6 +376,20 @@
                 });
         }
 
+        function queryStringToJSON(queryString) {
+            if(queryString.indexOf('?') > -1){
+                queryString = queryString.split('?')[1];
+            }
+            var pairs = queryString.split('&amp;');
+            var result = {};
+            pairs.forEach(function(pair) {
+                pair = pair.split('=');
+                result[pair[0]] = decodeURIComponent(pair[1] || '');
+            });
+            return result;
+        }
+
+
         function getSignInUrl(pageUrl) {
             if (isOnboardingExpEnabled) {
                 let url = new URL(onboardingUrl);
@@ -384,8 +399,8 @@
             return dashboardUrl + "?next=" + pageUrl;
         }
 
-        function shouldRedirect(res) {
-            return res.data.oauth_action === "REDIRECT"
+        function shouldRedirect(queryParams, res) {
+            return (queryParams?.oauth_referral != '1') && res.data.oauth_action === "REDIRECT"
         }
 
         function getAppLogoFullUrl(logoUrl) {
