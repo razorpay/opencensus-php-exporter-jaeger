@@ -180,7 +180,10 @@ jobs:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       signer-cache:
-        image: redis:6-alpine
+        image: harbor.razorpay.com/proxy_dockerhub/library/redis
+        credentials:
+          username: ${{ secrets.HARBOR_DOCKER_USERNAME }}
+          password: ${{ secrets.HARBOR_DOCKER_PASSWORD }}
         ports:
           - 6379
         options: >-
