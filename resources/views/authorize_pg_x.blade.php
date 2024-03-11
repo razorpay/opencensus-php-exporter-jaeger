@@ -320,7 +320,7 @@
             elements.token.attr("value", verifyToken);
             elements.merchant_id.attr("value", data.merchant_id);
 
-            if (queryParamsJson?.oauth_referral === '1') {
+            if (isOnboardingExpEnabled || queryParamsJson?.oauth_referral === '1'  ) {
               elements.dashboard_access.attr("value", true);
             }
             hideLoader();
