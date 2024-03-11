@@ -200,4 +200,49 @@ class ServiceTest extends TestCase
 
         $this->assertNull($response['platform_fee_policy_url']);
     }
+
+    /**
+     * @return void
+     * @throws \Razorpay\OAuth\Exception\BadRequestException
+     * @throws \Throwable
+     */
+    public function testGetAuthorizeViewDataForPhantomWithOnboardingSignature()
+    {
+        $redirectUrl = 'https://test.com';
+
+        config([
+                   'trace.services.splitz.mock'        => true,
+                   'trace.app.phantom_onboarding_url'  => $redirectUrl
+               ]);
+
+        $input = [
+            'state'         => '123',
+            'scope'         => 'read_only',
+            'client_id'     => '30000000000000',
+            'redirect_uri'  => 'https://www.example.com',
+            'response_type' => 'code',
+            'onboarding_signature' => 'ajdhfuhfug'
+        ];
+
+        $this->createAndSetClientWithEnvironment();
+
+        $expectedRedirectUrl = $redirectUrl . '?applicationId=' . $this->application->getId() . '&onboarding_signature=ajdhfuhfug';
+
+        $service = new Service();
+        $service->oauthServer = $this->oauthServerMock;
+
+        $this->oauthServerMock
+            ->shouldReceive('validateAuthorizeRequestAndGetScopes')
+            ->andReturn(collect(
+                            [
+                                new Scope\Entity(ScopeConstants::READ_ONLY),
+                            ]));
+
+        $response = $service->getAuthorizeViewData($input);
+
+        $this->assertEquals("10000000000000", $response["application"]["merchant_id"]);
+        $this->assertEquals($this->application->getId(), $response["application"]["id"]);
+        $this->assertEquals("https://api-test.com", $response['dashboard_url']);
+        $this->assertEquals($expectedRedirectUrl, $response['onboarding_url']);
+    }
 }

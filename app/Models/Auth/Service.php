@@ -116,7 +116,7 @@ class Service
             'scope_policies'            => $this->parseScopePolicies($scopeIds),
             'platform_fee_policy_url'   => $this->fetchCustomPolicyUrlForApplication($merchantId, $appData['id'], $scopeIds),
             'partner_pricing_plans_url' => env('DASHBOARD_HOST'). 'app/partner-pricing-plans?partner_id='. $merchantId,
-            'onboarding_url'            => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled),
+            'onboarding_url'            => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled, $input),
             'isOnboardingExpEnabled'    => $isOnboardingExpEnabled,
             'showPartnerPricingAgreement'    => $defaultPartnerConfig['is_default_plan_exists'] ?? false,
         ];
@@ -848,13 +848,20 @@ class Service
         (new DEEventsKafkaProducer($event))->trackEvent();
     }
 
-    private function getOnboardingUrl(string $applicationId, bool $isPhantomOnboardingEnabled) : ?string
+    private function getOnboardingUrl(string $applicationId, bool $isPhantomOnboardingEnabled, array $input) : ?string
     {
         if ($isPhantomOnboardingEnabled)
         {
-            $phantomUrl = $this->app['config']['trace.app.phantom_onboarding_url'];
+            $phantomUrl = $this->app['config']['trace.app.phantom_onboarding_url'] . '?applicationId=' . $applicationId;
 
-            return $phantomUrl . '?applicationId=' . $applicationId;
+            // onboarding_signature is used to verify that the merchant is coming from partner's platform and to allow login with unverified phone number
+            // https://docs.google.com/document/d/1lUZj5Ls_ivR_iIksdbqL6ZyrN-FHD9THDWFtjt3OeHo/edit#heading=h.vwqzrtx452oq
+            if (isset($input['onboarding_signature']) && !empty($input['onboarding_signature']))
+            {
+                $phantomUrl = $phantomUrl . '&onboarding_signature=' . $input['onboarding_signature'];
+            }
+
+            return $phantomUrl;
         }
 
         return null;
