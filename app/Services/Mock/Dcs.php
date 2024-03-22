@@ -5,6 +5,7 @@ namespace App\Services\Mock;
 use App\Constants\Mode;
 use Razorpay\Dcs\Cache;
 use Razorpay\Dcs\Config\Config;
+use App\Services\Dcs\Features\Constants;
 use Razorpay\Dcs\Config\UserCredentials;
 use App\Services\Dcs\Service as DcsService;
 
@@ -40,6 +41,10 @@ class Dcs extends DcsService
         if (in_array('LNWDzDK1sqQnjY', $entityIds) === true or in_array('LNWDzDK1sqQnjZ', $entityIds) === true)
         {
             return parent::isFeatureEnabledForEntityIdsAndFeatureName($entityIds, $featureName, $mode);
+        }
+        else if ($featureName === Constants::ENABLE_PARTNER_PLAT_FEE_INVOICE and in_array('20000000000002', $entityIds) === true)
+        {
+            return false;
         }
 
         return true;

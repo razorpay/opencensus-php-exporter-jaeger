@@ -109,16 +109,17 @@ class Service
         $scopeIds = $scopes->pluck('id')->all();
 
         $authorizeData = [
-            'application'               => $appData,
-            'scope_names'               => $scopeIds,
-            'scope_descriptions'        => $this->parseScopeDescriptionsForDisplay($scopes),
-            'dashboard_url'             => $hostName,
-            'scope_policies'            => $this->parseScopePolicies($scopeIds),
-            'platform_fee_policy_url'   => $this->fetchCustomPolicyUrlForApplication($merchantId, $appData['id'], $scopeIds),
-            'partner_pricing_plans_url' => env('DASHBOARD_HOST'). 'app/partner-pricing-plans?partner_id='. $merchantId,
-            'onboarding_url'            => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled, $input),
-            'isOnboardingExpEnabled'    => $isOnboardingExpEnabled,
-            'showPartnerPricingAgreement'    => $defaultPartnerConfig['is_default_plan_exists'] ?? false,
+            'application'                   => $appData,
+            'scope_names'                   => $scopeIds,
+            'scope_descriptions'            => $this->parseScopeDescriptionsForDisplay($scopes),
+            'dashboard_url'                 => $hostName,
+            'scope_policies'                => $this->parseScopePolicies($scopeIds),
+            'custom_policy_url'             => $this->fetchCustomPolicyUrlForApplication($merchantId, $appData['id'], $scopeIds),
+            'is_platform_fee_enabled'       => $this->app['dcs']->isFeatureEnabledForEntityIdsAndFeatureName([$merchantId, $appData['id']], Features::ENABLE_PARTNER_PLAT_FEE_INVOICE),
+            'partner_pricing_plans_url'     => env('DASHBOARD_HOST'). 'app/partner-pricing-plans?partner_id='. $merchantId,
+            'onboarding_url'                => $this->getOnboardingUrl($appData['id'], $isOnboardingExpEnabled, $input),
+            'isOnboardingExpEnabled'        => $isOnboardingExpEnabled,
+            'showPartnerPricingAgreement'   => $defaultPartnerConfig['is_default_plan_exists'] ?? false,
         ];
 
         if (empty($authorizeData['application']['logo']) === false)
@@ -894,14 +895,14 @@ class Service
     private function addCustomPolicyIfApplicable(array & $scopePolicies, array $scopes, array $input): void
     {
         // don't add the custom TnC url if both read_only & read_write scopes doesn't exist
-        if (empty($input['platform_fee_policy_url']) === true or
+        if (empty($input['custom_policy_url']) === true or
             (in_array(ScopeConstants::READ_ONLY, $scopes) === false and
             in_array(ScopeConstants::READ_WRITE, $scopes) === false))
         {
             return;
         }
 
-        $scopePolicies[Constant::CUSTOM_POLICY] =  $input['platform_fee_policy_url'];
+        $scopePolicies[Constant::CUSTOM_POLICY] =  $input['custom_policy_url'];
     }
 
     private function isCustomTncExpEnabled(string $merchantId): bool

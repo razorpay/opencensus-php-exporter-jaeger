@@ -126,7 +126,7 @@
   .card-footer {
     @if ($data['showPartnerPricingAgreement'] === true)
     margin-top: 10px;
-    @else 
+    @else
     margin-top: 63px;
     @endif
     height: 128px;
@@ -217,7 +217,7 @@
   .policies {
     @if ($data['showPartnerPricingAgreement'] === true)
     margin: 20px 104px 0px 74px;
-    @else 
+    @else
     margin: 40px 104px 0px 74px;
     @endif
   }
@@ -334,7 +334,7 @@
   .card-body {
     @if ($data['showPartnerPricingAgreement'] === true)
     margin-top: 20px;
-    @else 
+    @else
     margin-top: 53px;
     @endif
   }
@@ -417,13 +417,22 @@
     @endforeach
     You can remove this app from your account under Settings.</p>
     </section>
-    @if (empty($data['platform_fee_policy_url']) === false)
-        <section class="policies">
-          <p class="policies-text">
-              You are also authorizing Razorpay to deduct merchant services fee for each transaction as per terms specified
-              for {{$data['application']['name']}} <a class="underline" href={{$data['platform_fee_policy_url']}} target="_blank">here</a>.
-          </p>
-        </section>
+    @if (empty($data['custom_policy_url']) === false)
+        @if (isset($data['is_platform_fee_enabled']) === true and $data['is_platform_fee_enabled'] === true)
+            <section class="policies">
+              <p class="policies-text">
+                  You are also authorizing Razorpay to deduct merchant services fee for each transaction as per terms specified
+                  for {{$data['application']['name']}} <a class="underline" href={{$data['custom_policy_url']}} target="_blank">here</a>.
+              </p>
+            </section>
+        @else
+            <section class="policies">
+                <p class="policies-text">
+                    You are also authorizing {{$data['application']['name']}} to deduct partner services fee as per terms specified
+                    <a class="underline" href={{$data['custom_policy_url']}} target="_blank">here</a>.
+                </p>
+            </section>
+        @endif
     @endif
     @if ($data['showPartnerPricingAgreement'] === true)
     <section class="policies">
@@ -461,12 +470,12 @@
               class="dashboard-access"
               value="false"
           />
-          @if (empty($data['platform_fee_policy_url']) === false)
+          @if (empty($data['custom_policy_url']) === false)
               <input
                   type="hidden"
-                  name="platform_fee_policy_url"
-                  class="platform-fee-policy-url"
-                  value={{$data['platform_fee_policy_url']}}
+                  name="custom_policy_url"
+                  class="custom-policy-url"
+                  value={{$data['custom_policy_url']}}
               />
           @endif
         <button class="btn primary btn-submit" disabled onclick="authorizeBtnClick()"> Authorize </button>

@@ -124,9 +124,12 @@ class OAuthTest extends TestCase
         $this->assertStringContainsString($expectedString, $response->getContent());
 
         $platformFeeCondition = 'You are also authorizing Razorpay to deduct merchant services fee for each transaction as per terms specified
-              for ' . $application->getName() . ' <a class="underline" href=https://www.xyz.com/terms target="_blank">here</a>';
+                                 for ' . $application->getName() . ' <a class="underline" href=https://www.xyz.com/terms target="_blank">here</a>';
 
-        $this->assertStringContainsString($platformFeeCondition, $response->getContent());
+        $expected = preg_replace('/\s+/', ' ', trim($platformFeeCondition));
+        $actual = preg_replace('/\s+/', ' ', trim($response->getContent()));
+
+        $this->assertStringContainsString($expected, $actual);
 
         $data = [
             'method' => 'get',
@@ -145,6 +148,49 @@ class OAuthTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString($expectedString, $response->getContent());
+    }
+
+    public function testGetAuthorizeUrlWithClientWithPGAndPlatformFeeNotEnabled()
+    {
+        config(['trace.services.splitz.mock' => true]);
+
+        $application = Application\Entity::factory()->create(['id' => '20000000000002']);
+
+        Client\Entity::factory()->create(['application_id' => $application->getId(), 'environment' => 'prod']);
+
+        $devClient = Client\Entity::factory()->create(
+            [
+                'id'             => '30000000000000',
+                'application_id' => $application->getId(),
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $data = [
+            'method' => 'get',
+            'url'    => '/authorize?response_type=code' .
+                '&client_id=' . $devClient->getId() .
+                '&redirect_uri=https://www.example.com' .
+                '&scope=read_only' .
+                '&state=123',
+        ];
+
+        $response = $this->sendRequest($data);
+
+        $expectedString = '<p class="access-heading">'.
+            $application->getName() .
+            ' wants access to your Razorpay Account</p>';
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertStringContainsString($expectedString, $response->getContent());
+
+        $partnerFeeCondition = 'You are also authorizing ' . $application->getName() . ' to deduct partner services fee
+                                 as per terms specified' . ' <a class="underline" href=https://www.xyz.com/terms target="_blank">here</a>';
+
+        $expected = preg_replace('/\s+/', ' ', trim($partnerFeeCondition));
+        $actual = preg_replace('/\s+/', ' ', trim($response->getContent()));
+
+        $this->assertStringContainsString($expected, $actual);
     }
 
     public function testGetAuthorizeUrlWithClientWithXScope()

@@ -43,7 +43,7 @@ class Service
     /**
      * This function checks if a feature is enabled for any of the given entity ids. Using the response received from
      * DCS client, it checks whether the given feature is present in the list of features enabled for any entity id
-     * 
+     *
      * @throws \Throwable
      */
     public function isFeatureEnabledForEntityIdsAndFeatureName(array $entityIds, string $featureName, $mode = Mode::LIVE): bool
@@ -70,7 +70,7 @@ class Service
 
                 $features = DataFormatter::unMarshal($kv->getValue(), DataFormatter::convertDCSKeyToClassName($key));
 
-                if ($features[$featureName] === true)
+                if (isset($features[$featureName]) === true and $features[$featureName] === true)
                 {
                     return true;
                 }

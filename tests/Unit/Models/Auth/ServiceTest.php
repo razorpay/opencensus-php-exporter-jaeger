@@ -154,7 +154,7 @@ class ServiceTest extends UnitTestCase
 
         $scopePolicies = ['App Policies' => 'https://razorpay.com/s/terms/partners/payments-oauth/read-and-write/'];
 
-        $input = ['platform_fee_policy_url' =>  'https://www.xyz.com/terms'];
+        $input = ['custom_policy_url' =>  'https://www.xyz.com/terms'];
 
         $method->invokeArgs((new Service()), [&$scopePolicies, [ScopeConstants::READ_WRITE], $input]);
 

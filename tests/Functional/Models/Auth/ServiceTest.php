@@ -55,8 +55,9 @@ class ServiceTest extends TestCase
         $this->assertEquals("10000000000000", $response["application"]["merchant_id"]);
         $this->assertEquals($this->application->getId(), $response["application"]["id"]);
         $this->assertEquals("https://api-test.com", $response['dashboard_url']);
-        $this->assertNotNull($response['platform_fee_policy_url']);
+        $this->assertNotNull($response['custom_policy_url']);
         $this->assertNotNull($response['onboarding_url']);
+        $this->assertTrue($response['is_platform_fee_enabled']);
     }
 
     public function testGetAuthorizeViewDataForPhantom()
@@ -165,7 +166,7 @@ class ServiceTest extends TestCase
 
         $response = $service->getAuthorizeViewData($input);
 
-        $this->assertNull($response['platform_fee_policy_url']);
+        $this->assertNull($response['custom_policy_url']);
     }
 
     /**
@@ -198,7 +199,7 @@ class ServiceTest extends TestCase
 
         $response = $service->getAuthorizeViewData($input);
 
-        $this->assertNull($response['platform_fee_policy_url']);
+        $this->assertNull($response['custom_policy_url']);
     }
 
     /**
@@ -244,5 +245,39 @@ class ServiceTest extends TestCase
         $this->assertEquals($this->application->getId(), $response["application"]["id"]);
         $this->assertEquals("https://api-test.com", $response['dashboard_url']);
         $this->assertEquals($expectedRedirectUrl, $response['onboarding_url']);
+    }
+
+    public function testGetAuthorizeViewDataWithPlatformFeeNotEnabled() : void
+    {
+        config(['trace.services.splitz.mock' => true]);
+
+        $input = [
+            'state'         => '123',
+            'scope'         => 'read_only',
+            'client_id'     => '30000000000000',
+            'redirect_uri'  => 'https://www.example.com',
+            'response_type' => 'code'
+        ];
+
+        $this->createAndSetClientWithEnvironment('dev', '20000000000002');
+
+        $service = new Service();
+        $service->oauthServer = $this->oauthServerMock;
+
+        $this->oauthServerMock
+            ->shouldReceive('validateAuthorizeRequestAndGetScopes')
+            ->andReturn(collect(
+                [
+                    new Scope\Entity(ScopeConstants::READ_ONLY),
+                ]));
+
+        $response = $service->getAuthorizeViewData($input);
+
+        $this->assertEquals("10000000000000", $response["application"]["merchant_id"]);
+        $this->assertEquals($this->application->getId(), $response["application"]["id"]);
+        $this->assertEquals("https://api-test.com", $response['dashboard_url']);
+        $this->assertNotNull($response['custom_policy_url']);
+        $this->assertNotNull($response['onboarding_url']);
+        $this->assertFalse($response['is_platform_fee_enabled']);
     }
 }
