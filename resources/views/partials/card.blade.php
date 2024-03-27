@@ -437,8 +437,8 @@
     @if ($data['showPartnerPricingAgreement'] === true)
     <section class="policies">
       <p class="policies-text">
-        We agree to pay the <span class="underline partner-pricing-plans-link">Fees specified</span> for
-        all transactions initiated through the Partner <span class="emphasis merchant-name"></span>.
+        We agree to pay the <span class="underline partner-pricing-plans-link">fees specified</span> for
+        all transactions initiated through the Partner {{$data['application']['name']}}.
         For transactions initiated otherwise, fees as agreed with Razorpay separately shall apply.
       </p>
     </section>
