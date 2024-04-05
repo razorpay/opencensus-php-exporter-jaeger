@@ -3,7 +3,7 @@ on: [push]
 
 jobs:
   test:
-    runs-on: ubuntu-18.04
+    runs-on: [ self-hosted, non-api ]
     services:
       jaeger-all-in-one:
         image: jaegertracing/all-in-one:latest
