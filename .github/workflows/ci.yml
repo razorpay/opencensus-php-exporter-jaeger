@@ -94,6 +94,18 @@ jobs:
             -arm64
             -x64
 
+
+  base-deployment-webhook:
+    needs: [ build-multi-architecture ]
+    runs-on: [ self-hosted, non-api ]
+    steps:
+      - name: Trigger spinnaker base infra pipeline
+        if: ${{ github.ref != 'refs/heads/master' }}
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          https://${{ secrets.SPINNAKER_BASIC_AUTH }}@deploy-github-actions.razorpay.com/webhooks/webhook/devserve-auth  \
+          -d "{\"repo\":\"auth-service\",\"parameters\":{\"auth_commit_id\":\"${{ github.sha }}\"}}"
+
   run_test:
     name: Test Suite
     runs-on: [ self-hosted, non-api ]
