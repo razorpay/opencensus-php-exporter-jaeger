@@ -13,6 +13,15 @@
     <script>
 
         function authorizeBtnClick() {
+
+            // enabling loader after clicking Authorize button to avoid multiple clicks
+            // since API call is server side, we are currently showing loader till redirection happens
+            // have no control for API response to stop loader
+
+            document.querySelector('#loader').style.display = 'block';
+            document.querySelector('.card').style.display = 'none';
+            document.querySelector('.rzp-auth-header-footer').style.display = 'none';
+            
             let merchant_id= document.querySelector(".merchant-id").value
             trackEvents({
                 eventName: 'OAuth Partner Consent Screen Authorize Clicked',
