@@ -19,6 +19,9 @@ use Razorpay\OAuth\Token\Mode;
 
 class EdgeService
 {
+    const TAG_TENANT = 'tenant~razorpay';
+    const TAG_OWNER_TYPE_MERCHANT = 'ownertype~merchant';
+
     protected $apiUrl;
 
     protected $secret;
@@ -186,8 +189,11 @@ class EdgeService
     {
         $url = $this->apiUrl . '/consumers';
 
+        // owner type will always be merchant here
+        // this comes into picture during authorize code flow grant
         $postPayload = [
-            'username'      =>      $merchantId
+            'username' => $merchantId,
+            'tags'     => [self::TAG_TENANT, self::TAG_OWNER_TYPE_MERCHANT]
         ];
 
         Trace::info(TraceCode::CREATE_CONSUMER_IN_EDGE,
