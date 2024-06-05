@@ -26,6 +26,7 @@ ARGO_WEBHOOK_URL="https://argo.dev.razorpay.in/api/v1/events/argo-workflows/edge
 DATA='{
     "kube_manifests_ref": "master",
     "edge_commit_id": '$EDGE_COMMIT',
+    "enable_v2": false,
     "self": {
         "name": "auth",
         "commit_id": "'"$AUTHSERVICE_COMMIT"'",
