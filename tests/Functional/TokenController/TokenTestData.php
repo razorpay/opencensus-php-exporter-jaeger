@@ -170,6 +170,21 @@ return [
         ]
     ],
 
+    'testPostAuthCodeWithClientId' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/authorize',
+            'content' => [
+                'client_id'   => '27000000000000',
+                'token'       => 'success',
+                'merchant_id' => '90000000000000',
+            ]
+        ],
+        'response' => [
+            'content' => []
+        ]
+    ],
+
     'testValidatePublicTokenWithValidToken' => [
         'request'  => [
             'method'  => 'GET',

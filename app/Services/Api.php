@@ -183,6 +183,12 @@ class Api
             throw new LogicException('primary_host_name missing merchant org details', $orgDetails);
         }
 
+        // Adding this there exists two org with org_id 100000razorpay and one has an internal url as primary hostname,
+        // If that is sent back in response the OAuth page is not rendered since *.int.dev.razorpay.in is an internal url.
+        if ($orgDetails['primary_host_name'] == 'dashboard.int.dev.razorpay.in') {
+            return 'https://dashboard.dev.razorpay.in';
+        }
+
         $protocolIdentifier = '';
 
         if (Str::startsWith($orgDetails['primary_host_name'], 'http') === false)

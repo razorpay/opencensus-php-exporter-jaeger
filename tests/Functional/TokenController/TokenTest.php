@@ -2,8 +2,8 @@
 
 namespace App\Tests\Functional\TokenController;
 
-use Trace;
-use App\Constants\TraceCode;
+use Razorpay\OAuth\Constants;
+use Razorpay\OAuth\Encryption;
 use Request;
 use Razorpay\OAuth\Application;
 use Razorpay\OAuth\Client;
@@ -579,6 +579,34 @@ class TokenTest extends TestCase
         return substr($content, $pos + 5, $end - $pos - 5);
     }
 
+    protected function generateAuthCodeWithClientId($client_id): string
+    {
+        $this->application = Application\Entity::factory()->create();
+
+        Client\Entity::factory()->create(['application_id' => $this->application->id, 'environment' => 'prod']);
+
+        $this->devClient = Client\Entity::factory()->create(
+            [
+                'id'             => $client_id,
+                'application_id' => $this->application->id,
+                'redirect_url'   => ['https://www.example.com'],
+                'environment'    => 'dev'
+            ]);
+
+        $data = $this->testData['testPostAuthCodeWithClientId'];
+
+        $data['request']['content']['client_id'] = $this->devClient->id;
+
+        $response = ($this->sendRequest($data['request']))->getContent();
+
+        $content = urldecode($response);
+
+        $pos = strpos($content, 'code=');
+        $end = strpos($content, '\'" />', $pos);
+
+        return substr($content, $pos + 5, $end - $pos - 5);
+    }
+
     public function testHandleRevokeTokenRequestForMobileApp()
     {
         $input = [];
@@ -593,4 +621,250 @@ class TokenTest extends TestCase
 
         $this->assertNull($method->invoke($obj, 'id123', $input));
     }
+
+    public function testRefreshTokenGrantGeneratesAReusableRefreshToken() {
+
+        $clientId = '27000000000000';
+
+        $authCode = $this->generateAuthCodeWithClientId($clientId);
+
+        Request::clearResolvedInstances();
+
+        $params1 = [
+            'client_id'    => $clientId,
+            'grant_type'   => 'authorization_code',
+            'client_secret' => $this->devClient->getSecret(),
+            'code'          => $authCode,
+            'redirect_uri'  => 'http://localhost',
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        $response = $this->sendRequest($data1['request']);
+
+        //decoding the request
+        $data = json_decode($response->getContent());
+
+        $firstRefreshToken = $data->refresh_token;
+
+        $params1 = [
+            'client_id'    => $clientId,
+            'grant_type'   => 'refresh_token',
+            'client_secret' => $this->devClient->getSecret(),
+            'refresh_token' => $firstRefreshToken,
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        Request::clearResolvedInstances();
+
+        $response = $this->sendRequest($data1['request']);
+
+        $data = json_decode($response->getContent());
+
+        $secondRefreshToken = $data->refresh_token;
+
+        $params1 = [
+            'client_id'    => $clientId,
+            'grant_type'   => 'refresh_token',
+            'client_secret' => $this->devClient->getSecret(),
+            'refresh_token' => $secondRefreshToken,
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        Request::clearResolvedInstances();
+
+        $response = $this->sendRequest($data1['request']);
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $params1 = [
+            'client_id'    => $clientId,
+            'grant_type'   => 'refresh_token',
+            'client_secret' => $this->devClient->getSecret(),
+            'refresh_token' => $firstRefreshToken,
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        Request::clearResolvedInstances();
+
+        $response = $this->sendRequest($data1['request']);
+
+        $data = json_decode($response->getContent());
+
+        $thirdRefreshToken = $data->refresh_token ;
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+
+        $firstRefreshTokenData = (new Encryption(Constants::ENTITY_REFRESH_TOKEN))->decryptWithFallback($firstRefreshToken);
+        $secondRefreshTokenData = (new Encryption(Constants::ENTITY_REFRESH_TOKEN))->decryptWithFallback($secondRefreshToken);
+        $thirdRefreshTokenData = (new Encryption(Constants::ENTITY_REFRESH_TOKEN))->decryptWithFallback($thirdRefreshToken);
+
+        $rt1 = \json_decode($firstRefreshTokenData, true);
+        $rt2 = \json_decode($secondRefreshTokenData, true);
+        $rt3 = \json_decode($thirdRefreshTokenData, true);
+
+        // Asserts that the refresh_token_id is same for all the tokens.
+        $this->assertEquals($rt1['refresh_token_id'], $rt2['refresh_token_id']);
+        $this->assertEquals($rt2['refresh_token_id'], $rt3['refresh_token_id']);
+
+        // Asserts that the expiry time is updated for the refresh token
+        $this->assertGreaterThan($rt1['expire_time'], $rt2['expire_time']);
+        $this->assertGreaterThan($rt2['expire_time'], $rt3['expire_time'] );
+
+        // Asserts that access tokens for each refresh token is different
+        $this->assertNotEquals($rt1['access_token_id'], $rt2['access_token_id']);
+        $this->assertNotEquals($rt2['access_token_id'], $rt3['access_token_id']);
+        $this->assertNotEquals($rt3['access_token_id'], $rt1['access_token_id']);
+
+
+        // Asserts that access tokens to older refresh tokens are revoked.
+        $this->assertTrue((new Token\Repository())->isAccessTokenRevoked($rt1['access_token_id']));
+        $this->assertTrue((new Token\Repository())->isAccessTokenRevoked($rt2['access_token_id']));
+        $this->assertFalse((new Token\Repository())->isAccessTokenRevoked($rt3['access_token_id']));
+
+    }
+
+    public function testRefreshTokenGrantGeneratesAReusableRefreshTokenForAllBasedOnEnvVar() {
+
+        $clientId = '30000000000000';
+
+        putenv('USE_REUSABLE_REFRESH_TOKENS=true');
+
+        $authCode = $this->generateAuthCode();
+
+        Request::clearResolvedInstances();
+
+        $params1 = [
+            'client_id'    => $clientId,
+            'grant_type'   => 'authorization_code',
+            'client_secret' => $this->devClient->getSecret(),
+            'code'          => $authCode,
+            'redirect_uri'  => 'http://localhost',
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        $response = $this->sendRequest($data1['request']);
+
+        //decoding the request
+        $data = json_decode($response->getContent());
+
+        $firstRefreshToken = $data->refresh_token;
+
+        $params1 = [
+            'client_id'    => $clientId,
+            'grant_type'   => 'refresh_token',
+            'client_secret' => $this->devClient->getSecret(),
+            'refresh_token' => $firstRefreshToken,
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        Request::clearResolvedInstances();
+
+        $response = $this->sendRequest($data1['request']);
+
+        $data = json_decode($response->getContent());
+
+        $secondRefreshToken = $data->refresh_token;
+
+        $params1 = [
+            'client_id'    => $clientId,
+            'grant_type'   => 'refresh_token',
+            'client_secret' => $this->devClient->getSecret(),
+            'refresh_token' => $secondRefreshToken,
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        Request::clearResolvedInstances();
+
+        $response = $this->sendRequest($data1['request']);
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $params1 = [
+            'client_id'    => $clientId,
+            'grant_type'   => 'refresh_token',
+            'client_secret' => $this->devClient->getSecret(),
+            'refresh_token' => $firstRefreshToken,
+        ];
+
+        $data1['request']['content'] = $params1;
+
+        $data1['request']['url'] = '/token';
+
+        $data1['request']['method'] = 'POST';
+
+        Request::clearResolvedInstances();
+
+        $response = $this->sendRequest($data1['request']);
+
+        $data = json_decode($response->getContent());
+
+        $thirdRefreshToken = $data->refresh_token ;
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+
+        $firstRefreshTokenData = (new Encryption(Constants::ENTITY_REFRESH_TOKEN))->decryptWithFallback($firstRefreshToken);
+        $secondRefreshTokenData = (new Encryption(Constants::ENTITY_REFRESH_TOKEN))->decryptWithFallback($secondRefreshToken);
+        $thirdRefreshTokenData = (new Encryption(Constants::ENTITY_REFRESH_TOKEN))->decryptWithFallback($thirdRefreshToken);
+
+        $rt1 = \json_decode($firstRefreshTokenData, true);
+        $rt2 = \json_decode($secondRefreshTokenData, true);
+        $rt3 = \json_decode($thirdRefreshTokenData, true);
+
+        // Asserts that the refresh_token_id is same for all the tokens.
+        $this->assertEquals($rt1['refresh_token_id'], $rt2['refresh_token_id']);
+        $this->assertEquals($rt2['refresh_token_id'], $rt3['refresh_token_id']);
+
+        // Asserts that the expiry time is updated for the refresh token
+        $this->assertGreaterThan($rt1['expire_time'], $rt2['expire_time']);
+        $this->assertGreaterThan($rt2['expire_time'], $rt3['expire_time'] );
+
+        // Asserts that access tokens for each refresh token is different
+        $this->assertNotEquals($rt1['access_token_id'], $rt2['access_token_id']);
+        $this->assertNotEquals($rt2['access_token_id'], $rt3['access_token_id']);
+        $this->assertNotEquals($rt3['access_token_id'], $rt1['access_token_id']);
+
+
+        // Asserts that access tokens to older refresh tokens are revoked.
+        $this->assertTrue((new Token\Repository())->isAccessTokenRevoked($rt1['access_token_id']));
+        $this->assertTrue((new Token\Repository())->isAccessTokenRevoked($rt2['access_token_id']));
+        $this->assertFalse((new Token\Repository())->isAccessTokenRevoked($rt3['access_token_id']));
+
+        }
 }
