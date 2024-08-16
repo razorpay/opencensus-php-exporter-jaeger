@@ -666,6 +666,8 @@ class TokenTest extends TestCase
 
         Request::clearResolvedInstances();
 
+        sleep(2);
+
         $response = $this->sendRequest($data1['request']);
 
         $data = json_decode($response->getContent());
@@ -687,6 +689,8 @@ class TokenTest extends TestCase
 
         Request::clearResolvedInstances();
 
+        sleep(2);
+
         $response = $this->sendRequest($data1['request']);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -705,6 +709,8 @@ class TokenTest extends TestCase
         $data1['request']['method'] = 'POST';
 
         Request::clearResolvedInstances();
+
+        sleep(2);
 
         $response = $this->sendRequest($data1['request']);
 
@@ -768,6 +774,8 @@ class TokenTest extends TestCase
 
         $data1['request']['method'] = 'POST';
 
+        sleep(2);
+
         $response = $this->sendRequest($data1['request']);
 
         //decoding the request
@@ -790,6 +798,8 @@ class TokenTest extends TestCase
 
         Request::clearResolvedInstances();
 
+        sleep(2);
+
         $response = $this->sendRequest($data1['request']);
 
         $data = json_decode($response->getContent());
@@ -811,6 +821,8 @@ class TokenTest extends TestCase
 
         Request::clearResolvedInstances();
 
+        sleep(2);
+
         $response = $this->sendRequest($data1['request']);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -829,6 +841,8 @@ class TokenTest extends TestCase
         $data1['request']['method'] = 'POST';
 
         Request::clearResolvedInstances();
+
+        sleep(2);
 
         $response = $this->sendRequest($data1['request']);
 
