@@ -22,6 +22,7 @@ class TraceCode extends BaseTraceCode
     const RESTORE_APPLICATION_REQUEST                               = 'RESTORE_APPLICATION_REQUEST';
     const GET_APPLICATIONS_REQUEST                                  = 'GET_APPLICATIONS_REQUEST';
     const BANKING_ACCOUNTS_WEBHOOK_REQUEST                          = 'BANKING_ACCOUNTS_WEBHOOK_REQUEST';
+    const MERCHANT_DETAILS_FETCH_FAILED                             = 'MERCHANT_DETAILS_FETCH_FAILED';
     const CREATE_CLIENTS_REQUEST                                    = 'CREATE_CLIENTS_REQUEST';
     const DELETE_CLIENT_REQUEST                                     = 'DELETE_CLIENT_REQUEST';
     const REFRESH_CLIENTS_REQUEST                                   = 'REFRESH_CLIENTS_REQUEST';

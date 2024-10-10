@@ -1,4 +1,4 @@
-ARG ONGGI_IMAGE=c.rzp.io/razorpay/onggi-multi-arch:php-8.1-nginx
+ARG ONGGI_IMAGE=c.rzp.io/razorpay/rzp-docker-image-inventory-multi-arch:rzp-golden-image-nginx-php-8.1-fpm
 
 FROM $ONGGI_IMAGE as opencensus-ext
 
@@ -29,6 +29,25 @@ RUN set -eux && \
 
 RUN pear81 config-set php_ini /etc/php81/php.ini && \
     pecl81 install rdkafka
+
+ENV GRPC_VERSION=v1.66.0
+
+RUN apk update
+
+# ref: https://github.com/grpc/grpc/issues/34278#issuecomment-1871059454
+RUN apk add --no-cache git grpc-cpp grpc-dev $PHPIZE_DEPS && \
+    GRPC_VERSION=$(apk info grpc -d | grep grpc | cut -d- -f2) && \
+    git clone --depth 1 -b v${GRPC_VERSION} https://github.com/grpc/grpc /tmp/grpc && \
+    cd /tmp/grpc/src/php/ext/grpc && \
+    phpize && \
+    ./configure && \
+    make && \
+    make install && \
+    rm -rf /tmp/grpc && \
+    apk del --no-cache git grpc-dev $PHPIZE_DEPS && \
+    echo "extension=grpc.so" >> /etc/php81/php.ini
+
+RUN apk add py3-pip
 
 RUN pip install --no-cache-dir "razorpay.alohomora==0.5.0"
 

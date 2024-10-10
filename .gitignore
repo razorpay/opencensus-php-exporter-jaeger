@@ -16,6 +16,7 @@ dockerconf/auth.nginx.conf
 .env.*
 !environment/.env.wercker
 !environment/.env.defaults
+!environment/.env.testing
 !environment/.env.production
 !environment/.env.beta
 !environment/.env.alpha

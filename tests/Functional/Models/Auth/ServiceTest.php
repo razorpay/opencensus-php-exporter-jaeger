@@ -43,11 +43,14 @@ class ServiceTest extends TestCase
         $service = new Service();
         $service->oauthServer = $this->oauthServerMock;
 
+        $scope = new Scope\Entity();
+        $scope->setIdentifier(ScopeConstants::READ_ONLY);
+
         $this->oauthServerMock
             ->shouldReceive('validateAuthorizeRequestAndGetScopes')
             ->andReturn(collect(
                 [
-                    new Scope\Entity(ScopeConstants::READ_ONLY),
+                    $scope,
                 ]));
 
         $response = $service->getAuthorizeViewData($input);
@@ -84,11 +87,14 @@ class ServiceTest extends TestCase
         $service = new Service();
         $service->oauthServer = $this->oauthServerMock;
 
+        $scope = new Scope\Entity();
+        $scope->setIdentifier(ScopeConstants::READ_ONLY);
+
         $this->oauthServerMock
             ->shouldReceive('validateAuthorizeRequestAndGetScopes')
             ->andReturn(collect(
                 [
-                    new Scope\Entity(ScopeConstants::READ_ONLY),
+                    $scope
                 ]));
 
         $response = $service->getAuthorizeViewData($input);
@@ -121,11 +127,14 @@ class ServiceTest extends TestCase
         $service = new Service();
         $service->oauthServer = $this->oauthServerMock;
 
+        $scope = new Scope\Entity();
+        $scope->setIdentifier(ScopeConstants::RX_READ_ONLY);
+
         $this->oauthServerMock
             ->shouldReceive('validateAuthorizeRequestAndGetScopes')
             ->andReturn(collect(
                 [
-                    new Scope\Entity(ScopeConstants::RX_READ_ONLY),
+                    $scope,
                 ]));
 
         $response = $service->getAuthorizeViewData($input);
@@ -157,11 +166,14 @@ class ServiceTest extends TestCase
         $service = new Service();
         $service->oauthServer = $this->oauthServerMock;
 
+        $scope = new Scope\Entity();
+        $scope->setIdentifier(ScopeConstants::READ_ONLY);
+
         $this->oauthServerMock
             ->shouldReceive('validateAuthorizeRequestAndGetScopes')
             ->andReturn(collect(
                 [
-                    new Scope\Entity(ScopeConstants::READ_ONLY),
+                    $scope,
                 ]));
 
         $response = $service->getAuthorizeViewData($input);
@@ -190,11 +202,13 @@ class ServiceTest extends TestCase
         $service = new Service();
         $service->oauthServer = $this->oauthServerMock;
 
+        $scope = new Scope\Entity();
+        $scope->setIdentifier(ScopeConstants::READ_ONLY);
         $this->oauthServerMock
             ->shouldReceive('validateAuthorizeRequestAndGetScopes')
             ->andReturn(collect(
                 [
-                    new Scope\Entity(ScopeConstants::READ_ONLY),
+                    $scope,
                 ]));
 
         $response = $service->getAuthorizeViewData($input);
@@ -232,11 +246,14 @@ class ServiceTest extends TestCase
         $service = new Service();
         $service->oauthServer = $this->oauthServerMock;
 
+        $scope = new Scope\Entity();
+        $scope->setIdentifier(ScopeConstants::READ_ONLY);
+
         $this->oauthServerMock
             ->shouldReceive('validateAuthorizeRequestAndGetScopes')
             ->andReturn(collect(
                             [
-                                new Scope\Entity(ScopeConstants::READ_ONLY),
+                                $scope,
                             ]));
 
         $response = $service->getAuthorizeViewData($input);
@@ -264,11 +281,14 @@ class ServiceTest extends TestCase
         $service = new Service();
         $service->oauthServer = $this->oauthServerMock;
 
+        $scope = new Scope\Entity();
+        $scope->setIdentifier(ScopeConstants::READ_ONLY);
+
         $this->oauthServerMock
             ->shouldReceive('validateAuthorizeRequestAndGetScopes')
             ->andReturn(collect(
                 [
-                    new Scope\Entity(ScopeConstants::READ_ONLY),
+                    $scope,
                 ]));
 
         $response = $service->getAuthorizeViewData($input);

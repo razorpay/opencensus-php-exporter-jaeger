@@ -3,6 +3,9 @@
 namespace App\Models\Auth;
 
 use App;
+use App\Exception\LogicException;
+use Razorpay\Asv\Config\Config;
+use Razorpay\OAuth\Exception\DBQueryException;
 use Trace;
 use App\Services;
 use Razorpay\OAuth;
@@ -38,6 +41,7 @@ class Service
     const LIVE                        = 'live';
     const TEST                        = 'test';
     const ACCOUNTING_INTEGRATION      = "accounting_integration";
+    const COUNTRY_CODE                = "country_code";
 
     protected $raven;
     private $signAlgo;
@@ -445,9 +449,16 @@ class Service
         ];
     }
 
+    /**
+     * @throws LogicException
+     * @throws OAuth\Exception\BadRequestException
+     * @throws DBQueryException
+     */
     public function generateAccessToken(array $input)
     {
         Trace::info(TraceCode::SIGN_ALGO_USED, [$this->signAlgo]);
+
+        $input[self::COUNTRY_CODE] = $this->getMerchantCountryCode($input);
 
         $data = $this->oauthServer->getAccessToken($input);
 
@@ -459,6 +470,33 @@ class Service
         $this->getApiService()->triggerBankingAccountsWebhook($token[Token::MERCHANT_ID], $input['mode'] ?? 'live');
 
         return $response;
+    }
+
+    private function getMerchantCountryCode($input) : string {
+
+        // We do not need to embed country_code in case of IN deployments.
+        if ($this->isINDeployment()) {
+            return Constant::COUNTRY_CODE_INDIA;
+        }
+
+        $client = (new Client\Repository)->getClientEntity($input[RequestParams::CLIENT_ID]) ;
+
+        if ($client === null)
+        {
+            throw new OAuth\Exception\DBQueryException('No records found with the given Id', ErrorCode::BAD_REQUEST_INVALID_CLIENT, [],400);
+        }
+
+        $merchantId = $client->getMerchantId();
+
+        if (!$merchantId or empty($merchantId))
+        {
+            throw new OAuth\Exception\BadRequestException('failed to get merchant_id for the client_id: ' . $input[RequestParams::CLIENT_ID]);
+        }
+
+        $country_code = $this->getAccountsService()->getCountryCode($merchantId);
+
+        return $country_code ?? Constant::COUNTRY_CODE_INDIA;
+
     }
 
     protected function resolveTokenOnDashboard(string $token, string $merchantId)
@@ -490,6 +528,17 @@ class Service
         }
 
         return new Services\Api();
+    }
+
+    public function getAccountsService() {
+
+        $accountMock = env('APP_ASV_MOCK', false);
+
+        if ($accountMock === true) {
+            return new Services\Mock\AccountService();
+        }
+
+        return new Services\AccountService();
     }
 
     protected function validateAndGetApplicationDataForAuthorize(array $input): array
@@ -913,5 +962,15 @@ class Service
         ];
 
         return $this->app['splitz']->isExperimentEnabled($properties);
+    }
+
+    private function getDeploymentRegion() : string
+    {
+        return env('AUTH_DEPLOYMENT_REGION', Constant::COUNTRY_CODE_INDIA);
+    }
+
+    private function isINDeployment(): bool
+    {
+        return $this->getDeploymentRegion() === Constant::COUNTRY_CODE_INDIA;
     }
 }

@@ -61,6 +61,9 @@ class ServiceTest extends UnitTestCase
         $class  = new \ReflectionClass('App\Models\Auth\Service');
         $method = $class->getMethod("parseScopeDescriptionsForDisplay");
 
+        $scope = new Scope\Entity();
+        $scope->setIdentifier(ScopeConstants::READ_ONLY);
+
         // test read_only
         $expected = OAuthServer::$scopes[ScopeConstants::READ_ONLY];
         $actual   = $method->invokeArgs(
@@ -68,13 +71,16 @@ class ServiceTest extends UnitTestCase
             [
                 collect(
                     [
-                        new Scope\Entity(ScopeConstants::READ_ONLY),
+                        $scope,
                     ]
                 )
             ]
         );
 
         $this->assertEquals($expected, $actual);
+
+        $scope = new Scope\Entity();
+        $scope->setIdentifier(ScopeConstants::READ_WRITE);
 
         // test read_write
         $expected = OAuthServer::$scopes[ScopeConstants::READ_WRITE];
@@ -83,13 +89,23 @@ class ServiceTest extends UnitTestCase
             [
                 collect(
                     [
-                        new Scope\Entity(ScopeConstants::READ_WRITE),
+                        $scope,
                     ]
                 )
             ]
         );
 
         $this->assertEquals($expected, $actual);
+
+        $readOnlyScope = new Scope\Entity();
+        $readOnlyScope->setIdentifier(ScopeConstants::READ_ONLY);
+
+        $rxReadOnlyScope = new Scope\Entity();
+        $rxReadOnlyScope->setIdentifier(ScopeConstants::RX_READ_ONLY);
+
+
+        $readWriteScope = new Scope\Entity();
+        $readWriteScope->setIdentifier(ScopeConstants::READ_WRITE);
 
         // test read_only and rx_read_only
         $expected = array_collapse(
@@ -102,8 +118,8 @@ class ServiceTest extends UnitTestCase
             [
                 collect(
                     [
-                        new Scope\Entity(ScopeConstants::READ_ONLY),
-                        new Scope\Entity(ScopeConstants::RX_READ_ONLY)
+                        $readOnlyScope,
+                        $rxReadOnlyScope
                     ]
                 )
             ]
@@ -118,8 +134,8 @@ class ServiceTest extends UnitTestCase
             [
                 collect(
                     [
-                        new Scope\Entity(ScopeConstants::READ_ONLY),
-                        new Scope\Entity(ScopeConstants::READ_WRITE)
+                        $readOnlyScope,
+                        $readWriteScope
                     ]
                 )
             ]

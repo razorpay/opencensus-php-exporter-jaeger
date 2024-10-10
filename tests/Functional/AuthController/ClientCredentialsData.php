@@ -20,6 +20,24 @@ return [
         ]
     ],
 
+    'testPostAccessTokenPublicToken' => [
+        'request'  => [
+            'method'  => 'POST',
+            'url'     => '/token',
+            'content' => [
+                'client_id'    => '30000000000000',
+                'grant_type'   => 'client_credentials',
+            ]
+        ],
+        'response' => [
+            'content'     => [
+                'token_type' => 'Bearer',
+                'razorpay_account_id' => 'acc_10000000000000'
+            ],
+            'status_code' => 200
+        ]
+    ],
+
     'testPostAccessTokenWithInvalidClientID' => [
         'request'  => [
             'method'  => 'POST',
@@ -80,14 +98,14 @@ return [
         'response'  => [
             'content'     => [
                 'error' => [
-                    'description' => 'Token provided is not valid'
+                    'description' => 'Only allowed modes are test or live'
                 ],
             ],
-            'status_code' => 401
+            'status_code' => 400
         ],
         'exception' => [
             'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
-            'message' => 'Token provided is not valid',
+            'message' => 'Only allowed modes are test or live',
         ]
     ],
 

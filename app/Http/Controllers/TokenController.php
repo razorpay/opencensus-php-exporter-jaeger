@@ -62,13 +62,13 @@ class TokenController extends Controller
     {
         Trace::info(TraceCode::VALIDATE_PUBLIC_TOKEN_REQUEST, ["id" => $id]);
 
-        $found = (preg_match("/^rzp_(test|live)_oauth_([a-zA-Z0-9]{14})$/", $id, $matches) === 1);
+        $found = (preg_match("/^rzp_(test|live)(_IN|SG)?_oauth_([a-zA-Z0-9]{14})$/", $id, $matches) === 1);
         if ($found === false)
         {
             throw new LogicException("public token is invalid");
         }
 
-        $token = (new Auth\Repository)->findByPublicTokenIdAndMode($matches[2], $matches[1]);
+        $token = (new Auth\Repository)->findByPublicTokenIdAndMode($matches[3], $matches[1]);
         if ($token === null)
         {
             return response()->json(["exist"=> false]);

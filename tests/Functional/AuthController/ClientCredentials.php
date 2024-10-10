@@ -42,6 +42,27 @@ class ClientCredentials extends TestCase
         }
     }
 
+    // testPostAccessTokenPublicToken verifies creation of access token on passing valid params
+    public function testPostAccessTokenPublicToken()
+    {
+        $this->createAndSetClientWithEnvironment();
+
+        foreach($this->modes as $mode)
+        {
+            $params = [
+                'client_secret' => $this->devClient->getSecret(),
+                'mode' => $mode
+            ];
+
+            $data = & $this->testData[__FUNCTION__];
+            $this->addRequestParameters($data['request']['content'], $params);
+
+            $content = $this->runRequestResponseFlow($data);
+            echo(implode(',',$content));
+            $this->assertStringContainsString( "_SG_",$content['public_token']);
+        }
+    }
+
     //testPostAccessTokenWithScope verifies creation of access token when scope is provided. If scope is not provided, 'read_write' is used as scope
     public function testPostAccessTokenWithScope()
     {
