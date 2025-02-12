@@ -273,6 +273,116 @@ return [
         ]
     ],
 
+    'testGetApplicationIDFromPublicKey' => [
+        'request'  => [
+            'url'     => '/applications',
+            'method'  => 'GET',
+            'content' => [
+                'public_key' => 'rzp_test_oauth_9xu1rkZqoXlClS',
+                'fields'     => ['id']
+            ]
+        ],
+        'response' => [
+            'content' => [
+                'entity' => 'collection',
+                'count' => 1,
+                'items' => [
+                    [
+                        'id' => 'IgU34AOEwf9fqq'
+                    ]
+                ]
+            ],
+        ]
+    ],
+
+    'testGetApplicationFromPublicKeyWithoutFieldsPassed' => [
+        'request'  => [
+            'url'     => '/applications',
+            'method'  => 'GET',
+            'content' => [
+                'public_key' => 'rzp_test_oauth_9xu1rkZqoXlClS'
+            ]
+        ],
+        'response' => [
+            'content' => [
+                'entity' => 'collection',
+                'count' => 1,
+                'items' => [
+                    [
+                        'id' => 'IgU34AOEwf9fqq'
+                    ]
+                ]
+            ],
+        ]
+    ],
+
+    'testBadRequestGetApplicationFromPublicKey' => [
+        'request'  => [
+            'url'     => '/applications',
+            'method'  => 'GET',
+            'content' => [
+                'public_key' => 'rzp_test_oauth_9xu1rkZqoXlClS',
+            ]
+        ],
+        'response' => [
+            'content' => [
+                'error' => [
+                    'description' => 'Invalid public key',
+                ],
+            ],
+            'status_code' => 400,
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\ValidationException',
+            'message' => 'Invalid public key',
+        ]
+    ],
+
+    'testInvalidFieldsRequestedForGetApplicationFromPublicKey' => [
+        'request'  => [
+            'url'     => '/applications',
+            'method'  => 'GET',
+            'content' => [
+                'public_key' => 'rzp_test_oauth_9xu1rkZqoXlClS',
+                'fields'     => ['invalid_field']
+            ]
+        ],
+        'response' => [
+            'content' => [
+                'error' => [
+                    'description' => 'Invalid Application field requested',
+                ],
+            ],
+            'status_code' => 400,
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\ValidationException',
+            'message' => 'Invalid Application field requested',
+        ]
+    ],
+
+    'testGetApplicationFromInvalidPublicKeyFailure' => [
+        'request'  => [
+            'url'     => '/applications',
+            'method'  => 'GET',
+            'content' => [
+                'public_key' => 'rzp_test_oauth_9xu1rkZqoXlClS',
+            ]
+        ],
+        'response' => [
+            'content' => [
+                'error' => [
+                    'description' => 'Public key not found',
+                ],
+            ],
+            'status_code' => 400,
+        ],
+        'exception' => [
+            'class'   => 'Razorpay\OAuth\Exception\BadRequestException',
+            'message' => 'Public key not found',
+        ]
+    ],
+
     'testGetMultipleSubmerchantApplications' => [
         'request'  => [
             'url'     => '/applications/submerchant',

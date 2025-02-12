@@ -217,6 +217,155 @@ class ApplicationTest extends TestCase
         $this->assertEquals($data['response']['content'], $content);
     }
 
+    public function testGetApplicationIDFromPartnerAuthPublicKey()
+    {
+        $application = Application\Entity::factory()->create();
+        $prodClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $application->id, Client\Entity::ENVIRONMENT => 'prod']);
+        $devClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $application->id, Client\Entity::ENVIRONMENT => 'dev']);
+
+        $data = & $this->testData['testGetApplicationIDFromPublicKey'];
+
+        $modes = ['live', 'test'];
+        $publicKey = [
+            'live' => 'rzp_live_partner_' . $prodClient->getId(),
+            'test' => 'rzp_test_partner_' . $devClient->getId()
+        ];
+
+        foreach ($modes as $mode)
+        {
+            $data['request']['content']['public_key'] = $publicKey[$mode];
+            $content = $this->makeRequestAndGetContent($data['request']);
+            $data['response']['content']['items'][0]['id'] = $application->getId();
+            $this->assertEquals($data['response']['content'], $content);
+        }
+    }
+
+    public function testGetApplicationIDFromOAuthPublicKey()
+    {
+        $application = Application\Entity::factory()->create();
+        $prodClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $application->id, Client\Entity::ENVIRONMENT => 'prod']);
+        $devClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $application->id, Client\Entity::ENVIRONMENT => 'dev']);
+        $devToken = Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::CLIENT_ID => $devClient->getId()]);
+        $prodToken = Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::CLIENT_ID => $prodClient->getId()]);
+
+        $data = & $this->testData['testGetApplicationIDFromPublicKey'];
+
+        $modes = ['test', 'live'];
+        $publicKey = [
+            'test' => 'rzp_test_oauth_' . $devToken->getPublicToken(),
+            'live' => 'rzp_live_oauth_' . $prodToken->getPublicToken()
+        ];
+
+        foreach ($modes as $mode)
+        {
+            $data['request']['content']['public_key'] = $publicKey[$mode];
+            $content = $this->makeRequestAndGetContent($data['request']);
+            $data['response']['content']['items'][0]['id'] = $application->getId();
+            $this->assertEquals($data['response']['content'], $content);
+        }
+    }
+
+    public function testGetApplicationFromPartnerAuthPublicKeyWithoutFieldsPassed()
+    {
+        $application = Application\Entity::factory()->create();
+        $prodClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $application->id, Client\Entity::ENVIRONMENT => 'prod']);
+        $devClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $application->id, Client\Entity::ENVIRONMENT => 'dev']);
+
+        $data = & $this->testData['testGetApplicationFromPublicKeyWithoutFieldsPassed'];
+
+        $modes = ['live', 'test'];
+        $publicKey = [
+            'live' => 'rzp_live_partner_' . $prodClient->getId(),
+            'test' => 'rzp_test_partner_' . $devClient->getId()
+        ];
+
+        $repo = new Application\Repository();
+
+        foreach ($modes as $mode)
+        {
+            $data['request']['content']['public_key'] = $publicKey[$mode];
+            $content = $this->makeRequestAndGetContent($data['request']);
+            $data['response']['content']['items'][0]['id'] = $application->getId();
+            $appData = $repo->findOrFailPublic($application->getId())->toArrayPublic();
+            $expectedContent = [
+                'entity' => 'collection',
+                'count' => 1,
+                'items' => [$appData]
+            ];
+            $this->assertEquals($expectedContent, $content);
+        }
+    }
+
+    public function testGetApplicationFromOAuthPublicKeyWithoutFieldsPassed()
+    {
+        $application = Application\Entity::factory()->create();
+        $prodClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $application->id, Client\Entity::ENVIRONMENT => 'prod']);
+        $devClient = Client\Entity::factory()->create([Client\Entity::APPLICATION_ID => $application->id, Client\Entity::ENVIRONMENT => 'dev']);
+        $devToken = Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::CLIENT_ID => $devClient->getId()]);
+        $prodToken = Token\Entity::factory()->create([Token\Entity::TYPE => 'access_token', Token\Entity::CLIENT_ID => $prodClient->getId()]);
+
+        $data = & $this->testData['testGetApplicationFromPublicKeyWithoutFieldsPassed'];
+
+        $modes = ['test', 'live'];
+        $publicKey = [
+            'test' => 'rzp_test_oauth_' . $devToken->getPublicToken(),
+            'live' => 'rzp_live_oauth_' . $prodToken->getPublicToken()
+        ];
+
+        $repo = new Application\Repository();
+
+        foreach ($modes as $mode)
+        {
+            $data['request']['content']['public_key'] = $publicKey[$mode];
+            $content = $this->makeRequestAndGetContent($data['request']);
+            $data['response']['content']['items'][0]['id'] = $application->getId();
+            $appData = $repo->findOrFailPublic($application->getId())->toArrayPublic();
+            $expectedContent = [
+                'entity' => 'collection',
+                'count' => 1,
+                'items' => [$appData]
+            ];
+            $this->assertEquals($expectedContent, $content);
+        }
+    }
+
+    public function testBadRequestGetApplicationFromPublicKey()
+    {
+       $data = & $this->testData[__FUNCTION__];
+
+        $publicKeysToErrMap = [
+            'rzp_live_partner_invalid',
+            'rzp_test_oauth_invalid'
+        ];
+
+        foreach ($publicKeysToErrMap as $publicKey)
+        {
+            $data['request']['content']['public_key'] = $publicKey;
+            $this->startTest($data);
+        }
+    }
+
+    public function testInvalidFieldsRequestedForGetApplicationFromPublicKey()
+    {
+        $this->startTest();
+    }
+
+    public function testGetApplicationFromInvalidPublicKeyFailure()
+    {
+        $data = & $this->testData[__FUNCTION__];
+
+        $publicKeysToErrMap = [
+            'rzp_test_partner_OtlDqPTGZBoVLD',
+            'rzp_live_oauth_OtlDqPTGZBoVLD'
+        ];
+
+        foreach ($publicKeysToErrMap as $publicKey)
+        {
+            $data['request']['content']['public_key'] = $publicKey;
+            $this->startTest($data);
+        }
+    }
+
     public function testGetMultipleSubmerchantApplications()
     {
         $this->createTestApp(['name' => 'apptestFirst', 'website' => 'https://www.example.com', 'logo_url' => '/logos/8f6s8096pYQw0v.png']);
