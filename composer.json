@@ -4,7 +4,7 @@
     "type": "library",
     "require": {
         "php-64bit": "^8.0",
-        "opencensus/opencensus": "^1.0.0",
+        "opencensus/opencensus": "upgrade-laravel-11-2025-dev",
         "apache/thrift": "^0.11",
         "ext-sockets": "*",
         "phpspec/prophecy": "*"
