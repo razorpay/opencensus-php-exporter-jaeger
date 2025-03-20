@@ -178,7 +178,10 @@ jobs:
         uses: razorpay/gh-find-current-pr@v1
         id: findPr
       - name: check values
-        run: echo ${{ github.ref }}::${{ steps.findPr.outputs.number }}
+        env:
+          GITHUB_REF: ${{ github.ref }}
+          PR_NUMBER: ${{ steps.findPr.outputs.number }}
+        run: echo "$GITHUB_REF::$PR_NUMBER"
       - name: Code Quality Analysis
         if: github.ref != 'refs/heads/master' && success() && steps.findPr.outputs.number
         id: code_quality_analysis
@@ -304,3 +307,4 @@ jobs:
         run: |
           echo 'Status check has passed!'
           exit 0
+
