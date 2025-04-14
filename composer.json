@@ -5,7 +5,7 @@
     "require": {
         "php-64bit": "^8.0",
         "opencensus/opencensus": "^1.0.0",
-        "apache/thrift": "^0.21.0",
+        "apache/thrift": "^1.0.x-dev",
         "ext-sockets": "*",
         "phpspec/prophecy": "*"
     },
