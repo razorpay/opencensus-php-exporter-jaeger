@@ -5,7 +5,7 @@
     "require": {
         "php-64bit": "^8.0",
         "opencensus/opencensus": "^1.0.0",
-        "apache/thrift": "^1.0.x-dev",
+        "apache/thrift": "dev-initial-setup",
         "ext-sockets": "*",
         "phpspec/prophecy": "*"
     },
@@ -21,7 +21,7 @@
             "email": "chingor@google.com"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "OpenCensus\\Trace\\Exporter\\": "src/"
@@ -35,6 +35,11 @@
             "type": "vcs",
             "no-api": true,
             "url": "git@github.com:razorpay/opencensus-php.git"
+        },
+        {
+          "type": "vcs",
+          "no-api": true,
+          "url": "git@github.com:razorpay/thrift.git"
         }
     ]
 }
