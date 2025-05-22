@@ -58,7 +58,7 @@ class Service
         ],
         ScopeConstants::RX_READ_WRITE => [
             "RazorpayX Policies" => "https://razorpay.com/terms/razorpayx/partnership/"
-        ],
+        ]
     ];
 
     protected const SCOPES_ALLOWED_FOR_ONBOARDING = [

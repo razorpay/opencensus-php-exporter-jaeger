@@ -1,22 +1,25 @@
 name: CI
-on: [push]
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+      - 'dark'
+      - singapore_release
+      - us_release
+  push:
+    branches:
+      - 'master'
+      - 'hotfix**'
+      - 'dark'
+      - singapore_release
+      - us_release
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 jobs:
-  cancel:
-    runs-on: [self-hosted]
-    name: Cancel Previous Runs
-    if: always()
-    steps:
-      - uses: styfle/cancel-workflow-action@d57d93c3a8110b00c3a2c0b64b8516013c9fd4c9
-        if: ${{ github.ref != 'refs/heads/master' }}
-        name: cancel old workflows
-        id: cancel
-        with:
-          access_token: ${{ github.token }}
-      - if: ${{ github.ref == 'refs/heads/master' }}
-        name: Don't cancel old workflows
-        id: dont_cancel
-        run: |
-          echo "Don't cancel old workflow"
   build:
     strategy:
       fail-fast: false
@@ -70,7 +73,6 @@ jobs:
             GIT_USERNAME=rzp
           push: true
           tags: c.rzp.io/${{ github.repository }}:${{ github.sha }}-${{ steps.matrixLowercase.outputs.platform }}
-
   build-multi-architecture:
     needs:
       - build
@@ -85,11 +87,8 @@ jobs:
           registry: c.rzp.io
           username: ${{ secrets.HARBOR_DOCKER_USERNAME }}
           password: ${{ secrets.HARBOR_DOCKER_PASSWORD }}
-      - uses: docker/metadata-action@v5
-        id: metadata
-        with:
-          images: c.rzp.io/razorpay/edge-dp
-          flavor: suffix=-${{ github.sha }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - uses: int128/docker-manifest-create-action@v1
         with:
           tags: c.rzp.io/${{ github.repository }}:${{ github.sha }}
@@ -112,7 +111,6 @@ jobs:
   run_test:
     name: Test Suite
     runs-on: [ self-hosted, non-api ]
-    needs: [ cancel ]
     continue-on-error: false
     container:
       image: harbor.razorpay.com/razorpay/rzp-docker-image-inventory-multi-arch:rzp-golden-image-nginx-php-8.1-fpm

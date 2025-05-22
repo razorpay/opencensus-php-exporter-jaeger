@@ -29,6 +29,7 @@ class AuthController extends Controller
         ScopeConstants::APPLE_WATCH_READ_WRITE  => self::AUTHORIZE_DEFAULT_VIEW,
         ScopeConstants::X_MOBILE_APP            => self::AUTHORIZE_DEFAULT_VIEW,
         ScopeConstants::X_MOBILE_APP_2_FA_TOKEN => self::AUTHORIZE_DEFAULT_VIEW,
+        ScopeConstants::ANALYTICS               => self::AUTHORIZE_DEFAULT_VIEW,
     ];
 
     public function getRoot()
