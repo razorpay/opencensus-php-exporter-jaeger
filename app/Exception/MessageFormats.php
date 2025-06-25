@@ -108,13 +108,13 @@ trait MessageFormats
 
         if ($array !== null)
         {
-            $pair = each($array);
+            $firstKey = array_key_first($array);
+            $firstValue = $array[$firstKey] ?? null;
 
-            $firstKey = $pair['key'];
-
-            $firstValue = (is_array($pair['value'])) ? $pair['value'][0] : $pair['value'];
-
-            $this->first = array($firstKey => $firstValue);
+            if ($firstKey !== null) {
+                $firstValue = (is_array($firstValue)) ? $firstValue[0] : $firstValue;
+                $this->first = array($firstKey => $firstValue);
+            }
         }
     }
 
@@ -137,9 +137,14 @@ trait MessageFormats
 
     protected function getFirstPair()
     {
-        $pair = each($this->first);
-
-        return array($pair['key'], $pair['value']);
+        if ($this->first !== null) {
+            $firstKey = array_key_first($this->first);
+            $firstValue = $this->first[$firstKey] ?? null;
+            
+            return array($firstKey, $firstValue);
+        }
+        
+        return array(null, null);
     }
 
     protected function constructError($code, $message, $field = null)
