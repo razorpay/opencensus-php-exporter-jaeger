@@ -10,35 +10,25 @@
     "type": "project",
     "require": {
         "php": "^8.2",
+        "laravel/lumen-framework": "^11.0",
         "rmccue/requests": "^2.0.4",
         "vlucas/phpdotenv": "^5.6",
-        "razorpay/trace": "4.0.3 || 5.0.0",
-        "laravel/lumen-framework": "11.45.1",
-        "razorpay/spine": "^3.0.0",
-        "lcobucci/jwt": "^4.3",
-        "razorpay/oauth":"dev-oauth_dualwrite",
-        "razorpay/outbox-php": "^3.0.0",
+        "razorpay/trace": "dev-illuminate-upgrade",
+        "razorpay/oauth": "dev-oauth-upgrade",
+        "lcobucci/jwt": "^4.1",
         "laravel/helpers": "^1.7",
         "ext-json": "*",
         "opencensus/opencensus": "^1.0.0|^0.4",
         "opencensus/opencensus-exporter-jaeger": "^v0.2.0",
         "laravel/legacy-factories": "^1.3",
         "predis/predis": "^2.2",
-        "razorpay/dcs-php-sdk": "dev-master",
-        "razorpay/account-service-php-sdk": "^v2.1.0",
         "grpc/grpc": "^1.57",
         "ext-grpc": "*",
-        "google/common-protos": "^4.8"
+        "google/common-protos": "^4.8",
+        "razorpay/outbox-php": "dev-dev-lumen-fix",
+        "razorpay/spine": "dev-dev-laravel-update"
     },
     "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:razorpay/spine.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:razorpay/oauth.git"
-        },
         {
             "type": "vcs",
             "url": "git@github.com:razorpay/trace.git"
@@ -53,6 +43,10 @@
         },
         {
             "type": "vcs",
+            "url": "git@github.com:razorpay/spine.git"
+        },
+        {
+            "type": "vcs",
             "url": "git@github.com:razorpay/opencensus-php.git"
         },
         {
@@ -61,34 +55,14 @@
         },
         {
             "type": "vcs",
-            "no-api": true,
-            "url": "git@github.com:razorpay/dcs-php-sdk.git"
-        },
-        {
-            "type": "vcs",
-            "no-api": true,
-            "url": "git@github.com:razorpay/config-proto.git"
-        },
-        {
-          "type": "vcs",
-          "no-api": true,
-          "url": "git@github.com:razorpay/account-service-php-sdk.git"
-        },
-        {
-          "type": "vcs",
-          "url": "git@github.com:razorpay/opencensus-php.git"
-        },
-        {
-        "type": "vcs",
-        "no-api": true,
-        "url": "git@github.com:razorpay/opencensus-php-exporter-jaeger.git"
+            "url": "git@github.com:razorpay/oauth.git"
         }
     ],
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "mockery/mockery": "^1.6.0",
         "kint-php/kint": "^5.0",
-        "phpunit/phpunit": "^10.5"
+        "phpunit/phpunit": "^9.0"
     },
     "autoload": {
         "psr-4": {
