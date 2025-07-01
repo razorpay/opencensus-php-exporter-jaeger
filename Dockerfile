@@ -30,7 +30,8 @@ RUN apk add --no-cache bash build-base autoconf && \
     make install
 
 RUN pear config-set php_ini /usr/local/etc/php/php.ini && \
-    pecl install rdkafka
+    pecl install rdkafka && \
+    echo "extension=rdkafka.so" >> /usr/local/etc/php/php.ini
 
 ENV GRPC_VERSION=v1.66.0
 
@@ -58,6 +59,7 @@ COPY ./dockerconf/php-fpm-www.conf /usr/local/etc/php/php-fpm.conf
 WORKDIR /app
 
 ARG GIT_USERNAME
+RUN apk add --no-cache git
 RUN --mount=type=secret,id=git_token set -eux \
     && git config --global user.name ${GIT_USERNAME} \
     && composer config -g -a github-oauth.github.com $(cat /run/secrets/git_token) \
