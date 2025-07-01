@@ -2,13 +2,13 @@ ARG ONGGI_IMAGE=c.rzp.io/razorpay/rzp-docker-image-inventory-multi-arch:rzp-gold
 
 FROM $ONGGI_IMAGE as opencensus-ext
 
-RUN apk add --no-cache dumb-init php82-dev build-base
+RUN apk add --no-cache dumb-init build-base autoconf
 
 WORKDIR /
 ARG OPENCENSUS_VERSION_TAG=v0.8.0-beta
 RUN set -eux && \
     wget -O - https://github.com/razorpay/opencensus-php/tarball/"${OPENCENSUS_VERSION_TAG}" | tar xz --strip=1
-RUN cd /ext && phpize82 && ./configure --enable-opencensus --with-php-config=/usr/bin/php-config82 && make install
+RUN cd /ext && phpize && ./configure --enable-opencensus --with-php-config=/usr/bin/php-config && make install
 
 FROM $ONGGI_IMAGE
 
