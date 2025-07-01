@@ -2,7 +2,7 @@ ARG ONGGI_IMAGE=c.rzp.io/razorpay/rzp-docker-image-inventory-multi-arch:rzp-gold
 
 FROM $ONGGI_IMAGE as opencensus-ext
 
-RUN apk add dumb-init
+RUN apk add --no-cache dumb-init php82-dev build-base
 
 WORKDIR /
 ARG OPENCENSUS_VERSION_TAG=v0.8.0-beta
@@ -28,8 +28,8 @@ RUN apk add --no-cache bash build-base && \
     make && \
     make install
 
-RUN pear81 config-set php_ini /etc/php81/php.ini && \
-    pecl81 install rdkafka
+RUN pear82 config-set php_ini /etc/php82/php.ini && \
+    pecl82 install rdkafka
 
 ENV GRPC_VERSION=v1.66.0
 
@@ -46,13 +46,13 @@ RUN apk add --no-cache git grpc-cpp grpc-dev $PHPIZE_DEPS && \
     make install && \
     rm -rf /tmp/grpc && \
     apk del --no-cache git grpc-dev $PHPIZE_DEPS && \
-    echo "extension=grpc.so" >> /etc/php81/php.ini
+    echo "extension=grpc.so" >> /etc/php82/php.ini
 
 RUN apk add py3-pip
 
 RUN pip install --no-cache-dir "razorpay.alohomora==0.5.0"
 
-COPY ./dockerconf/php-fpm-www.conf /etc/php81/php-fpm.conf
+COPY ./dockerconf/php-fpm-www.conf /etc/php82/php-fpm.conf
 
 WORKDIR /app
 
