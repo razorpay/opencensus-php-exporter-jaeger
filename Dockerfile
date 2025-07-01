@@ -70,7 +70,7 @@ RUN --mount=type=secret,id=git_token set -eux \
 RUN  pear config-set php_ini /etc/php82/php.ini \
     && pecl install opencensus-alpha
 
-COPY --from=opencensus-ext /usr/lib/php/modules/opencensus.so /usr/lib/php/modules/
+COPY --from=opencensus-ext /ext/modules/opencensus.so /usr/lib/php82/modules/
 
 EXPOSE 80
 
