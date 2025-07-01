@@ -51,7 +51,7 @@ RUN apk add --no-cache git grpc-cpp grpc-dev $PHPIZE_DEPS && \
 
 RUN apk add py3-pip
 
-RUN pip install --no-cache-dir "razorpay.alohomora==0.5.0"
+RUN pip install --no-cache-dir --break-system-packages "razorpay.alohomora==0.5.0"
 
 COPY ./dockerconf/php-fpm-www.conf /usr/local/etc/php/php-fpm.conf
 
