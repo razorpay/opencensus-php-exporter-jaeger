@@ -8,7 +8,7 @@ WORKDIR /
 ARG OPENCENSUS_VERSION_TAG=v0.8.0-beta
 RUN set -eux && \
     wget -O - https://github.com/razorpay/opencensus-php/tarball/"${OPENCENSUS_VERSION_TAG}" | tar xz --strip=1
-RUN cd /ext && phpize && ./configure --enable-opencensus --with-php-config=/usr/bin/php-config && make install
+RUN cd /ext && phpize && ./configure --enable-opencensus --with-php-config=/usr/local/bin/php-config && make install
 
 FROM $ONGGI_IMAGE
 
