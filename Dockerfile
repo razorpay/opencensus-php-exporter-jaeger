@@ -21,7 +21,7 @@ WORKDIR /
 
 ARG LIBRDKAFKA_VERSION_TAG=1.2.2
 
-RUN apk add --no-cache bash build-base && \
+RUN apk add --no-cache bash build-base autoconf && \
     set -eux && \
     wget https://github.com/edenhill/librdkafka/archive/v"${LIBRDKAFKA_VERSION_TAG}".tar.gz  -O - | tar -xz && \
     cd librdkafka-"${LIBRDKAFKA_VERSION_TAG}" && ./configure && \
