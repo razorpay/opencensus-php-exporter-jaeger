@@ -47,13 +47,13 @@ RUN apk add --no-cache git grpc-cpp grpc-dev $PHPIZE_DEPS && \
     make install && \
     rm -rf /tmp/grpc && \
     apk del --no-cache git grpc-dev $PHPIZE_DEPS && \
-    echo "extension=grpc.so" >> /etc/php82/php.ini
+    echo "extension=grpc.so" >> /etc/php/php.ini
 
 RUN apk add py3-pip
 
 RUN pip install --no-cache-dir "razorpay.alohomora==0.5.0"
 
-COPY ./dockerconf/php-fpm-www.conf /etc/php82/php-fpm.conf
+COPY ./dockerconf/php-fpm-www.conf /etc/php/php-fpm.conf
 
 WORKDIR /app
 
@@ -64,13 +64,13 @@ RUN --mount=type=secret,id=git_token set -eux \
     && composer install --no-interaction --no-dev \
     && composer clear-cache \
     # Disable opcache for now
-    && rm /etc/php82/conf.d/00_opcache.ini
+    && rm /etc/php/conf.d/00_opcache.ini
 
 
 RUN  pear config-set php_ini /etc/php82/php.ini \
     && pecl install opencensus-alpha
 
-COPY --from=opencensus-ext /ext/modules/opencensus.so /usr/lib/php82/modules/
+COPY --from=opencensus-ext /ext/modules/opencensus.so /usr/lib/php/modules/
 
 EXPOSE 80
 
