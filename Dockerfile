@@ -63,13 +63,13 @@ RUN --mount=type=secret,id=git_token set -eux \
     && composer install --no-interaction --no-dev \
     && composer clear-cache \
     # Disable opcache for now
-    && rm /etc/php81/conf.d/00_opcache.ini
+    && rm /etc/php82/conf.d/00_opcache.ini
 
 
-RUN  pear81 config-set php_ini /etc/php81/php.ini \
-    && pecl81 install opencensus-alpha
+RUN  pear82 config-set php_ini /etc/php82/php.ini \
+    && pecl82 install opencensus-alpha
 
-COPY --from=opencensus-ext /usr/lib/php81/modules/opencensus.so /usr/lib/php81/modules
+COPY --from=opencensus-ext /usr/lib/php82/modules/opencensus.so /usr/lib/php82/modules
 
 EXPOSE 80
 
