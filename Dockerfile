@@ -1,4 +1,4 @@
-ARG ONGGI_IMAGE=c.rzp.io/razorpay/rzp-docker-image-inventory-multi-arch:rzp-golden-image-base-php-8.2-fpm-alpine3.20
+ARG ONGGI_IMAGE=harbor.razorpay.com/razorpay/rzp-docker-image-inventory-multi-arch:rzp-golden-image-base-php-8.2-fpm-alpine3.20
 
 FROM $ONGGI_IMAGE as opencensus-ext
 
@@ -16,7 +16,7 @@ FROM $ONGGI_IMAGE
 ARG GIT_COMMIT_HASH
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
-COPY --chown=nginx:nginx . /app/
+COPY . /app/
 
 WORKDIR /
 
@@ -29,7 +29,7 @@ RUN apk add --no-cache bash build-base autoconf && \
     make && \
     make install
 
-RUN pear config-set php_ini /etc/php82/php.ini && \
+RUN pear config-set php_ini /usr/local/etc/php/php.ini && \
     pecl install rdkafka
 
 ENV GRPC_VERSION=v1.66.0
@@ -47,13 +47,13 @@ RUN apk add --no-cache git grpc-cpp grpc-dev $PHPIZE_DEPS && \
     make install && \
     rm -rf /tmp/grpc && \
     apk del --no-cache git grpc-dev $PHPIZE_DEPS && \
-    echo "extension=grpc.so" >> /etc/php/php.ini
+    echo "extension=grpc.so" >> /usr/local/etc/php/php.ini
 
 RUN apk add py3-pip
 
 RUN pip install --no-cache-dir "razorpay.alohomora==0.5.0"
 
-COPY ./dockerconf/php-fpm-www.conf /etc/php/php-fpm.conf
+COPY ./dockerconf/php-fpm-www.conf /usr/local/etc/php/php-fpm.conf
 
 WORKDIR /app
 
@@ -64,10 +64,10 @@ RUN --mount=type=secret,id=git_token set -eux \
     && composer install --no-interaction --no-dev \
     && composer clear-cache \
     # Disable opcache for now
-    && rm /etc/php/conf.d/00_opcache.ini
+    && rm /usr/local/etc/php/conf.d/00_opcache.ini
 
 
-RUN  pear config-set php_ini /etc/php82/php.ini \
+RUN  pear config-set php_ini /usr/local/etc/php/php.ini \
     && pecl install opencensus-alpha
 
 COPY --from=opencensus-ext /ext/modules/opencensus.so /usr/lib/php/modules/
