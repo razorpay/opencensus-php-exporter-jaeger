@@ -1,4 +1,4 @@
-ARG ONGGI_IMAGE=harbor.razorpay.com/razorpay/rzp-docker-image-inventory-multi-arch:rzp-golden-image-base-php-8.2-fpm-alpine3.20
+ARG ONGGI_IMAGE=c.rzp.io/razorpay/rzp-docker-image-inventory-multi-arch:rzp-golden-image-base-php-8.2-fpm-alpine3.20
 
 FROM $ONGGI_IMAGE as opencensus-ext
 
