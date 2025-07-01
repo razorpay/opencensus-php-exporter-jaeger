@@ -8,7 +8,8 @@ WORKDIR /
 ARG OPENCENSUS_VERSION_TAG=v0.8.0-beta
 RUN set -eux && \
     wget -O - https://github.com/razorpay/opencensus-php/tarball/"${OPENCENSUS_VERSION_TAG}" | tar xz --strip=1
-RUN cd /ext && phpize && ./configure --enable-opencensus --with-php-config=/usr/local/bin/php-config && make install
+RUN cd /ext && phpize && ./configure --enable-opencensus --with-php-config=/usr/local/bin/php-config && make install && \
+    find /usr -name "opencensus.so" -type f
 
 FROM $ONGGI_IMAGE
 
@@ -69,7 +70,7 @@ RUN --mount=type=secret,id=git_token set -eux \
 RUN  pear config-set php_ini /etc/php82/php.ini \
     && pecl install opencensus-alpha
 
-COPY --from=opencensus-ext /usr/lib/php/modules/opencensus.so /usr/lib/php82/modules
+COPY --from=opencensus-ext /usr/lib/php/modules/opencensus.so /usr/lib/php/modules/
 
 EXPOSE 80
 
