@@ -59,7 +59,9 @@ COPY ./dockerconf/php-fpm-www.conf /usr/local/etc/php/php-fpm.conf
 WORKDIR /app
 
 ARG GIT_USERNAME
-RUN apk add --no-cache git
+RUN apk add --no-cache git curl && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    
 RUN --mount=type=secret,id=git_token set -eux \
     && git config --global user.name ${GIT_USERNAME} \
     && composer config -g -a github-oauth.github.com $(cat /run/secrets/git_token) \
