@@ -28,8 +28,8 @@ RUN apk add --no-cache bash build-base && \
     make && \
     make install
 
-RUN pear82 config-set php_ini /etc/php82/php.ini && \
-    pecl82 install rdkafka
+RUN pear config-set php_ini /etc/php82/php.ini && \
+    pecl install rdkafka
 
 ENV GRPC_VERSION=v1.66.0
 
@@ -66,8 +66,8 @@ RUN --mount=type=secret,id=git_token set -eux \
     && rm /etc/php82/conf.d/00_opcache.ini
 
 
-RUN  pear82 config-set php_ini /etc/php82/php.ini \
-    && pecl82 install opencensus-alpha
+RUN  pear config-set php_ini /etc/php82/php.ini \
+    && pecl install opencensus-alpha
 
 COPY --from=opencensus-ext /usr/lib/php82/modules/opencensus.so /usr/lib/php82/modules
 
