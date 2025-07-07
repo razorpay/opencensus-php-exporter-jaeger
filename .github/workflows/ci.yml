@@ -154,20 +154,16 @@ jobs:
           echo ::set-output name=sonar_project::$SONAR_PROJECT
           echo "Sonar Project : $SONAR_PROJECT for branch : $BRANCH"
       - name: Integration Coverage Push to sonar
-        uses: sonarsource/sonarcloud-github-action@v1.4
+        uses: sonarsource/sonarqube-scan-action@v4
         env:
-          SONAR_HOST: ${{ secrets.SONARQUBE_HOST }}
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-          SONARCLOUD_URL: https://sonar.razorpay.com
-          SONAR_INTEGRATION_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_HOST_URL: https://sonar.razorpay.com
         with:
           projectBaseDir: /github/workspace/app/
           args: >
-            -Dsonar.host.url=https://sonar.razorpay.com
             -Dsonar.projectKey=${{ steps.set_sonar_project.outputs.sonar_project }}
             -Dsonar.projectName=${{ steps.set_sonar_project.outputs.sonar_project }}
             -Dsonar.projectVersion=${{ github.sha }}
-            -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.php.coverage.reportPaths=/github/workspace/clover.xml
             -Dsonar.exclusions=tests/**,vendor,storage/**,Exception/**,Services/Mock/**

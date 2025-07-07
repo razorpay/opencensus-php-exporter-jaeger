@@ -79,8 +79,8 @@ RUN --mount=type=secret,id=git_token set -eux \
     && composer config -g -a github-oauth.github.com $(cat /run/secrets/git_token) \
     && composer install --no-interaction --no-dev \
     && composer clear-cache \
-    # Disable opcache for now
-    && rm /usr/local/etc/php/conf.d/00_opcache.ini
+    # Disable opcache for now (use -f to not fail if file doesn't exist)
+    && rm -f /usr/local/etc/php/conf.d/00_opcache.ini
 
 
 RUN  pear config-set php_ini /usr/local/etc/php/php.ini \
