@@ -63,14 +63,25 @@ ARG GIT_USERNAME
 RUN apk add --no-cache git curl \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install sockets extension for all PHP versions present
-RUN apk add --no-cache php-sockets php83-sockets
+# Install sockets extension using docker-php-ext-install (preferred method for Docker PHP images)
+RUN docker-php-ext-install sockets || \
+    (apk add --no-cache $PHPIZE_DEPS && \
+     docker-php-source extract && \
+     cd /usr/src/php/ext/sockets && \
+     phpize && \
+     ./configure && \
+     make && \
+     make install && \
+     echo "extension=sockets.so" >> /usr/local/etc/php/php.ini && \
+     docker-php-source delete && \
+     apk del --no-cache $PHPIZE_DEPS)
 
-# Debug: show PHP version
-RUN php -v
+# Debug: show PHP version and available extensions
+RUN php -v && echo "Available extensions:" && php -m
 
-# Try to verify sockets extension, and enable it manually if missing
-RUN php -m | grep sockets || (echo "extension=sockets.so" > /usr/local/etc/php/conf.d/50_sockets.ini && php -m | grep sockets)
+# Verify sockets extension is now available
+RUN php -m | grep sockets
+
 RUN --mount=type=secret,id=git_token set -eux \
     && git config --global user.name ${GIT_USERNAME} \
     && composer config -g -a github-oauth.github.com $(cat /run/secrets/git_token) \
