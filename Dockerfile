@@ -63,10 +63,10 @@ ARG GIT_USERNAME
 RUN apk add --no-cache git curl \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install sockets extension - need Linux headers for compilation
-RUN apk add --no-cache linux-headers && \
+# Install sockets extension - handle both X64 and ARM64 architectures
+RUN apk add --no-cache linux-headers $PHPIZE_DEPS && \
     docker-php-ext-install sockets && \
-    apk del --no-cache linux-headers
+    apk del --no-cache linux-headers $PHPIZE_DEPS
 
 # Debug: show PHP version and available extensions
 RUN php -v && echo "Available extensions:" && php -m
