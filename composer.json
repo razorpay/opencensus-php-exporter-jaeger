@@ -13,22 +13,23 @@
         "laravel/lumen-framework": "^11.0",
         "rmccue/requests": "^2.0.4",
         "vlucas/phpdotenv": "^5.6",
-        "razorpay/trace": "4.0.3",
+        "razorpay/trace": "dev-illuminate-upgrade",
         "razorpay/oauth": "dev-oauth-upgrade",
         "lcobucci/jwt": "^4.1",
+        "illuminate/support": "^11.0",
         "laravel/helpers": "^1.7",
         "ext-json": "*",
         "opencensus/opencensus": "^1.0.0|^0.4",
         "opencensus/opencensus-exporter-jaeger": "^v0.2.0",
         "laravel/legacy-factories": "^1.3",
         "predis/predis": "^2.2",
-        "razorpay/account-service-php-sdk": "dev-account-service/1.0.17",
+        "razorpay/account-service-php-sdk": "dev-php-upgrade",
         "grpc/grpc": "^1.57",
         "ext-grpc": "*",
         "google/common-protos": "^4.8",
         "razorpay/outbox-php": "dev-dev-lumen-fix",
         "razorpay/spine": "dev-dev-laravel-update",
-        "razorpay/dcs-php-sdk": "dev-upgrade-versions"
+        "razorpay/dcs-php-sdk": "dev-service-upgrade"
     },
     "repositories": [
         {
@@ -88,7 +89,7 @@
         "fakerphp/faker": "^1.23",
         "mockery/mockery": "^1.6.0",
         "kint-php/kint": "^5.0",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^9.0"
     },
     "autoload": {
         "psr-4": {
