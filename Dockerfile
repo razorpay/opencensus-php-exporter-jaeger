@@ -64,8 +64,10 @@ RUN apk add --no-cache git curl \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install PHP sockets extension for datadog/php-datadogstatsd and opencensus/opencensus-exporter-jaeger
-RUN apk add --no-cache php-sockets
+RUN apk add --no-cache php83-sockets
 
+# Verify sockets extension is enabled
+RUN php -m | grep sockets
 RUN --mount=type=secret,id=git_token set -eux \
     && git config --global user.name ${GIT_USERNAME} \
     && composer config -g -a github-oauth.github.com $(cat /run/secrets/git_token) \
