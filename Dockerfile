@@ -63,18 +63,10 @@ ARG GIT_USERNAME
 RUN apk add --no-cache git curl \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install sockets extension using docker-php-ext-install (preferred method for Docker PHP images)
-RUN docker-php-ext-install sockets || \
-    (apk add --no-cache $PHPIZE_DEPS && \
-     docker-php-source extract && \
-     cd /usr/src/php/ext/sockets && \
-     phpize && \
-     ./configure && \
-     make && \
-     make install && \
-     echo "extension=sockets.so" >> /usr/local/etc/php/php.ini && \
-     docker-php-source delete && \
-     apk del --no-cache $PHPIZE_DEPS)
+# Install sockets extension - need Linux headers for compilation
+RUN apk add --no-cache linux-headers && \
+    docker-php-ext-install sockets && \
+    apk del --no-cache linux-headers
 
 # Debug: show PHP version and available extensions
 RUN php -v && echo "Available extensions:" && php -m
