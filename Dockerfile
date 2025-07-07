@@ -63,11 +63,14 @@ ARG GIT_USERNAME
 RUN apk add --no-cache git curl \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install PHP sockets extension for datadog/php-datadogstatsd and opencensus/opencensus-exporter-jaeger
-RUN apk add --no-cache php83-sockets
+# Install sockets extension for all PHP versions present
+RUN apk add --no-cache php-sockets php83-sockets
 
-# Verify sockets extension is enabled
-RUN php -m | grep sockets
+# Debug: show PHP version
+RUN php -v
+
+# Try to verify sockets extension, and enable it manually if missing
+RUN php -m | grep sockets || (echo "extension=sockets.so" > /usr/local/etc/php/conf.d/50_sockets.ini && php -m | grep sockets)
 RUN --mount=type=secret,id=git_token set -eux \
     && git config --global user.name ${GIT_USERNAME} \
     && composer config -g -a github-oauth.github.com $(cat /run/secrets/git_token) \
