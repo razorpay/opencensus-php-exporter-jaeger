@@ -83,8 +83,10 @@ RUN --mount=type=secret,id=git_token set -eux \
     && rm -f /usr/local/etc/php/conf.d/00_opcache.ini
 
 
-RUN  pear config-set php_ini /usr/local/etc/php/php.ini \
-    && pecl install opencensus-alpha
+RUN apk add --no-cache build-base autoconf $PHPIZE_DEPS && \
+    pear config-set php_ini /usr/local/etc/php/php.ini && \
+    pecl install opencensus-alpha && \
+    apk del --no-cache build-base autoconf $PHPIZE_DEPS
 
 COPY --from=opencensus-ext /ext/modules/opencensus.so /usr/lib/php/modules/
 
