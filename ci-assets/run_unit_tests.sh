@@ -9,6 +9,9 @@ GRPC_VERSION=v1.66.0
 
 SRC_DIR=/__w/auth-service/auth-service
 
+# Define PHP extension build dependencies
+PHPIZE_DEPS="autoconf dpkg-dev dpkg file g++ gcc libc-dev make pkgconf re2c"
+
 function init_setup
 {
     echo "initiate setup"
@@ -20,7 +23,7 @@ function init_setup
     echo "sonar branch : ${GITHUB_BRANCH}, Argument : ${SONAR}"
 
     echo "installing build dependencies"
-    apk add --no-cache build-base autoconf $PHPIZE_DEPS
+    apk add --no-cache build-base autoconf ${PHPIZE_DEPS}
 
     echo "adding xdebug"
     apk --no-cache add pcre-dev
@@ -68,7 +71,7 @@ function init_setup
     composer config -g -a github-oauth.github.com ${GIT_TOKEN} && composer install --no-interaction && composer clear-cache && rm -f /usr/local/etc/php/conf.d/00_opcache.ini
 
     echo "cleaning up build dependencies"
-    apk del --no-cache build-base autoconf $PHPIZE_DEPS
+    apk del --no-cache build-base autoconf ${PHPIZE_DEPS}
 
     if [ ! -d "$auth_TMP_DIR" ]; then
         mkdir -p $auth_TMP_DIR
