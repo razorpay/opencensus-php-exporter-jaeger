@@ -22,8 +22,8 @@ function init_setup
 
     echo "sonar branch : ${GITHUB_BRANCH}, Argument : ${SONAR}"
 
-    echo "installing build dependencies"
-    apk add --no-cache build-base autoconf ${PHPIZE_DEPS}
+    echo "installing build dependencies and PHP development tools"
+    apk add --no-cache build-base autoconf ${PHPIZE_DEPS} php82-pear php82-dev
 
     echo "adding xdebug"
     apk --no-cache add pcre-dev
@@ -71,7 +71,7 @@ function init_setup
     composer config -g -a github-oauth.github.com ${GIT_TOKEN} && composer install --no-interaction && composer clear-cache && rm -f /usr/local/etc/php/conf.d/00_opcache.ini
 
     echo "cleaning up build dependencies"
-    apk del --no-cache build-base autoconf ${PHPIZE_DEPS}
+    apk del --no-cache build-base autoconf ${PHPIZE_DEPS} php82-pear php82-dev
 
     if [ ! -d "$auth_TMP_DIR" ]; then
         mkdir -p $auth_TMP_DIR
