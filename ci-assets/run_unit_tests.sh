@@ -19,6 +19,9 @@ function init_setup
 
     echo "sonar branch : ${GITHUB_BRANCH}, Argument : ${SONAR}"
 
+    echo "installing build dependencies"
+    apk add --no-cache build-base autoconf $PHPIZE_DEPS
+
     echo "adding xdebug"
     apk --no-cache add pcre-dev
     pecl install xdebug
@@ -63,6 +66,9 @@ function init_setup
 
     echo "running composer install"
     composer config -g -a github-oauth.github.com ${GIT_TOKEN} && composer install --no-interaction && composer clear-cache && rm -f /usr/local/etc/php/conf.d/00_opcache.ini
+
+    echo "cleaning up build dependencies"
+    apk del --no-cache build-base autoconf $PHPIZE_DEPS
 
     if [ ! -d "$auth_TMP_DIR" ]; then
         mkdir -p $auth_TMP_DIR
